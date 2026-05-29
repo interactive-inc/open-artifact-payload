@@ -1,0 +1,67 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "inta-cms",
+  "compatibility_date": "2025-08-15",
+  "compatibility_flags": [
+    // Enable Node.js API
+    // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag
+    "nodejs_compat",
+    // Allow to fetch URLs in your app
+    // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
+    "global_fetch_strictly_public",
+  ],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS",
+  },
+  "d1_databases": [
+    {
+      "binding": "D1",
+      // `bun run setup:project` で自動置換される。手動セットアップの場合は `wrangler d1 create <name>` で生成された ID を貼る
+      "database_id": "<REPLACE_WITH_YOUR_DATABASE_ID>",
+      "database_name": "inta-cms",
+      "remote": true,
+    },
+  ],
+  "services": [
+    // The service should match the "name" of your worker
+    // {
+    //   "binding": "WORKER_SELF_REFERENCE",
+    //   "service": "inta-cms"
+    // },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "inta-cms",
+    },
+    // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
+    // {
+    //   "binding": "NEXT_INC_CACHE_R2_BUCKET",
+    //   "bucket_name": "<BUCKET_NAME>",
+    // },
+  ],
+
+  // クライアント確認用 staging 環境。`CLOUDFLARE_ENV=staging bun run deploy` でデプロイ
+  // 利用前に staging 用の D1/R2 を別途作成し、database_id と bucket_name を差し替えること
+  "env": {
+    "staging": {
+      "name": "inta-cms-staging",
+      "d1_databases": [
+        {
+          "binding": "D1",
+          "database_id": "<REPLACE_WITH_YOUR_STAGING_DATABASE_ID>",
+          "database_name": "inta-cms-staging",
+          "remote": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "inta-cms-staging",
+        },
+      ],
+    },
+  },
+}

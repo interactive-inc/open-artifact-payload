@@ -1,0 +1,122 @@
+.ictms-dashboard {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.ictms-dashboard__hero h1 {
+  font-size: 24px;
+  margin-bottom: 8px;
+}
+
+.ictms-dashboard__hero p {
+  color: var(--theme-elevation-500);
+}
+
+.ictms-dashboard__primary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.ictms-dashboard__secondary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.ictms-dashboard__task {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-elevation-150);
+  background: var(--theme-elevation-0);
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.15s ease;
+}
+
+.ictms-dashboard__task:hover {
+  background: var(--theme-elevation-50);
+}
+
+.ictms-dashboard__task--large {
+  padding: 24px;
+}
+
+.ictms-dashboard__task-label {
+  font-weight: 600;
+}
+
+.ictms-dashboard__task-description {
+  font-size: 14px;
+  color: var(--theme-elevation-500);
+}
+
+.ictms-dashboard__recent {
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid var(--theme-elevation-150);
+}
+
+.ictms-dashboard__section-title {
+  font-size: 16px;
+  margin-bottom: 12px;
+}
+
+.ictms-dashboard__recent-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ictms-dashboard__recent-item a {
+  display: flex;
+  gap: 12px;
+  padding: 8px 4px;
+  border-radius: 6px;
+  color: inherit;
+  text-decoration: none;
+}
+
+.ictms-dashboard__recent-item a:hover {
+  background: var(--theme-elevation-50);
+}
+
+.ictms-dashboard__recent-date {
+  min-width: 104px;
+  color: var(--theme-elevation-500);
+  font-variant-numeric: tabular-nums;
+}
+
+.ictms-dashboard__help {
+  font-size: 14px;
+  color: var(--theme-elevation-500);
+}
+
+.ictms-dashboard__task--small {
+  padding: 16px;
+  font-size: 14px;
+}
+
+.ictms-dashboard__task-icon {
+  display: flex;
+  align-items: center;
+}
+
+.ictms-dashboard__recent-empty {
+  color: var(--theme-elevation-500);
+  font-size: 14px;
+  padding: 8px 4px;
+}
+
+.ictms-dashboard__recent-title {
+  flex: 1;
+  font-weight: 500;
+}
