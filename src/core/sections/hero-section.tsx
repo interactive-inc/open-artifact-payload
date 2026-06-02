@@ -40,11 +40,14 @@ export function HeroSection(props: Props) {
             <p className="mt-5 text-xl text-background/80 leading-relaxed">{props.data.subtitle}</p>
           ) : null}
           {props.data.ctaLabel && props.data.ctaHref ? (
-            <Button asChild size="lg" variant="secondary" className="mt-8">
-              <Link href={props.data.ctaHref}>
-                {props.data.ctaLabel}
-                <ArrowRightIcon data-icon="inline-end" />
-              </Link>
+            <Button
+              render={<Link href={props.data.ctaHref} />}
+              size="lg"
+              variant="secondary"
+              className="mt-8"
+            >
+              {props.data.ctaLabel}
+              <ArrowRightIcon data-icon="inline-end" />
             </Button>
           ) : null}
         </div>

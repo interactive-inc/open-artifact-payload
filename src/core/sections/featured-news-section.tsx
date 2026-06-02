@@ -35,11 +35,9 @@ export function FeaturedNewsSection(props: Props) {
           <h2 className="text-2xl font-bold tracking-tight">
             {props.data.heading ?? '最新のお知らせ'}
           </h2>
-          <Button asChild variant="ghost" size="sm">
-            <Link href="/news">
-              一覧を見る
-              <ArrowRightIcon data-icon="inline-end" />
-            </Link>
+          <Button render={<Link href="/news" />} variant="ghost" size="sm">
+            一覧を見る
+            <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
         <div className="grid gap-4 md:grid-cols-3">

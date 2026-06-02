@@ -93,12 +93,12 @@ export function SiteFooter(props: Props) {
             </div>
             <div className="mt-6">
               <Button
-                asChild
+                render={<Link href="/contact" />}
                 variant="outline"
                 size="sm"
                 className="border-background/30 text-background hover:bg-background/10 hover:text-background"
               >
-                <Link href="/contact">お問い合わせ</Link>
+                お問い合わせ
               </Button>
             </div>
           </div>

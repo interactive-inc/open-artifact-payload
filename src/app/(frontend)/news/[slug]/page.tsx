@@ -94,11 +94,9 @@ export default async function NewsDetailPage(props: Props) {
           <LexicalRenderer value={item.body} />
         </div>
         <Separator className="mt-12 mb-8" />
-        <Button asChild variant="ghost">
-          <Link href="/news">
-            <ArrowLeftIcon data-icon="inline-start" />
-            お知らせ一覧へ戻る
-          </Link>
+        <Button render={<Link href="/news" />} variant="ghost">
+          <ArrowLeftIcon data-icon="inline-start" />
+          お知らせ一覧へ戻る
         </Button>
       </article>
     </div>

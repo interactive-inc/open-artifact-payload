@@ -136,11 +136,9 @@ export default async function ServicePage() {
               <p className="text-lg text-background/80 mb-8">{service.cta.description}</p>
             ) : null}
             {service.cta.ctaLabel && service.cta.ctaHref ? (
-              <Button asChild size="lg" variant="secondary">
-                <Link href={service.cta.ctaHref}>
-                  {service.cta.ctaLabel}
-                  <ArrowRightIcon data-icon="inline-end" />
-                </Link>
+              <Button render={<Link href={service.cta.ctaHref} />} size="lg" variant="secondary">
+                {service.cta.ctaLabel}
+                <ArrowRightIcon data-icon="inline-end" />
               </Button>
             ) : null}
           </div>

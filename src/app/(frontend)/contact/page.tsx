@@ -94,8 +94,8 @@ export default async function ContactPage() {
                   <p className="text-sm text-muted-foreground mb-3">
                     ご不明な点はまずFAQをご確認ください。
                   </p>
-                  <Button asChild variant="outline" size="sm">
-                    <Link href="/faq">FAQを見る</Link>
+                  <Button render={<Link href="/faq" />} variant="outline" size="sm">
+                    FAQを見る
                   </Button>
                 </CardContent>
               </Card>

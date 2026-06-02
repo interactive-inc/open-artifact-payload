@@ -32,8 +32,8 @@ export default function ThanksPage() {
           </p>
         </CardContent>
         <CardFooter className="justify-center">
-          <Button asChild variant="outline">
-            <Link href="/">トップページへ戻る</Link>
+          <Button render={<Link href="/" />} variant="outline">
+            トップページへ戻る
           </Button>
         </CardFooter>
       </Card>

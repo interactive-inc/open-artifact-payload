@@ -48,8 +48,8 @@ export function SiteHeader(props: Props) {
                 {item.label}
               </Link>
             ))}
-            <Button asChild size="sm" className="ml-2">
-              <Link href="/contact">お問い合わせ</Link>
+            <Button render={<Link href="/contact" />} size="sm" className="ml-2">
+              お問い合わせ
             </Button>
           </nav>
 
@@ -77,10 +77,12 @@ export function SiteHeader(props: Props) {
             </Link>
           ))}
           <Separator className="my-2" />
-          <Button asChild className="w-full" size="sm">
-            <Link href="/contact" onClick={() => setIsMenuOpen(false)}>
-              お問い合わせ
-            </Link>
+          <Button
+            render={<Link href="/contact" onClick={() => setIsMenuOpen(false)} />}
+            className="w-full"
+            size="sm"
+          >
+            お問い合わせ
           </Button>
         </div>
       ) : null}

@@ -38,11 +38,13 @@ export function AboutPreviewSection(props: Props) {
               </p>
             ) : null}
             {props.data.ctaLabel && props.data.ctaHref ? (
-              <Button asChild variant="outline" className="mt-8">
-                <Link href={props.data.ctaHref}>
-                  {props.data.ctaLabel}
-                  <ArrowRightIcon data-icon="inline-end" />
-                </Link>
+              <Button
+                render={<Link href={props.data.ctaHref} />}
+                variant="outline"
+                className="mt-8"
+              >
+                {props.data.ctaLabel}
+                <ArrowRightIcon data-icon="inline-end" />
               </Button>
             ) : null}
           </div>

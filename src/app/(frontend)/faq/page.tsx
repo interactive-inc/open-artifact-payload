@@ -81,9 +81,7 @@ export default async function FaqPage() {
 
           <div className="text-center bg-muted/30 rounded-xl p-8">
             <p className="text-foreground mb-4">解決しない場合はお気軽にお問い合わせください</p>
-            <Button asChild>
-              <Link href="/contact">お問い合わせする</Link>
-            </Button>
+            <Button render={<Link href="/contact" />}>お問い合わせする</Button>
           </div>
         </div>
       </section>
