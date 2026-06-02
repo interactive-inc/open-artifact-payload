@@ -11,6 +11,7 @@ import {
 } from '@/project/shared/ui/accordion'
 import { Button } from '@/project/shared/ui/button'
 import { Separator } from '@/project/shared/ui/separator'
+import { PageHeader } from '@/project/shared/sections/page-header'
 import '../styles.css'
 
 const categoryLabel: Record<string, string> = {
@@ -38,12 +39,7 @@ export default async function FaqPage() {
 
   return (
     <div>
-      <section className="bg-foreground py-16 text-background">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">よくある質問</h1>
-          <p className="mt-4 text-lg text-background/80">FAQ</p>
-        </div>
-      </section>
+      <PageHeader title="よくある質問" description="FAQ" />
 
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6">

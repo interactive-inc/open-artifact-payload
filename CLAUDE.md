@@ -159,5 +159,6 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - @README.md
 - @package.json
 - @wrangler.jsonc
+- @portless.json
 - @.claude/rules/ts.md
 - @.claude/rules/md.md

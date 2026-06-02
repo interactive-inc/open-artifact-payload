@@ -3,9 +3,9 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import config from '@/payload.config'
-import { HeroSection } from '@/core/sections/hero-section'
-import { FeaturedNewsSection } from '@/core/sections/featured-news-section'
-import { CtaSection } from '@/core/sections/cta-section'
+import { HeroSection } from '@/project/shared/sections/hero-section'
+import { FeaturedNewsSection } from '@/project/shared/sections/featured-news-section'
+import { CtaSection } from '@/project/shared/sections/cta-section'
 import { ServicesSection } from '@/project/pages/home/sections/services-section'
 import { AboutPreviewSection } from '@/project/pages/home/sections/about-preview-section'
 

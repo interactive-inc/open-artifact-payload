@@ -1,7 +1,5 @@
 import React from 'react'
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
-
 type ServiceItem = {
   icon?: string | null
   title?: string | null
@@ -22,39 +20,47 @@ export function ServicesSection(props: Props) {
   const items = props.data.items ?? []
 
   return (
-    <section className="py-20 bg-muted/30">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center mb-12">
-          {props.data.heading ? (
-            <h2 className="text-3xl font-bold tracking-tight">{props.data.heading}</h2>
-          ) : null}
+    <section className="py-24 md:py-32">
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 items-end mb-16">
+          <div className="md:col-span-7">
+            {props.data.heading ? (
+              <h2 className="text-3xl md:text-4xl font-heading font-semibold tracking-tight text-balance">
+                {props.data.heading}
+              </h2>
+            ) : null}
+          </div>
           {props.data.subheading ? (
-            <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
+            <p className="md:col-span-5 text-base text-muted-foreground leading-relaxed">
               {props.data.subheading}
             </p>
           ) : null}
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <ul className="divide-y divide-foreground/10 border-t border-foreground/10">
           {items.map((item, index) => (
-            <Card key={index} className="hover:shadow-md transition-shadow">
-              <CardHeader>
-                {item.icon ? (
-                  <div className="text-4xl mb-2">{item.icon}</div>
-                ) : (
-                  <div className="size-10 bg-primary/10 rounded-lg flex items-center justify-center mb-2">
-                    <div className="size-5 bg-primary rounded" />
-                  </div>
-                )}
-                {item.title ? <CardTitle className="text-xl">{item.title}</CardTitle> : null}
-              </CardHeader>
+            <li
+              key={index}
+              className="group grid grid-cols-1 md:grid-cols-12 gap-2 md:gap-8 py-8 md:py-10 transition-colors hover:bg-muted/40"
+            >
+              <div className="md:col-span-1 font-heading text-sm text-muted-foreground tabular-nums pt-1">
+                {String(index + 1).padStart(2, '0')}
+              </div>
+              <div className="md:col-span-5">
+                {item.title ? (
+                  <h3 className="text-xl font-heading font-semibold tracking-tight">
+                    {item.title}
+                  </h3>
+                ) : null}
+              </div>
               {item.description ? (
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed">{item.description}</p>
-                </CardContent>
+                <p className="md:col-span-6 text-muted-foreground leading-relaxed">
+                  {item.description}
+                </p>
               ) : null}
-            </Card>
+            </li>
           ))}
-        </div>
+        </ul>
       </div>
     </section>
   )

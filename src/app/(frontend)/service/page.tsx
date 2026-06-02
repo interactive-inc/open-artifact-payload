@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/ca
 import { Badge } from '@/project/shared/ui/badge'
 import { Button } from '@/project/shared/ui/button'
 import { Separator } from '@/project/shared/ui/separator'
+import { PageHeader } from '@/project/shared/sections/page-header'
 import '../styles.css'
 
 export default async function ServicePage() {
@@ -21,16 +22,7 @@ export default async function ServicePage() {
   return (
     <>
       {service.hero?.enabled ? (
-        <section className="bg-foreground py-20 text-background">
-          <div className="max-w-6xl mx-auto px-6 text-center">
-            <h1 className="text-4xl font-bold tracking-tight">{service.hero.title}</h1>
-            {service.hero.subtitle ? (
-              <p className="mt-4 text-xl text-background/80 max-w-2xl mx-auto">
-                {service.hero.subtitle}
-              </p>
-            ) : null}
-          </div>
-        </section>
+        <PageHeader title={service.hero.title ?? ''} description={service.hero.subtitle} />
       ) : null}
 
       {service.services?.enabled ? (
@@ -137,7 +129,6 @@ export default async function ServicePage() {
             ) : null}
             {service.cta.ctaLabel && service.cta.ctaHref ? (
               <Button
-                nativeButton={false}
                 nativeButton={false}
                 render={<Link href={service.cta.ctaHref} />}
                 size="lg"

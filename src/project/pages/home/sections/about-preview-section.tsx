@@ -6,6 +6,9 @@ import { ArrowRightIcon } from 'lucide-react'
 import { resolveMediaUrl, resolveMediaAlt } from '@/core/lib/media'
 import { Button } from '@/project/shared/ui/button'
 
+// CMS に画像が無いときの仮表示。固定 ID なので毎回同じ写真が出る。本番では CMS の画像が優先される。
+const fallbackImageUrl = 'https://picsum.photos/id/180/1200/900'
+
 type Props = {
   data: {
     enabled?: boolean | null
@@ -19,16 +22,16 @@ type Props = {
 
 export function AboutPreviewSection(props: Props) {
   if (!props.data.enabled) return null
-  const imageUrl = resolveMediaUrl(props.data.image as never)
+  const imageUrl = resolveMediaUrl(props.data.image as never) ?? fallbackImageUrl
   const imageAlt = resolveMediaAlt(props.data.image as never) ?? ''
 
   return (
-    <section className="py-20">
+    <section className="py-24 md:py-32">
       <div className="max-w-6xl mx-auto px-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
             {props.data.heading ? (
-              <h2 className="text-3xl font-bold tracking-tight mb-6 whitespace-pre-wrap">
+              <h2 className="text-3xl md:text-4xl font-heading font-semibold tracking-tight mb-6 whitespace-pre-wrap text-balance">
                 {props.data.heading}
               </h2>
             ) : null}
@@ -40,7 +43,6 @@ export function AboutPreviewSection(props: Props) {
             {props.data.ctaLabel && props.data.ctaHref ? (
               <Button
                 nativeButton={false}
-                nativeButton={false}
                 render={<Link href={props.data.ctaHref} />}
                 variant="outline"
                 className="mt-8"
@@ -51,27 +53,13 @@ export function AboutPreviewSection(props: Props) {
             ) : null}
           </div>
           <div className="relative">
-            {imageUrl ? (
-              <div className="aspect-[4/3] relative rounded-xl overflow-hidden shadow-lg">
-                <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
-              </div>
-            ) : (
-              <div className="aspect-[4/3] bg-muted rounded-xl flex items-center justify-center">
-                <svg
-                  className="size-24 text-muted-foreground/30"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={1}
-                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-                  />
-                </svg>
-              </div>
-            )}
+            <div
+              aria-hidden
+              className="absolute -inset-4 -z-10 rounded-3xl bg-[linear-gradient(135deg,oklch(0.52_0.21_268/0.18),transparent)] blur-xl"
+            />
+            <div className="aspect-[4/3] relative rounded-2xl overflow-hidden shadow-xl ring-1 ring-foreground/5">
+              <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
+            </div>
           </div>
         </div>
       </div>

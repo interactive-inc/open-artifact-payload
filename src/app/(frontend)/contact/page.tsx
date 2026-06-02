@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/ca
 import { Separator } from '@/project/shared/ui/separator'
 import { Button } from '@/project/shared/ui/button'
 import Link from 'next/link'
+import { PageHeader } from '@/project/shared/sections/page-header'
 import '../styles.css'
 
 const inquiryOptions = [
@@ -26,14 +27,7 @@ export default async function ContactPage() {
 
   return (
     <div>
-      <section className="bg-foreground py-16 text-background">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">お問い合わせ</h1>
-          <p className="mt-4 text-lg text-background/80">
-            サービスのご相談・お見積もりはお気軽にどうぞ
-          </p>
-        </div>
-      </section>
+      <PageHeader title="お問い合わせ" description="サービスのご相談・お見積もりはお気軽にどうぞ" />
 
       <section className="py-16">
         <div className="max-w-5xl mx-auto px-6">

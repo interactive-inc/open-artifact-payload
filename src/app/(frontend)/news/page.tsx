@@ -6,6 +6,7 @@ import React from 'react'
 import config from '@/payload.config'
 import { Badge } from '@/project/shared/ui/badge'
 import { Separator } from '@/project/shared/ui/separator'
+import { PageHeader } from '@/project/shared/sections/page-header'
 import '../styles.css'
 
 const categoryLabel: Record<string, string> = {
@@ -28,12 +29,7 @@ export default async function NewsListPage() {
 
   return (
     <div>
-      <section className="bg-foreground py-16 text-background">
-        <div className="max-w-6xl mx-auto px-6 text-center">
-          <h1 className="text-4xl font-bold tracking-tight">お知らせ</h1>
-          <p className="mt-4 text-lg text-background/80">最新情報・プレスリリース</p>
-        </div>
-      </section>
+      <PageHeader title="お知らせ" description="最新情報・プレスリリース" />
 
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6">

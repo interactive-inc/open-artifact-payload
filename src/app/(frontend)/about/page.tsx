@@ -8,6 +8,7 @@ import { resolveMediaUrl } from '@/core/lib/media'
 import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
 import { Badge } from '@/project/shared/ui/badge'
 import { Separator } from '@/project/shared/ui/separator'
+import { PageHeader } from '@/project/shared/sections/page-header'
 import '../styles.css'
 
 export default async function AboutPage() {
@@ -20,16 +21,7 @@ export default async function AboutPage() {
   return (
     <>
       {about.hero?.enabled ? (
-        <section className="bg-foreground py-20 text-background">
-          <div className="max-w-6xl mx-auto px-6 text-center">
-            <h1 className="text-4xl font-bold tracking-tight">{about.hero.title}</h1>
-            {about.hero.subtitle ? (
-              <p className="mt-4 text-xl text-background/80 max-w-2xl mx-auto">
-                {about.hero.subtitle}
-              </p>
-            ) : null}
-          </div>
-        </section>
+        <PageHeader title={about.hero.title ?? ''} description={about.hero.subtitle} />
       ) : null}
 
       {about.mission?.enabled ? (
