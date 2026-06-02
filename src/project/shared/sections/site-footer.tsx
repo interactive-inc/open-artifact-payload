@@ -31,7 +31,7 @@ export function SiteFooter(props: Props) {
                   className="h-8 w-auto object-contain brightness-0 invert"
                 />
               ) : (
-                <span className="text-lg font-bold">{props.settings.siteName}</span>
+                <span className="text-lg font-bold tracking-tight">SAMPLE inc.</span>
               )}
             </Link>
             {props.settings.companyInfo?.address ? (
@@ -109,8 +109,7 @@ export function SiteFooter(props: Props) {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-background/50">
-            {props.settings.footerText ??
-              `© ${currentYear} ${props.settings.siteName}. All rights reserved.`}
+            {props.settings.footerText ?? `© ${currentYear} SAMPLE inc. All rights reserved.`}
           </p>
           {(props.settings.policyLinks ?? []).length > 0 ? (
             <nav className="flex flex-wrap gap-4">

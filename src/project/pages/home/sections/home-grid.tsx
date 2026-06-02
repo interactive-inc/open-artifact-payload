@@ -68,23 +68,23 @@ export function HomeGrid(props: Props) {
   )
 
   return (
-    <div className="grid grid-cols-2 gap-px bg-border md:grid-cols-6">
-      {/* KV：全幅・全高のヒーロー */}
-      <section className="relative isolate col-span-2 flex min-h-[92dvh] flex-col justify-center overflow-hidden bg-white px-6 pt-24 md:col-span-6 md:px-12 lg:px-20">
+    <div className="mx-auto grid max-w-site grid-cols-2 gap-px bg-border md:grid-cols-6">
+      {/* KV：全幅・全高のヒーロー。コピーは右下に寄せてアートを見せる。 */}
+      <section className="relative isolate col-span-2 flex min-h-[92dvh] flex-col items-end justify-end overflow-hidden bg-white px-6 pb-16 pt-24 text-right md:col-span-6 md:px-12 md:pb-24 lg:px-20">
         <GenerativeCanvas variant="attractor" className="absolute inset-0 -z-20 size-full" />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,transparent_30%,rgba(255,255,255,0.55)_100%)]"
+          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_80%,rgba(255,255,255,0.7)_0%,transparent_55%)]"
         />
-        <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight whitespace-pre-wrap md:text-8xl">
-          {props.hero.title}
+        <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+          SAMPLE, then ship.
         </h1>
         {props.hero.ctaLabel && props.hero.ctaHref ? (
           <Button
             nativeButton={false}
             render={<Link href={props.hero.ctaHref} />}
             size="lg"
-            className="mt-12 w-fit transition-transform active:scale-[0.98]"
+            className="mt-10 w-fit transition-transform active:scale-[0.98]"
           >
             {props.hero.ctaLabel}
             <ArrowRightIcon data-icon="inline-end" />
