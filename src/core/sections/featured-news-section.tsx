@@ -35,7 +35,7 @@ export function FeaturedNewsSection(props: Props) {
           <h2 className="text-2xl font-bold tracking-tight">
             {props.data.heading ?? '最新のお知らせ'}
           </h2>
-          <Button render={<Link href="/news" />} variant="ghost" size="sm">
+          <Button nativeButton={false} render={<Link href="/news" />} variant="ghost" size="sm">
             一覧を見る
             <ArrowRightIcon data-icon="inline-end" />
           </Button>

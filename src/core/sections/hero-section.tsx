@@ -42,6 +42,7 @@ export function HeroSection(props: Props) {
           {props.data.ctaLabel && props.data.ctaHref ? (
             <Button
               nativeButton={false}
+              nativeButton={false}
               render={<Link href={props.data.ctaHref} />}
               size="lg"
               variant="secondary"

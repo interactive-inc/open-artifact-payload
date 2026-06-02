@@ -94,7 +94,12 @@ export default async function ContactPage() {
                   <p className="text-sm text-muted-foreground mb-3">
                     ご不明な点はまずFAQをご確認ください。
                   </p>
-                  <Button render={<Link href="/faq" />} variant="outline" size="sm">
+                  <Button
+                    nativeButton={false}
+                    render={<Link href="/faq" />}
+                    variant="outline"
+                    size="sm"
+                  >
                     FAQを見る
                   </Button>
                 </CardContent>

@@ -93,6 +93,7 @@ export function SiteFooter(props: Props) {
             </div>
             <div className="mt-6">
               <Button
+                nativeButton={false}
                 render={<Link href="/contact" />}
                 variant="outline"
                 size="sm"

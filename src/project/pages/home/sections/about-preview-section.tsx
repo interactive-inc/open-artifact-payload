@@ -40,6 +40,7 @@ export function AboutPreviewSection(props: Props) {
             {props.data.ctaLabel && props.data.ctaHref ? (
               <Button
                 nativeButton={false}
+                nativeButton={false}
                 render={<Link href={props.data.ctaHref} />}
                 variant="outline"
                 className="mt-8"

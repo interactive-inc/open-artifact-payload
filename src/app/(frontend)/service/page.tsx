@@ -138,6 +138,7 @@ export default async function ServicePage() {
             {service.cta.ctaLabel && service.cta.ctaHref ? (
               <Button
                 nativeButton={false}
+                nativeButton={false}
                 render={<Link href={service.cta.ctaHref} />}
                 size="lg"
                 variant="secondary"

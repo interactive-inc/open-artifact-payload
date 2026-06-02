@@ -48,7 +48,12 @@ export function SiteHeader(props: Props) {
                 {item.label}
               </Link>
             ))}
-            <Button render={<Link href="/contact" />} size="sm" className="ml-2">
+            <Button
+              nativeButton={false}
+              render={<Link href="/contact" />}
+              size="sm"
+              className="ml-2"
+            >
               お問い合わせ
             </Button>
           </nav>
