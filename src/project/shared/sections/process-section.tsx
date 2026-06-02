@@ -38,7 +38,7 @@ export function ProcessSection() {
             最初のご相談から公開後の運用まで、一貫した体制で伴走します。
           </p>
         </div>
-        <div className="grid gap-px overflow-hidden rounded-xl bg-border ring-1 ring-border md:grid-cols-4">
+        <div className="grid gap-px overflow-hidden bg-border ring-1 ring-border md:grid-cols-4">
           {steps.map((step, index) => (
             <div key={step.title} className="flex flex-col gap-4 bg-card p-8">
               <span className="font-heading text-3xl font-semibold text-primary tabular-nums">

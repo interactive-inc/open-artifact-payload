@@ -52,7 +52,7 @@ export function ServicesSection(props: Props) {
             return (
               <article
                 key={index}
-                className={`group relative isolate flex flex-col justify-end overflow-hidden rounded-xl ring-1 ring-foreground/10 p-7 ${
+                className={`group relative isolate flex flex-col justify-end overflow-hidden ring-1 ring-foreground/10 p-7 ${
                   isFeatured ? 'md:col-span-2 md:row-span-2' : ''
                 }`}
               >

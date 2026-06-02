@@ -41,7 +41,7 @@ export function FeaturedNewsSection(props: Props) {
             <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
-        <div className="grid gap-px overflow-hidden rounded-xl bg-border ring-1 ring-border md:grid-cols-3">
+        <div className="grid gap-px overflow-hidden bg-border ring-1 ring-border md:grid-cols-3">
           {items.map((item) => {
             const publishedDate = new Date(item.publishedAt)
 

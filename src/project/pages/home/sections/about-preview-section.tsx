@@ -55,9 +55,9 @@ export function AboutPreviewSection(props: Props) {
           <div className="relative">
             <div
               aria-hidden
-              className="absolute -inset-4 -z-10 rounded-xl bg-[linear-gradient(135deg,oklch(0.52_0.21_268/0.18),transparent)] blur-xl"
+              className="absolute -inset-4 -z-10 bg-[linear-gradient(135deg,oklch(0.52_0.21_268/0.18),transparent)] blur-xl"
             />
-            <div className="aspect-[4/3] relative rounded-xl overflow-hidden shadow-xl ring-1 ring-foreground/5">
+            <div className="aspect-[4/3] relative overflow-hidden shadow-xl ring-1 ring-foreground/5">
               <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
             </div>
           </div>

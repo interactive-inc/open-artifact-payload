@@ -1,21 +1,23 @@
 import React from 'react'
 
+import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
+
 type Props = {
   title: string
   description?: string | null
 }
 
-// 下層ページ共通のヘッダー。トップのヒーローと同じ斜めグラデーション基調で統一する。
+// 下層ページ共通のヘッダー。トップの KV と同じアトラクターを黒地に敷き、世界観を統一する。
 export function PageHeader(props: Props) {
   return (
-    <section className="relative isolate overflow-hidden bg-[oklch(0.22_0.08_268)] text-background">
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-[linear-gradient(125deg,oklch(0.32_0.16_268)_0%,oklch(0.2_0.1_280)_55%,oklch(0.18_0.05_250)_100%)]"
+    <section className="relative isolate overflow-hidden bg-[oklch(0.12_0_0)] text-background">
+      <GenerativeCanvas
+        variant="attractor"
+        className="absolute inset-0 -z-10 size-full opacity-50 invert"
       />
       <div
         aria-hidden
-        className="absolute -top-32 -right-24 -z-10 size-[28rem] rounded-full bg-primary/30 blur-[110px]"
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_30%_60%,transparent_20%,oklch(0.12_0_0/0.85)_100%)]"
       />
       <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-36 md:pb-24 md:pt-40">
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl">{props.title}</h1>

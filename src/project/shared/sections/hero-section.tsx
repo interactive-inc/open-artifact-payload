@@ -31,31 +31,21 @@ export function HeroSection(props: Props) {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,transparent_30%,rgba(255,255,255,0.6)_100%)]"
       />
 
-      <div className="relative mx-auto w-full max-w-6xl px-6 pt-24">
-        <div className="max-w-2xl">
-          <p className="mb-6 inline-flex items-center rounded-full border border-foreground/15 bg-white/70 px-4 py-1.5 text-sm font-medium text-foreground/70 backdrop-blur-sm">
-            テクノロジーで、ビジネスを次の段階へ
-          </p>
-          <h1 className="text-4xl font-bold leading-[1.1] tracking-tight whitespace-pre-wrap md:text-6xl">
-            {props.data.title}
-          </h1>
-          {props.data.subtitle ? (
-            <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
-              {props.data.subtitle}
-            </p>
-          ) : null}
-          {props.data.ctaLabel && props.data.ctaHref ? (
-            <Button
-              nativeButton={false}
-              render={<Link href={props.data.ctaHref} />}
-              size="lg"
-              className="mt-10 shadow-lg transition-transform active:scale-[0.98]"
-            >
-              {props.data.ctaLabel}
-              <ArrowRightIcon data-icon="inline-end" />
-            </Button>
-          ) : null}
-        </div>
+      <div className="relative mx-auto w-full max-w-[1600px] px-6 md:px-12 lg:px-20">
+        <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight whitespace-pre-wrap md:text-8xl">
+          {props.data.title}
+        </h1>
+        {props.data.ctaLabel && props.data.ctaHref ? (
+          <Button
+            nativeButton={false}
+            render={<Link href={props.data.ctaHref} />}
+            size="lg"
+            className="mt-12 transition-transform active:scale-[0.98]"
+          >
+            {props.data.ctaLabel}
+            <ArrowRightIcon data-icon="inline-end" />
+          </Button>
+        ) : null}
       </div>
     </section>
   )

@@ -45,11 +45,11 @@ export function TestimonialsSection() {
           {testimonials.map((item) => (
             <figure
               key={item.name}
-              className="flex flex-col justify-between gap-8 rounded-xl bg-card p-8 ring-1 ring-foreground/5 shadow-sm"
+              className="flex flex-col justify-between gap-8 bg-card p-8 ring-1 ring-foreground/5 shadow-sm"
             >
               <blockquote className="text-lg leading-relaxed">「{item.quote}」</blockquote>
               <figcaption className="flex items-center gap-4">
-                <div className="relative size-12 overflow-hidden rounded-full ring-1 ring-foreground/10">
+                <div className="relative size-12 overflow-hidden ring-1 ring-foreground/10">
                   <Image
                     src={`https://picsum.photos/id/${item.avatarId}/96/96`}
                     alt=""
