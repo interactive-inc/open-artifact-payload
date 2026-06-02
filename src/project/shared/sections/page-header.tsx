@@ -17,7 +17,7 @@ export function PageHeader(props: Props) {
         aria-hidden
         className="absolute -top-32 -right-24 -z-10 size-[28rem] rounded-full bg-primary/30 blur-[110px]"
       />
-      <div className="relative mx-auto max-w-6xl px-6 py-24 md:py-28">
+      <div className="relative mx-auto max-w-6xl px-6 pb-20 pt-36 md:pb-24 md:pt-40">
         <h1 className="text-4xl font-bold tracking-tight md:text-5xl">{props.title}</h1>
         {props.description ? (
           <p className="mt-4 max-w-2xl text-lg text-background/75 md:text-xl">

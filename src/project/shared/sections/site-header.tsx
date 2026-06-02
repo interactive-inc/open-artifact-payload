@@ -21,7 +21,7 @@ export function SiteHeader(props: Props) {
   const logoAlt = resolveMediaAlt(props.settings.logo as never) ?? props.settings.siteName
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+    <header className="fixed inset-x-0 top-0 z-50 bg-white/70 backdrop-blur-xl">
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3">
@@ -43,7 +43,7 @@ export function SiteHeader(props: Props) {
               <Link
                 key={item.id ?? item.href}
                 href={item.href}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
               >
                 {item.label}
               </Link>
@@ -61,7 +61,7 @@ export function SiteHeader(props: Props) {
           <button
             type="button"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-muted-foreground hover:bg-accent transition-colors"
+            className="md:hidden p-2 rounded-md text-muted-foreground hover:bg-muted transition-colors"
             aria-label={isMenuOpen ? 'メニューを閉じる' : 'メニューを開く'}
           >
             {isMenuOpen ? <XIcon className="size-5" /> : <MenuIcon className="size-5" />}
@@ -70,13 +70,13 @@ export function SiteHeader(props: Props) {
       </div>
 
       {isMenuOpen ? (
-        <div className="md:hidden border-t border-border bg-background px-6 py-4 space-y-1">
+        <div className="md:hidden border-t border-foreground/10 bg-white/90 backdrop-blur-xl px-6 py-4 space-y-1">
           {(props.settings.headerNav ?? []).map((item) => (
             <Link
               key={item.id ?? item.href}
               href={item.href}
               onClick={() => setIsMenuOpen(false)}
-              className="block px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors"
+              className="block px-3 py-2 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
             >
               {item.label}
             </Link>

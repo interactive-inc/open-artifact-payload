@@ -20,7 +20,7 @@ export function CtaSection(props: Props) {
 
   return (
     <section className="px-6 py-24">
-      <div className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-3xl bg-[oklch(0.24_0.1_268)] px-8 py-20 text-background shadow-2xl shadow-primary/10 md:px-16">
+      <div className="relative isolate mx-auto max-w-6xl overflow-hidden rounded-xl bg-[oklch(0.24_0.1_268)] px-8 py-20 text-background shadow-2xl shadow-primary/10 md:px-16">
         <div
           aria-hidden
           className="absolute inset-0 -z-10 bg-[linear-gradient(120deg,oklch(0.34_0.17_268)_0%,oklch(0.2_0.09_280)_100%)]"

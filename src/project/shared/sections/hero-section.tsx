@@ -1,10 +1,9 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 import { ArrowRightIcon } from 'lucide-react'
 
-import { resolveMediaAlt, resolveMediaUrl } from '@/core/lib/media'
 import { Button } from '@/project/shared/ui/button'
+import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
 
 type HeroData = {
   enabled?: boolean | null
@@ -19,35 +18,29 @@ type Props = {
   data: HeroData
 }
 
-// Stripe 風の斜めグラデーション背景を持つヒーロー。背景画像は CMS 優先、なければグラデのみ。
+// 白基調のヒーロー。数式フィールドの流線アートを背景に敷き、その上に黒い文字を置く。
 export function HeroSection(props: Props) {
   if (!props.data.enabled) return null
-  const imageUrl = resolveMediaUrl(props.data.image as never)
-  const imageAlt = resolveMediaAlt(props.data.image as never) ?? ''
 
   return (
-    <section className="relative isolate overflow-hidden bg-[oklch(0.22_0.08_268)] text-background">
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-10 bg-[linear-gradient(125deg,oklch(0.32_0.16_268)_0%,oklch(0.2_0.1_280)_45%,oklch(0.18_0.05_250)_100%)]"
-      />
-      <div
-        aria-hidden
-        className="absolute -top-40 -right-32 -z-10 size-[36rem] rounded-full bg-primary/30 blur-[120px]"
-      />
-      {imageUrl ? (
-        <div className="absolute inset-0 -z-10 opacity-15">
-          <Image src={imageUrl} alt={imageAlt} fill className="object-cover" priority />
-        </div>
-      ) : null}
+    <section className="relative isolate flex min-h-[100dvh] items-center overflow-hidden bg-white text-foreground">
+      <GenerativeCanvas variant="metaballs" className="absolute inset-0 -z-20 size-full" />
 
-      <div className="relative mx-auto max-w-6xl px-6 py-32 md:py-40">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,transparent_30%,rgba(255,255,255,0.6)_100%)]"
+      />
+
+      <div className="relative mx-auto w-full max-w-6xl px-6 pt-24">
         <div className="max-w-2xl">
+          <p className="mb-6 inline-flex items-center rounded-full border border-foreground/15 bg-white/70 px-4 py-1.5 text-sm font-medium text-foreground/70 backdrop-blur-sm">
+            テクノロジーで、ビジネスを次の段階へ
+          </p>
           <h1 className="text-4xl font-bold leading-[1.1] tracking-tight whitespace-pre-wrap md:text-6xl">
             {props.data.title}
           </h1>
           {props.data.subtitle ? (
-            <p className="mt-6 max-w-xl text-lg leading-relaxed text-background/75 md:text-xl">
+            <p className="mt-7 max-w-xl text-lg leading-relaxed text-muted-foreground md:text-xl">
               {props.data.subtitle}
             </p>
           ) : null}
@@ -56,8 +49,7 @@ export function HeroSection(props: Props) {
               nativeButton={false}
               render={<Link href={props.data.ctaHref} />}
               size="lg"
-              variant="secondary"
-              className="mt-10 shadow-lg shadow-primary/20 transition-transform active:scale-[0.98]"
+              className="mt-10 shadow-lg transition-transform active:scale-[0.98]"
             >
               {props.data.ctaLabel}
               <ArrowRightIcon data-icon="inline-end" />
@@ -65,11 +57,6 @@ export function HeroSection(props: Props) {
           ) : null}
         </div>
       </div>
-
-      <div
-        aria-hidden
-        className="absolute inset-x-0 bottom-0 -z-10 h-px bg-gradient-to-r from-transparent via-background/20 to-transparent"
-      />
     </section>
   )
 }

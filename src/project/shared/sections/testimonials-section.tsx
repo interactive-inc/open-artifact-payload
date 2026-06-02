@@ -45,7 +45,7 @@ export function TestimonialsSection() {
           {testimonials.map((item) => (
             <figure
               key={item.name}
-              className="flex flex-col justify-between gap-8 rounded-2xl bg-card p-8 ring-1 ring-foreground/5 shadow-sm"
+              className="flex flex-col justify-between gap-8 rounded-xl bg-card p-8 ring-1 ring-foreground/5 shadow-sm"
             >
               <blockquote className="text-lg leading-relaxed">「{item.quote}」</blockquote>
               <figcaption className="flex items-center gap-4">
