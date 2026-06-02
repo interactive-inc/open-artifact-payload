@@ -1,23 +1,28 @@
+import { getPayload } from 'payload'
 import React from 'react'
 
+import config from '@/payload.config'
 import { RefreshRouteOnSave } from '@/core/frontend/components/refresh-route-on-save'
+import { SiteHeader } from '@/project/shared/sections/site-header'
+import { SiteFooter } from '@/project/shared/sections/site-footer'
 import './styles.css'
 
 type Props = {
   children: React.ReactNode
 }
 
-export const metadata = {
-  description: 'Inta CMS テンプレート',
-  title: 'Inta CMS',
-}
+export default async function RootLayout(props: Props) {
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+  const settings = await payload.findGlobal({ slug: 'site-settings', depth: 1 })
 
-export default function RootLayout(props: Props) {
   return (
     <html lang="ja">
-      <body>
+      <body className="flex flex-col min-h-screen">
         <RefreshRouteOnSave />
-        <main>{props.children}</main>
+        <SiteHeader settings={settings} />
+        <main className="flex-1">{props.children}</main>
+        <SiteFooter settings={settings} />
       </body>
     </html>
   )

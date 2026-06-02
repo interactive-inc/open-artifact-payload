@@ -10,6 +10,7 @@ import * as migration_20260411_120111_core_seo_plugin from './20260411_120111_co
 import * as migration_20260411_120817_core_contact_required_status from './20260411_120817_core_contact_required_status';
 import * as migration_20260420_075159_core_extensions from './20260420_075159_core_extensions';
 import * as migration_20260521_065500_add_user_roles from './20260521_065500_add_user_roles';
+import * as migration_20260602_121751 from './20260602_121751';
 
 export const migrations = [
   {
@@ -70,6 +71,11 @@ export const migrations = [
   {
     up: migration_20260521_065500_add_user_roles.up,
     down: migration_20260521_065500_add_user_roles.down,
-    name: '20260521_065500_add_user_roles'
+    name: '20260521_065500_add_user_roles',
+  },
+  {
+    up: migration_20260602_121751.up,
+    down: migration_20260602_121751.down,
+    name: '20260602_121751'
   },
 ];

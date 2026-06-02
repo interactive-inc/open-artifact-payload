@@ -96,10 +96,14 @@ export interface Config {
   globals: {
     'site-settings': SiteSetting;
     'home-page': HomePage;
+    about: About;
+    service: Service;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    about: AboutSelect<false> | AboutSelect<true>;
+    service: ServiceSelect<false> | ServiceSelect<true>;
   };
   locale: null;
   widgets: {
@@ -537,6 +541,27 @@ export interface HomePage {
     ctaLabel?: string | null;
     ctaHref?: string | null;
   };
+  services?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    subheading?: string | null;
+    items?:
+      | {
+          icon?: string | null;
+          title: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  aboutPreview?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
+  };
   featuredNews?: {
     enabled?: boolean | null;
     heading?: string | null;
@@ -556,6 +581,108 @@ export interface HomePage {
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
     image?: (number | null) | Media;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about".
+ */
+export interface About {
+  id: number;
+  hero: {
+    enabled?: boolean | null;
+    title: string;
+    subtitle?: string | null;
+  };
+  mission?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    description?: string | null;
+    values?:
+      | {
+          title: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  companyProfile?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    rows?:
+      | {
+          label: string;
+          value: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  members?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    items?:
+      | {
+          name: string;
+          position?: string | null;
+          bio?: string | null;
+          image?: (number | null) | Media;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  _status?: ('draft' | 'published') | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service".
+ */
+export interface Service {
+  id: number;
+  hero: {
+    enabled?: boolean | null;
+    title: string;
+    subtitle?: string | null;
+  };
+  services?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    items?:
+      | {
+          icon?: string | null;
+          title: string;
+          description?: string | null;
+          features?:
+            | {
+                text: string;
+                id?: string | null;
+              }[]
+            | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  process?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    steps?:
+      | {
+          title: string;
+          description?: string | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  cta?: {
+    enabled?: boolean | null;
+    heading?: string | null;
+    description?: string | null;
+    ctaLabel?: string | null;
+    ctaHref?: string | null;
   };
   _status?: ('draft' | 'published') | null;
   updatedAt?: string | null;
@@ -631,6 +758,31 @@ export interface HomePageSelect<T extends boolean = true> {
         ctaLabel?: T;
         ctaHref?: T;
       };
+  services?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        subheading?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  aboutPreview?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        description?: T;
+        image?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
+      };
   featuredNews?:
     | T
     | {
@@ -653,6 +805,124 @@ export interface HomePageSelect<T extends boolean = true> {
         title?: T;
         description?: T;
         image?: T;
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "about_select".
+ */
+export interface AboutSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  mission?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        description?: T;
+        values?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  companyProfile?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        rows?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              id?: T;
+            };
+      };
+  members?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              name?: T;
+              position?: T;
+              bio?: T;
+              image?: T;
+              id?: T;
+            };
+      };
+  _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "service_select".
+ */
+export interface ServiceSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        enabled?: T;
+        title?: T;
+        subtitle?: T;
+      };
+  services?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        items?:
+          | T
+          | {
+              icon?: T;
+              title?: T;
+              description?: T;
+              features?:
+                | T
+                | {
+                    text?: T;
+                    id?: T;
+                  };
+              id?: T;
+            };
+      };
+  process?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        steps?:
+          | T
+          | {
+              title?: T;
+              description?: T;
+              id?: T;
+            };
+      };
+  cta?:
+    | T
+    | {
+        enabled?: T;
+        heading?: T;
+        description?: T;
+        ctaLabel?: T;
+        ctaHref?: T;
       };
   _status?: T;
   updatedAt?: T;
