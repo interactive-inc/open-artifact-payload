@@ -22,7 +22,7 @@ export function SiteHeader(props: Props) {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 bg-white/70 backdrop-blur-xl">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-site mx-auto px-6 md:px-12 lg:px-20">
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3">
             {logoUrl ? (

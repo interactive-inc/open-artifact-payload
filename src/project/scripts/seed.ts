@@ -44,7 +44,7 @@ async function seed() {
     data: {
       hero: {
         enabled: true,
-        title: 'ビジネスの可能性を、\nテクノロジーで広げる',
+        title: 'プログラミングと、\nデザインと。',
         subtitle:
           'インタラクティブは、Webシステム開発・クラウドインフラ・DX推進支援を通じて、企業のデジタル変革を力強くサポートします。',
         ctaLabel: 'サービスを見る',

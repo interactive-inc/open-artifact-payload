@@ -3,11 +3,7 @@ import { getPayload } from 'payload'
 import React from 'react'
 
 import config from '@/payload.config'
-import { HeroSection } from '@/project/shared/sections/hero-section'
-import { FeaturedNewsSection } from '@/project/shared/sections/featured-news-section'
-import { CtaSection } from '@/project/shared/sections/cta-section'
-import { TestimonialsSection } from '@/project/shared/sections/testimonials-section'
-import { HomeBento } from '@/project/pages/home/sections/home-bento'
+import { HomeGrid } from '@/project/pages/home/sections/home-grid'
 
 export default async function HomePage() {
   const payloadConfig = await config
@@ -17,12 +13,12 @@ export default async function HomePage() {
   const home = await payload.findGlobal({ slug: 'home-page', depth: 2, draft: isDraft })
 
   return (
-    <>
-      <HeroSection data={home.hero ?? {}} />
-      <HomeBento services={home.services ?? {}} about={home.aboutPreview ?? {}} />
-      <TestimonialsSection />
-      <FeaturedNewsSection data={home.featuredNews ?? {}} />
-      <CtaSection data={home.cta ?? {}} />
-    </>
+    <HomeGrid
+      hero={home.hero ?? {}}
+      services={home.services ?? {}}
+      about={home.aboutPreview ?? {}}
+      news={home.featuredNews ?? {}}
+      cta={home.cta ?? {}}
+    />
   )
 }
