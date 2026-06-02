@@ -78,6 +78,7 @@ export function SiteHeader(props: Props) {
           ))}
           <Separator className="my-2" />
           <Button
+            nativeButton={false}
             render={<Link href="/contact" onClick={() => setIsMenuOpen(false)} />}
             className="w-full"
             size="sm"

@@ -136,7 +136,12 @@ export default async function ServicePage() {
               <p className="text-lg text-background/80 mb-8">{service.cta.description}</p>
             ) : null}
             {service.cta.ctaLabel && service.cta.ctaHref ? (
-              <Button render={<Link href={service.cta.ctaHref} />} size="lg" variant="secondary">
+              <Button
+                nativeButton={false}
+                render={<Link href={service.cta.ctaHref} />}
+                size="lg"
+                variant="secondary"
+              >
                 {service.cta.ctaLabel}
                 <ArrowRightIcon data-icon="inline-end" />
               </Button>

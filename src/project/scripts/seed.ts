@@ -363,7 +363,7 @@ async function seed() {
   }
 
   console.log('Seeding news...')
-  const existingNews = await payload.find({ collection: 'news', limit: 1 })
+  const existingNews = await payload.find({ collection: 'news', limit: 1, draft: true })
   if (existingNews.totalDocs === 0) {
     await payload.create({
       collection: 'news',
