@@ -24,7 +24,7 @@ export function HeroSection(props: Props) {
 
   return (
     <section className="relative isolate flex min-h-[100dvh] items-center overflow-hidden bg-white text-foreground">
-      <GenerativeCanvas variant="metaballs" className="absolute inset-0 -z-20 size-full" />
+      <GenerativeCanvas variant="attractor" className="absolute inset-0 -z-20 size-full" />
 
       <div
         aria-hidden

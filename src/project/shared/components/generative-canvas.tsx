@@ -2,7 +2,7 @@
 
 import React from 'react'
 
-type Variant = 'metaballs' | 'truchet' | 'apollonian' | 'penrose' | 'wang'
+type Variant = 'attractor' | 'metaballs' | 'truchet' | 'apollonian' | 'penrose' | 'wang'
 
 type Props = {
   variant: Variant
@@ -231,10 +231,50 @@ export function GenerativeCanvas(props: Props) {
       if (!reduceMotion) frameId = window.requestAnimationFrame(loop)
     }
 
+    // Clifford ストレンジアトラクター。黒い点が紙の上に堆積し、水墨画のような有機的な軌跡を描く。
+    const startAttractor = () => {
+      const a = -2.0
+      const b = -2.34
+      const c = 1.28
+      const d = 2.6
+      const scale = width / 4.4
+      const ox = width / 2
+      const oy = height / 2
+      let x = 0.1
+      let y = 0.1
+
+      context.globalCompositeOperation = 'source-over'
+      context.fillStyle = 'rgb(255,255,255)'
+      context.fillRect(0, 0, width, height)
+
+      const tick = () => {
+        // 直前のフレームを薄い紙色で覆い、軌跡をゆっくり堆積させる。
+        context.fillStyle = 'rgba(255,255,255,0.04)'
+        context.fillRect(0, 0, width, height)
+
+        context.fillStyle = 'rgba(20,20,24,0.25)'
+        const iterations = reduceMotion ? 120000 : 3000
+
+        for (let i = 0; i < iterations; i++) {
+          const nx = Math.sin(a * y) - Math.cos(b * x)
+          const ny = Math.sin(c * x) - Math.cos(d * y)
+          x = nx
+          y = ny
+          context.fillRect(ox + x * scale, oy + y * scale, 1, 1)
+        }
+
+        if (!reduceMotion) frameId = window.requestAnimationFrame(tick)
+      }
+
+      tick()
+    }
+
     resize()
     window.addEventListener('resize', resize)
 
-    if (props.variant === 'metaballs' && !reduceMotion) {
+    if (props.variant === 'attractor') {
+      startAttractor()
+    } else if (props.variant === 'metaballs' && !reduceMotion) {
       loop()
     } else {
       renderOnce()
