@@ -1,6 +1,11 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@theme inline {
+  --font-sans: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+  --font-mono: 'Roboto Mono', monospace;
+}
 
 @layer base {
   :root {
@@ -75,47 +80,68 @@
   }
 
   html {
-    font-family: 'Noto Sans JP', 'Hiragino Sans', 'Yu Gothic', sans-serif;
+    font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
 
   body {
     margin: 0;
-    @apply bg-background text-foreground;
+    background-color: var(--background);
+    color: var(--foreground);
   }
 
   * {
-    @apply border-border;
+    border-color: var(--border);
   }
 }
 
 @layer components {
   .prose {
-    @apply text-foreground/70 leading-relaxed;
+    leading-trim: both;
+    line-height: 1.75;
+    color: oklch(0.37 0 0);
   }
   .prose p {
-    @apply mb-4;
+    margin-bottom: 1rem;
   }
   .prose h2 {
-    @apply text-2xl font-bold text-foreground mt-8 mb-4;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--foreground);
+    margin-top: 2rem;
+    margin-bottom: 1rem;
   }
   .prose h3 {
-    @apply text-xl font-semibold text-foreground mt-6 mb-3;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--foreground);
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
   }
   .prose ul {
-    @apply list-disc list-inside mb-4 space-y-1;
+    list-style-type: disc;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
   }
   .prose ol {
-    @apply list-decimal list-inside mb-4 space-y-1;
+    list-style-type: decimal;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
   }
   .prose a {
-    @apply text-primary underline hover:text-primary/80;
+    color: var(--primary);
+    text-decoration: underline;
   }
   .prose strong {
-    @apply font-bold text-foreground;
+    font-weight: 700;
+    color: var(--foreground);
   }
   .prose blockquote {
-    @apply border-l-4 border-primary pl-4 italic text-foreground/60 my-4;
+    border-left: 4px solid var(--primary);
+    padding-left: 1rem;
+    font-style: italic;
+    color: oklch(0.45 0 0);
+    margin-block: 1rem;
   }
 }
