@@ -33,10 +33,10 @@ bun install
 
 ```bash
 # D1 データベース作成
-wrangler d1 create inta-cms
+wrangler d1 create open-artifact-payload
 
 # R2 バケット作成
-wrangler r2 bucket create inta-cms
+wrangler r2 bucket create open-artifact-payload
 ```
 
 `wrangler.jsonc` の `database_id` を実際の ID に更新してください（テンプレ初期値は `<REPLACE_WITH_YOUR_DATABASE_ID>`）。`bun run setup:project` を使うと自動置換されます。
@@ -127,12 +127,14 @@ staging 環境は `--env=staging` を指定。各環境ごとに別途登録が�
 
 ### Wrangler CLI
 
+デプロイ系タスクは `Makefile` に集約しています。
+
 ```bash
 # データベースマイグレーション（リモート）
-CLOUDFLARE_ENV=production bun run deploy:database
+make deploy-db
 
 # ビルド + デプロイ
-CLOUDFLARE_ENV=production bun run deploy:app
+make deploy-app
 ```
 
 ### staging 環境
@@ -140,7 +142,7 @@ CLOUDFLARE_ENV=production bun run deploy:app
 `wrangler.jsonc` の `env.staging` を有効化済み。`<REPLACE_WITH_YOUR_STAGING_DATABASE_ID>` を staging 用に作成した D1 の ID に差し替え、staging 用 R2 バケットを作成してから:
 
 ```bash
-CLOUDFLARE_ENV=staging bun run deploy
+make deploy CLOUDFLARE_ENV=staging
 ```
 
 ### GitHub 連携
@@ -163,10 +165,10 @@ CLOUDFLARE_ENV=staging bun run deploy
 bun dev                         # 開発サーバー起動
 bun run build                   # プロダクションビルド
 bun run start                   # プロダクションサーバー起動
-bun run deploy                  # DB マイグレーション + デプロイ
-bun run deploy:app              # アプリのみデプロイ
-bun run deploy:database         # DB マイグレーションのみ
+make deploy                     # DB マイグレーション + デプロイ
+make deploy-app                 # アプリのみデプロイ
+make deploy-db                  # DB マイグレーションのみ
 bun run generate:types          # Payload 型定義の生成
 bun run generate:importmap      # Import map の生成
-bun run preview                 # ローカルで Cloudflare Workers プレビュー
+make preview                    # ローカルで Cloudflare Workers プレビュー
 ```

@@ -109,7 +109,7 @@ bun dev                              # 開発サーバー (http://localhost:3000
 bun run devsafe                      # .next / .open-next を削除してから dev 起動
 bun run build                        # プロダクションビルド
 bun run start                        # プロダクションサーバー起動
-bun run preview                      # Cloudflare Workers ローカルプレビュー
+make preview                         # Cloudflare Workers ローカルプレビュー
 
 bun run lint                         # ESLint
 bun run test:int                     # vitest 統合テストのみ
@@ -382,13 +382,15 @@ i18n は `@payloadcms/translations/languages/ja` を使って自動的に日本�
 
 デプロイには Cloudflare Workers Paid プランが必要です。
 
+デプロイ系タスクは `Makefile` に集約しています。
+
 ```bash
-CLOUDFLARE_ENV=production bun run deploy            # DB マイグレーション + アプリデプロイ
-CLOUDFLARE_ENV=production bun run deploy:app        # アプリのみ (マイグレーション済みの場合)
-CLOUDFLARE_ENV=production bun run deploy:database   # DB マイグレーションのみ
+make deploy            # DB マイグレーション + アプリデプロイ (CLOUDFLARE_ENV のデフォルトは production)
+make deploy-app        # アプリのみ (マイグレーション済みの場合)
+make deploy-db         # DB マイグレーションのみ
 ```
 
-`deploy:database` は内部で以下を実行します。
+`make deploy-db` は内部で以下を実行します。
 
 - `payload migrate` をリモート D1 に対して適用
 - `wrangler d1 execute D1 --command 'PRAGMA optimize'` でクエリプランを最適化

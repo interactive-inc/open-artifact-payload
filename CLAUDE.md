@@ -85,7 +85,7 @@ bun dev                             # 開発サーバー (http://localhost:3000)
 bun run devsafe                     # .next / .open-next を消してから dev 起動
 bun run build                       # プロダクションビルド
 bun run start                       # プロダクションサーバー
-bun run preview                     # Cloudflare Workers ローカルプレビュー
+make preview                        # Cloudflare Workers ローカルプレビュー
 bun run lint                        # ESLint
 bun run test                        # vitest + Playwright すべて
 bun run test:int                    # 統合テストのみ
@@ -99,13 +99,15 @@ bun run build-storybook             # Storybook 静的ビルド (storybook-stati
 
 ## デプロイ
 
-Cloudflare Workers (Paid プランが必要)。
+Cloudflare Workers (Paid プランが必要)。デプロイ系タスクは `Makefile` に集約している (環境変数を素のシェルで渡すため)。
 
 ```bash
-CLOUDFLARE_ENV=production bun run deploy           # DB マイグレーション + アプリ
-CLOUDFLARE_ENV=production bun run deploy:app       # アプリのみ
-CLOUDFLARE_ENV=production bun run deploy:database  # DB マイグレーションのみ
+make deploy           # DB マイグレーション + アプリ (CLOUDFLARE_ENV のデフォルトは production)
+make deploy-app       # アプリのみ
+make deploy-db        # DB マイグレーションのみ
 ```
+
+`CLOUDFLARE_ENV` を上書きすれば別環境にデプロイできる (例: `make deploy CLOUDFLARE_ENV=staging`)。
 
 `wrangler.jsonc` で D1 (binding: `D1`) と R2 (binding: `R2`) を定義している。`database_id` と R2 の `bucket_name` は各自のリソースに合わせて更新する必要がある。
 
