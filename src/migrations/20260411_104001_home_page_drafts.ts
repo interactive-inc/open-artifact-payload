@@ -26,10 +26,18 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`version_hero_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`CREATE INDEX \`_home_page_v_version_hero_version_hero_image_idx\` ON \`_home_page_v\` (\`version_hero_image_id\`);`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_version_version__status_idx\` ON \`_home_page_v\` (\`version__status\`);`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_created_at_idx\` ON \`_home_page_v\` (\`created_at\`);`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_updated_at_idx\` ON \`_home_page_v\` (\`updated_at\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_version_hero_version_hero_image_idx\` ON \`_home_page_v\` (\`version_hero_image_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_version_version__status_idx\` ON \`_home_page_v\` (\`version__status\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_created_at_idx\` ON \`_home_page_v\` (\`created_at\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_updated_at_idx\` ON \`_home_page_v\` (\`updated_at\`);`,
+  )
   await db.run(sql`CREATE INDEX \`_home_page_v_latest_idx\` ON \`_home_page_v\` (\`latest\`);`)
   await db.run(sql`CREATE INDEX \`_home_page_v_autosave_idx\` ON \`_home_page_v\` (\`autosave\`);`)
   await db.run(sql`CREATE TABLE \`_home_page_v_rels\` (
@@ -42,10 +50,18 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`news_id\`) REFERENCES \`news\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`CREATE INDEX \`_home_page_v_rels_order_idx\` ON \`_home_page_v_rels\` (\`order\`);`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_rels_parent_idx\` ON \`_home_page_v_rels\` (\`parent_id\`);`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_rels_path_idx\` ON \`_home_page_v_rels\` (\`path\`);`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_rels_news_id_idx\` ON \`_home_page_v_rels\` (\`news_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_rels_order_idx\` ON \`_home_page_v_rels\` (\`order\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_rels_parent_idx\` ON \`_home_page_v_rels\` (\`parent_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_rels_path_idx\` ON \`_home_page_v_rels\` (\`path\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_rels_news_id_idx\` ON \`_home_page_v_rels\` (\`news_id\`);`,
+  )
   await db.run(sql`PRAGMA foreign_keys=OFF;`)
   await db.run(sql`CREATE TABLE \`__new_home_page\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
@@ -68,11 +84,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`hero_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`INSERT INTO \`__new_home_page\`("id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", "_status", "updated_at", "created_at") SELECT "id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", 'published', "updated_at", "created_at" FROM \`home_page\`;`)
+  await db.run(
+    sql`INSERT INTO \`__new_home_page\`("id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", "_status", "updated_at", "created_at") SELECT "id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", 'published', "updated_at", "created_at" FROM \`home_page\`;`,
+  )
   await db.run(sql`DROP TABLE \`home_page\`;`)
   await db.run(sql`ALTER TABLE \`__new_home_page\` RENAME TO \`home_page\`;`)
   await db.run(sql`PRAGMA foreign_keys=ON;`)
-  await db.run(sql`CREATE INDEX \`home_page_hero_hero_image_idx\` ON \`home_page\` (\`hero_image_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_hero_hero_image_idx\` ON \`home_page\` (\`hero_image_id\`);`,
+  )
   await db.run(sql`CREATE INDEX \`home_page__status_idx\` ON \`home_page\` (\`_status\`);`)
 }
 
@@ -100,9 +120,13 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   	FOREIGN KEY (\`hero_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`INSERT INTO \`__new_home_page\`("id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", "updated_at", "created_at") SELECT "id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", "updated_at", "created_at" FROM \`home_page\`;`)
+  await db.run(
+    sql`INSERT INTO \`__new_home_page\`("id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", "updated_at", "created_at") SELECT "id", "hero_enabled", "hero_title", "hero_subtitle", "hero_image_id", "hero_cta_label", "hero_cta_href", "featured_news_enabled", "featured_news_heading", "cta_enabled", "cta_heading", "cta_description", "cta_cta_label", "cta_cta_href", "updated_at", "created_at" FROM \`home_page\`;`,
+  )
   await db.run(sql`DROP TABLE \`home_page\`;`)
   await db.run(sql`ALTER TABLE \`__new_home_page\` RENAME TO \`home_page\`;`)
   await db.run(sql`PRAGMA foreign_keys=ON;`)
-  await db.run(sql`CREATE INDEX \`home_page_hero_hero_image_idx\` ON \`home_page\` (\`hero_image_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_hero_hero_image_idx\` ON \`home_page\` (\`hero_image_id\`);`,
+  )
 }

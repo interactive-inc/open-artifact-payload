@@ -4,18 +4,18 @@
 
 構造
 
-- pages/<page>/        ページ単位のコロケーション
-  - global.ts          Payload Global 定義 (export 名は <name>Global)
-  - sections/          そのページ専用のセクション React コンポーネント
-  - components/ hooks/ lib/  そのページ専用の補助モジュール
-- shared/              複数ページで使う資産
-  - sections/          2 ページ以上で使うセクション (site-header / site-footer など)
-  - components/        汎用 UI コンポーネント (フラット配置)
-  - ui/                shadcn/ui 所管領域 (bunx shadcn add の配置先)
-  - hooks/ lib/        汎用フック / util
-- collections/         案件固有コレクション (tours, staff, cases など)
-- admin/               ダッシュボードタスク定義、feature flag
-- theme/               Tailwind テーマ (色・フォント)
+- pages/<page>/ ページ単位のコロケーション
+  - global.ts Payload Global 定義 (export 名は <name>Global)
+  - sections/ そのページ専用のセクション React コンポーネント
+  - components/ hooks/ lib/ そのページ専用の補助モジュール
+- shared/ 複数ページで使う資産
+  - sections/ 2 ページ以上で使うセクション (site-header / site-footer など)
+  - components/ 汎用 UI コンポーネント (フラット配置)
+  - ui/ shadcn/ui 所管領域 (bunx shadcn add の配置先)
+  - hooks/ lib/ 汎用フック / util
+- collections/ 案件固有コレクション (tours, staff, cases など)
+- admin/ ダッシュボードタスク定義、feature flag
+- theme/ Tailwind テーマ (色・フォント)
 
 セクションをどこに置くか:
 

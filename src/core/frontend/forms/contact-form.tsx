@@ -3,21 +3,24 @@
 import React, { useState } from 'react'
 
 import { submitContact } from './contact-form-action'
+import { Button } from '@/project/shared/ui/button'
+import { Input } from '@/project/shared/ui/input'
+import { Textarea } from '@/project/shared/ui/textarea'
+import { Label } from '@/project/shared/ui/label'
+import { NativeSelect } from '@/project/shared/ui/native-select'
+import { Alert, AlertDescription } from '@/project/shared/ui/alert'
+import { Spinner } from '@/project/shared/ui/spinner'
+import { AlertCircleIcon } from 'lucide-react'
 
 type InquiryOption = { value: string; label: string }
 
 type Props = {
   turnstileSiteKey?: string
-  /**
-   * お問い合わせ種別の選択肢。指定すると select で表示。
-   * 未指定なら入力欄自体を出さない。案件側で差し替える想定。
-   */
   inquiryOptions?: InquiryOption[]
-  /** 会社名フィールドを表示するか。デフォルトは true。 */
   showCompanyName?: boolean
 }
 
-type FormState = 'idle' | 'submitting' | 'done' | 'error'
+type FormState = 'idle' | 'submitting' | 'error'
 
 export function ContactForm(props: Props) {
   const [state, setState] = useState<FormState>('idle')
@@ -31,7 +34,6 @@ export function ContactForm(props: Props) {
         setErrors([])
         const result = await submitContact(formData)
         if (result.status === 'ok') {
-          setState('done')
           window.location.href = '/contact/thanks'
           return
         }
@@ -43,48 +45,80 @@ export function ContactForm(props: Props) {
         }
         setState('error')
       }}
-      className="max-w-xl mx-auto p-6 space-y-4"
+      className="space-y-5"
     >
-      {errors.map((message) => (
-        <p key={message} className="text-red-600 text-sm">
-          {message}
-        </p>
-      ))}
-      <label className="block">
-        <span className="block text-sm mb-1">お名前</span>
-        <input name="name" required className="w-full border rounded px-3 py-2" />
-      </label>
-      {showCompanyName ? (
-        <label className="block">
-          <span className="block text-sm mb-1">会社名 (任意)</span>
-          <input name="companyName" className="w-full border rounded px-3 py-2" />
-        </label>
+      {errors.length > 0 ? (
+        <Alert variant="destructive">
+          <AlertCircleIcon className="size-4" />
+          <AlertDescription>
+            <ul className="list-disc list-inside space-y-1">
+              {errors.map((message) => (
+                <li key={message}>{message}</li>
+              ))}
+            </ul>
+          </AlertDescription>
+        </Alert>
       ) : null}
-      <label className="block">
-        <span className="block text-sm mb-1">メールアドレス</span>
-        <input type="email" name="email" required className="w-full border rounded px-3 py-2" />
-      </label>
-      <label className="block">
-        <span className="block text-sm mb-1">電話番号 (任意)</span>
-        <input name="phone" className="w-full border rounded px-3 py-2" />
-      </label>
+
+      <div className="space-y-2">
+        <Label htmlFor="name">
+          お名前 <span className="text-destructive">*</span>
+        </Label>
+        <Input id="name" name="name" required placeholder="山田 太郎" />
+      </div>
+
+      {showCompanyName ? (
+        <div className="space-y-2">
+          <Label htmlFor="companyName">
+            会社名 <span className="text-muted-foreground text-xs">（任意）</span>
+          </Label>
+          <Input id="companyName" name="companyName" placeholder="株式会社◯◯" />
+        </div>
+      ) : null}
+
+      <div className="space-y-2">
+        <Label htmlFor="email">
+          メールアドレス <span className="text-destructive">*</span>
+        </Label>
+        <Input id="email" type="email" name="email" required placeholder="example@company.com" />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="phone">
+          電話番号 <span className="text-muted-foreground text-xs">（任意）</span>
+        </Label>
+        <Input id="phone" name="phone" placeholder="03-1234-5678" />
+      </div>
+
       {props.inquiryOptions && props.inquiryOptions.length > 0 ? (
-        <label className="block">
-          <span className="block text-sm mb-1">お問い合わせ種別</span>
-          <select name="inquiryType" required className="w-full border rounded px-3 py-2">
+        <div className="space-y-2">
+          <Label htmlFor="inquiryType">
+            お問い合わせ種別 <span className="text-destructive">*</span>
+          </Label>
+          <NativeSelect id="inquiryType" name="inquiryType" required>
             <option value="">選択してください</option>
             {props.inquiryOptions.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
-          </select>
-        </label>
+          </NativeSelect>
+        </div>
       ) : null}
-      <label className="block">
-        <span className="block text-sm mb-1">お問い合わせ内容</span>
-        <textarea name="message" rows={6} required className="w-full border rounded px-3 py-2" />
-      </label>
+
+      <div className="space-y-2">
+        <Label htmlFor="message">
+          お問い合わせ内容 <span className="text-destructive">*</span>
+        </Label>
+        <Textarea
+          id="message"
+          name="message"
+          rows={6}
+          required
+          placeholder="ご相談内容をご記入ください"
+        />
+      </div>
+
       {props.turnstileSiteKey ? (
         <div
           className="cf-turnstile"
@@ -94,13 +128,17 @@ export function ContactForm(props: Props) {
       ) : (
         <input type="hidden" name="turnstileToken" value="dev-bypass" />
       )}
-      <button
-        type="submit"
-        disabled={state === 'submitting'}
-        className="bg-brand text-white px-6 py-3 rounded"
-      >
-        {state === 'submitting' ? '送信中...' : '送信する'}
-      </button>
+
+      <Button type="submit" disabled={state === 'submitting'} className="w-full" size="lg">
+        {state === 'submitting' ? (
+          <>
+            <Spinner data-icon="inline-start" />
+            送信中...
+          </>
+        ) : (
+          '送信する'
+        )}
+      </Button>
     </form>
   )
 }

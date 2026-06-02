@@ -10,8 +10,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`_parent_id\`) REFERENCES \`site_settings\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`CREATE INDEX \`site_settings_header_nav_order_idx\` ON \`site_settings_header_nav\` (\`_order\`);`)
-  await db.run(sql`CREATE INDEX \`site_settings_header_nav_parent_id_idx\` ON \`site_settings_header_nav\` (\`_parent_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`site_settings_header_nav_order_idx\` ON \`site_settings_header_nav\` (\`_order\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`site_settings_header_nav_parent_id_idx\` ON \`site_settings_header_nav\` (\`_parent_id\`);`,
+  )
   await db.run(sql`CREATE TABLE \`site_settings_footer_nav\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` integer NOT NULL,
@@ -21,8 +25,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`_parent_id\`) REFERENCES \`site_settings\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`CREATE INDEX \`site_settings_footer_nav_order_idx\` ON \`site_settings_footer_nav\` (\`_order\`);`)
-  await db.run(sql`CREATE INDEX \`site_settings_footer_nav_parent_id_idx\` ON \`site_settings_footer_nav\` (\`_parent_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`site_settings_footer_nav_order_idx\` ON \`site_settings_footer_nav\` (\`_order\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`site_settings_footer_nav_parent_id_idx\` ON \`site_settings_footer_nav\` (\`_parent_id\`);`,
+  )
   await db.run(sql`CREATE TABLE \`site_settings_policy_links\` (
   	\`_order\` integer NOT NULL,
   	\`_parent_id\` integer NOT NULL,
@@ -32,8 +40,12 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`_parent_id\`) REFERENCES \`site_settings\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`CREATE INDEX \`site_settings_policy_links_order_idx\` ON \`site_settings_policy_links\` (\`_order\`);`)
-  await db.run(sql`CREATE INDEX \`site_settings_policy_links_parent_id_idx\` ON \`site_settings_policy_links\` (\`_parent_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`site_settings_policy_links_order_idx\` ON \`site_settings_policy_links\` (\`_order\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`site_settings_policy_links_parent_id_idx\` ON \`site_settings_policy_links\` (\`_parent_id\`);`,
+  )
   await db.run(sql`ALTER TABLE \`contact_submissions\` ADD \`company_name\` text;`)
   await db.run(sql`ALTER TABLE \`contact_submissions\` ADD \`inquiry_type\` text;`)
   await db.run(sql`ALTER TABLE \`site_settings\` ADD \`company_info_address\` text;`)

@@ -1,6 +1,6 @@
 ---
 name: add-story
-description: "既存コンポーネントに Storybook のストーリーを追加する、または新規コンポーネントとストーリーをセットで生成する。コンポーネントの動作確認/カタログ化、UIレビュー用ストーリー作成時に使用。/add-story で呼び出す。"
+description: '既存コンポーネントに Storybook のストーリーを追加する、または新規コンポーネントとストーリーをセットで生成する。コンポーネントの動作確認/カタログ化、UIレビュー用ストーリー作成時に使用。/add-story で呼び出す。'
 user_invocable: true
 arguments: コンポーネントのパス（省略可。省略時は対話で決定）
 ---
@@ -70,7 +70,9 @@ type Story = StoryObj<typeof ComponentName>
 export const Default: Story = {}
 
 export const Variant: Story = {
-  args: { /* 差分 */ },
+  args: {
+    /* 差分 */
+  },
 }
 ```
 

@@ -6,11 +6,11 @@
 
 構造
 
-- collections/  コア共通コレクション (users, media, news, faq, pages, contact-submissions)
-- globals/      コア共通グローバル (site-settings)
-- admin/        管理画面カスタマイズ (ダッシュボード、ブランディング)
-- sections/     汎用セクション React コンポーネント
-- frontend/     共通レイアウト用コンポーネント
-- lib/          共通ユーティリティ
-- payload/      payload.config のベース
-- scripts/      セットアップスクリプト
+- collections/ コア共通コレクション (users, media, news, faq, pages, contact-submissions)
+- globals/ コア共通グローバル (site-settings)
+- admin/ 管理画面カスタマイズ (ダッシュボード、ブランディング)
+- sections/ 汎用セクション React コンポーネント
+- frontend/ 共通レイアウト用コンポーネント
+- lib/ 共通ユーティリティ
+- payload/ payload.config のベース
+- scripts/ セットアップスクリプト

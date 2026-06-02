@@ -1,5 +1,5 @@
 import { getPayload, type Payload } from 'payload'
-import { beforeAll, describe, expect, it, vi } from 'vitest'
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test'
 
 import config from '@/payload.config'
 import { submitContact } from '@/core/frontend/forms/contact-form-action'

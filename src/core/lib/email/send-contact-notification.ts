@@ -9,7 +9,10 @@ type ContactPayload = {
   message: string
 }
 
-type NotificationResult = { status: 'sent' } | { status: 'skipped'; reason: string } | { status: 'failed'; error: string }
+type NotificationResult =
+  | { status: 'sent' }
+  | { status: 'skipped'; reason: string }
+  | { status: 'failed'; error: string }
 
 /**
  * 問い合わせ受付の管理者通知メールを Resend 経由で送信する。
@@ -17,7 +20,9 @@ type NotificationResult = { status: 'sent' } | { status: 'skipped'; reason: stri
  * RESEND_API_KEY / CONTACT_NOTIFICATION_EMAIL / CONTACT_NOTIFICATION_FROM のいずれかが未設定
  * のときは送信せず skipped で返す。送信失敗時も例外を投げず failed で返す（フォーム本体の保存は維持）。
  */
-export async function sendContactNotification(payload: ContactPayload): Promise<NotificationResult> {
+export async function sendContactNotification(
+  payload: ContactPayload,
+): Promise<NotificationResult> {
   const apiKey = process.env.RESEND_API_KEY
   const to = process.env.CONTACT_NOTIFICATION_EMAIL
   const from = process.env.CONTACT_NOTIFICATION_FROM

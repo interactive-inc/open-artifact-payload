@@ -22,11 +22,21 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   `)
   await db.run(sql`CREATE INDEX \`_news_v_parent_idx\` ON \`_news_v\` (\`parent_id\`);`)
-  await db.run(sql`CREATE INDEX \`_news_v_version_version_slug_idx\` ON \`_news_v\` (\`version_slug\`);`)
-  await db.run(sql`CREATE INDEX \`_news_v_version_version_thumbnail_idx\` ON \`_news_v\` (\`version_thumbnail_id\`);`)
-  await db.run(sql`CREATE INDEX \`_news_v_version_version_updated_at_idx\` ON \`_news_v\` (\`version_updated_at\`);`)
-  await db.run(sql`CREATE INDEX \`_news_v_version_version_created_at_idx\` ON \`_news_v\` (\`version_created_at\`);`)
-  await db.run(sql`CREATE INDEX \`_news_v_version_version__status_idx\` ON \`_news_v\` (\`version__status\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_news_v_version_version_slug_idx\` ON \`_news_v\` (\`version_slug\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_news_v_version_version_thumbnail_idx\` ON \`_news_v\` (\`version_thumbnail_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_news_v_version_version_updated_at_idx\` ON \`_news_v\` (\`version_updated_at\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_news_v_version_version_created_at_idx\` ON \`_news_v\` (\`version_created_at\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`_news_v_version_version__status_idx\` ON \`_news_v\` (\`version__status\`);`,
+  )
   await db.run(sql`CREATE INDEX \`_news_v_created_at_idx\` ON \`_news_v\` (\`created_at\`);`)
   await db.run(sql`CREATE INDEX \`_news_v_updated_at_idx\` ON \`_news_v\` (\`updated_at\`);`)
   await db.run(sql`CREATE INDEX \`_news_v_latest_idx\` ON \`_news_v\` (\`latest\`);`)
@@ -46,7 +56,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`thumbnail_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`INSERT INTO \`__new_news\`("id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at", "_status") SELECT "id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at", 'published' FROM \`news\`;`)
+  await db.run(
+    sql`INSERT INTO \`__new_news\`("id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at", "_status") SELECT "id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at", 'published' FROM \`news\`;`,
+  )
   await db.run(sql`DROP TABLE \`news\`;`)
   await db.run(sql`ALTER TABLE \`__new_news\` RENAME TO \`news\`;`)
   await db.run(sql`PRAGMA foreign_keys=ON;`)
@@ -73,7 +85,9 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   	FOREIGN KEY (\`thumbnail_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`INSERT INTO \`__new_news\`("id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at") SELECT "id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at" FROM \`news\`;`)
+  await db.run(
+    sql`INSERT INTO \`__new_news\`("id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at") SELECT "id", "title", "slug", "published_at", "category", "thumbnail_id", "body", "updated_at", "created_at" FROM \`news\`;`,
+  )
   await db.run(sql`DROP TABLE \`news\`;`)
   await db.run(sql`ALTER TABLE \`__new_news\` RENAME TO \`news\`;`)
   await db.run(sql`PRAGMA foreign_keys=ON;`)

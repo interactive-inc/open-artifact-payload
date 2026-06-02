@@ -42,7 +42,8 @@ export const users: CollectionConfig = {
         update: isAdminField,
       },
       admin: {
-        description: '管理者: 全権限。編集者: コンテンツ編集のみ可能（ユーザー追加・削除や設定変更は不可）。',
+        description:
+          '管理者: 全権限。編集者: コンテンツ編集のみ可能（ユーザー追加・削除や設定変更は不可）。',
       },
     },
   ],

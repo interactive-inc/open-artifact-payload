@@ -1,6 +1,6 @@
 ---
 name: add-collection
-description: "既存案件に新しいコレクションを追加する。コレクション追加、新規コレクション作成時に使用。/add-collection で呼び出す。"
+description: '既存案件に新しいコレクションを追加する。コレクション追加、新規コレクション作成時に使用。/add-collection で呼び出す。'
 user_invocable: true
 ---
 

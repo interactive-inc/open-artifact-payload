@@ -46,7 +46,8 @@ export const siteSettings: GlobalConfig = {
       label: 'ヘッダーナビゲーション',
       type: 'array',
       admin: {
-        description: '表示順で並べる。href は `/about` のような絶対パス、外部 URL なら https:// から書く',
+        description:
+          '表示順で並べる。href は `/about` のような絶対パス、外部 URL なら https:// から書く',
       },
       fields: [
         { name: 'label', label: 'ラベル', type: 'text', required: true },
@@ -67,7 +68,8 @@ export const siteSettings: GlobalConfig = {
       label: 'ポリシー系リンク',
       type: 'array',
       admin: {
-        description: 'プライバシーポリシー、特定商取引法、サイトマップなど、フッター下部に出すリンク',
+        description:
+          'プライバシーポリシー、特定商取引法、サイトマップなど、フッター下部に出すリンク',
       },
       fields: [
         { name: 'label', label: 'ラベル', type: 'text', required: true },

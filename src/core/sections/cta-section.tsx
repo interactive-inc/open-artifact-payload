@@ -1,5 +1,8 @@
 import Link from 'next/link'
 import React from 'react'
+import { ArrowRightIcon } from 'lucide-react'
+
+import { Button } from '@/project/shared/ui/button'
 
 type Props = {
   data: {
@@ -14,21 +17,21 @@ type Props = {
 export function CtaSection(props: Props) {
   if (!props.data.enabled) return null
   return (
-    <section className="py-20 bg-brand-dark text-white">
+    <section className="py-20 bg-foreground text-background">
       <div className="max-w-4xl mx-auto px-6 text-center">
         {props.data.heading ? (
-          <h2 className="text-3xl font-bold mb-4">{props.data.heading}</h2>
+          <h2 className="text-3xl font-bold tracking-tight mb-4">{props.data.heading}</h2>
         ) : null}
         {props.data.description ? (
-          <p className="text-lg opacity-90 mb-8">{props.data.description}</p>
+          <p className="text-lg text-background/80 mb-8">{props.data.description}</p>
         ) : null}
         {props.data.ctaLabel && props.data.ctaHref ? (
-          <Link
-            href={props.data.ctaHref}
-            className="inline-block px-8 py-4 bg-accent rounded-md font-semibold"
-          >
-            {props.data.ctaLabel}
-          </Link>
+          <Button asChild size="lg" variant="secondary">
+            <Link href={props.data.ctaHref}>
+              {props.data.ctaLabel}
+              <ArrowRightIcon data-icon="inline-end" />
+            </Link>
+          </Button>
         ) : null}
       </div>
     </section>

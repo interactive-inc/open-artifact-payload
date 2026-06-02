@@ -1,5 +1,5 @@
 ---
-paths: "**/*.entity.ts"
+paths: '**/*.entity.ts'
 ---
 
 # Entity Instructions
@@ -16,8 +16,8 @@ paths: "**/*.entity.ts"
 ## for Zod
 
 ```ts
-import { z } from "zod"
-import { NameValue } from "@/domain/values/name.value"
+import { z } from 'zod'
+import { NameValue } from '@/domain/values/name.value'
 
 const PropsSchema = z.object({
   id: z.string(),
@@ -30,18 +30,18 @@ const PropsSchema = z.object({
 type Props = z.infer<typeof PropsSchema>
 
 export class UserEntity implements Props {
-  readonly id!: Props["id"]
+  readonly id!: Props['id']
 
   /**
    * 名前
    */
-  readonly name!: Props["name"]
+  readonly name!: Props['name']
 
-  readonly description!: Props["description"]
+  readonly description!: Props['description']
 
-  readonly createdAt!: Props["createdAt"]
+  readonly createdAt!: Props['createdAt']
 
-  readonly isDeleted!: Props["isDeleted"]
+  readonly isDeleted!: Props['isDeleted']
 
   constructor(private readonly props: Props) {
     Object.assign(this, PropsSchema.parse(props))

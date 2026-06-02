@@ -38,9 +38,7 @@ export const serviceGlobal: GlobalConfig = {
               label: '特徴・機能リスト',
               type: 'array',
               maxRows: 6,
-              fields: [
-                { name: 'text', label: 'テキスト', type: 'text', required: true },
-              ],
+              fields: [{ name: 'text', label: 'テキスト', type: 'text', required: true }],
             },
           ],
         },

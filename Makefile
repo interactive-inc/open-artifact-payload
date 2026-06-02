@@ -6,7 +6,7 @@
 export PATH := $(CURDIR)/node_modules/.bin:$(PATH)
 export CLOUDFLARE_ENV ?= production
 
-.PHONY: deploy deploy-app deploy-db preview
+.PHONY: deploy deploy-app deploy-db preview storybook shadcn-add
 
 # DB マイグレーション + アプリデプロイ
 deploy: deploy-db deploy-app
@@ -25,3 +25,11 @@ deploy-db:
 preview:
 	opennextjs-cloudflare build
 	opennextjs-cloudflare preview --env=$(CLOUDFLARE_ENV)
+
+# Storybook (portless 経由で https://storybook.payload.artifacts.open.localhost)
+storybook:
+	portless storybook.payload.artifacts.open bun run storybook
+
+# shadcn コンポーネント全追加
+shadcn-add:
+	bunx --bun shadcn@latest add --all --overwrite --yes

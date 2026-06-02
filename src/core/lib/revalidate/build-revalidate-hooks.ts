@@ -1,5 +1,9 @@
 import { revalidatePath } from 'next/cache'
-import type { CollectionAfterChangeHook, CollectionAfterDeleteHook, GlobalAfterChangeHook } from 'payload'
+import type {
+  CollectionAfterChangeHook,
+  CollectionAfterDeleteHook,
+  GlobalAfterChangeHook,
+} from 'payload'
 
 type CollectionPathResolver<T = Record<string, unknown>> = (args: {
   doc: T
@@ -49,7 +53,9 @@ export function buildCollectionRevalidateAfterDelete<T = Record<string, unknown>
 /**
  * Global 保存後にパスを revalidate する hook。
  */
-export function buildGlobalRevalidateAfterChange(resolver: GlobalPathResolver): GlobalAfterChangeHook {
+export function buildGlobalRevalidateAfterChange(
+  resolver: GlobalPathResolver,
+): GlobalAfterChangeHook {
   return ({ doc, req }) => {
     const log = (message: string) => req.payload.logger.warn(message)
     safeRevalidate(resolver(), log)

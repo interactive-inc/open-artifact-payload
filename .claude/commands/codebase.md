@@ -35,6 +35,7 @@ Checks and updates `CODEBASE.md` to ensure it contains all required project info
 **IMPORTANT**: Use the `AskUserQuestion` tool for all questions. This provides a better UX with selectable options.
 
 ### Initial Check Message
+
 ```
 プロジェクトの設定を確認させてください。
 CODEBASE.mdに必要な情報が不足しています。
@@ -46,6 +47,7 @@ CODEBASE.mdに必要な情報が不足しています。
 ### Required Questions (Ask ONE at a time)
 
 1. **Application Purpose**:
+
    ```
    このアプリケーションの目的を教えてください：
    - 実際の商品販売用ですか？
@@ -54,6 +56,7 @@ CODEBASE.mdに必要な情報が不足しています。
    ```
 
 2. **System Separation**:
+
    ```
    システムの分離方針を教えてください：
    - フロントエンドのみのモックでよいですか？
@@ -71,12 +74,14 @@ CODEBASE.mdに必要な情報が不足しています。
 ## Continuous Information Gathering
 
 During development, if information is unclear:
+
 1. STOP current task
 2. Ask ONE clarifying question
 3. Wait for answer
 4. Continue implementation
 
 ### Trigger Conditions
+
 - System separation requirements unclear → ASK before coding
 - Core functionality placement ambiguous → ASK before creating files
 - Architectural constraints missing → ASK before implementing
@@ -85,11 +90,13 @@ During development, if information is unclear:
 ## Auto-Update Rules
 
 AI automatically appends discovered constraints to `CODEBASE.md`:
+
 - Important architectural constraints discovered through implementation
 - New constraints affecting system separation
 - Constraints to prevent development drift
 
 ### Update Principles
+
 - Add constraints only when architectural direction drifts
 - Remove specifications that aren't preventing problems
 - Focus on maintaining system separation
@@ -102,21 +109,27 @@ The following section names must never be changed:
 
 ```markdown
 # Overview
+
 [Application overview description]
 
 ## Directory Structure
+
 [Directory structure]
 
 ## Technical Features
+
 [Technology stack]
 
 ## Decoupled Design
+
 [System separation policy]
 
 ## Core Location
+
 [Core functionality placement]
 
 ## System Independence
+
 [Independence of each system]
 ```
 
@@ -124,11 +137,14 @@ The following section names must never be changed:
 
 ```markdown
 ## Domain Systems
+
 [Domain-specific systems - for special business logic]
 
 ## API Design
+
 [API design policy - for API-centric projects]
 
 ## Data Flow
+
 [Data flow - for complex data processing]
 ```

@@ -5,11 +5,7 @@ import { createD1Database } from '@/core/scripts/create-d1-database'
 import { createR2Bucket } from '@/core/scripts/create-r2-bucket'
 import { askSetupQuestions } from '@/core/scripts/setup-project-prompts'
 import { applySsgMode } from '@/core/scripts/setup-ssg-mode'
-import {
-  withDatabaseId,
-  withR2BucketName,
-  withWorkerName,
-} from '@/core/scripts/update-wrangler'
+import { withDatabaseId, withR2BucketName, withWorkerName } from '@/core/scripts/update-wrangler'
 import { writeEnvFile } from '@/core/scripts/write-env'
 
 const ROOT = process.cwd()

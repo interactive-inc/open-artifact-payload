@@ -11,9 +11,7 @@ export function LexicalRenderer(props: Props) {
   if (!props.value) return null
   const blocks = props.value.root?.children ?? []
   return (
-    <div className="ictms-lexical">
-      {blocks.map((block, index) => renderBlock(block, index))}
-    </div>
+    <div className="ictms-lexical">{blocks.map((block, index) => renderBlock(block, index))}</div>
   )
 }
 

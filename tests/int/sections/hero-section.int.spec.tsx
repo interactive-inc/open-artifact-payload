@@ -3,7 +3,7 @@
  */
 import { render } from '@testing-library/react'
 import React from 'react'
-import { describe, expect, it } from 'vitest'
+import { describe, expect, it } from 'vite-plus/test'
 
 import { HeroSection } from '@/core/sections/hero-section'
 

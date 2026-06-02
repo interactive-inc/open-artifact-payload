@@ -1,8 +1,10 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import React from 'react'
+import { ArrowRightIcon } from 'lucide-react'
 
 import { resolveMediaUrl, resolveMediaAlt } from '@/core/lib/media'
+import { Button } from '@/project/shared/ui/button'
 
 type Props = {
   data: {
@@ -26,18 +28,22 @@ export function AboutPreviewSection(props: Props) {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
             {props.data.heading ? (
-              <h2 className="text-3xl font-bold text-gray-900 mb-6">{props.data.heading}</h2>
+              <h2 className="text-3xl font-bold tracking-tight mb-6 whitespace-pre-wrap">
+                {props.data.heading}
+              </h2>
             ) : null}
             {props.data.description ? (
-              <p className="text-gray-600 leading-relaxed text-lg">{props.data.description}</p>
+              <p className="text-muted-foreground leading-relaxed text-lg">
+                {props.data.description}
+              </p>
             ) : null}
             {props.data.ctaLabel && props.data.ctaHref ? (
-              <Link
-                href={props.data.ctaHref}
-                className="inline-block mt-8 px-6 py-3 border-2 border-brand text-brand font-semibold rounded-md hover:bg-brand hover:text-white transition-colors"
-              >
-                {props.data.ctaLabel}
-              </Link>
+              <Button asChild variant="outline" className="mt-8">
+                <Link href={props.data.ctaHref}>
+                  {props.data.ctaLabel}
+                  <ArrowRightIcon data-icon="inline-end" />
+                </Link>
+              </Button>
             ) : null}
           </div>
           <div className="relative">
@@ -46,12 +52,20 @@ export function AboutPreviewSection(props: Props) {
                 <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
               </div>
             ) : (
-              <div className="aspect-[4/3] bg-gradient-to-br from-brand/20 to-brand-dark/20 rounded-xl flex items-center justify-center">
-                <div className="text-brand/40">
-                  <svg className="w-24 h-24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                  </svg>
-                </div>
+              <div className="aspect-[4/3] bg-muted rounded-xl flex items-center justify-center">
+                <svg
+                  className="size-24 text-muted-foreground/30"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1}
+                    d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+                  />
+                </svg>
               </div>
             )}
           </div>

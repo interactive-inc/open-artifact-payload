@@ -21,8 +21,9 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 // ─── フォント・サイズ・余白 ───
 
 :root {
-  --font-body: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN',
-    'YuGothic', 'Yu Gothic', 'Avenir', 'Helvetica Neue', sans-serif;
+  --font-body:
+    'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'YuGothic', 'Yu Gothic', 'Avenir',
+    'Helvetica Neue', sans-serif;
   --base-body-size: 15;
   font-size: 15px;
   --base: 1.5rem;
@@ -108,7 +109,9 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
 
 // ─── サイドバー ナビゲーション ───
 
-.nav-group { padding: 8px 14px; }
+.nav-group {
+  padding: 8px 14px;
+}
 
 .nav-group__label {
   font-size: 11px;
@@ -117,9 +120,16 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   color: var(--theme-elevation-400);
 }
 
-.nav-group__toggle { padding: 6px 4px; margin-bottom: 2px; }
+.nav-group__toggle {
+  padding: 6px 4px;
+  margin-bottom: 2px;
+}
 
-.nav-group__content { display: flex; flex-direction: column; gap: 3px; }
+.nav-group__content {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
 
 // ナビリンク (カード化 + アイコン)
 .nav__link {
@@ -131,26 +141,56 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   border: 1px solid var(--theme-elevation-150);
   color: var(--theme-text);
   text-decoration: none;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
 }
 
-.nav__link:hover { background: var(--theme-elevation-50); border-color: var(--theme-elevation-200); }
-.nav__link:active { background: var(--theme-elevation-100); }
-.nav__link--active { background: var(--theme-elevation-100); border-color: var(--theme-elevation-250); font-weight: 500; }
+.nav__link:hover {
+  background: var(--theme-elevation-50);
+  border-color: var(--theme-elevation-200);
+}
+.nav__link:active {
+  background: var(--theme-elevation-100);
+}
+.nav__link--active {
+  background: var(--theme-elevation-100);
+  border-color: var(--theme-elevation-250);
+  font-weight: 500;
+}
 
-[data-theme='dark'] .nav__link { background: var(--theme-elevation-50); border-color: var(--theme-elevation-150); }
-[data-theme='dark'] .nav__link:hover { background: var(--theme-elevation-100); border-color: var(--theme-elevation-200); }
-[data-theme='dark'] .nav__link--active { background: var(--theme-elevation-100); border-color: var(--theme-elevation-250); }
+[data-theme='dark'] .nav__link {
+  background: var(--theme-elevation-50);
+  border-color: var(--theme-elevation-150);
+}
+[data-theme='dark'] .nav__link:hover {
+  background: var(--theme-elevation-100);
+  border-color: var(--theme-elevation-200);
+}
+[data-theme='dark'] .nav__link--active {
+  background: var(--theme-elevation-100);
+  border-color: var(--theme-elevation-250);
+}
 
 // ─── ナビ順序 ───
 
-.nav-group.コンテンツ { order: -2; }
-.nav-group.システム { order: -1; }
-#nav-global-home-page { order: -1; }
+.nav-group.コンテンツ {
+  order: -2;
+}
+.nav-group.システム {
+  order: -1;
+}
+#nav-global-home-page {
+  order: -1;
+}
 
 // ─── 下部ボタン (公開サイト + ログアウト) ───
 
-.ictms-open-public-site { padding: 8px 14px 4px; margin-top: auto; order: 10; }
+.ictms-open-public-site {
+  padding: 8px 14px 4px;
+  margin-top: auto;
+  order: 10;
+}
 
 .ictms-open-public-site__link {
   display: flex;
@@ -166,11 +206,18 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   text-decoration: none;
   font-size: 13px;
   font-weight: 500;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
 }
 
-.ictms-open-public-site__link:hover { background: var(--theme-elevation-50); border-color: var(--theme-elevation-300); }
-.ictms-open-public-site__link::before { display: none; }
+.ictms-open-public-site__link:hover {
+  background: var(--theme-elevation-50);
+  border-color: var(--theme-elevation-300);
+}
+.ictms-open-public-site__link::before {
+  display: none;
+}
 .ictms-open-public-site__link::after {
   content: '';
   display: inline-block;
@@ -186,7 +233,11 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   @include mask-icon($icon-external-link);
 }
 
-.nav__controls { order: 11; margin-top: 0; padding: 4px 14px 12px; }
+.nav__controls {
+  order: 11;
+  margin-top: 0;
+  padding: 4px 14px 12px;
+}
 
 .nav__log-out {
   display: flex;
@@ -201,11 +252,20 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   color: var(--theme-elevation-500);
   text-decoration: none;
   font-size: 13px;
-  transition: background 0.12s ease, border-color 0.12s ease;
+  transition:
+    background 0.12s ease,
+    border-color 0.12s ease;
 }
 
-.nav__log-out:hover { background: var(--theme-elevation-50); border-color: var(--theme-elevation-200); color: var(--theme-error-500); }
-.nav__log-out::after { content: 'ログアウト'; font-size: 13px; }
+.nav__log-out:hover {
+  background: var(--theme-elevation-50);
+  border-color: var(--theme-elevation-200);
+  color: var(--theme-error-500);
+}
+.nav__log-out::after {
+  content: 'ログアウト';
+  font-size: 13px;
+}
 
 // ─── ナビアイコン ───
 
@@ -226,11 +286,23 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   opacity: 0.55;
 }
 
-#nav-users::before { @include mask-icon($icon-users); }
-#nav-media::before { @include mask-icon($icon-image); }
-#nav-global-site-settings::before { @include mask-icon($icon-settings); }
+#nav-users::before {
+  @include mask-icon($icon-users);
+}
+#nav-media::before {
+  @include mask-icon($icon-image);
+}
+#nav-global-site-settings::before {
+  @include mask-icon($icon-settings);
+}
 
 // コンテンツグループは既定でページアイコン、トップとお問い合わせだけ個別指定
-.nav-group.コンテンツ .nav__link::before { @include mask-icon($icon-file-text); }
-#nav-global-home-page::before { @include mask-icon($icon-home); }
-#nav-contact-submissions::before { @include mask-icon($icon-mail); }
+.nav-group.コンテンツ .nav__link::before {
+  @include mask-icon($icon-file-text);
+}
+#nav-global-home-page::before {
+  @include mask-icon($icon-home);
+}
+#nav-contact-submissions::before {
+  @include mask-icon($icon-mail);
+}

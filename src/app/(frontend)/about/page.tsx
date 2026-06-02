@@ -5,6 +5,9 @@ import React from 'react'
 
 import config from '@/payload.config'
 import { resolveMediaUrl } from '@/core/lib/media'
+import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
+import { Badge } from '@/project/shared/ui/badge'
+import { Separator } from '@/project/shared/ui/separator'
 import '../styles.css'
 
 export default async function AboutPage() {
@@ -17,11 +20,13 @@ export default async function AboutPage() {
   return (
     <>
       {about.hero?.enabled ? (
-        <section className="bg-brand py-20 text-white">
+        <section className="bg-foreground py-20 text-background">
           <div className="max-w-6xl mx-auto px-6 text-center">
-            <h1 className="text-4xl font-bold">{about.hero.title}</h1>
+            <h1 className="text-4xl font-bold tracking-tight">{about.hero.title}</h1>
             {about.hero.subtitle ? (
-              <p className="mt-4 text-xl opacity-90 max-w-2xl mx-auto">{about.hero.subtitle}</p>
+              <p className="mt-4 text-xl text-background/80 max-w-2xl mx-auto">
+                {about.hero.subtitle}
+              </p>
             ) : null}
           </div>
         </section>
@@ -32,26 +37,35 @@ export default async function AboutPage() {
           <div className="max-w-6xl mx-auto px-6">
             <div className="text-center mb-12">
               {about.mission.heading ? (
-                <h2 className="text-3xl font-bold text-gray-900">{about.mission.heading}</h2>
+                <h2 className="text-3xl font-bold tracking-tight">{about.mission.heading}</h2>
               ) : null}
               {about.mission.description ? (
-                <p className="mt-4 text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed">{about.mission.description}</p>
+                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                  {about.mission.description}
+                </p>
               ) : null}
             </div>
             {(about.mission.values ?? []).length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12">
                 {(about.mission.values ?? []).map((value, index) => (
-                  <div key={index} className="bg-gray-50 rounded-xl p-8 border border-gray-100">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center text-white text-sm font-bold">
-                        {index + 1}
-                      </div>
-                      <h3 className="text-xl font-semibold text-gray-900">{value.title}</h3>
-                    </div>
+                  <Card key={index}>
+                    <CardHeader className="pb-2">
+                      <CardTitle className="flex items-center gap-3 text-lg">
+                        <Badge
+                          variant="outline"
+                          className="size-8 rounded-full flex items-center justify-center p-0 text-sm font-bold"
+                        >
+                          {index + 1}
+                        </Badge>
+                        {value.title}
+                      </CardTitle>
+                    </CardHeader>
                     {value.description ? (
-                      <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                      <CardContent>
+                        <p className="text-muted-foreground leading-relaxed">{value.description}</p>
+                      </CardContent>
                     ) : null}
-                  </div>
+                  </Card>
                 ))}
               </div>
             ) : null}
@@ -60,27 +74,31 @@ export default async function AboutPage() {
       ) : null}
 
       {about.companyProfile?.enabled ? (
-        <section className="py-20 bg-gray-50">
+        <section className="py-20 bg-muted/30">
           <div className="max-w-4xl mx-auto px-6">
             {about.companyProfile.heading ? (
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">{about.companyProfile.heading}</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+                {about.companyProfile.heading}
+              </h2>
             ) : null}
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <table className="w-full">
-                <tbody>
-                  {(about.companyProfile.rows ?? []).map((row, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-700 w-40 whitespace-nowrap border-b border-gray-100">
-                        {row.label}
-                      </th>
-                      <td className="px-6 py-4 text-sm text-gray-600 border-b border-gray-100 leading-relaxed whitespace-pre-wrap">
-                        {row.value}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <Card>
+              <CardContent className="p-0">
+                <table className="w-full">
+                  <tbody>
+                    {(about.companyProfile.rows ?? []).map((row, index) => (
+                      <tr key={index}>
+                        <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground w-36 whitespace-nowrap border-b border-border">
+                          {row.label}
+                        </th>
+                        <td className="px-6 py-4 text-sm border-b border-border leading-relaxed whitespace-pre-wrap">
+                          {row.value}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </CardContent>
+            </Card>
           </div>
         </section>
       ) : null}
@@ -89,32 +107,58 @@ export default async function AboutPage() {
         <section className="py-20">
           <div className="max-w-6xl mx-auto px-6">
             {about.members.heading ? (
-              <h2 className="text-3xl font-bold text-gray-900 text-center mb-12">{about.members.heading}</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+                {about.members.heading}
+              </h2>
             ) : null}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {(about.members.items ?? []).map((member, index) => {
                 const imageUrl = resolveMediaUrl(member.image as never)
                 return (
-                  <div key={index} className="text-center">
-                    <div className="w-32 h-32 mx-auto mb-4 rounded-full overflow-hidden bg-gray-200">
-                      {imageUrl ? (
-                        <Image src={imageUrl} alt={member.name} width={128} height={128} className="object-cover w-full h-full" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-gray-400">
-                          <svg className="w-16 h-16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                          </svg>
-                        </div>
-                      )}
-                    </div>
-                    <h3 className="text-lg font-semibold text-gray-900">{member.name}</h3>
-                    {member.position ? (
-                      <p className="text-sm text-brand font-medium mt-1">{member.position}</p>
-                    ) : null}
+                  <Card key={index} className="text-center">
+                    <CardHeader className="items-center pb-2">
+                      <div className="size-24 mx-auto mb-2 rounded-full overflow-hidden bg-muted">
+                        {imageUrl ? (
+                          <Image
+                            src={imageUrl}
+                            alt={member.name}
+                            width={96}
+                            height={96}
+                            className="object-cover size-full"
+                          />
+                        ) : (
+                          <div className="size-full flex items-center justify-center text-muted-foreground">
+                            <svg
+                              className="size-12"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={1}
+                                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                              />
+                            </svg>
+                          </div>
+                        )}
+                      </div>
+                      <CardTitle className="text-lg">{member.name}</CardTitle>
+                      {member.position ? (
+                        <Badge variant="secondary" className="mt-1">
+                          {member.position}
+                        </Badge>
+                      ) : null}
+                    </CardHeader>
                     {member.bio ? (
-                      <p className="text-sm text-gray-600 mt-3 leading-relaxed">{member.bio}</p>
+                      <CardContent>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                          {member.bio}
+                        </p>
+                      </CardContent>
                     ) : null}
-                  </div>
+                  </Card>
                 )
               })}
             </div>

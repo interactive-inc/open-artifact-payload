@@ -1,5 +1,5 @@
 import { getPayload, type Payload } from 'payload'
-import { beforeAll, describe, expect, it } from 'vitest'
+import { beforeAll, describe, expect, it } from 'vite-plus/test'
 
 import config from '@/payload.config'
 
@@ -34,10 +34,7 @@ describe('drafts', () => {
     const onlyPublished = await payload.find({
       collection: 'news',
       where: {
-        and: [
-          { slug: { equals: slug } },
-          { _status: { equals: 'published' } },
-        ],
+        and: [{ slug: { equals: slug } }, { _status: { equals: 'published' } }],
       },
     })
     expect(onlyPublished.docs).toHaveLength(0)

@@ -1,8 +1,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
+import { ArrowRightIcon } from 'lucide-react'
 
 import { resolveMediaAlt, resolveMediaUrl } from '@/core/lib/media'
+import { Button } from '@/project/shared/ui/button'
 
 type HeroData = {
   enabled?: boolean | null
@@ -23,25 +25,27 @@ export function HeroSection(props: Props) {
   const imageAlt = resolveMediaAlt(props.data.image as never) ?? ''
 
   return (
-    <section className="relative py-24 bg-brand text-white">
-      <div className="max-w-6xl mx-auto px-6">
-        {imageUrl ? (
-          <div className="absolute inset-0 opacity-30">
-            <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
-          </div>
-        ) : null}
-        <div className="relative z-10 max-w-2xl">
-          <h1 className="text-4xl font-bold">{props.data.title}</h1>
+    <section className="relative py-28 bg-foreground text-background overflow-hidden">
+      {imageUrl ? (
+        <div className="absolute inset-0 opacity-20">
+          <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
+        </div>
+      ) : null}
+      <div className="relative z-10 max-w-6xl mx-auto px-6">
+        <div className="max-w-2xl">
+          <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight whitespace-pre-wrap">
+            {props.data.title}
+          </h1>
           {props.data.subtitle ? (
-            <p className="mt-4 text-xl opacity-90">{props.data.subtitle}</p>
+            <p className="mt-5 text-xl text-background/80 leading-relaxed">{props.data.subtitle}</p>
           ) : null}
           {props.data.ctaLabel && props.data.ctaHref ? (
-            <Link
-              href={props.data.ctaHref}
-              className="inline-block mt-8 px-6 py-3 bg-accent rounded-md font-semibold"
-            >
-              {props.data.ctaLabel}
-            </Link>
+            <Button asChild size="lg" variant="secondary" className="mt-8">
+              <Link href={props.data.ctaHref}>
+                {props.data.ctaLabel}
+                <ArrowRightIcon data-icon="inline-end" />
+              </Link>
+            </Button>
           ) : null}
         </div>
       </div>

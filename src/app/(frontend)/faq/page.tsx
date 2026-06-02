@@ -3,6 +3,14 @@ import Link from 'next/link'
 import React from 'react'
 
 import config from '@/payload.config'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/project/shared/ui/accordion'
+import { Button } from '@/project/shared/ui/button'
+import { Separator } from '@/project/shared/ui/separator'
 import '../styles.css'
 
 const categoryLabel: Record<string, string> = {
@@ -30,66 +38,52 @@ export default async function FaqPage() {
 
   return (
     <div>
-      <section className="bg-brand py-16 text-white">
+      <section className="bg-foreground py-16 text-background">
         <div className="max-w-6xl mx-auto px-6 text-center">
-          <h1 className="text-4xl font-bold">よくある質問</h1>
-          <p className="mt-4 text-lg opacity-90">FAQ</p>
+          <h1 className="text-4xl font-bold tracking-tight">よくある質問</h1>
+          <p className="mt-4 text-lg text-background/80">FAQ</p>
         </div>
       </section>
 
       <section className="py-16">
         <div className="max-w-4xl mx-auto px-6">
           {result.docs.length === 0 ? (
-            <p className="text-center text-gray-500 py-16">FAQはまだありません。</p>
+            <p className="text-center text-muted-foreground py-16">FAQはまだありません。</p>
           ) : (
             <div className="space-y-12">
               {Object.entries(grouped).map(([category, items]) => (
                 <div key={category}>
-                  <h2 className="text-xl font-bold text-gray-900 mb-6 pb-2 border-b-2 border-brand">
-                    {categoryLabel[category] ?? category}
-                  </h2>
-                  <div className="space-y-4">
+                  <h2 className="text-xl font-bold mb-6">{categoryLabel[category] ?? category}</h2>
+                  <Accordion type="single" collapsible className="w-full">
                     {items.map((item) => (
-                      <details
-                        key={item.id}
-                        className="group bg-white border border-gray-200 rounded-xl overflow-hidden"
-                      >
-                        <summary className="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none hover:bg-gray-50 transition-colors">
-                          <div className="flex items-start gap-3">
-                            <span className="text-brand font-bold text-lg mt-0.5 flex-shrink-0">Q</span>
-                            <span className="font-medium text-gray-900">{item.question}</span>
+                      <AccordionItem key={item.id} value={String(item.id)}>
+                        <AccordionTrigger className="text-left">
+                          <span className="flex items-start gap-3">
+                            <span className="text-primary font-bold flex-shrink-0">Q</span>
+                            {item.question}
+                          </span>
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          <div className="flex gap-3 pt-2">
+                            <span className="font-bold text-muted-foreground flex-shrink-0">A</span>
+                            <p className="text-muted-foreground leading-relaxed">{item.answer}</p>
                           </div>
-                          <svg
-                            className="w-5 h-5 text-gray-400 flex-shrink-0 transition-transform group-open:rotate-180"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                          </svg>
-                        </summary>
-                        <div className="px-6 pb-5 pt-2">
-                          <div className="flex gap-3">
-                            <span className="text-accent font-bold text-lg flex-shrink-0">A</span>
-                            <p className="text-gray-700 leading-relaxed">{item.answer}</p>
-                          </div>
-                        </div>
-                      </details>
+                        </AccordionContent>
+                      </AccordionItem>
                     ))}
-                  </div>
+                  </Accordion>
                 </div>
               ))}
             </div>
           )}
 
-          <div className="mt-12 text-center bg-gray-50 rounded-xl p-8">
-            <p className="text-gray-700 mb-4">解決しない場合はお気軽にお問い合わせください</p>
-            <Link
-              href="/contact"
-              className="inline-block px-6 py-3 bg-brand text-white font-semibold rounded-md hover:bg-brand-dark transition-colors"
-            >
-              お問い合わせする
-            </Link>
+          <Separator className="my-12" />
+
+          <div className="text-center bg-muted/30 rounded-xl p-8">
+            <p className="text-foreground mb-4">解決しない場合はお気軽にお問い合わせください</p>
+            <Button asChild>
+              <Link href="/contact">お問い合わせする</Link>
+            </Button>
           </div>
         </div>
       </section>

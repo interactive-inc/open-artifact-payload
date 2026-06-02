@@ -5,6 +5,8 @@ import config from '@/payload.config'
 import { RefreshRouteOnSave } from '@/core/frontend/components/refresh-route-on-save'
 import { SiteHeader } from '@/project/shared/sections/site-header'
 import { SiteFooter } from '@/project/shared/sections/site-footer'
+import { TooltipProvider } from '@/project/shared/ui/tooltip'
+import { Toaster } from '@/project/shared/ui/sonner'
 import './styles.css'
 
 type Props = {
@@ -18,11 +20,14 @@ export default async function RootLayout(props: Props) {
 
   return (
     <html lang="ja">
-      <body className="flex flex-col min-h-screen">
+      <body className="flex flex-col min-h-screen bg-background text-foreground">
         <RefreshRouteOnSave />
-        <SiteHeader settings={settings} />
-        <main className="flex-1">{props.children}</main>
-        <SiteFooter settings={settings} />
+        <TooltipProvider>
+          <SiteHeader settings={settings} />
+          <main className="flex-1">{props.children}</main>
+          <SiteFooter settings={settings} />
+        </TooltipProvider>
+        <Toaster />
       </body>
     </html>
   )

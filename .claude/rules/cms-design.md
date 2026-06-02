@@ -5,19 +5,19 @@
 
 ## UI要素 → フィールド型の対応表
 
-| UI要素 | フィールド型 | 備考 |
-|---|---|---|
-| 1行テキスト見出し | `text` | |
-| 複数行の説明文 | `textarea` | |
-| リッチテキスト本文 | `richText` | Lexical エディタ |
-| 画像1枚 | `upload, relationTo: 'media'` | |
-| 繰り返し要素（3〜6件程度） | `array` + 内部フィールド | D1 では autosave と非互換。後述の制約を参照 |
-| 他コレクションからの参照 | `relationship` | depth 指定を忘れない |
-| ON/OFF切り替え | `checkbox` | |
-| 選択肢 | `select` | value は英語、label は日本語 |
-| リンクボタン | `text` x2（ラベル + URL） | name は `ctaLabel` + `ctaHref` のパターン |
-| 日付 | `date` | |
-| 数値 | `number` | |
+| UI要素                     | フィールド型                  | 備考                                        |
+| -------------------------- | ----------------------------- | ------------------------------------------- |
+| 1行テキスト見出し          | `text`                        |                                             |
+| 複数行の説明文             | `textarea`                    |                                             |
+| リッチテキスト本文         | `richText`                    | Lexical エディタ                            |
+| 画像1枚                    | `upload, relationTo: 'media'` |                                             |
+| 繰り返し要素（3〜6件程度） | `array` + 内部フィールド      | D1 では autosave と非互換。後述の制約を参照 |
+| 他コレクションからの参照   | `relationship`                | depth 指定を忘れない                        |
+| ON/OFF切り替え             | `checkbox`                    |                                             |
+| 選択肢                     | `select`                      | value は英語、label は日本語                |
+| リンクボタン               | `text` x2（ラベル + URL）     | name は `ctaLabel` + `ctaHref` のパターン   |
+| 日付                       | `date`                        |                                             |
+| 数値                       | `number`                      |                                             |
 
 ## 編集可能 vs 固定の判断基準
 
@@ -67,6 +67,7 @@
 D1 では `array` フィールドと `autosave` を併用すると、マイグレーション時に `_uuid` カラムの問題が起きる。
 
 対処法:
+
 - `array` を含む Global では `autosave` を設定しないか、`interval` を十分長く（10000以上）にする
 - または `array` の代わりに固定個数の `group` フィールドを繰り返す（3件固定なら `item1` / `item2` / `item3`）
 
@@ -166,7 +167,9 @@ buildCoreConfig({
 個別にアイコンを変えたい場合だけ、`custom.scss` の「ナビアイコン」節に以下を追記する:
 
 ```scss
-#nav-<slug>::before { @include mask-icon($icon-xxx); }
+#nav-<slug > ::before {
+  @include mask-icon($icon-xxx);
+}
 // Global の場合は #nav-global-<slug>
 ```
 

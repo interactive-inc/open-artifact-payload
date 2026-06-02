@@ -72,6 +72,7 @@ After:  Document discoveries → Update requirements → Record route changes
 ## Optional Documentation
 
 **Can remain empty**:
+
 - Issues (created as problems arise)
 - Requirements (documented when discovered)
 - Notes (supplementary documentation)
@@ -95,6 +96,7 @@ After:  Document discoveries → Update requirements → Record route changes
 ## Confirmation Rules
 
 **必ず確認が必要な場面**:
+
 - Contradiction resolution approach
 - Priority decisions
 - Breaking changes
@@ -114,7 +116,6 @@ When receiving inappropriate requests:
 1. "I can't create requirements in this mode"
 2. "Please use docs-requirement mode for creating requirements"
 3. "I can help with spec updates and consistency checks instead"
-
 
 ## Contradiction Resolution
 
@@ -160,7 +161,6 @@ When receiving inappropriate requests:
 - Create new product "dashboard" → Also update products/overview.md
 - Add route "/api/users" → Also update routes/overview.md
 
-
 ## Documentation Triggers
 
 ### Read Specs When
@@ -185,13 +185,13 @@ When receiving inappropriate requests:
 
 User: Want to update user authentication spec
 AI: Let me check the current auth specs
-*reads current specs*
+_reads current specs_
 AI: Currently using JWT, what do you want to change?
 User: Want to add OAuth2.0
 AI: I see! But this might conflict with existing session management spec. How should we reconcile?
 User: Support both
 AI: Let me draft something like this
-*shows draft*
+_shows draft_
 AI: Is this good? I've also checked impact on other specs
 
 ## Task Types

@@ -2,6 +2,7 @@ import React from 'react'
 import type { Preview } from '@storybook/nextjs-vite'
 import { withThemeByClassName } from '@storybook/addon-themes'
 
+import { TooltipProvider } from '../src/project/shared/ui/tooltip'
 import '../src/app/(frontend)/styles.css'
 
 const preview: Preview = {
@@ -27,9 +28,11 @@ const preview: Preview = {
       defaultTheme: 'light',
     }),
     (Story) => (
-      <div className="font-sans antialiased text-[#111]">
-        <Story />
-      </div>
+      <TooltipProvider>
+        <div className="font-sans antialiased bg-background text-foreground p-4">
+          <Story />
+        </div>
+      </TooltipProvider>
     ),
   ],
 }

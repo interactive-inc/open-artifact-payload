@@ -21,7 +21,9 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`hero_image_id\`) REFERENCES \`media\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`CREATE INDEX \`home_page_hero_hero_image_idx\` ON \`home_page\` (\`hero_image_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_hero_hero_image_idx\` ON \`home_page\` (\`hero_image_id\`);`,
+  )
   await db.run(sql`CREATE TABLE \`home_page_rels\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`order\` integer,
@@ -33,9 +35,13 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   `)
   await db.run(sql`CREATE INDEX \`home_page_rels_order_idx\` ON \`home_page_rels\` (\`order\`);`)
-  await db.run(sql`CREATE INDEX \`home_page_rels_parent_idx\` ON \`home_page_rels\` (\`parent_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_rels_parent_idx\` ON \`home_page_rels\` (\`parent_id\`);`,
+  )
   await db.run(sql`CREATE INDEX \`home_page_rels_path_idx\` ON \`home_page_rels\` (\`path\`);`)
-  await db.run(sql`CREATE INDEX \`home_page_rels_news_id_idx\` ON \`home_page_rels\` (\`news_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_rels_news_id_idx\` ON \`home_page_rels\` (\`news_id\`);`,
+  )
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {

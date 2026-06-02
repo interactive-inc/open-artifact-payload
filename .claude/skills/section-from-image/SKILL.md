@@ -1,6 +1,6 @@
 ---
 name: section-from-image
-description: "スクリーンショット画像から案件固有セクションコンポーネントを生成する。画像からのセクション生成、Figma が無い案件でのコンポーネント生成時に使用。/section-from-image で呼び出す。"
+description: 'スクリーンショット画像から案件固有セクションコンポーネントを生成する。画像からのセクション生成、Figma が無い案件でのコンポーネント生成時に使用。/section-from-image で呼び出す。'
 user_invocable: true
 arguments: 画像ファイルパス
 ---

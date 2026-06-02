@@ -35,7 +35,9 @@ type BuildCoreConfigProps = {
 
 const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
 
-const isCLI = process.argv.some((value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')))
+const isCLI = process.argv.some((value) =>
+  realpath(value)?.endsWith(path.join('payload', 'bin.js')),
+)
 const isProduction = process.env.NODE_ENV === 'production'
 
 const createLog =
@@ -70,8 +72,7 @@ function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
 
 const defaultLivePreviewUrl: LivePreviewUrlFn = (args) => {
   const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
-  const toPreview = (urlPath: string) =>
-    `${base}/next/preview?path=${encodeURIComponent(urlPath)}`
+  const toPreview = (urlPath: string) => `${base}/next/preview?path=${encodeURIComponent(urlPath)}`
   if (args.globalConfig) {
     const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
     return toPreview(globalPath)
@@ -120,12 +121,8 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         description: 'Inta CMS 管理画面',
       },
       components: {
-        providers: [
-          '@/core/admin/theme/admin-theme-provider#AdminThemeProvider',
-        ],
-        afterNavLinks: [
-          '@/core/admin/nav/open-public-site#OpenPublicSite',
-        ],
+        providers: ['@/core/admin/theme/admin-theme-provider#AdminThemeProvider'],
+        afterNavLinks: ['@/core/admin/nav/open-public-site#OpenPublicSite'],
         views: {
           dashboard: {
             Component: '@/core/admin/dashboard/dashboard-view#DashboardView',

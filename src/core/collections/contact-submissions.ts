@@ -48,7 +48,8 @@ export const contactSubmissions: CollectionConfig = {
       label: 'お問い合わせ種別',
       type: 'text',
       admin: {
-        description: '案件固有の選択肢がある場合、project 側で select フィールドに差し替えてから利用する',
+        description:
+          '案件固有の選択肢がある場合、project 側で select フィールドに差し替えてから利用する',
       },
     },
     {

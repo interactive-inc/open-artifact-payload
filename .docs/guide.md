@@ -1,6 +1,5 @@
 # Inta CMS テンプレート 運用ガイド
 
-
 ## はじめに
 
 このガイドは Inta CMS テンプレートを使ってクライアント向けサイトを構築・運用する開発チーム向けのリファレンスです。テンプレートの目的、セットアップ手順、日常の開発フロー、コンテンツモデルの拡張方法、デプロイ手順、トラブルシューティングを網羅しています。
@@ -15,9 +14,7 @@
 - 言語: TypeScript 5.7 (`strict: true`、ただし `strictNullChecks: false`)
 - パッケージマネージャー: bun 1.3+
 
-
 ## セットアップ
-
 
 ### 前提条件
 
@@ -27,7 +24,6 @@
 - bun 1.3 以上
 - wrangler CLI (`bun add -g wrangler`)
 - Cloudflare アカウント (Workers Paid プランが必要)
-
 
 ### テンプレートからプロジェクトを作成
 
@@ -66,7 +62,6 @@ wrangler r2 bucket create <slug>
 
 作成後、`wrangler.jsonc` の `database_id` と `bucket_name` を実際の値に更新してください。
 
-
 ### プロジェクト概要の記入
 
 `.docs/project-brief.md` はプロジェクトの Single Source of Truth です。セットアップ完了後すぐに内容を埋めてください。Claude Code でスラッシュコマンドを実行する前に必ず記入済みの状態にしておく必要があります。
@@ -80,7 +75,6 @@ wrangler r2 bucket create <slug>
 - ダッシュボードタスク (優先度付き)
 - 汎用ページ機能の有効/無効
 - デザイン情報 (キーカラー、アクセント、フォント、雰囲気)
-
 
 ### 初回マイグレーションと起動
 
@@ -98,9 +92,7 @@ bun dev
 
 `http://localhost:3000/admin` にアクセスし、最初の管理者ユーザーを作成します。
 
-
 ## 日常の開発
-
 
 ### 開発コマンド一覧
 
@@ -124,7 +116,6 @@ bun run payload migrate              # ローカル D1 にマイグレーショ�
 bun run payload migrate:create <name>  # 新規マイグレーションファイル作成
 ```
 
-
 ### PAYLOAD_MIGRATING 環境変数
 
 通常の `bun dev` では、起動時に `pushDevSchema` が走り D1 スキーマを自動同期しようとします。すでにマイグレーション済みのローカル D1 に対してこれを実行すると、既存インデックスとの衝突で 500 エラーが発生します。
@@ -138,7 +129,6 @@ PAYLOAD_MIGRATING=true bun dev
 この変数を設定すると `pushDevSchema` がスキップされ、既存のスキーマをそのまま使用します。既存マイグレーションが適用済みのローカル環境での通常開発時はこのモードを使用してください。
 
 インデックス競合が発生した場合の解消手順は後述のトラブルシューティングを参照してください。
-
 
 ### 型の再生成
 
@@ -155,9 +145,7 @@ bun run generate:types
 
 どちらのファイルも手動で編集してはいけません。
 
-
 ## コンテンツモデルの追加・変更
-
 
 ### コレクションの追加
 
@@ -191,11 +179,10 @@ export default buildCoreConfig({
   dirname,
   features: projectFeatures,
   projectGlobals: [homeGlobal],
-  livePreviewCollections: ['news', 'tours'],  // 追加した slug を列挙
+  livePreviewCollections: ['news', 'tours'], // 追加した slug を列挙
   livePreviewGlobals: ['home-page'],
 })
 ```
-
 
 ### グローバルの追加
 
@@ -209,13 +196,12 @@ export default buildCoreConfig({
 export default buildCoreConfig({
   dirname,
   features: projectFeatures,
-  projectGlobals: [homeGlobal, accessGlobal],  // 追加したグローバルを列挙
-  livePreviewGlobals: ['home-page', 'access-page'],  // ライブプレビュー対象にする場合
+  projectGlobals: [homeGlobal, accessGlobal], // 追加したグローバルを列挙
+  livePreviewGlobals: ['home-page', 'access-page'], // ライブプレビュー対象にする場合
 })
 ```
 
 マイグレーションと型再生成を忘れずに実行してください。
-
 
 ### セクションコンポーネントの追加
 
@@ -237,7 +223,6 @@ Claude Code のスラッシュコマンドで生成するのが推奨です。
 - hex カラー直書き禁止、Tailwind のテーマトークンを使う (`bg-brand`, `text-accent` 等)
 - フロントエンドの `page.tsx` でセクションを組み立てる
 
-
 ### 汎用ページ機能の有効化
 
 `pages` コレクション (タイトル、スラッグ、リッチテキスト、SEO) を有効化する場合は `src/project/project-features.ts` を変更します。
@@ -250,9 +235,7 @@ export const projectFeatures: ProjectFeatures = {
 
 変更後、マイグレーションを作成して適用します。SEO プラグイン対象にする場合は `src/core/payload/config-base.ts` の `seoPlugin` の `collections` に `'pages'` を追加しますが、`src/core/` は読み取り専用のため、本体テンプレートリポジトリへの PR が必要です。
 
-
 ## 案件の骨格生成 (AI 活用)
-
 
 ### project-bootstrap スラッシュコマンド
 
@@ -271,7 +254,6 @@ export const projectFeatures: ProjectFeatures = {
 - `src/project/theme/tailwind.theme.ts` のカラー・フォント設定
 - `src/payload.config.ts` の更新
 
-
 ### プロジェクト概要の書き方
 
 `.docs/project-brief.md` の各セクションの意味は以下のとおりです。
@@ -288,9 +270,7 @@ export const projectFeatures: ProjectFeatures = {
 
 デザインセクションには、キーカラーの hex 値、アクセントカラー、フォント名、全体的な雰囲気を記入します。
 
-
 ## 管理画面のカスタマイズ
-
 
 ### ダッシュボードタスク
 
@@ -315,7 +295,6 @@ export const projectFeatures: ProjectFeatures = {
 - `settings` — 設定系
 - `helpCircle` — ヘルプ系
 
-
 ### ライブプレビュー
 
 ライブプレビューの仕組みは以下のとおりです。
@@ -329,14 +308,11 @@ export const projectFeatures: ProjectFeatures = {
 
 プレビュー URL の解決ロジックは `src/core/payload/config-base.ts` の `livePreview.url` 関数で定義されています。`home-page` グローバルは `/` に、その他のグローバルは `/<slug>` に、コレクションは `/<collectionSlug>/<documentSlug>` にマップされます。
 
-
 ### 公開サイトリンク
 
 管理画面サイドバーの「公開サイトを開く」リンクは `src/core/admin/nav/open-public-site.tsx` で定義されています。クリックすると `/next/exit-preview` 経由で Draft Mode が解除された状態でフロントエンドが開きます。
 
-
 ## テーマとデザイン
-
 
 ### Tailwind テーマトークン
 
@@ -367,16 +343,13 @@ export const projectTailwindTheme = {
 - `bg-accent` / `text-accent`
 - `font-sans` (日本語フォントスタック)
 
-
 ### 管理画面の日本語化
 
 i18n は `@payloadcms/translations/languages/ja` を使って自動的に日本語化されています。追加設定は不要です。
 
 フィールドのラベルは日本語で記述し、フィールド名 (プロパティ名) は lowerCamelCase で統一します。
 
-
 ## デプロイ
-
 
 ### Cloudflare Workers (デフォルト)
 
@@ -400,7 +373,6 @@ make deploy-db         # DB マイグレーションのみ
 - `d1_databases[0].database_id` — Cloudflare D1 データベース ID
 - `r2_buckets[0].bucket_name` — Cloudflare R2 バケット名
 
-
 ### 環境変数
 
 本番環境で設定が必要な環境変数は以下のとおりです。
@@ -414,7 +386,6 @@ make deploy-db         # DB マイグレーションのみ
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — CI やバックアップ自動化用 (任意)
 
 ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
-
 
 ### SSG モード (骨格)
 
@@ -430,9 +401,7 @@ SSG モード適用時の変更内容は以下のとおりです。
 
 SSG モードは現時点では骨格のみです。Payload REST API の接続先設定、rsync の詳細、本番での問い合わせ受付方法は第一案件で詰める予定です。詳細は `docs/superpowers/notes/ssg-mode.md` を参照してください。
 
-
 ## テンプレート更新の取り込み
-
 
 ### 更新手順
 
@@ -447,16 +416,13 @@ bun run test:int
 
 テストが通ることを確認してから案件ブランチにマージしてください。
 
-
 ### 注意点
 
 `src/core/` 配下のファイルは案件側で直接変更しないでください。テンプレート本体への改善はリポジトリに PR を送ります。
 
 マイグレーションの競合に注意してください。テンプレート側のマイグレーションと案件側のマイグレーションが衝突する場合は、マイグレーションファイルのタイムスタンプとスキーマ差分を慎重に確認してください。
 
-
 ## ディレクトリ構成
-
 
 ### src/core/ (テンプレート本体、読み取り専用)
 
@@ -471,7 +437,6 @@ bun run test:int
 - `src/core/lib/` — 共通ユーティリティ
 - `src/core/scripts/` — セットアップスクリプト群
 
-
 ### src/project/ (案件ごとにカスタマイズ)
 
 案件固有のファイルはすべて `src/project/` 配下に置きます。
@@ -483,7 +448,6 @@ bun run test:int
 - `src/project/theme/tailwind.theme.ts` — ブランドカラー・フォント定義
 - `src/project/project-features.ts` — 機能フラグ (`enableFreePages` 等)
 - `src/project/types.ts` — プロジェクト固有の型定義
-
 
 ### Payload 設定のエントリポイント
 
@@ -500,13 +464,11 @@ export default buildCoreConfig({
 })
 ```
 
-
 ### テスト
 
 - `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
 - `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seedUser.ts`、ログイン `login.ts`)
-
 
 ### GitHub Actions ワークフロー
 
@@ -534,9 +496,7 @@ gh workflow disable ci
 gh workflow disable backup-d1
 ```
 
-
 ## トラブルシューティング
-
 
 ### dev 起動で 500 エラー (CREATE INDEX 競合)
 
@@ -562,7 +522,6 @@ bun run payload migrate
 PAYLOAD_MIGRATING=true bun dev
 ```
 
-
 ### array フィールドのマイグレーションと autosave
 
 `type: 'array'` フィールドを持つ Global/Collection でマイグレーションを手動作成する場合、version 用の array サブテーブルに `_uuid` カラムを含める必要があります。Payload は version の array 項目を `_uuid` で追跡しているため、このカラムが欠落すると autosave/publish 時に array データが version テーブルにコピーされず、admin 画面で入力が消える現象が発生します。
@@ -580,13 +539,11 @@ dev-push で生成されるスキーマが正解なので、開発中は `PAYLOA
 - [Autosave with SQLite interfering with publishing (payloadcms/payload#8659)](https://github.com/payloadcms/payload/issues/8659)
 - [Migrations ドキュメント](https://payloadcms.com/docs/database/migrations) — dev-push とマイグレーションの併用は推奨されていない
 
-
 ### マイグレーション作成時の注意
 
 SQLite の二重引用符フォールバック問題に注意してください。生成されたマイグレーション SQL で `INSERT INTO ... SELECT` を使う場合、新規カラムに既存テーブルから値を SELECT すると文字列リテラルとして解釈される場合があります。
 
 既存データがある状態でカラムのデフォルト値を設定する場合は、`'published'` や `NULL` などのリテラルを明示的に指定してください。マイグレーションファイル (`src/migrations/` 配下) を必ず内容確認してから `bun run payload migrate` を実行してください。
-
 
 ### ライブプレビューが表示されない
 
@@ -597,14 +554,12 @@ SQLite の二重引用符フォールバック問題に注意してください�
 - 管理画面に管理者でログイン済みか (`/next/preview` は Payload 認証を通す)
 - `NEXT_PUBLIC_SERVER_URL` が正しい URL を指しているか
 
-
 ### 問い合わせフォームが動かない
 
 `TURNSTILE_SECRET_KEY` が未設定のときはローカル開発モードとして Turnstile 検証がスキップされます。フォームが送信できない場合は以下を確認してください。
 
 - 本番環境で `TURNSTILE_SECRET_KEY` と `TURNSTILE_SITE_KEY` が設定されているか
 - Turnstile のサイトキーがドメインに紐づいているか (Cloudflare ダッシュボードで確認)
-
 
 ### bun run build が失敗する
 

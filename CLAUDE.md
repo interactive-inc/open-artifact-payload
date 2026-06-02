@@ -15,21 +15,21 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 
 ## 技術スタック
 
-| カテゴリ | 技術 |
-|---|---|
-| CMS | Payload CMS 3.84 (`@payloadcms/db-d1-sqlite`) |
-| フレームワーク | Next.js 16 (App Router) |
-| 言語 | TypeScript 5.7 (`strict: true`) |
-| データベース | Cloudflare D1 (SQLite) |
-| ストレージ | Cloudflare R2 |
-| デプロイ | Cloudflare Workers (`@opennextjs/cloudflare`) |
-| リッチテキスト | Lexical Editor (`@payloadcms/richtext-lexical`) |
-| UI ライブラリ | React 19 |
-| パッケージマネージャー | bun 1.3+ |
-| リンター | ESLint (`next/core-web-vitals`, `next/typescript`) |
-| 統合テスト | vitest + jsdom + @testing-library/react (`tests/int/`) |
-| E2E テスト | Playwright / Chromium (`tests/e2e/`) |
-| UI カタログ | Storybook 10 (`@storybook/nextjs-vite`) / `.storybook/` |
+| カテゴリ               | 技術                                                    |
+| ---------------------- | ------------------------------------------------------- |
+| CMS                    | Payload CMS 3.84 (`@payloadcms/db-d1-sqlite`)           |
+| フレームワーク         | Next.js 16 (App Router)                                 |
+| 言語                   | TypeScript 5.7 (`strict: true`)                         |
+| データベース           | Cloudflare D1 (SQLite)                                  |
+| ストレージ             | Cloudflare R2                                           |
+| デプロイ               | Cloudflare Workers (`@opennextjs/cloudflare`)           |
+| リッチテキスト         | Lexical Editor (`@payloadcms/richtext-lexical`)         |
+| UI ライブラリ          | React 19                                                |
+| パッケージマネージャー | bun 1.3+                                                |
+| リンター               | ESLint (`next/core-web-vitals`, `next/typescript`)      |
+| 統合テスト             | vitest + jsdom + @testing-library/react (`tests/int/`)  |
+| E2E テスト             | Playwright / Chromium (`tests/e2e/`)                    |
+| UI カタログ            | Storybook 10 (`@storybook/nextjs-vite`) / `.storybook/` |
 
 ## ディレクトリ構成の要点
 

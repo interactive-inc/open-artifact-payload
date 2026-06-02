@@ -1,5 +1,5 @@
 ---
-paths: "**/*.value.ts"
+paths: '**/*.value.ts'
 ---
 
 # Value Object Instructions
@@ -15,7 +15,7 @@ paths: "**/*.value.ts"
 ## for Zod
 
 ```ts
-import { z } from "zod"
+import { z } from 'zod'
 
 const vValue = z.string().max(128)
 
@@ -31,7 +31,7 @@ export class NameValue {
 ## for Valibot
 
 ```ts
-import { type InferInput, maxLength, parse, pipe, string } from "valibot"
+import { type InferInput, maxLength, parse, pipe, string } from 'valibot'
 
 const vValue = pipe(string(), maxLength(128))
 
