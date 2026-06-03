@@ -31,7 +31,7 @@ export function FeaturedNewsSection(props: Props) {
 
   return (
     <section className="py-24 bg-muted/40">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="container-site">
         <div className="flex items-end justify-between mb-12">
           <h2 className="text-3xl md:text-4xl font-heading font-semibold tracking-tight">
             {props.data.heading ?? '最新のお知らせ'}

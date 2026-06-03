@@ -31,7 +31,7 @@ export function HeroSection(props: Props) {
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_50%_50%,transparent_30%,rgba(255,255,255,0.6)_100%)]"
       />
 
-      <div className="relative mx-auto w-full max-w-site px-6 md:px-12 lg:px-20">
+      <div className="relative container-site">
         <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight whitespace-pre-wrap md:text-8xl">
           {props.data.title}
         </h1>

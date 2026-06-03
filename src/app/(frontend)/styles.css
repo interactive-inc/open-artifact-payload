@@ -135,6 +135,22 @@
   }
 }
 
+/* サイト共通コンテナ。全ページ・全セクションで左右余白と最大幅を一致させる。 */
+@utility container-site {
+  margin-inline: auto;
+  width: 100%;
+  max-width: var(--container-site);
+  padding-inline: 1.5rem;
+
+  @media (width >= 768px) {
+    padding-inline: 3rem;
+  }
+
+  @media (width >= 1024px) {
+    padding-inline: 5rem;
+  }
+}
+
 @layer components {
   .prose {
     line-height: 1.75;

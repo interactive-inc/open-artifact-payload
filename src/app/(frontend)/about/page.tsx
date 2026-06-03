@@ -26,7 +26,7 @@ export default async function AboutPage() {
 
       {about.mission?.enabled ? (
         <section className="py-20">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="container-site">
             <div className="text-center mb-12">
               {about.mission.heading ? (
                 <h2 className="text-3xl font-bold tracking-tight">{about.mission.heading}</h2>
@@ -67,7 +67,7 @@ export default async function AboutPage() {
 
       {about.companyProfile?.enabled ? (
         <section className="py-20 bg-muted/30">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="container-site">
             {about.companyProfile.heading ? (
               <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
                 {about.companyProfile.heading}
@@ -97,7 +97,7 @@ export default async function AboutPage() {
 
       {about.members?.enabled ? (
         <section className="py-20">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="container-site">
             {about.members.heading ? (
               <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
                 {about.members.heading}

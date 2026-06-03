@@ -69,31 +69,33 @@ export function HomeGrid(props: Props) {
 
   return (
     <>
-      {/* KV：グリッドの外。画面いっぱいの全幅。コピーは右下に寄せてアートを見せる。 */}
-      <section className="relative isolate flex min-h-[92dvh] flex-col items-end justify-end overflow-hidden bg-white px-6 pb-16 pt-24 text-right md:px-12 md:pb-24 lg:px-20">
+      {/* KV：グリッドの外。背景は全幅、中身は container-site で他セクションと左右端を揃える。 */}
+      <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-white pb-16 pt-24 md:pb-24">
         <GenerativeCanvas variant="attractor" className="absolute inset-0 -z-20 size-full" />
         <div
           aria-hidden
           className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_80%,rgba(255,255,255,0.7)_0%,transparent_55%)]"
         />
-        <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-          SAMPLE, then ship.
-        </h1>
-        {props.hero.ctaLabel && props.hero.ctaHref ? (
-          <Button
-            nativeButton={false}
-            render={<Link href={props.hero.ctaHref} />}
-            size="lg"
-            className="mt-10 w-fit transition-transform active:scale-[0.98]"
-          >
-            {props.hero.ctaLabel}
-            <ArrowRightIcon data-icon="inline-end" />
-          </Button>
-        ) : null}
+        <div className="container-site flex flex-col items-end text-right">
+          <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+            SAMPLE, then ship.
+          </h1>
+          {props.hero.ctaLabel && props.hero.ctaHref ? (
+            <Button
+              nativeButton={false}
+              render={<Link href={props.hero.ctaHref} />}
+              size="lg"
+              className="mt-10 w-fit transition-transform active:scale-[0.98]"
+            >
+              {props.hero.ctaLabel}
+              <ArrowRightIcon data-icon="inline-end" />
+            </Button>
+          ) : null}
+        </div>
       </section>
 
-      {/* KV 以外：max-w-site の余白付きコンテナ内に 1 枚グリッドで配置 */}
-      <div className="mx-auto grid max-w-site grid-cols-2 gap-px bg-border px-6 md:grid-cols-6 md:px-12 lg:px-20">
+      {/* KV 以外：container-site の余白付きコンテナ内に 1 枚グリッドで配置 */}
+      <div className="container-site grid grid-cols-2 gap-px md:grid-cols-6">
         {/* 見出しタイル */}
       <div className="relative isolate col-span-2 flex flex-col justify-center overflow-hidden bg-background p-10 md:col-span-3 md:min-h-[15rem]">
         <GenerativeCanvas

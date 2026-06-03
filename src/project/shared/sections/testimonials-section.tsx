@@ -34,7 +34,7 @@ const testimonials: ReadonlyArray<Testimonial> = [
 export function TestimonialsSection() {
   return (
     <section className="bg-muted/40 py-24 md:py-32">
-      <div className="mx-auto max-w-6xl px-6">
+      <div className="container-site">
         <div className="mb-16 max-w-2xl">
           <p className="mb-3 text-sm font-medium tracking-wide text-primary">VOICE</p>
           <h2 className="text-3xl font-heading font-semibold tracking-tight md:text-4xl">

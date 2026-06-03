@@ -51,7 +51,7 @@ export default async function NewsDetailPage(props: Props) {
   return (
     <div>
       <section className="bg-muted/30 py-6">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="container-site">
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
@@ -70,7 +70,7 @@ export default async function NewsDetailPage(props: Props) {
         </div>
       </section>
 
-      <article className="max-w-4xl mx-auto px-6 py-12">
+      <article className="container-site py-12">
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             {item.category ? (

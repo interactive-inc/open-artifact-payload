@@ -19,7 +19,7 @@ export function PageHeader(props: Props) {
         aria-hidden
         className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_30%_60%,transparent_20%,rgba(255,255,255,0.7)_100%)]"
       />
-      <div className="relative mx-auto max-w-site px-6 pb-20 pt-36 md:px-12 md:pb-24 md:pt-40 lg:px-20">
+      <div className="container-site relative pb-20 pt-36 md:pb-24 md:pt-40">
         <h1 className="text-4xl font-bold tracking-tight md:text-6xl">{props.title}</h1>
         {props.description ? (
           <p className="mt-4 max-w-2xl text-lg text-muted-foreground md:text-xl">

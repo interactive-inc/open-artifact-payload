@@ -32,7 +32,7 @@ export default async function NewsListPage() {
       <PageHeader title="お知らせ" description="最新情報・プレスリリース" />
 
       <section className="py-16">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="container-site">
           {result.docs.length === 0 ? (
             <p className="text-center text-muted-foreground py-16">まだ投稿がありません。</p>
           ) : (

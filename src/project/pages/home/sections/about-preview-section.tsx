@@ -27,7 +27,7 @@ export function AboutPreviewSection(props: Props) {
 
   return (
     <section className="py-24 md:py-32">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="container-site">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 items-center">
           <div>
             {props.data.heading ? (

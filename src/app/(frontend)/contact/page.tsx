@@ -30,7 +30,7 @@ export default async function ContactPage() {
       <PageHeader title="お問い合わせ" description="サービスのご相談・お見積もりはお気軽にどうぞ" />
 
       <section className="py-16">
-        <div className="max-w-5xl mx-auto px-6">
+        <div className="container-site">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             <div className="md:col-span-2">
               <h2 className="text-xl font-bold mb-6">お問い合わせフォーム</h2>

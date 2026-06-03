@@ -42,7 +42,7 @@ export default async function FaqPage() {
       <PageHeader title="よくある質問" description="FAQ" />
 
       <section className="py-16">
-        <div className="max-w-4xl mx-auto px-6">
+        <div className="container-site">
           {result.docs.length === 0 ? (
             <p className="text-center text-muted-foreground py-16">FAQはまだありません。</p>
           ) : (

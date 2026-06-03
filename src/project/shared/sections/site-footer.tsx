@@ -18,7 +18,7 @@ export function SiteFooter(props: Props) {
 
   return (
     <footer className="bg-foreground text-background">
-      <div className="max-w-6xl mx-auto px-6 py-12">
+      <div className="container-site py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
             <Link href="/" className="inline-block mb-4">

@@ -27,7 +27,7 @@ export default async function ServicePage() {
 
       {service.services?.enabled ? (
         <section className="py-20">
-          <div className="max-w-6xl mx-auto px-6">
+          <div className="container-site">
             {service.services.heading ? (
               <h2 className="text-3xl font-bold tracking-tight text-center mb-16">
                 {service.services.heading}
@@ -87,7 +87,7 @@ export default async function ServicePage() {
 
       {service.process?.enabled ? (
         <section className="py-20 bg-muted/30">
-          <div className="max-w-4xl mx-auto px-6">
+          <div className="container-site">
             {service.process.heading ? (
               <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
                 {service.process.heading}
@@ -120,7 +120,7 @@ export default async function ServicePage() {
 
       {service.cta?.enabled ? (
         <section className="py-20 bg-foreground text-background">
-          <div className="max-w-4xl mx-auto px-6 text-center">
+          <div className="container-site text-center">
             {service.cta.heading ? (
               <h2 className="text-3xl font-bold tracking-tight mb-4">{service.cta.heading}</h2>
             ) : null}

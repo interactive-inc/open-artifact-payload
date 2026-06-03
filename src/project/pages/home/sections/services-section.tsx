@@ -29,7 +29,7 @@ export function ServicesSection(props: Props) {
 
   return (
     <section className="py-24 md:py-32">
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="container-site">
         <div className="mb-16 max-w-2xl">
           <p className="mb-3 text-sm font-medium tracking-wide text-muted-foreground">SERVICES</p>
           {props.data.heading ? (
