@@ -68,9 +68,9 @@ export function HomeGrid(props: Props) {
   )
 
   return (
-    <div className="mx-auto grid max-w-site grid-cols-2 gap-px bg-border md:grid-cols-6">
-      {/* KV：全幅・全高のヒーロー。コピーは右下に寄せてアートを見せる。 */}
-      <section className="relative isolate col-span-2 flex min-h-[92dvh] flex-col items-end justify-end overflow-hidden bg-white px-6 pb-16 pt-24 text-right md:col-span-6 md:px-12 md:pb-24 lg:px-20">
+    <>
+      {/* KV：グリッドの外。画面いっぱいの全幅。コピーは右下に寄せてアートを見せる。 */}
+      <section className="relative isolate flex min-h-[92dvh] flex-col items-end justify-end overflow-hidden bg-white px-6 pb-16 pt-24 text-right md:px-12 md:pb-24 lg:px-20">
         <GenerativeCanvas variant="attractor" className="absolute inset-0 -z-20 size-full" />
         <div
           aria-hidden
@@ -92,7 +92,9 @@ export function HomeGrid(props: Props) {
         ) : null}
       </section>
 
-      {/* 見出しタイル */}
+      {/* KV 以外：max-w-site の余白付きコンテナ内に 1 枚グリッドで配置 */}
+      <div className="mx-auto grid max-w-site grid-cols-2 gap-px bg-border px-6 md:grid-cols-6 md:px-12 lg:px-20">
+        {/* 見出しタイル */}
       <div className="relative isolate col-span-2 flex flex-col justify-center overflow-hidden bg-card p-10 md:col-span-3 md:min-h-[15rem]">
         <GenerativeCanvas
           variant="wang"
@@ -234,6 +236,7 @@ export function HomeGrid(props: Props) {
           ) : null}
         </section>
       ) : null}
-    </div>
+      </div>
+    </>
   )
 }
