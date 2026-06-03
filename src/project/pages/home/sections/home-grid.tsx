@@ -94,8 +94,9 @@ export function HomeGrid(props: Props) {
         </div>
       </section>
 
-      {/* KV 以外：container-site の余白付きコンテナ内に 1 枚グリッドで配置 */}
-      <div className="container-site grid grid-cols-2 gap-px md:grid-cols-6">
+      {/* KV 以外：container-site の余白付きコンテナ内に 1 枚グリッドで配置。
+          グリッド全体を border で囲む。モバイルでは左右 border を消す。 */}
+      <div className="container-site grid grid-cols-2 gap-px border-y border-border md:grid-cols-6 md:border-x">
         {/* 見出しタイル */}
       <div className="relative isolate col-span-2 flex flex-col justify-center overflow-hidden bg-background p-10 md:col-span-3 md:min-h-[15rem]">
         <GenerativeCanvas
