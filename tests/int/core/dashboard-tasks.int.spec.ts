@@ -15,4 +15,24 @@ describe('dashboard tasks', () => {
       }
     }
   })
+
+  it('全タスクが非空の id / label / href を持つ', () => {
+    for (const task of dashboardTasks) {
+      expect(task.id.length).toBeGreaterThan(0)
+      expect(task.label.length).toBeGreaterThan(0)
+      expect(task.href.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('href は管理画面内パス (/admin で始まる)', () => {
+    for (const task of dashboardTasks) {
+      expect(task.href.startsWith('/admin')).toBe(true)
+    }
+  })
+
+  it('id は kebab-case', () => {
+    for (const task of dashboardTasks) {
+      expect(task.id).toMatch(/^[a-z0-9]+(-[a-z0-9]+)*$/)
+    }
+  })
 })

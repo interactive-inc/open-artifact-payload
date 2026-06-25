@@ -38,15 +38,36 @@ const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(valu
 const isCLI = process.argv.some((value) => realpath(value)?.endsWith(path.join('payload', 'bin.js')))
 const isProduction = process.env.NODE_ENV === 'production'
 
+// 本番で PAYLOAD_SECRET が未設定のまま空文字で起動すると認証トークンの署名が無防備になる。
+// 空文字へ暗黙フォールバックせず、本番では明示的に起動を失敗させる。
+function resolveSecret(): string {
+  const secret = process.env.PAYLOAD_SECRET
+  if (secret) return secret
+  if (isProduction) {
+    throw new Error(
+      'PAYLOAD_SECRET is required in production. Register it with `wrangler secret put PAYLOAD_SECRET`.',
+    )
+  }
+  return ''
+}
+
 const createLog =
-  (level: string, fn: typeof console.log) => (objOrMsg: object | string, msg?: string) => {
-    if (typeof objOrMsg === 'string') {
-      fn(JSON.stringify({ level, msg: objOrMsg }))
-    } else {
-      fn(JSON.stringify({ level, ...objOrMsg, msg: msg ?? (objOrMsg as { msg?: string }).msg }))
+  (level: string, logFunction: typeof console.log) =>
+  (payloadOrMessage: object | string, message?: string) => {
+    if (typeof payloadOrMessage === 'string') {
+      logFunction(JSON.stringify({ level, msg: payloadOrMessage }))
+      return
     }
+    const existingMessage =
+      'msg' in payloadOrMessage && typeof payloadOrMessage.msg === 'string'
+        ? payloadOrMessage.msg
+        : undefined
+    logFunction(JSON.stringify({ level, ...payloadOrMessage, msg: message ?? existingMessage }))
   }
 
+// pino 互換の Logger 型に対するアダプタ。console ベースの構造化ロガーを
+// Payload の logger スロットに渡すため、外部型 (pino.Logger) との相互運用として
+// ここだけアサーションを許容する (ts.md の適用除外を参照)。
 const cloudflareLogger = {
   level: process.env.PAYLOAD_LOG_LEVEL || 'info',
   trace: createLog('trace', console.debug),
@@ -146,7 +167,7 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     collections: allCollections,
     globals: allGlobals,
     editor: lexicalEditor(),
-    secret: process.env.PAYLOAD_SECRET || '',
+    secret: resolveSecret(),
     typescript: {
       outputFile: path.resolve(props.dirname, 'payload-types.ts'),
     },
@@ -158,10 +179,9 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         collections: { media: true },
       }),
       seoPlugin({
-        // pages は features.enableFreePages が true の案件でのみ登録される。
-        // 有効化する際はこの collections リストに 'pages' を追加し、
-        // pages.ts の meta グループフィールド (手書き) と競合しないか確認すること。
-        collections: ['news'],
+        // pages は features.enableFreePages が true の案件でのみ登録されるため、
+        // SEO 対象コレクションもフラグに合わせて切り替える。
+        collections: props.features.enableFreePages ? ['news', 'pages'] : ['news'],
         globals: ['home-page'],
         uploadsCollection: 'media',
         generateTitle: (args) => {

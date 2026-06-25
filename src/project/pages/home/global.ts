@@ -1,10 +1,16 @@
 import type { GlobalConfig } from 'payload'
 
+import { buildGlobalRevalidateAfterChange } from '@/core/lib/revalidate/build-global-revalidate-after-change'
+
 export const homeGlobal: GlobalConfig = {
   slug: 'home-page',
   label: 'トップページ',
   admin: {
     group: 'コンテンツ',
+  },
+  hooks: {
+    // トップページ編集後に / を revalidate する。
+    afterChange: [buildGlobalRevalidateAfterChange(() => ['/'])],
   },
   fields: [
     {

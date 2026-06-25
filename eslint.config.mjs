@@ -30,6 +30,7 @@ export default defineConfig([
     'out/**',
     'build/**',
     'next-env.d.ts',
+    'cloudflare-env.d.ts',
     'src/payload-types.ts',
     'src/payload-generated-schema.ts',
     'src/migrations/**',

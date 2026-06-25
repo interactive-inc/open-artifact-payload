@@ -3,16 +3,50 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
-    --font-mono: 'Roboto Mono', monospace;
-  }
   html {
-    font-family: 'Noto Sans JP', 'Hiragino Sans', sans-serif;
-    background: #fff;
-    color: #111;
-    -webkit-font-smoothing: antialiased;
+    @apply bg-surface text-foreground font-sans antialiased;
   }
   body {
     margin: 0;
   }
+}
+
+/* Lexical リッチテキスト本文の最小スタイル。
+   Tailwind preflight で <h2>/<ul>/<li>/<p> のデフォルトスタイルがリセットされるため、
+   .ictms-lexical 配下に CMS 本文向けの見栄えを再付与する。 */
+.ictms-lexical h1 {
+  @apply mt-8 mb-4 text-3xl font-bold;
+}
+.ictms-lexical h2 {
+  @apply mt-8 mb-4 text-2xl font-bold;
+}
+.ictms-lexical h3 {
+  @apply mt-6 mb-3 text-xl font-bold;
+}
+.ictms-lexical p {
+  @apply my-4 leading-relaxed;
+}
+.ictms-lexical ul {
+  @apply my-4 ml-6 list-disc;
+}
+.ictms-lexical ol {
+  @apply my-4 ml-6 list-decimal;
+}
+.ictms-lexical li {
+  @apply my-1;
+}
+.ictms-lexical a {
+  @apply text-brand underline hover:text-brand-dark;
+}
+.ictms-lexical blockquote {
+  @apply my-4 border-l-4 border-border pl-4 italic text-muted;
+}
+.ictms-lexical strong {
+  @apply font-bold;
+}
+.ictms-lexical em {
+  @apply italic;
+}
+.ictms-lexical code {
+  @apply rounded bg-neutral-100 px-1 py-0.5 text-sm;
 }

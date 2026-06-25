@@ -1,36 +1,21 @@
 import React from 'react'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import { RichText as PayloadRichText } from '@payloadcms/richtext-lexical/react'
 
 type Props = {
-  value: SerializedEditorState | null | undefined
+  data: SerializedEditorState | null | undefined
 }
 
-export { LexicalRenderer as RichText }
-
-export function LexicalRenderer(props: Props) {
-  if (!props.value) return null
-  const blocks = props.value.root?.children ?? []
+/**
+ * Lexical のシリアライズ済みエディタ状態を HTML にレンダリングする。
+ * Payload 公式コンバータ (@payloadcms/richtext-lexical/react) に委譲しており、
+ * 段落・見出し・リスト・リンク・装飾など全ノードを正しく描画する。
+ */
+export function RichText(props: Props) {
+  if (!props.data) return null
   return (
     <div className="ictms-lexical">
-      {blocks.map((block, index) => renderBlock(block, index))}
+      <PayloadRichText data={props.data} />
     </div>
   )
-}
-
-function renderBlock(block: unknown, index: number): React.ReactNode {
-  if (!block || typeof block !== 'object') return null
-  const node = block as { type?: string; text?: string; children?: unknown[] }
-  if (node.type === 'paragraph') {
-    return (
-      <p key={index}>
-        {node.children?.map((child, childIndex) => {
-          if (typeof child === 'object' && child && 'text' in child) {
-            return <span key={childIndex}>{(child as { text: string }).text}</span>
-          }
-          return null
-        })}
-      </p>
-    )
-  }
-  return null
 }

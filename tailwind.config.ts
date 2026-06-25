@@ -1,5 +1,6 @@
 import type { Config } from 'tailwindcss'
 import { projectTailwindTheme } from './src/project/theme/tailwind.theme'
+import { themeTokens } from './src/core/lib/theme-tokens'
 
 const config: Config = {
   content: [
@@ -11,7 +12,20 @@ const config: Config = {
     './.storybook/**/*.{ts,tsx}',
   ],
   theme: {
-    extend: projectTailwindTheme,
+    extend: {
+      colors: projectTailwindTheme.colors,
+      fontFamily: projectTailwindTheme.fontFamily,
+      // theme-tokens.ts を Tailwind に配線する (セクション余白・コンテナ幅の単一の真実源)
+      spacing: {
+        section: themeTokens.spacing.sectionY,
+        'section-sm': themeTokens.spacing.sectionYMobile,
+      },
+      maxWidth: {
+        container: themeTokens.container.maxWidth,
+        wide: '896px',
+        prose: '768px',
+      },
+    },
   },
   plugins: [],
 }

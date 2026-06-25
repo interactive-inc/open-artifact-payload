@@ -1,7 +1,7 @@
 import type { Page } from '@playwright/test'
 import { expect } from '@playwright/test'
 
-export interface LoginOptions {
+type Props = {
   page: Page
   serverURL?: string
   user: {
@@ -13,19 +13,16 @@ export interface LoginOptions {
 /**
  * Logs the user into the admin panel via the login page.
  */
-export async function login({
-  page,
-  serverURL = 'http://localhost:3000',
-  user,
-}: LoginOptions): Promise<void> {
-  await page.goto(`${serverURL}/admin/login`)
+export async function login(props: Props): Promise<void> {
+  const serverURL = props.serverURL ?? 'http://localhost:3000'
+  await props.page.goto(`${serverURL}/admin/login`)
 
-  await page.fill('#field-email', user.email)
-  await page.fill('#field-password', user.password)
-  await page.click('button[type="submit"]')
+  await props.page.fill('#field-email', props.user.email)
+  await props.page.fill('#field-password', props.user.password)
+  await props.page.click('button[type="submit"]')
 
-  await page.waitForURL(`${serverURL}/admin`)
+  await props.page.waitForURL(`${serverURL}/admin`)
 
-  const dashboardArtifact = page.locator('span[title="Dashboard"]')
+  const dashboardArtifact = props.page.locator('span[title="Dashboard"]')
   await expect(dashboardArtifact).toBeVisible()
 }

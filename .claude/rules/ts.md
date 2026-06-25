@@ -23,6 +23,16 @@ Multiple variables and types can be exported in these files:
 - **/types.ts - Type definitions
 - **/utils.ts - Utility functions
 
+### Exceptions (適用除外)
+
+These rules are scoped to hand-written product code. The following are out of scope to avoid fighting frameworks and tooling:
+
+- **Auto-generated files**: `src/payload-types.ts`, `cloudflare-env.d.ts`, `src/migrations/index.ts`, and the Payload-generated routes/layout under `src/app/(payload)/` (e.g. `admin/[[...segments]]`, `api/[...]`). Do not hand-edit these; the `index.ts` / multiple-export / assertion rules do not apply.
+- **React hook tuples**: `useState` / `useActionState` / `useReducer` return values may be array-destructured (`const [state, setState] = useState()`), since index access is strictly less readable and non-idiomatic.
+- **Test files** (`tests/**`): `let` for `beforeAll`-assigned fixtures, multiple exports in `tests/helpers/*`, and framework-idiomatic destructuring (Playwright `async ({ page }) =>`, Testing Library `const { getByRole } = render(...)`) are allowed. Type assertions are also allowed in tests solely to construct partial mocks of framework objects whose full type is impractical to satisfy (e.g. Payload hook args / `PayloadRequest`).
+- **External library type interop**: when adapting our own object to a third-party type whose full structural shape is impractical to satisfy (e.g. the pino `Logger` slot in `config-base.ts`), a single documented assertion is allowed with an explanatory comment.
+- **Storybook stories** (`**/*.stories.tsx`): the Component Story Format requires `export default meta` plus one named export per story, so multiple exports per file are allowed.
+
 ## Type System
 
 - Use "type" instead of "interface"

@@ -56,8 +56,9 @@ jobs:
 export async function applySsgMode(): Promise<void> {
   await rm(path.join(ROOT, 'src/app/(payload)'), { recursive: true, force: true })
   await rm(path.join(ROOT, 'src/app/(frontend)/contact'), { recursive: true, force: true })
-  await rm(path.join(ROOT, 'src/core/frontend/forms/contact-form.tsx'), { force: true })
-  await rm(path.join(ROOT, 'src/core/frontend/forms/contact-form-action.ts'), { force: true })
+  // 問い合わせフォーム関連は SSG モードでは使わないため、ディレクトリごと削除する。
+  // (個別に rm すると新規追加された submit-contact-form.ts / types.ts などが取り残されてビルドが壊れる)
+  await rm(path.join(ROOT, 'src/core/frontend/forms'), { recursive: true, force: true })
   await rm(path.join(ROOT, 'wrangler.jsonc'), { force: true })
   await ensureOutputExport()
   await ensureUnoptimizedImages()

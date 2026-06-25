@@ -25,7 +25,8 @@
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "setup:project": "cross-env NODE_OPTIONS=--no-deprecation tsx src/core/scripts/setup-project.ts",
     "test:ci": "bun run lint && bun run test:int",
-    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
+    "test:int:migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_SECRET=test-secret-do-not-use-in-production payload migrate",
+    "test:int": "bun run test:int:migrate && cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
     "@opennextjs/cloudflare": "^1.19.11",

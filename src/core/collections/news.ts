@@ -2,16 +2,15 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAuthenticated } from '@/core/lib/access/is-authenticated'
-import {
-  buildCollectionRevalidateAfterChange,
-  buildCollectionRevalidateAfterDelete,
-} from '@/core/lib/revalidate/build-revalidate-hooks'
+import { publishedOrAuthenticated } from '@/core/lib/access/published-or-authenticated'
+import { buildCollectionRevalidateAfterChange } from '@/core/lib/revalidate/build-collection-revalidate-after-change'
+import { buildCollectionRevalidateAfterDelete } from '@/core/lib/revalidate/build-collection-revalidate-after-delete'
 
 type NewsDoc = { slug?: string }
 
-const resolvePaths = ({ doc }: { doc: NewsDoc }): string[] => {
+const resolvePaths = (props: { doc: NewsDoc }): string[] => {
   const paths = ['/news']
-  if (doc.slug) paths.push(`/news/${doc.slug}`)
+  if (props.doc.slug) paths.push(`/news/${props.doc.slug}`)
   return paths
 }
 
@@ -27,8 +26,8 @@ export const news: CollectionConfig = {
     group: 'コンテンツ',
   },
   access: {
-    // 公開コンテンツは未ログインでも閲覧可。編集者以上で更新可。削除は admin のみ。
-    read: () => true,
+    // 未ログイン訪問者には _status='published' のみ。エディタ/管理者は下書きも閲覧可。
+    read: publishedOrAuthenticated,
     create: isAuthenticated,
     update: isAuthenticated,
     delete: isAdmin,

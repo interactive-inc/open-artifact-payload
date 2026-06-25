@@ -2,13 +2,15 @@ import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
 
-import { resolveMediaAlt, resolveMediaUrl } from '@/core/lib/media'
+import type { MediaOrId } from '@/core/lib/media/types'
+import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
+import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 
 type HeroData = {
   enabled?: boolean | null
   title?: string | null
   subtitle?: string | null
-  image?: unknown
+  image?: MediaOrId
   ctaLabel?: string | null
   ctaHref?: string | null
 }
@@ -19,12 +21,12 @@ type Props = {
 
 export function HeroSection(props: Props) {
   if (!props.data.enabled) return null
-  const imageUrl = resolveMediaUrl(props.data.image as never)
-  const imageAlt = resolveMediaAlt(props.data.image as never) ?? ''
+  const imageUrl = resolveMediaUrl(props.data.image)
+  const imageAlt = resolveMediaAlt(props.data.image) ?? ''
 
   return (
-    <section className="relative py-24 bg-brand text-white">
-      <div className="max-w-6xl mx-auto px-6">
+    <section className="relative py-section bg-brand text-white">
+      <div className="max-w-container mx-auto px-6">
         {imageUrl ? (
           <div className="absolute inset-0 opacity-30">
             <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />

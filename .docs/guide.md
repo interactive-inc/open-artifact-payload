@@ -7,12 +7,12 @@
 
 技術スタックの概要は以下のとおりです。
 
-- CMS: Payload CMS 3.82.1 (`@payloadcms/db-d1-sqlite`)
-- フレームワーク: Next.js 15.4.11 (App Router)
+- CMS: Payload CMS 3.84.1 (`@payloadcms/db-d1-sqlite`)
+- フレームワーク: Next.js 16.2.6 (App Router)
 - データベース: Cloudflare D1 (SQLite)
 - ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
-- 言語: TypeScript 5.7 (`strict: true`、ただし `strictNullChecks: false`)
+- 言語: TypeScript 5.7 (`strict: true`)
 - パッケージマネージャー: bun 1.3+
 
 
@@ -248,7 +248,9 @@ export const projectFeatures: ProjectFeatures = {
 }
 ```
 
-変更後、マイグレーションを作成して適用します。SEO プラグイン対象にする場合は `src/core/payload/config-base.ts` の `seoPlugin` の `collections` に `'pages'` を追加しますが、`src/core/` は読み取り専用のため、本体テンプレートリポジトリへの PR が必要です。
+変更後、マイグレーションを作成して適用し、`bun run generate:types` で型を再生成します。SEO プラグインは `enableFreePages` が true のとき自動的に `pages` を対象に含めるため、追加設定は不要です (`config-base.ts` がフラグに応じて切り替えます)。
+
+フロントで固定ページを表示するには、対応する `src/app/(frontend)/[slug]/page.tsx` ルートを案件側で追加してください (テンプレートには同梱していません。`enableFreePages` が false のときは `pages` コレクション型が生成されず、ルートを同梱すると型エラーになるため)。ルートは `payload.find({ collection: 'pages', where: { slug: { equals: params.slug } } })` で取得し、`RichText` で本文を、`generateMetadata` で `doc.meta` を描画します。実装例は `src/app/(frontend)/news/[slug]/page.tsx` を参考にしてください。
 
 
 ## 案件の骨格生成 (AI 活用)
@@ -405,13 +407,14 @@ CLOUDFLARE_ENV=production bun run deploy:database   # DB マイグレーショ�
 
 - `PAYLOAD_SECRET` — 必須。`openssl rand -hex 32` で生成した 32 バイトのランダム文字列
 - `NEXT_PUBLIC_SERVER_URL` — ライブプレビューの URL 解決に使用。デプロイ先の URL を設定
-- `TURNSTILE_SECRET_KEY` — 問い合わせフォームの Cloudflare Turnstile 検証用
-- `TURNSTILE_SITE_KEY` — 同上、フロントエンド用
+- `TURNSTILE_SECRET_KEY` — 問い合わせフォームの Cloudflare Turnstile 検証用 (サーバー側シークレット)
 - `RESEND_API_KEY` — メール通知 (任意)
 - `SUPPORT_EMAIL` — ダッシュボードのヘルプリンク用 (任意)
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — CI やバックアップ自動化用 (任意)
 
 ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
+
+Turnstile の公開サイトキー (フロントエンド用) は環境変数ではなく、管理画面の「サイト設定」グローバルの `turnstileSiteKey` で設定します。サイトキーが設定されると問い合わせフォームが Turnstile ウィジェットを読み込みます。
 
 
 ### SSG モード (骨格)
@@ -426,7 +429,7 @@ SSG モード適用時の変更内容は以下のとおりです。
 - `next.config.ts` に `output: 'export'` と `unoptimized: true` を追加
 - `.github/workflows/deploy-static.yml` を生成
 
-SSG モードは現時点では骨格のみです。Payload REST API の接続先設定、rsync の詳細、本番での問い合わせ受付方法は第一案件で詰める予定です。詳細は `docs/superpowers/notes/ssg-mode.md` を参照してください。
+SSG モードは現時点では骨格のみです。Payload REST API の接続先設定、rsync の詳細、本番での問い合わせ受付方法は第一案件で詰める予定です。
 
 
 ## テンプレート更新の取り込み
@@ -522,7 +525,7 @@ gh workflow enable backup-d1
 
 CI を動かすには GitHub リポジトリの Settings > Secrets に以下を設定します。
 
-- `PAYLOAD_SECRET` — Payload 用シークレット (未設定でもフォールバック値で lint/test は通る)
+- `PAYLOAD_SECRET` — Payload 用シークレット (統合テストは vitest.setup.ts のテスト専用フォールバックで動作する。本番は未設定だと起動失敗する)
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — バックアップワークフロー用 (ci.yml には不要)
 
 無効化するには以下のコマンドです。

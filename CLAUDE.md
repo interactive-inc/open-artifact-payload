@@ -42,8 +42,9 @@ src/
     globals/site-settings.ts  サイト設定 (グローバル)
     payload/config-base.ts    buildCoreConfig（案件側 payload.config.ts から呼ばれる）
     sections/                 汎用セクション (hero / featured-news / rich-text / cta)
-    frontend/                 共通フロントエンド資産 (RefreshRouteOnSave 等)
-    lib/                      media / lexical / theme-tokens
+    frontend/                 共通フロントエンド資産 (components/RefreshRouteOnSave, forms/問い合わせフォーム)
+    lib/                      media/ (画像URL解決) / lexical (RichText) / revalidate/ / format-news-date / build-metadata / load-site-settings / access/ / email/ / theme-tokens
+    test-support/             Storybook・テスト用の型付きサンプルデータ (本番バンドルには含まれない)
     admin/                    管理画面カスタム
   project/                    案件固有。新規ファイルは原則ここに
     pages/                    ページ単位のコロケーション
@@ -61,7 +62,7 @@ src/
     collections/              案件固有コレクション (news/faq 以外)
     theme/tailwind.theme.ts   Tailwind テーマトークン
     admin/                    管理画面カスタム (ダッシュボードタスク等)
-  app/(frontend)/             フロントエンドページ (ルート / news / faq / [slug])
+  app/(frontend)/             フロントエンドページ (ルート / news / faq / contact)。汎用ページ [slug] は enableFreePages 有効時に案件側で追加
   app/(payload)/              Payload の管理画面 / REST / GraphQL
 .storybook/                   Storybook 設定 (main.ts / preview.tsx)
 tests/int/                    統合テスト (vitest)
@@ -134,7 +135,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - Next.js 16 で `next lint` は削除されたため、`bun run lint` は `eslint .` を直接呼ぶ。Turbopack デフォルトの仕様で webpack 設定が必要な dev/build には `--webpack` を付けて回避している。
 - ユーザーは `admin` / `editor` のロールを持つ。コレクションの削除など破壊的操作は admin のみ可能。共通アクセス制御は `src/core/lib/access/` 配下を参照。
 - 問い合わせフォーム送信時の通知メールは Resend を使う。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` がすべて設定されたときのみ送信、失敗してもフォーム保存はブロックしない。
-- ニュース / ページ更新後は `src/core/lib/revalidate/build-revalidate-hooks.ts` 経由で対象パスを `revalidatePath()` する。案件側で新コレクションを追加した場合も同 hook を使うこと。
+- ニュース / ページ更新後は `src/core/lib/revalidate/build-collection-revalidate-after-change.ts` などの hook ビルダー経由で対象パスを `revalidatePath()` する (削除側は `build-collection-revalidate-after-delete.ts`、グローバルは `build-global-revalidate-after-change.ts`)。案件側で新コレクションを追加した場合も同 hook を使うこと。
 
 ## パスエイリアス
 
@@ -150,7 +151,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - フィールドラベルは日本語、フィールド名は lowerCamelCase
 - hex 直書き禁止、Tailwind の theme トークンを使う
 - 生成後は必ず `bun run lint` と `bun run generate:types` を流す
-- 案件の Single Source of Truth は `.docs/project-brief.md`。ここを先に読み込んでから作業する
+- 案件の Single Source of Truth は `.docs/project-brief.md`。ここを先に読み込んでから作業する（テンプレート直後は未生成。`bun run setup:project` が `.docs/project-brief.template.md` から生成する）
 
 ## 参照
 

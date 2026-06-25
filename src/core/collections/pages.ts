@@ -2,16 +2,15 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAuthenticated } from '@/core/lib/access/is-authenticated'
-import {
-  buildCollectionRevalidateAfterChange,
-  buildCollectionRevalidateAfterDelete,
-} from '@/core/lib/revalidate/build-revalidate-hooks'
+import { publishedOrAuthenticated } from '@/core/lib/access/published-or-authenticated'
+import { buildCollectionRevalidateAfterChange } from '@/core/lib/revalidate/build-collection-revalidate-after-change'
+import { buildCollectionRevalidateAfterDelete } from '@/core/lib/revalidate/build-collection-revalidate-after-delete'
 
 type PageDoc = { slug?: string }
 
-const resolvePaths = ({ doc }: { doc: PageDoc }): string[] => {
-  if (!doc.slug) return []
-  return [`/${doc.slug}`]
+const resolvePaths = (props: { doc: PageDoc }): string[] => {
+  if (!props.doc.slug) return []
+  return [`/${props.doc.slug}`]
 }
 
 export const pages: CollectionConfig = {
@@ -26,7 +25,8 @@ export const pages: CollectionConfig = {
     group: 'コンテンツ',
   },
   access: {
-    read: () => true,
+    // 未ログイン訪問者には _status='published' のみ。エディタ/管理者は下書きも閲覧可。
+    read: publishedOrAuthenticated,
     create: isAuthenticated,
     update: isAuthenticated,
     delete: isAdmin,
@@ -50,15 +50,7 @@ export const pages: CollectionConfig = {
       label: '本文',
       type: 'richText',
     },
-    {
-      name: 'meta',
-      label: 'SEO 設定',
-      type: 'group',
-      fields: [
-        { name: 'title', label: 'メタタイトル', type: 'text' },
-        { name: 'description', label: 'メタ説明', type: 'textarea' },
-      ],
-    },
+    // SEO の meta フィールドは seoPlugin が付与する (config-base の enableFreePages 分岐参照)。
   ],
   versions: {
     drafts: {

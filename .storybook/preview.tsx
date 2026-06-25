@@ -27,7 +27,7 @@ const preview: Preview = {
       defaultTheme: 'light',
     }),
     (Story) => (
-      <div className="font-sans antialiased text-[#111]">
+      <div className="font-sans antialiased text-foreground">
         <Story />
       </div>
     ),

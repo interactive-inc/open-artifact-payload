@@ -14,8 +14,8 @@ type Props = {
 export function CtaSection(props: Props) {
   if (!props.data.enabled) return null
   return (
-    <section className="py-20 bg-brand-dark text-white">
-      <div className="max-w-4xl mx-auto px-6 text-center">
+    <section className="py-section-sm md:py-section bg-brand-dark text-white">
+      <div className="max-w-wide mx-auto px-6 text-center">
         {props.data.heading ? (
           <h2 className="text-3xl font-bold mb-4">{props.data.heading}</h2>
         ) : null}
