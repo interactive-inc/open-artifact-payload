@@ -20,7 +20,9 @@
     "build-storybook": "storybook build",
     "test": "bun run test:int && bun run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
-    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vp test run",
+    "test:ci": "bun run lint && bun run test:int",
+    "test:int:migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_SECRET=test-secret-do-not-use-in-production payload migrate",
+    "test:int": "bun run test:int:migrate && cross-env NODE_OPTIONS=--no-deprecation vp test run",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx src/project/scripts/seed.ts",
     "setup:project": "cross-env NODE_OPTIONS=--no-deprecation tsx src/core/scripts/setup-project.ts"
   },

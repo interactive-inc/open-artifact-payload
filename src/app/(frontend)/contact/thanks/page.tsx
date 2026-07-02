@@ -2,6 +2,8 @@ import Link from 'next/link'
 import React from 'react'
 import { CheckCircleIcon } from 'lucide-react'
 
+import type { Metadata } from 'next'
+
 import { Button } from '@/project/shared/ui/button'
 import {
   Card,
@@ -12,6 +14,10 @@ import {
   CardTitle,
 } from '@/project/shared/ui/card'
 import '../../styles.css'
+
+export const metadata: Metadata = {
+  title: 'お問い合わせありがとうございました',
+}
 
 export default function ThanksPage() {
   return (

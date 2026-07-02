@@ -2,18 +2,10 @@ import Link from 'next/link'
 import React from 'react'
 
 import type { News } from '@/payload-types'
+import { formatNewsDate } from '@/core/lib/format-news-date'
 
 type Props = {
   items: News[]
-}
-
-function formatDate(value: string) {
-  const date = new Date(value)
-  return date.toLocaleDateString('ja-JP', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  })
 }
 
 export function RecentUpdates(props: Props) {
@@ -30,14 +22,19 @@ export function RecentUpdates(props: Props) {
     <section className="ictms-dashboard__recent">
       <h2 className="ictms-dashboard__section-title">最近の更新</h2>
       <ul className="ictms-dashboard__recent-list">
-        {props.items.map((item) => (
-          <li key={item.id} className="ictms-dashboard__recent-item">
-            <Link href={`/admin/collections/news/${item.id}`}>
-              <span className="ictms-dashboard__recent-date">{formatDate(item.updatedAt)}</span>
-              <span className="ictms-dashboard__recent-title">{item.title}</span>
-            </Link>
-          </li>
-        ))}
+        {props.items.map((item) => {
+          const updatedAt = formatNewsDate(item.updatedAt)
+          return (
+            <li key={item.id} className="ictms-dashboard__recent-item">
+              <Link href={`/admin/collections/news/${item.id}`}>
+                {updatedAt ? (
+                  <span className="ictms-dashboard__recent-date">{updatedAt.label}</span>
+                ) : null}
+                <span className="ictms-dashboard__recent-title">{item.title}</span>
+              </Link>
+            </li>
+          )
+        })}
       </ul>
     </section>
   )

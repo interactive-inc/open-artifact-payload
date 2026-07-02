@@ -1,12 +1,12 @@
-import { getPayload } from 'payload'
 import React from 'react'
 
 import type { Metadata } from 'next'
 
-import config from '@/payload.config'
+import { loadSiteSettings } from '@/core/lib/load-site-settings'
 import { RefreshRouteOnSave } from '@/core/frontend/components/refresh-route-on-save'
 import { SiteHeader } from '@/project/shared/sections/site-header'
 import { SiteFooter } from '@/project/shared/sections/site-footer'
+import { SiteAnalytics } from '@/project/shared/components/site-analytics'
 import { TooltipProvider } from '@/project/shared/ui/tooltip'
 import { Toaster } from '@/project/shared/ui/sonner'
 import './styles.css'
@@ -16,9 +16,7 @@ type Props = {
 }
 
 export async function generateMetadata(): Promise<Metadata> {
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const settings = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
+  const settings = await loadSiteSettings()
 
   return {
     title: {
@@ -28,14 +26,17 @@ export async function generateMetadata(): Promise<Metadata> {
   }
 }
 
+// フロントは D1 由来のコンテンツ (サイト設定・各ページ) をリクエスト時に取得するため、
+// ビルド時のプリレンダリング (D1 非接続) を避けて動的レンダリングに統一する。
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout(props: Props) {
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const settings = await payload.findGlobal({ slug: 'site-settings', depth: 1 })
+  const settings = await loadSiteSettings()
 
   return (
     <html lang="ja">
       <body className="flex flex-col min-h-screen bg-background text-foreground">
+        {/* ライブプレビューを成立させるため、ドラフトモード判定なしで常時マウントする */}
         <RefreshRouteOnSave />
         <TooltipProvider>
           <SiteHeader settings={settings} />
@@ -43,6 +44,7 @@ export default async function RootLayout(props: Props) {
           <SiteFooter settings={settings} />
         </TooltipProvider>
         <Toaster />
+        <SiteAnalytics gaTagId={settings.analytics?.gaTagId} gtmId={settings.analytics?.gtmId} />
       </body>
     </html>
   )

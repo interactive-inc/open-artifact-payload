@@ -2,10 +2,8 @@ import type { CollectionConfig } from 'payload'
 
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAuthenticated } from '@/core/lib/access/is-authenticated'
-import {
-  buildCollectionRevalidateAfterChange,
-  buildCollectionRevalidateAfterDelete,
-} from '@/core/lib/revalidate/build-revalidate-hooks'
+import { buildCollectionRevalidateAfterChange } from '@/core/lib/revalidate/build-collection-revalidate-after-change'
+import { buildCollectionRevalidateAfterDelete } from '@/core/lib/revalidate/build-collection-revalidate-after-delete'
 
 type WorkDoc = { slug?: string }
 

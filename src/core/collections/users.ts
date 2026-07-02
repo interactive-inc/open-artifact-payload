@@ -23,7 +23,7 @@ export const users: CollectionConfig = {
     update: isAdmin,
     delete: isAdmin,
     // admin プロパティは boolean | Promise<boolean> しか返せない仕様のため直書き
-    admin: ({ req }) => Boolean(req.user),
+    admin: (args) => Boolean(args.req.user),
   },
   fields: [
     {

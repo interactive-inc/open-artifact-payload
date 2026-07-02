@@ -69,3 +69,13 @@ export function run() {
 ## コメント
 
 - 動作が予測しにくい場合のみ。@param, @return 禁止
+
+## 適用除外
+
+上記ルールは手書きのプロダクトコードが対象。以下はフレームワークやツールと衝突するため対象外。
+
+- 自動生成ファイル: `src/payload-types.ts` / `cloudflare-env.d.ts` / `src/migrations/index.ts` / `src/app/(payload)/` 配下の Payload 生成ルート。手編集禁止、index.ts・複数 export・assertion のルールは適用しない
+- React フックのタプル: `useState` / `useActionState` / `useReducer` の戻り値は配列 destructuring 可（index アクセスは非イディオム的で可読性が落ちる）
+- テストファイル (`tests/**`): `beforeAll` で代入するフィクスチャの `let`、`tests/helpers/*` の複数 export、フレームワーク慣習の destructuring（Playwright の `async ({ page }) =>` 等）は許可。フレームワークオブジェクトの部分モック構築に限り型 assertion も許可（Payload hook 引数 / `PayloadRequest` 等）
+- 外部ライブラリ型との接続: サードパーティ型の完全な構造を満たすのが非現実的な場合（`config-base.ts` の pino `Logger` 等）、説明コメント付きの assertion を1箇所だけ許可
+- Storybook ストーリー (`**/*.stories.tsx`): CSF の仕様上 `export default meta` + ストーリーごとの named export が必要なため、複数 export を許可

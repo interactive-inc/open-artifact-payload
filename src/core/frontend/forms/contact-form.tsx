@@ -1,144 +1,104 @@
 'use client'
 
-import React, { useState } from 'react'
+import Script from 'next/script'
+import React, { useActionState } from 'react'
 
-import { submitContact } from './contact-form-action'
-import { Button } from '@/project/shared/ui/button'
-import { Input } from '@/project/shared/ui/input'
-import { Textarea } from '@/project/shared/ui/textarea'
-import { Label } from '@/project/shared/ui/label'
-import { NativeSelect } from '@/project/shared/ui/native-select'
-import { Alert, AlertDescription } from '@/project/shared/ui/alert'
-import { Spinner } from '@/project/shared/ui/spinner'
-import { AlertCircleIcon } from 'lucide-react'
+import { submitContactForm } from '@/core/frontend/forms/submit-contact-form'
+import type { ContactSubmitResult } from '@/core/frontend/forms/types'
 
 type InquiryOption = { value: string; label: string }
 
 type Props = {
   turnstileSiteKey?: string
+  /**
+   * お問い合わせ種別の選択肢。指定すると select で表示。
+   * 未指定なら入力欄自体を出さない。案件側で差し替える想定。
+   */
   inquiryOptions?: InquiryOption[]
+  /** 会社名フィールドを表示するか。デフォルトは true。 */
   showCompanyName?: boolean
 }
 
-type FormState = 'idle' | 'submitting' | 'error'
+function errorMessages(state: ContactSubmitResult | null): string[] {
+  if (!state) return []
+  if (state.status === 'validationFailed') return state.errors
+  if (state.status === 'turnstileFailed') return ['スパム判定されました。もう一度お試しください']
+  if (state.status === 'serverError') {
+    return ['送信中にエラーが発生しました。しばらく待ってからもう一度お試しください']
+  }
+  return []
+}
 
 export function ContactForm(props: Props) {
-  const [state, setState] = useState<FormState>('idle')
-  const [errors, setErrors] = useState<string[]>([])
   const showCompanyName = props.showCompanyName ?? true
+  const [state, formAction, isPending] = useActionState(submitContactForm, null)
+  const errors = errorMessages(state)
+  const inputClass = 'w-full border border-border rounded px-3 py-2'
 
   return (
-    <form
-      action={async (formData) => {
-        setState('submitting')
-        setErrors([])
-        const result = await submitContact(formData)
-        if (result.status === 'ok') {
-          window.location.href = '/contact/thanks'
-          return
-        }
-        if (result.status === 'validationFailed') {
-          setErrors(result.errors)
-        }
-        if (result.status === 'turnstileFailed') {
-          setErrors(['スパム判定されました。もう一度お試しください'])
-        }
-        setState('error')
-      }}
-      className="space-y-5"
-    >
-      {errors.length > 0 ? (
-        <Alert variant="destructive">
-          <AlertCircleIcon className="size-4" />
-          <AlertDescription>
-            <ul className="list-disc list-inside space-y-1">
-              {errors.map((message) => (
-                <li key={message}>{message}</li>
-              ))}
-            </ul>
-          </AlertDescription>
-        </Alert>
-      ) : null}
-
-      <div className="space-y-2">
-        <Label htmlFor="name">
-          お名前 <span className="text-destructive">*</span>
-        </Label>
-        <Input id="name" name="name" required placeholder="山田 太郎" />
-      </div>
-
-      {showCompanyName ? (
-        <div className="space-y-2">
-          <Label htmlFor="companyName">
-            会社名 <span className="text-muted-foreground text-xs">（任意）</span>
-          </Label>
-          <Input id="companyName" name="companyName" placeholder="株式会社◯◯" />
-        </div>
-      ) : null}
-
-      <div className="space-y-2">
-        <Label htmlFor="email">
-          メールアドレス <span className="text-destructive">*</span>
-        </Label>
-        <Input id="email" type="email" name="email" required placeholder="example@company.com" />
-      </div>
-
-      <div className="space-y-2">
-        <Label htmlFor="phone">
-          電話番号 <span className="text-muted-foreground text-xs">（任意）</span>
-        </Label>
-        <Input id="phone" name="phone" placeholder="03-1234-5678" />
-      </div>
-
-      {props.inquiryOptions && props.inquiryOptions.length > 0 ? (
-        <div className="space-y-2">
-          <Label htmlFor="inquiryType">
-            お問い合わせ種別 <span className="text-destructive">*</span>
-          </Label>
-          <NativeSelect id="inquiryType" name="inquiryType" required>
-            <option value="">選択してください</option>
-            {props.inquiryOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </NativeSelect>
-        </div>
-      ) : null}
-
-      <div className="space-y-2">
-        <Label htmlFor="message">
-          お問い合わせ内容 <span className="text-destructive">*</span>
-        </Label>
-        <Textarea
-          id="message"
-          name="message"
-          rows={6}
-          required
-          placeholder="ご相談内容をご記入ください"
-        />
-      </div>
-
+    <>
       {props.turnstileSiteKey ? (
-        <div
-          className="cf-turnstile"
-          data-sitekey={props.turnstileSiteKey}
-          data-callback="onTurnstile"
+        <Script
+          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+          strategy="afterInteractive"
         />
-      ) : (
-        <input type="hidden" name="turnstileToken" value="dev-bypass" />
-      )}
-
-      <Button type="submit" disabled={state === 'submitting'} className="w-full" size="lg">
-        {state === 'submitting' ? (
-          <>
-            <Spinner data-icon="inline-start" />
-            送信中...
-          </>
-        ) : (
-          '送信する'
-        )}
-      </Button>
-    </form>
+      ) : null}
+      <form action={formAction} className="max-w-xl mx-auto p-6 space-y-4">
+        {errors.length > 0 ? (
+          <div role="alert" aria-live="assertive" className="space-y-1">
+            {errors.map((message) => (
+              <p key={message} className="text-error text-sm">
+                {message}
+              </p>
+            ))}
+          </div>
+        ) : null}
+        <label className="block">
+          <span className="block text-sm mb-1">お名前</span>
+          <input name="name" required className={inputClass} />
+        </label>
+        {showCompanyName ? (
+          <label className="block">
+            <span className="block text-sm mb-1">会社名 (任意)</span>
+            <input name="companyName" className={inputClass} />
+          </label>
+        ) : null}
+        <label className="block">
+          <span className="block text-sm mb-1">メールアドレス</span>
+          <input type="email" name="email" required className={inputClass} />
+        </label>
+        <label className="block">
+          <span className="block text-sm mb-1">電話番号 (任意)</span>
+          <input name="phone" className={inputClass} />
+        </label>
+        {props.inquiryOptions && props.inquiryOptions.length > 0 ? (
+          <label className="block">
+            <span className="block text-sm mb-1">お問い合わせ種別</span>
+            <select name="inquiryType" required className={inputClass}>
+              <option value="">選択してください</option>
+              {props.inquiryOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        ) : null}
+        <label className="block">
+          <span className="block text-sm mb-1">お問い合わせ内容</span>
+          <textarea name="message" rows={6} required className={inputClass} />
+        </label>
+        {props.turnstileSiteKey ? (
+          <div className="cf-turnstile" data-sitekey={props.turnstileSiteKey} />
+        ) : null}
+        <button
+          type="submit"
+          disabled={isPending}
+          className="bg-brand text-white px-6 py-3 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isPending ? '送信中...' : '送信する'}
+        </button>
+      </form>
+    </>
   )
 }

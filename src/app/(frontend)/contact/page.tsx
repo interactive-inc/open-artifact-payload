@@ -1,9 +1,8 @@
-import { getPayload } from 'payload'
 import React from 'react'
 import { PhoneIcon, MapPinIcon, HelpCircleIcon } from 'lucide-react'
 
-import config from '@/payload.config'
 import { ContactForm } from '@/core/frontend/forms/contact-form'
+import { loadSiteSettings } from '@/core/lib/load-site-settings'
 import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
 import { Button } from '@/project/shared/ui/button'
 import Link from 'next/link'
@@ -26,9 +25,7 @@ const inquiryOptions = [
 ]
 
 export default async function ContactPage() {
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const settings = await payload.findGlobal({ slug: 'site-settings' })
+  const settings = await loadSiteSettings()
 
   return (
     <div>

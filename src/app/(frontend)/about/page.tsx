@@ -4,7 +4,7 @@ import Image from 'next/image'
 import React from 'react'
 
 import config from '@/payload.config'
-import { resolveMediaUrl } from '@/core/lib/media'
+import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
 import { Badge } from '@/project/shared/ui/badge'
 import { PageHeader } from '@/project/shared/sections/page-header'

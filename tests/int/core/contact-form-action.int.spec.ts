@@ -17,7 +17,7 @@ describe('submitContact', () => {
     formData.set('name', '山田太郎')
     formData.set('email', 'taro@example.com')
     formData.set('message', 'テスト送信')
-    formData.set('turnstileToken', 'test-token')
+    formData.set('cf-turnstile-response', 'test-token')
 
     const verifier = vi.fn().mockResolvedValue(true)
     const result = await submitContact(formData, { verifyTurnstile: verifier })
@@ -37,7 +37,7 @@ describe('submitContact', () => {
     formData.set('name', 'NG 太郎')
     formData.set('email', 'ng@example.com')
     formData.set('message', 'スパム')
-    formData.set('turnstileToken', 'bad-token')
+    formData.set('cf-turnstile-response', 'bad-token')
 
     const verifier = vi.fn().mockResolvedValue(false)
     const result = await submitContact(formData, { verifyTurnstile: verifier })

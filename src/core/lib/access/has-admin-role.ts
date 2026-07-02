@@ -4,6 +4,7 @@
  */
 export function hasAdminRole(user: unknown): boolean {
   if (!user || typeof user !== 'object') return false
-  const roles = (user as { roles?: unknown }).roles
+  if (!('roles' in user)) return false
+  const roles = user.roles
   return Array.isArray(roles) && roles.includes('admin')
 }

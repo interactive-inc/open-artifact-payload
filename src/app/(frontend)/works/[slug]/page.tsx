@@ -9,8 +9,9 @@ import { ArrowLeftIcon } from 'lucide-react'
 import type { Metadata } from 'next'
 
 import config from '@/payload.config'
-import { resolveMediaUrl, resolveMediaAlt } from '@/core/lib/media'
-import { LexicalRenderer } from '@/core/lib/lexical'
+import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
+import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
+import { RichText } from '@/core/lib/lexical'
 import { Button } from '@/project/shared/ui/button'
 import { workCategoryLabels } from '@/project/shared/lib/work-category-labels'
 import '../../styles.css'
@@ -106,7 +107,7 @@ export default async function WorkDetailPage(props: Props) {
           </div>
           <div className="md:col-span-8">
             <div className="prose max-w-none">
-              <LexicalRenderer value={item.body} />
+              <RichText data={item.body} />
             </div>
           </div>
         </div>

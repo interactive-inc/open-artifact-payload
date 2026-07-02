@@ -1,16 +1,16 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React from 'react'
-import { ArrowRightIcon } from 'lucide-react'
 
-import { resolveMediaAlt, resolveMediaUrl } from '@/core/lib/media'
-import { Button } from '@/project/shared/ui/button'
+import type { MediaOrId } from '@/core/lib/media/types'
+import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
+import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 
 type HeroData = {
   enabled?: boolean | null
   title?: string | null
   subtitle?: string | null
-  image?: unknown
+  image?: MediaOrId
   ctaLabel?: string | null
   ctaHref?: string | null
 }
@@ -21,35 +21,29 @@ type Props = {
 
 export function HeroSection(props: Props) {
   if (!props.data.enabled) return null
-  const imageUrl = resolveMediaUrl(props.data.image as never)
-  const imageAlt = resolveMediaAlt(props.data.image as never) ?? ''
+  const imageUrl = resolveMediaUrl(props.data.image)
+  const imageAlt = resolveMediaAlt(props.data.image) ?? ''
 
   return (
-    <section className="relative py-28 bg-foreground text-background overflow-hidden">
-      {imageUrl ? (
-        <div className="absolute inset-0 opacity-20">
-          <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
-        </div>
-      ) : null}
-      <div className="relative z-10 max-w-6xl mx-auto px-6">
-        <div className="max-w-2xl">
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight whitespace-pre-wrap">
-            {props.data.title}
-          </h1>
+    <section className="relative py-section bg-brand text-white">
+      <div className="max-w-container mx-auto px-6">
+        {imageUrl ? (
+          <div className="absolute inset-0 opacity-30">
+            <Image src={imageUrl} alt={imageAlt} fill className="object-cover" />
+          </div>
+        ) : null}
+        <div className="relative z-10 max-w-2xl">
+          <h1 className="text-4xl font-bold">{props.data.title}</h1>
           {props.data.subtitle ? (
-            <p className="mt-5 text-xl text-background/80 leading-relaxed">{props.data.subtitle}</p>
+            <p className="mt-4 text-xl opacity-90">{props.data.subtitle}</p>
           ) : null}
           {props.data.ctaLabel && props.data.ctaHref ? (
-            <Button
-              nativeButton={false}
-              render={<Link href={props.data.ctaHref} />}
-              size="lg"
-              variant="secondary"
-              className="mt-8"
+            <Link
+              href={props.data.ctaHref}
+              className="inline-block mt-8 px-6 py-3 bg-accent rounded-md font-semibold"
             >
               {props.data.ctaLabel}
-              <ArrowRightIcon data-icon="inline-end" />
-            </Button>
+            </Link>
           ) : null}
         </div>
       </div>

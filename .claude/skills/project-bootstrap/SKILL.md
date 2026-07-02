@@ -10,7 +10,7 @@ user_invocable: true
 
 ## 前提
 
-- 参照: `docs/superpowers/specs/2026-04-11-payload-cms-template-design.md`
+- 参照: `CLAUDE.md` / `.claude/rules/cms-design.md`（設計ルール）
 - ガードレール: `CLAUDE.md` の「生成 AI のガードレール」章
 - 対象ファイルは `src/project/` 配下のみ。`src/core/` は読み取り専用
 

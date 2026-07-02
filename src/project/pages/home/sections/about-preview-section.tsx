@@ -3,7 +3,8 @@ import Image from 'next/image'
 import React from 'react'
 import { ArrowRightIcon } from 'lucide-react'
 
-import { resolveMediaUrl, resolveMediaAlt } from '@/core/lib/media'
+import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
+import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
 import { Button } from '@/project/shared/ui/button'
 
 // CMS に画像が無いときの仮表示。固定 ID なので毎回同じ写真が出る。本番では CMS の画像が優先される。

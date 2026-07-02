@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
 import { isAdmin } from '@/core/lib/access/is-admin'
+import { buildGlobalRevalidateAfterChange } from '@/core/lib/revalidate/build-global-revalidate-after-change'
 
 export const siteSettings: GlobalConfig = {
   slug: 'site-settings',
@@ -12,6 +13,10 @@ export const siteSettings: GlobalConfig = {
     // フロントから取得するため read は public。更新は admin のみ（サイト全体設定の事故防止）。
     read: () => true,
     update: isAdmin,
+  },
+  hooks: {
+    // ヘッダー/フッターは全ページ共通のため layout 全体を revalidate する。
+    afterChange: [buildGlobalRevalidateAfterChange(() => [{ path: '/', type: 'layout' }])],
   },
   fields: [
     {

@@ -52,9 +52,8 @@
 コード生成後に必ず以下を自己チェックする。1つでも不整合があれば生成をやり直す。
 
 - Global のフィールド名とセクションコンポーネントの `props.data.xxx` 参照が完全に一致しているか
-- セクションコンポーネントの先頭で `if (!props.data.enabled) return null` しているか
-- ページ側で `{home.sectionName?.enabled && <Section data={home.sectionName ?? {}} />}` の形になっているか
-- `upload` フィールドの画像は `resolveMediaUrl()` / `resolveMediaAlt()` (`@/core/lib/media`) で解決しているか
+- セクションコンポーネントの先頭で `if (!props.data.enabled) return null` しているか（テンプレートはこの自己ガード方式を採用。ページ側は `<Section data={home.sectionName ?? {}} />` と無条件で渡してよい）
+- `upload` フィールドの画像は `resolveMediaUrl()` / `resolveMediaAlt()` (`@/core/lib/media/resolve-media-url` / `resolve-media-alt`) で解決しているか
 - `relationship` フィールドを使うページ側の `payload.findGlobal()` / `payload.find()` に `depth: 2` 以上を指定しているか
 - `array` フィールドを含む Global で `autosave` を使う場合、D1 の `_uuid` カラム問題を認識しているか
 - `generate:types` 後の Payload 生成型と、セクションコンポーネントの型定義が整合するか
@@ -184,5 +183,5 @@ buildCoreConfig({
 - 既存セクションの実装パターンは `src/core/sections/` のコードを読んで踏襲すること
 - Payload のフィールド定義や API は context7 プラグインで公式ドキュメントを引くこと
 - テーマトークンは `src/project/theme/tailwind.theme.ts` を参照すること
-- 画像 URL は `src/core/lib/media.ts` の `resolveMediaUrl()` / `resolveMediaAlt()` を使うこと
-- リッチテキストのレンダリングは `src/core/lib/lexical.tsx` の `RichText` コンポーネントを使うこと
+- 画像 URL は `src/core/lib/media/` の `resolveMediaUrl()` / `resolveMediaAlt()` を使うこと
+- リッチテキストのレンダリングは `src/core/lib/lexical.tsx` の `RichText` コンポーネント (`<RichText data={...} />`) を使うこと

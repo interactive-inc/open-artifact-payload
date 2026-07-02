@@ -1,6 +1,6 @@
 import { test, expect, Page } from '@playwright/test'
 import { login } from '../helpers/login'
-import { seedTestUser, cleanupTestUser, testUser } from '../helpers/seedUser'
+import { seedTestUser, cleanupTestUser, testUser } from '../helpers/seed-user'
 
 test.describe('Admin Panel', () => {
   let page: Page
@@ -30,7 +30,7 @@ test.describe('Admin Panel', () => {
   test('can navigate to list view', async () => {
     await page.goto('http://localhost:3000/admin/collections/users')
     await expect(page).toHaveURL('http://localhost:3000/admin/collections/users')
-    const listViewArtifact = page.locator('h1', { hasText: 'Users' }).first()
+    const listViewArtifact = page.locator('h1', { hasText: 'ユーザー一覧' }).first()
     await expect(listViewArtifact).toBeVisible()
   })
 

@@ -8,6 +8,13 @@ test.describe('Contact form', () => {
     await page.fill('input[name="email"]', 'taro@example.com')
     await page.fill('textarea[name="message"]', 'E2E テスト送信メッセージ')
 
+    // 案件側で inquiryOptions を渡すと種別 select (required) が描画されるため、
+    // 存在するときだけ先頭の選択肢を選ぶ
+    const inquiryTypeSelect = page.locator('select[name="inquiryType"]')
+    if ((await inquiryTypeSelect.count()) > 0) {
+      await inquiryTypeSelect.selectOption({ index: 1 })
+    }
+
     await page.click('button[type="submit"]')
 
     await expect(page).toHaveURL(/\/contact\/thanks/)
