@@ -12,7 +12,13 @@ import {
 import { Button } from '@/project/shared/ui/button'
 import { Separator } from '@/project/shared/ui/separator'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import type { Metadata } from 'next'
+
 import '../styles.css'
+
+export const metadata: Metadata = {
+  title: 'よくある質問',
+}
 
 const categoryLabel: Record<string, string> = {
   general: '全般',
@@ -50,7 +56,7 @@ export default async function FaqPage() {
               {Object.entries(grouped).map(([category, items]) => (
                 <div key={category}>
                   <h2 className="text-xl font-bold mb-6">{categoryLabel[category] ?? category}</h2>
-                  <Accordion type="single" collapsible className="w-full">
+                  <Accordion className="w-full">
                     {items.map((item) => (
                       <AccordionItem key={item.id} value={String(item.id)}>
                         <AccordionTrigger className="text-left">

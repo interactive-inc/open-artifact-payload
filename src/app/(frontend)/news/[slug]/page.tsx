@@ -5,6 +5,8 @@ import { getPayload } from 'payload'
 import React from 'react'
 import { ArrowLeftIcon } from 'lucide-react'
 
+import type { Metadata } from 'next'
+
 import config from '@/payload.config'
 import { LexicalRenderer } from '@/core/lib/lexical'
 import { Badge } from '@/project/shared/ui/badge'
@@ -28,6 +30,25 @@ const categoryLabel: Record<string, string> = {
 
 type Props = {
   params: Promise<{ slug: string }>
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+  const result = await payload.find({
+    collection: 'news',
+    where: { slug: { equals: params.slug } },
+    limit: 1,
+    depth: 0,
+  })
+
+  const item = result.docs[0]
+  if (!item) return {}
+
+  return {
+    title: item.title,
+  }
 }
 
 export default async function NewsDetailPage(props: Props) {

@@ -8,9 +8,14 @@ import config from '@/payload.config'
 import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
 import { Badge } from '@/project/shared/ui/badge'
 import { Button } from '@/project/shared/ui/button'
-import { Separator } from '@/project/shared/ui/separator'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import type { Metadata } from 'next'
+
 import '../styles.css'
+
+export const metadata: Metadata = {
+  title: 'サービス',
+}
 
 export default async function ServicePage() {
   const payloadConfig = await config

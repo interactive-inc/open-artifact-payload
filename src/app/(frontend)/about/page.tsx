@@ -7,9 +7,14 @@ import config from '@/payload.config'
 import { resolveMediaUrl } from '@/core/lib/media'
 import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
 import { Badge } from '@/project/shared/ui/badge'
-import { Separator } from '@/project/shared/ui/separator'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import type { Metadata } from 'next'
+
 import '../styles.css'
+
+export const metadata: Metadata = {
+  title: '会社情報',
+}
 
 export default async function AboutPage() {
   const payloadConfig = await config

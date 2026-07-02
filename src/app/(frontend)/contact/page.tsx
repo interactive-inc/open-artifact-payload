@@ -5,11 +5,16 @@ import { PhoneIcon, MapPinIcon, HelpCircleIcon } from 'lucide-react'
 import config from '@/payload.config'
 import { ContactForm } from '@/core/frontend/forms/contact-form'
 import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
-import { Separator } from '@/project/shared/ui/separator'
 import { Button } from '@/project/shared/ui/button'
 import Link from 'next/link'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import type { Metadata } from 'next'
+
 import '../styles.css'
+
+export const metadata: Metadata = {
+  title: 'お問い合わせ',
+}
 
 const inquiryOptions = [
   { value: 'service', label: 'サービスに関するお問い合わせ' },

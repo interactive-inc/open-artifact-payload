@@ -1,6 +1,8 @@
 import { getPayload } from 'payload'
 import React from 'react'
 
+import type { Metadata } from 'next'
+
 import config from '@/payload.config'
 import { RefreshRouteOnSave } from '@/core/frontend/components/refresh-route-on-save'
 import { SiteHeader } from '@/project/shared/sections/site-header'
@@ -11,6 +13,19 @@ import './styles.css'
 
 type Props = {
   children: React.ReactNode
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const payloadConfig = await config
+  const payload = await getPayload({ config: payloadConfig })
+  const settings = await payload.findGlobal({ slug: 'site-settings', depth: 0 })
+
+  return {
+    title: {
+      default: settings.siteName,
+      template: `%s | ${settings.siteName}`,
+    },
+  }
 }
 
 export default async function RootLayout(props: Props) {

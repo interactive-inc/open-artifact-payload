@@ -7,7 +7,13 @@ import config from '@/payload.config'
 import { Badge } from '@/project/shared/ui/badge'
 import { Separator } from '@/project/shared/ui/separator'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import type { Metadata } from 'next'
+
 import '../styles.css'
+
+export const metadata: Metadata = {
+  title: 'お知らせ',
+}
 
 const categoryLabel: Record<string, string> = {
   info: 'お知らせ',
