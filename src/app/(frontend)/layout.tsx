@@ -19,6 +19,8 @@ export async function generateMetadata(): Promise<Metadata> {
   const settings = await loadSiteSettings()
 
   return {
+    // OG 画像などの相対 URL を絶対 URL に解決するための基準。本番では必ず NEXT_PUBLIC_SERVER_URL を設定する。
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'),
     title: {
       default: settings.siteName,
       template: `%s | ${settings.siteName}`,
