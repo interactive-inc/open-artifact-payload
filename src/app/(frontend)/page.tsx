@@ -5,7 +5,7 @@ import React from 'react'
 import type { Metadata } from 'next'
 
 import config from '@/payload.config'
-import { buildMetadata } from '@/core/lib/build-metadata'
+import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
 import { HomeGrid } from '@/project/pages/home/sections/home-grid'
 
 const loadHome = cache(async (isDraft: boolean) => {
@@ -17,7 +17,7 @@ const loadHome = cache(async (isDraft: boolean) => {
 export async function generateMetadata(): Promise<Metadata> {
   const draftState = await draftMode()
   const home = await loadHome(draftState.isEnabled)
-  return buildMetadata({ meta: home.meta, fallbackTitle: 'ホーム' })
+  return buildPageMetadata({ meta: home.meta, fallbackTitle: 'ホーム' })
 }
 
 export default async function HomePage() {

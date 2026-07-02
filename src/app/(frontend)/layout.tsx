@@ -7,6 +7,7 @@ import { RefreshRouteOnSave } from '@/core/frontend/components/refresh-route-on-
 import { SiteHeader } from '@/project/shared/sections/site-header'
 import { SiteFooter } from '@/project/shared/sections/site-footer'
 import { SiteAnalytics } from '@/project/shared/components/site-analytics'
+import { JsonLd } from '@/project/shared/components/json-ld'
 import { TooltipProvider } from '@/project/shared/ui/tooltip'
 import { Toaster } from '@/project/shared/ui/sonner'
 import './styles.css'
@@ -25,6 +26,15 @@ export async function generateMetadata(): Promise<Metadata> {
       default: settings.siteName,
       template: `%s | ${settings.siteName}`,
     },
+    // ページ側で openGraph を定義しない画面のデフォルト。CMS の meta.image を設定した
+    // ページ (buildMetadata 経由) はそちらが優先される。画像はブランド素材に差し替える。
+    openGraph: {
+      siteName: settings.siteName,
+      images: [{ url: '/og-default.png', width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+    },
   }
 }
 
@@ -34,10 +44,20 @@ export const dynamic = 'force-dynamic'
 
 export default async function RootLayout(props: Props) {
   const settings = await loadSiteSettings()
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+  const organizationJsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'Organization',
+    name: settings.siteName,
+    url: baseUrl,
+  }
+  if (settings.companyInfo?.tel) organizationJsonLd.telephone = settings.companyInfo.tel
+  if (settings.companyInfo?.address) organizationJsonLd.address = settings.companyInfo.address
 
   return (
     <html lang="ja">
       <body className="flex flex-col min-h-screen bg-background text-foreground">
+        <JsonLd data={organizationJsonLd} />
         {/* ライブプレビューを成立させるため、ドラフトモード判定なしで常時マウントする */}
         <RefreshRouteOnSave />
         <TooltipProvider>

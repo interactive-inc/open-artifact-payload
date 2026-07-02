@@ -11,7 +11,10 @@ import type { Metadata } from 'next'
 import config from '@/payload.config'
 import { RichText } from '@/core/lib/lexical'
 import { formatNewsDate } from '@/core/lib/format-news-date'
-import { buildMetadata } from '@/core/lib/build-metadata'
+import { loadSiteSettings } from '@/core/lib/load-site-settings'
+import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
+import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
+import { JsonLd } from '@/project/shared/components/json-ld'
 import { Badge } from '@/project/shared/ui/badge'
 import {
   Breadcrumb,
@@ -59,7 +62,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const draftState = await draftMode()
   const item = await loadNewsBySlug(params.slug, draftState.isEnabled)
   if (!item) return {}
-  return buildMetadata({ meta: item.meta, fallbackTitle: item.title })
+  return buildPageMetadata({ meta: item.meta, fallbackTitle: item.title })
 }
 
 export default async function NewsDetailPage(props: Props) {
@@ -71,9 +74,24 @@ export default async function NewsDetailPage(props: Props) {
   }
 
   const publishedDate = formatNewsDate(item.publishedAt)
+  const settings = await loadSiteSettings()
+  const metaImageUrl = resolveMediaUrl(item.meta?.image as never)
+  const articleJsonLd: Record<string, unknown> = {
+    '@context': 'https://schema.org',
+    '@type': 'NewsArticle',
+    headline: item.title,
+    datePublished: item.publishedAt,
+    dateModified: item.updatedAt,
+    publisher: {
+      '@type': 'Organization',
+      name: settings.siteName,
+    },
+  }
+  if (metaImageUrl) articleJsonLd.image = [metaImageUrl]
 
   return (
     <div>
+      <JsonLd data={articleJsonLd} />
       <section className="bg-muted/30 py-6">
         <div className="container-site">
           <Breadcrumb>
