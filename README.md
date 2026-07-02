@@ -1,176 +1,106 @@
 # Inta CMS
 
-Payload CMS 3 + Next.js + Cloudflare (D1 + R2 + Workers) で構築した Inta CMS テンプレート。
+Payload CMS 3 + Next.js 16 + Cloudflare (D1 / R2 / Workers) で構築したコーポレートサイトのテンプレート。管理画面は日本語ローカライズ済み。
 
-管理画面は日本語ローカライズ済み。Cloudflare D1 (SQLite) + R2 (ストレージ) で動作し、Cloudflare Workers にデプロイ可能。
+Cloudflare Workers 専用です（Vercel 等の他プラットフォームには未対応）。DB は D1、画像ストレージは R2、デプロイは `@opennextjs/cloudflare` を前提に作られています。
 
-## Tech Stack
+## 技術スタック
 
 - CMS: Payload CMS 3 (`@payloadcms/db-d1-sqlite`)
-- Framework: Next.js 16 (App Router)
-- Database: Cloudflare D1 (SQLite)
-- Storage: Cloudflare R2
-- Deploy: Cloudflare Workers (`@opennextjs/cloudflare`)
-- Language: TypeScript
-- Runtime: bun
+- フレームワーク: Next.js 16 (App Router) / React 19 / TypeScript
+- インフラ: Cloudflare D1 + R2 + Workers
+- ランタイム / パッケージマネージャー: bun
 
 ## セットアップ
 
-### 前提条件
-
-- Node.js 20+
-- bun 1.3+
-- wrangler CLI (`bun add -g wrangler`)
-- Cloudflare アカウント
-
-### 依存関係のインストール
+前提: bun 1.3+ / wrangler CLI / Cloudflare アカウント
 
 ```bash
 bun install
-```
 
-### Cloudflare リソースの作成
+# D1 と R2 を作成し、wrangler.jsonc の database_id / bucket_name を差し替える
+# (bun run setup:project で対話的に自動置換できる)
+wrangler d1 create <project-name>
+wrangler r2 bucket create <project-name>
 
-```bash
-# D1 データベース作成
-wrangler d1 create open-artifact-payload
-
-# R2 バケット作成
-wrangler r2 bucket create open-artifact-payload
-```
-
-`wrangler.jsonc` の `database_id` と R2 の `bucket_name` を自分の Cloudflare リソースに合わせて更新してください。`bun run setup:project` を使うと自動置換されます。
-
-### 環境変数 (ローカル開発)
-
-```bash
+# 環境変数 (PAYLOAD_SECRET は openssl rand -hex 32 で生成)
 cp .env.example .env
-```
 
-`.env` を編集して `PAYLOAD_SECRET` を設定:
-
-```env
-PAYLOAD_SECRET=$(openssl rand -hex 32)
-```
-
-問い合わせ通知メール (Resend) を使う場合は `.env.example` の以下も設定:
-
-```env
-RESEND_API_KEY=re_xxx
-CONTACT_NOTIFICATION_EMAIL=admin@example.com
-CONTACT_NOTIFICATION_FROM="Contact <noreply@example.com>"
-```
-
-3 つすべて設定された場合のみ通知が送信されます（未設定なら CMS への保存だけ実施）。
-
-### マイグレーション
-
-```bash
+# ローカル D1 にマイグレーション + サンプルデータ投入
 bun run payload migrate
-```
+bun run seed
 
-### 開発サーバー起動
-
-```bash
 bun dev
 ```
 
-起動後:
+起動後、フロントは http://localhost:3000 、管理画面は http://localhost:3000/admin 。初回アクセス時にユーザー作成画面が表示されます。
 
-- フロントページ: http://localhost:3000
-- 管理画面: http://localhost:3000/admin
+## 公開までにすることリスト
 
-初回アクセス時にユーザー作成画面が表示されます。
+これをベースに案件サイトを作って公開するまでのチェックリスト。
 
-## コレクション
+コンテンツ・ブランド:
 
-| コレクション | Slug | グループ | 説明 |
-|---|---|---|---|
-| お知らせ | `news` | コンテンツ | ニュース・告知（カテゴリ、公開日、サムネイル） |
-| FAQ | `faq` | コンテンツ | よくある質問（カテゴリ、表示順） |
-| 制作実績 | `works` | コンテンツ | 制作実績（カテゴリ、サムネイル、本文）。案件固有コレクション |
-| お問い合わせ | `contact-submissions` | コンテンツ | 問い合わせフォームの受信内容 |
-| メディア | `media` | システム | 画像アップロード（R2 ストレージ） |
-| ユーザー | `users` | システム | 管理者・編集者 |
-| ページ（任意） | `pages` | コンテンツ | 汎用Webページ。`src/project/project-features.ts` の `enableFreePages: true` で有効化（デフォルト無効） |
+- [ ] 管理画面のサイト設定を入力する（サイト名 / ロゴ / 会社情報 / ヘッダー・フッターナビ / SNS / GA・GTM の ID）
+- [ ] favicon を差し替える（`src/app/icon.svg`、いまは仮の S アイコン）
+- [ ] OG デフォルト画像を差し替える（`public/og-default.png`、いまは SAMPLE inc. のプレースホルダ）
+- [ ] トップページのハードコードされたサンプルデータを実データまたは CMS に置き換える（`src/project/pages/home/sections/home-grid.tsx` の実績数値・使用技術・お客様の声）
+- [ ] news / works のダミー記事を削除して実コンテンツを入れる
 
-## グローバル設定
+インフラ・デプロイ:
 
-- サイト設定 (`site-settings`): サイト名、ロゴ、フッター、SNSリンク
+- [ ] `wrangler.jsonc` の `database_id` / `bucket_name` を本番リソースに差し替える
+- [ ] 本番シークレットを登録する（`wrangler secret put PAYLOAD_SECRET --env=production` は必須。Turnstile / Resend を使う場合はそれぞれのキーも）
+- [ ] `.env` の `NEXT_PUBLIC_SERVER_URL` を本番ドメインにする（ビルド時に焼き込まれ、sitemap / OG の URL が参照する）
+- [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だとビルドが `no such table` で落ちる）
+- [ ] Workers に独自ドメインを設定する
 
-## 管理画面のカスタマイズ
+任意・判断が必要:
 
-- 日本語ローカライズ（UIラベル、日付フォーマット）
-- 日本語フォントスタック（Hiragino Sans, Noto Sans JP 等）
-- 角丸・余白の改善
-- ダッシュボードに各コレクションの件数ウィジェット
-- コレクションのグループ分け（コンテンツ / システム）
+- [ ] 問い合わせのスパム対策 (Turnstile) を使うか決める。使うならサイトキーをサイト設定に、シークレットを Secret Store に登録
+- [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` の3つが揃ったときのみ送信される
+- [ ] staging 環境が必要なら `wrangler.jsonc` の `env.staging` に staging 用 D1 / R2 を設定して `make deploy CLOUDFLARE_ENV=staging`
+- [ ] `.docs/tasks.md` の「人間の判断が必要なタスク」を一読して、デフォルトのままでよいか確認する
 
-## Cloudflare デプロイ
+## コレクションとグローバル
 
-注意: Paid Workers プランが必要（サイズ制限のため）。
+- お知らせ `news` — カテゴリ・公開日・サムネイル・SEO
+- FAQ `faq` — カテゴリ・表示順
+- 制作実績 `works` — カテゴリ・サムネイル・本文・SEO（案件固有コレクションの実装例）
+- お問い合わせ `contact-submissions` — フォームの受信内容
+- メディア `media` — 画像アップロード（R2）
+- ユーザー `users` — 管理者 (admin) / 編集者 (editor)
+- ページ `pages` — 汎用ページ。`src/project/project-features.ts` の `enableFreePages: true` で有効化（デフォルト無効）
+- サイト設定 `site-settings`（グローバル）— サイト名・ロゴ・会社情報・ナビ・SNS・計測タグ・Turnstile サイトキー
 
-### 本番シークレットの登録 (必須)
+## デプロイ
 
-`.env` の値はローカル開発専用。本番 (Cloudflare Workers) では Secret Store にシークレットを登録してください。
-
-```bash
-# 必須
-wrangler secret put PAYLOAD_SECRET --env=production
-
-# 任意 (利用する場合のみ)
-wrangler secret put TURNSTILE_SECRET_KEY --env=production
-wrangler secret put RESEND_API_KEY --env=production
-wrangler secret put CONTACT_NOTIFICATION_EMAIL --env=production
-wrangler secret put CONTACT_NOTIFICATION_FROM --env=production
-```
-
-staging 環境は `--env=staging` を指定。各環境ごとに別途登録が必要です。
-
-### Wrangler CLI
-
-デプロイ系タスクは `Makefile` に集約しています。
+Paid Workers プランが必要です（Worker サイズ制限のため）。
 
 ```bash
-# データベースマイグレーション（リモート）
-make deploy-db
-
-# ビルド + デプロイ
-make deploy-app
+make deploy-db        # リモート D1 へマイグレーション
+make deploy-app       # ビルド + デプロイ
+make deploy           # 上記2つをまとめて実行
+make preview          # ローカルで Workers ランタイムを使ったプレビュー
 ```
 
-### staging 環境
+制限事項:
 
-`wrangler.jsonc` の `env.staging` を有効化済み。`<REPLACE_WITH_YOUR_STAGING_DATABASE_ID>` を staging 用に作成した D1 の ID に差し替え、staging 用 R2 バケットを作成してから:
-
-```bash
-make deploy CLOUDFLARE_ENV=staging
-```
-
-### GitHub 連携
-
-- GitHub にリポジトリを push
-- Cloudflare Dashboard > Workers & Pages > プロジェクト作成
-- GitHub リポジトリを選択
-- ビルドコマンド: `bun run build`
-- 環境変数 `PAYLOAD_SECRET` に本番用シークレットキーを設定
-
-### 制限事項
-
-- Sharp（画像処理）は Cloudflare Workers で動作しないため、画像の crop / focalPoint は無効
-- ファイルアップロードは R2 を使用（ローカルファイルシステムではない）
-- wrangler.jsonc の D1/R2 バインディング ID は各自のリソースに合わせて更新が必要
+- Sharp が Workers 上で動かないため、画像の crop / focalPoint は本番では無効
+- `bun run build` の SSG プリレンダーはリモート D1 に接続する。先にリモートへ migrate を当てること
 
 ## コマンド一覧
 
 ```bash
-bun dev                         # 開発サーバー起動
+bun dev                         # 開発サーバー
 bun run build                   # プロダクションビルド
-bun run start                   # プロダクションサーバー起動
-make deploy                     # DB マイグレーション + デプロイ
-make deploy-app                 # アプリのみデプロイ
-make deploy-db                  # DB マイグレーションのみ
-bun run generate:types          # Payload 型定義の生成
-bun run generate:importmap      # Import map の生成
-make preview                    # ローカルで Cloudflare Workers プレビュー
+bun run lint                    # vp lint (lint + 型チェック)
+bun run check                   # vp check (フォーマット + lint + 型チェック)
+bun run test                    # 統合テスト + E2E すべて
+bun run payload migrate         # ローカル D1 にマイグレーション
+bun run seed                    # サンプルデータ投入
+bun run generate:types          # Cloudflare + Payload の型生成
+bun run storybook               # Storybook (http://localhost:6006)
 ```
+
+詳細な運用ガイドは `.docs/guide.md` を参照してください。

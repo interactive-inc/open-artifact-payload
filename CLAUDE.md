@@ -2,34 +2,20 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Inta CMS
-
-Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築する Inta CMS テンプレート。管理画面は日本語ローカライズ済み。
-
-## 基本ルール
-
-- 日本語で応答する
-- パッケージマネージャーは `bun` を使用する (`pnpm` は使わない)
-- ライブラリのダウングレード禁止
-- TypeScript / Markdown の詳細ルールは `.claude/rules/` を参照 (`@.claude/rules/ts.md` / `@.claude/rules/md.md`)
+Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築する Inta CMS テンプレート。Cloudflare Workers 専用（Vercel 等には未対応）。管理画面は日本語ローカライズ済み。
 
 ## 技術スタック
 
-| カテゴリ               | 技術                                                    |
-| ---------------------- | ------------------------------------------------------- |
-| CMS                    | Payload CMS 3.84 (`@payloadcms/db-d1-sqlite`)           |
-| フレームワーク         | Next.js 16 (App Router)                                 |
-| 言語                   | TypeScript 5.7 (`strict: true`)                         |
-| データベース           | Cloudflare D1 (SQLite)                                  |
-| ストレージ             | Cloudflare R2                                           |
-| デプロイ               | Cloudflare Workers (`@opennextjs/cloudflare`)           |
-| リッチテキスト         | Lexical Editor (`@payloadcms/richtext-lexical`)         |
-| UI ライブラリ          | React 19                                                |
-| パッケージマネージャー | bun 1.3+                                                |
-| リンター               | vite-plus (`vp lint` / oxlint ベース)                   |
-| 統合テスト             | vitest + jsdom + @testing-library/react (`tests/int/`)  |
-| E2E テスト             | Playwright / Chromium (`tests/e2e/`)                    |
-| UI カタログ            | Storybook 10 (`@storybook/nextjs-vite`) / `.storybook/` |
+- CMS: Payload CMS 3.84 (`@payloadcms/db-d1-sqlite`)
+- フレームワーク: Next.js 16 (App Router) / React 19 / TypeScript 5.7 (`strict: true`)
+- データベース: Cloudflare D1 (SQLite)、ストレージ: Cloudflare R2
+- デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
+- リッチテキスト: Lexical Editor (`@payloadcms/richtext-lexical`)
+- パッケージマネージャー: bun 1.3+（npm / yarn / pnpm は使わない）
+- リンター & フォーマッター: vite-plus (`vp lint` / `vp check`)。設定は `vite.config.ts` に最小限のみ
+- 統合テスト: vite-plus test (vitest 互換) + @testing-library/react (`tests/int/`)。コンポーネントテストはファイル先頭の `@vitest-environment jsdom` で DOM を有効化
+- E2E テスト: Playwright / Chromium (`tests/e2e/`)。ローカル D1 が並列に弱いため workers は 1 固定
+- UI カタログ: Storybook 10 (`@storybook/nextjs-vite`) / `.storybook/`
 
 ## ディレクトリ構成の要点
 
@@ -55,15 +41,16 @@ src/
         hooks/ / lib/         このページでのみ使うフック / util
       about/ service/ ...     下層ページも同じ構造
     shared/                   複数ページで使う資産（2 ページ以上から参照されるもの）
-      sections/               site-header / site-footer / contact-cta など
+      sections/               site-header / site-footer / page-header など
       components/             汎用 UI コンポーネント (フラット配置)
       ui/                     shadcn/ui 所管領域 (bunx shadcn add の配置先)
       hooks/ / lib/           汎用フック / util
-    collections/              案件固有コレクション (news/faq 以外)
+    collections/              案件固有コレクション (works など。news/faq は core 側)
     theme/tailwind.theme.ts   Tailwind テーマトークン
     admin/                    管理画面カスタム (ダッシュボードタスク等)
-  app/(frontend)/             フロントエンドページ (ルート / news / faq / contact)。汎用ページ [slug] は enableFreePages 有効時に案件側で追加
+  app/(frontend)/             フロントエンドページ (ルート / about / service / works / news / faq / contact / 404)。汎用ページ [slug] は enableFreePages 有効時に案件側で追加
   app/(payload)/              Payload の管理画面 / REST / GraphQL
+  app/sitemap.ts, robots.ts   サイトマップと robots.txt (公開済みコンテンツから動的生成)
 .storybook/                   Storybook 設定 (main.ts / preview.tsx)
 tests/int/                    統合テスト (vitest)
 tests/e2e/                    E2E テスト (Playwright)
@@ -95,6 +82,7 @@ bun run test:e2e                    # E2E テストのみ
 bun run generate:types              # Cloudflare + Payload 型を生成
 bun run generate:importmap          # Payload Import Map 生成
 bun run payload migrate             # DB マイグレーション
+bun run seed                        # サンプルデータ投入 (ローカル D1)
 bun run storybook                   # Storybook 起動 (http://localhost:6006)
 bun run build-storybook             # Storybook 静的ビルド (storybook-static/)
 ```
@@ -141,11 +129,6 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - 問い合わせフォーム送信時の通知メールは Resend を使う。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` がすべて設定されたときのみ送信、失敗してもフォーム保存はブロックしない。
 - ニュース / ページ更新後は `src/core/lib/revalidate/build-collection-revalidate-after-change.ts` などの hook ビルダー経由で対象パスを `revalidatePath()` する (削除側は `build-collection-revalidate-after-delete.ts`、グローバルは `build-global-revalidate-after-change.ts`)。案件側で新コレクションを追加した場合も同 hook を使うこと。
 
-## パスエイリアス
-
-- `@/*` → `./src/*`
-- `@payload-config` → `./src/payload.config.ts`
-
 ## 生成 AI のガードレール
 
 - `src/core/` は読み取り専用。改変したい場合は本体テンプレートリポジトリへ PR を送る
@@ -159,9 +142,6 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 
 ## 参照
 
-- @README.md
 - @package.json
 - @wrangler.jsonc
 - @portless.json
-- @.claude/rules/ts.md
-- @.claude/rules/md.md
