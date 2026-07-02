@@ -8,7 +8,6 @@ import { MenuIcon, XIcon } from 'lucide-react'
 import { resolveMediaUrl, resolveMediaAlt } from '@/core/lib/media'
 import { Button } from '@/project/shared/ui/button'
 import { Separator } from '@/project/shared/ui/separator'
-import { cn } from '@/project/shared/lib/utils'
 import type { SiteSetting } from '@/payload-types'
 
 type Props = {

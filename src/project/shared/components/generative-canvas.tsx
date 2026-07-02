@@ -61,7 +61,7 @@ export function GenerativeCanvas(props: Props) {
         const seed = (i * 9301 + 49297) % 233280
         const rand = seed / 233280
         const x = (rand * width * 7.3) % width
-        const y = ((seed * 1.7) % 233280) / 233280 * height
+        const y = (((seed * 1.7) % 233280) / 233280) * height
         const shade = 20 + ((seed * 3) % 120)
         context.fillStyle = `rgba(${shade},${shade},${shade},${alpha})`
         context.fillRect(x, y, 1, 1)
@@ -278,6 +278,11 @@ export function GenerativeCanvas(props: Props) {
       loop()
     } else {
       renderOnce()
+    }
+
+    return () => {
+      window.cancelAnimationFrame(frameId)
+      window.removeEventListener('resize', resize)
     }
   }
 

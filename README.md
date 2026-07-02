@@ -39,7 +39,7 @@ wrangler d1 create open-artifact-payload
 wrangler r2 bucket create open-artifact-payload
 ```
 
-`wrangler.jsonc` の `database_id` を実際の ID に更新してください（テンプレ初期値は `<REPLACE_WITH_YOUR_DATABASE_ID>`）。`bun run setup:project` を使うと自動置換されます。
+`wrangler.jsonc` の `database_id` と R2 の `bucket_name` を自分の Cloudflare リソースに合わせて更新してください。`bun run setup:project` を使うと自動置換されます。
 
 ### 環境変数 (ローカル開発)
 

@@ -13,7 +13,7 @@ type Story = StoryObj
 
 export const FaqStyle: Story = {
   render: () => (
-    <Accordion type="single" collapsible className="w-full max-w-lg">
+    <Accordion className="w-full max-w-lg">
       <AccordionItem value="q1">
         <AccordionTrigger>
           <span className="flex items-start gap-2">

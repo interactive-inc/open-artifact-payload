@@ -1,7 +1,8 @@
 import { withPayload } from '@payloadcms/next/withPayload'
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import type { NextConfig } from 'next'
+
+const nextConfig: NextConfig = {
   images: {
     localPatterns: [
       {
@@ -22,10 +23,13 @@ const nextConfig = {
   // Packages with Cloudflare Workers (workerd) specific code
   // Read more: https://opennext.js.org/cloudflare/howtos/workerd
   serverExternalPackages: ['jose', 'pg-cloudflare'],
-  allowedDevOrigins: ['payload.artifacts.open.localhost', 'storybook.payload.artifacts.open.localhost'],
+  allowedDevOrigins: [
+    'payload.artifacts.open.localhost',
+    'storybook.payload.artifacts.open.localhost',
+  ],
 
   // Your Next.js config here
-  webpack: (webpackConfig: any) => {
+  webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
       '.cjs': ['.cts', '.cjs'],
       '.js': ['.ts', '.tsx', '.js', '.jsx'],

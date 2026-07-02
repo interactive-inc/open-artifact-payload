@@ -26,7 +26,7 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 | リッチテキスト         | Lexical Editor (`@payloadcms/richtext-lexical`)         |
 | UI ライブラリ          | React 19                                                |
 | パッケージマネージャー | bun 1.3+                                                |
-| リンター               | ESLint (`next/core-web-vitals`, `next/typescript`)      |
+| リンター               | vite-plus (`vp lint` / oxlint ベース)                   |
 | 統合テスト             | vitest + jsdom + @testing-library/react (`tests/int/`)  |
 | E2E テスト             | Playwright / Chromium (`tests/e2e/`)                    |
 | UI カタログ            | Storybook 10 (`@storybook/nextjs-vite`) / `.storybook/` |
@@ -86,7 +86,8 @@ bun run devsafe                     # .next / .open-next を消してから dev 
 bun run build                       # プロダクションビルド
 bun run start                       # プロダクションサーバー
 make preview                        # Cloudflare Workers ローカルプレビュー
-bun run lint                        # ESLint
+bun run lint                        # vp lint (oxlint + 型チェック)
+bun run check                       # vp check (フォーマット + lint + 型チェック)
 bun run test                        # vitest + Playwright すべて
 bun run test:int                    # 統合テストのみ
 bun run test:e2e                    # E2E テストのみ
@@ -127,13 +128,14 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 ## 設計上の非自明ポイント
 
 - `src/payload.config.ts` の Cloudflare コンテキストは `isCLI`/非 production なら `getPlatformProxy` を、本番は `getCloudflareContext` を使い分ける。CLI から `getCloudflareContext` を呼ぶと壊れるので注意。
+- wrangler.jsonc の D1 binding に `remote: true` が付いているため、`bun run build` の SSG プリレンダーは OpenNext 経由で本番のリモート D1 に接続する（`getPlatformProxy` の `remoteBindings` デフォルトが true）。ローカルで build を検証するとリモート DB を読み書きしうるので注意。リモート D1 のマイグレーションが遅れていると `no such table` で build が失敗する。先に `make deploy-db` でリモートに migrate を当てること。dev / `payload` CLI は `remoteBindings: false` でローカル D1 (`.wrangler/state/v3`) を使うため影響しない。
 - 案件固有の Global は `src/project/pages/<page>/global.ts` に置き、`src/payload.config.ts` の `projectGlobals` に import 追加する。export 名は `<name>Global`（例 `homeGlobal`）。
 - 案件固有のコレクションは `src/project/collections/*.ts` に置き、`projectCollections` に追加する。
 - `src/payload-types.ts` は `bun run generate:types` で再生成する。手で書き換えない。
 - Sharp は Cloudflare Workers 上で動かないため、画像の `crop` / `focalPoint` は本番で無効。ローカル dev では動く。
 - メディアファイルは R2 (`media` コレクション) 経由でのみ扱う。ローカルファイルシステムには置かない。
 - Payload 管理画面 / フロントエンドは `app/(payload)` と `app/(frontend)` のルートグループで分離されている。
-- Next.js 16 で `next lint` は削除されたため、`bun run lint` は `eslint .` を直接呼ぶ。Turbopack デフォルトの仕様で webpack 設定が必要な dev/build には `--webpack` を付けて回避している。
+- リンターは ESLint ではなく vite-plus (`vp lint` / oxlint ベース) を使う。Turbopack デフォルトの仕様で webpack 設定が必要な dev/build には `--webpack` を付けて回避している。
 - ユーザーは `admin` / `editor` のロールを持つ。コレクションの削除など破壊的操作は admin のみ可能。共通アクセス制御は `src/core/lib/access/` 配下を参照。
 - 問い合わせフォーム送信時の通知メールは Resend を使う。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` がすべて設定されたときのみ送信、失敗してもフォーム保存はブロックしない。
 - ニュース / ページ更新後は `src/core/lib/revalidate/build-revalidate-hooks.ts` 経由で対象パスを `revalidatePath()` する。案件側で新コレクションを追加した場合も同 hook を使うこと。
