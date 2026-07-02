@@ -22,7 +22,12 @@ async function defaultVerifyTurnstile(token: string): Promise<boolean> {
       body: new URLSearchParams({ secret, response: token }),
     })
     const raw: unknown = await response.json()
-    if (raw !== null && typeof raw === 'object' && 'success' in raw && typeof raw.success === 'boolean') {
+    if (
+      raw !== null &&
+      typeof raw === 'object' &&
+      'success' in raw &&
+      typeof raw.success === 'boolean'
+    ) {
       return raw.success
     }
     return false

@@ -33,10 +33,16 @@ async function main(): Promise<void> {
   if (answers.deployMode === 'cloudflare') {
     const source = await readFile(WRANGLER, 'utf8')
     const withName = withWorkerName({ source, name: answers.projectSlug })
-    const withBucket = withR2BucketName({ source: withName, bucketName: `${answers.projectSlug}-cms` })
+    const withBucket = withR2BucketName({
+      source: withName,
+      bucketName: `${answers.projectSlug}-cms`,
+    })
 
     const finalSource = answers.createD1
-      ? withDatabaseId({ source: withBucket, databaseId: await createD1Database(answers.projectSlug) })
+      ? withDatabaseId({
+          source: withBucket,
+          databaseId: await createD1Database(answers.projectSlug),
+        })
       : withBucket
 
     await writeFile(WRANGLER, finalSource, 'utf8')

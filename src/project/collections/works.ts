@@ -1,9 +1,5 @@
 import type { CollectionConfig } from 'payload'
-import {
-  MetaDescriptionField,
-  MetaImageField,
-  MetaTitleField,
-} from '@payloadcms/plugin-seo/fields'
+import { MetaDescriptionField, MetaImageField, MetaTitleField } from '@payloadcms/plugin-seo/fields'
 
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAuthenticated } from '@/core/lib/access/is-authenticated'

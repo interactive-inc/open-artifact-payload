@@ -10,7 +10,15 @@ const headingNode = {
   version: 1,
   direction: 'ltr',
   children: [
-    { type: 'text', text: '見出しの例', detail: 0, format: 0, mode: 'normal', style: '', version: 1 },
+    {
+      type: 'text',
+      text: '見出しの例',
+      detail: 0,
+      format: 0,
+      mode: 'normal',
+      style: '',
+      version: 1,
+    },
   ],
 }
 

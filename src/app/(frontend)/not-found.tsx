@@ -12,9 +12,7 @@ export default function NotFound() {
       <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
         404 Not Found
       </p>
-      <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-6xl">
-        ページが見つかりません
-      </h1>
+      <h1 className="mt-5 text-4xl font-bold tracking-tight md:text-6xl">ページが見つかりません</h1>
       <p className="mt-6 max-w-xl leading-relaxed text-muted-foreground">
         URL が変更されたか、ページが削除された可能性があります。
       </p>
