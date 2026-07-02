@@ -7,13 +7,14 @@ type Props = {
   description?: string | null
 }
 
-// 下層ページ共通のヘッダー。トップの KV と同じアトラクターを白地に敷き、世界観を統一する。
+// 下層ページ共通のヘッダー。動きのあるアトラクターはトップ KV 専用とし、
+// 下層は静的なタイルパターンを薄く敷いて控えめに世界観を揃える。
 export function PageHeader(props: Props) {
   return (
     <section className="relative isolate overflow-hidden bg-white text-foreground">
       <GenerativeCanvas
-        variant="attractor"
-        className="absolute inset-0 -z-10 size-full opacity-60"
+        variant="truchet"
+        className="absolute inset-0 -z-10 size-full opacity-[0.14]"
       />
       <div
         aria-hidden
