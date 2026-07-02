@@ -13,9 +13,11 @@ describe('submitContact', () => {
   })
 
   it('必須フィールドが揃っていれば保存される', async () => {
+    // E2E や手動確認で同じアドレスのレコードが残っていても壊れないよう、実行ごとに一意にする
+    const uniqueEmail = `int-test-${Date.now()}@example.com`
     const formData = new FormData()
     formData.set('name', '山田太郎')
-    formData.set('email', 'taro@example.com')
+    formData.set('email', uniqueEmail)
     formData.set('message', 'テスト送信')
     formData.set('cf-turnstile-response', 'test-token')
 
@@ -25,7 +27,7 @@ describe('submitContact', () => {
 
     const saved = await payload.find({
       collection: 'contact-submissions',
-      where: { email: { equals: 'taro@example.com' } },
+      where: { email: { equals: uniqueEmail } },
     })
     expect(saved.docs).toHaveLength(1)
     await payload.delete({ collection: 'contact-submissions', id: saved.docs[0].id })
