@@ -1,4 +1,9 @@
 import type { CollectionConfig } from 'payload'
+import {
+  MetaDescriptionField,
+  MetaImageField,
+  MetaTitleField,
+} from '@payloadcms/plugin-seo/fields'
 
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAuthenticated } from '@/core/lib/access/is-authenticated'
@@ -88,6 +93,18 @@ export const works: CollectionConfig = {
       name: 'body',
       label: '本文',
       type: 'richText',
+    },
+    {
+      // seoPlugin は core 設定で対象コレクションが固定されているため、
+      // works は plugin-seo のフィールドヘルパーで同じ構造 (meta.title/description/image) を持たせる。
+      name: 'meta',
+      label: 'SEO',
+      type: 'group',
+      fields: [
+        MetaTitleField({ hasGenerateFn: false }),
+        MetaDescriptionField({ hasGenerateFn: false }),
+        MetaImageField({ relationTo: 'media' }),
+      ],
     },
   ],
   versions: {

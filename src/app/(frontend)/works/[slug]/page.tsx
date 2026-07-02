@@ -1,3 +1,4 @@
+import { cache } from 'react'
 import { draftMode } from 'next/headers'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
@@ -12,6 +13,7 @@ import config from '@/payload.config'
 import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
 import { RichText } from '@/core/lib/lexical'
+import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
 import { Button } from '@/project/shared/ui/button'
 import { workCategoryLabels } from '@/project/shared/lib/work-category-labels'
 import '../../styles.css'
@@ -23,42 +25,46 @@ type Props = {
   params: Promise<{ slug: string }>
 }
 
-export async function generateMetadata(props: Props): Promise<Metadata> {
-  const params = await props.params
+// generateMetadata と本体で同一クエリを共有するため React.cache で memo 化する。
+const loadWorkBySlug = cache(async (slug: string, isDraft: boolean) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
+  const conditions: Record<string, { equals: string }>[] = [{ slug: { equals: slug } }]
+  if (!isDraft) conditions.push({ _status: { equals: 'published' } })
   const result = await payload.find({
     collection: 'works',
-    where: { slug: { equals: params.slug } },
+    where: { and: conditions },
     limit: 1,
-    depth: 0,
+    depth: 1,
+    draft: isDraft,
   })
+  return result.docs[0] ?? null
+})
 
-  const item = result.docs[0]
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const draftState = await draftMode()
+  const item = await loadWorkBySlug(params.slug, draftState.isEnabled)
   if (!item) return {}
 
-  return {
-    title: item.title,
-    description: item.summary ?? undefined,
-  }
+  // meta.description 未入力時は概要文を SEO ディスクリプションとして流用する。
+  return buildPageMetadata({
+    meta: {
+      title: item.meta?.title,
+      description: item.meta?.description ?? item.summary,
+      image: item.meta?.image,
+    },
+    fallbackTitle: item.title,
+  })
 }
 
 export default async function WorkDetailPage(props: Props) {
   const params = await props.params
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
   const draftState = await draftMode()
-  const isDraft = draftState.isEnabled
-  const result = await payload.find({
-    collection: 'works',
-    where: { slug: { equals: params.slug } },
-    limit: 1,
-    draft: isDraft,
-    depth: 1,
-  })
-
-  const item = result.docs[0]
-  if (!item) notFound()
+  const item = await loadWorkBySlug(params.slug, draftState.isEnabled)
+  if (!item) {
+    notFound()
+  }
 
   const imageUrl = resolveMediaUrl(item.thumbnail as never) ?? fallbackImageUrl
   const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ''

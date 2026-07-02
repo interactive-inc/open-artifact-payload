@@ -287,6 +287,14 @@ export interface Work {
     };
     [k: string]: unknown;
   } | null;
+  meta?: {
+    title?: string | null;
+    description?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+  };
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
@@ -481,6 +489,13 @@ export interface WorksSelect<T extends boolean = true> {
   thumbnail?: T;
   summary?: T;
   body?: T;
+  meta?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
