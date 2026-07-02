@@ -11,12 +11,20 @@ export default async function HomePage() {
   const draftState = await draftMode()
   const isDraft = draftState.isEnabled
   const home = await payload.findGlobal({ slug: 'home-page', depth: 2, draft: isDraft })
+  const worksResult = await payload.find({
+    collection: 'works',
+    limit: 4,
+    sort: '-publishedAt',
+    draft: isDraft,
+    depth: 1,
+  })
 
   return (
     <HomeGrid
       hero={home.hero ?? {}}
       services={home.services ?? {}}
       about={home.aboutPreview ?? {}}
+      works={worksResult.docs}
       news={home.featuredNews ?? {}}
       cta={home.cta ?? {}}
     />

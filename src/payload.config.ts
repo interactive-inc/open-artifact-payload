@@ -6,6 +6,7 @@ import { projectFeatures } from '@/project/project-features'
 import { homeGlobal } from '@/project/pages/home/global'
 import { aboutGlobal } from '@/project/pages/about/global'
 import { serviceGlobal } from '@/project/pages/service/global'
+import { works } from '@/project/collections/works'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -13,6 +14,7 @@ const dirname = path.dirname(filename)
 export default buildCoreConfig({
   dirname,
   features: projectFeatures,
+  projectCollections: [works],
   projectGlobals: [homeGlobal, aboutGlobal, serviceGlobal],
   livePreviewGlobals: ['home-page', 'about', 'service'],
   livePreviewUrl: (args) => {

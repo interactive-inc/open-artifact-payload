@@ -11,6 +11,7 @@ import * as migration_20260411_120817_core_contact_required_status from './20260
 import * as migration_20260420_075159_core_extensions from './20260420_075159_core_extensions'
 import * as migration_20260521_065500_add_user_roles from './20260521_065500_add_user_roles'
 import * as migration_20260602_121751 from './20260602_121751'
+import * as migration_20260603_170022_works_collection from './20260603_170022_works_collection'
 
 export const migrations = [
   {
@@ -77,5 +78,10 @@ export const migrations = [
     up: migration_20260602_121751.up,
     down: migration_20260602_121751.down,
     name: '20260602_121751',
+  },
+  {
+    up: migration_20260603_170022_works_collection.up,
+    down: migration_20260603_170022_works_collection.down,
+    name: '20260603_170022_works_collection',
   },
 ]

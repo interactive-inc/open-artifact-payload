@@ -2,6 +2,38 @@ import 'dotenv/config'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+// 段落の配列から Lexical リッチテキストの root を組み立てる。本文（body）用。
+function richText(paragraphs: ReadonlyArray<string>) {
+  return {
+    root: {
+      type: 'root',
+      format: '' as const,
+      indent: 0,
+      version: 1,
+      direction: 'ltr' as const,
+      children: paragraphs.map((textValue) => ({
+        type: 'paragraph',
+        format: '' as const,
+        indent: 0,
+        version: 1,
+        direction: 'ltr' as const,
+        textFormat: 0,
+        children: [
+          {
+            type: 'text',
+            text: textValue,
+            format: 0,
+            detail: 0,
+            mode: 'normal',
+            style: '',
+            version: 1,
+          },
+        ],
+      })),
+    },
+  }
+}
+
 async function seed() {
   const payload = await getPayload({ config: await config })
 
@@ -9,15 +41,16 @@ async function seed() {
   await payload.updateGlobal({
     slug: 'site-settings',
     data: {
-      siteName: 'インタラクティブ株式会社',
-      footerText: '© 2024 インタラクティブ株式会社. All rights reserved.',
+      siteName: 'サンプル株式会社',
+      footerText: '© 2024 サンプル株式会社. All rights reserved.',
       companyInfo: {
-        address: '〒100-0005 東京都千代田区丸の内1丁目1番1号\nインタラクティブビル 8F',
+        address: '〒100-0005 東京都千代田区丸の内1丁目1番1号\nサンプルビル 8F',
         tel: '03-1234-5678',
         fax: '03-1234-5679',
       },
       headerNav: [
         { label: 'サービス', href: '/service' },
+        { label: '制作実績', href: '/works' },
         { label: '会社概要', href: '/about' },
         { label: 'お知らせ', href: '/news' },
         { label: 'FAQ', href: '/faq' },
@@ -25,6 +58,7 @@ async function seed() {
       footerNav: [
         { label: 'トップ', href: '/' },
         { label: 'サービス', href: '/service' },
+        { label: '制作実績', href: '/works' },
         { label: '会社概要', href: '/about' },
         { label: 'お知らせ', href: '/news' },
         { label: 'FAQ', href: '/faq' },
@@ -46,7 +80,7 @@ async function seed() {
         enabled: true,
         title: 'プログラミングと、\nデザインと。',
         subtitle:
-          'インタラクティブは、Webシステム開発・クラウドインフラ・DX推進支援を通じて、企業のデジタル変革を力強くサポートします。',
+          'サンプルは、Webシステム開発・クラウドインフラ・DX推進支援を通じて、企業のデジタル変革を力強くサポートします。',
         ctaLabel: 'サービスを見る',
         ctaHref: '/service',
       },
@@ -80,7 +114,7 @@ async function seed() {
         enabled: true,
         heading: 'テクノロジーで、\n未来をともに創る',
         description:
-          'インタラクティブは2010年の創業以来、「技術で人と企業の可能性を広げる」という理念のもと、100社以上のデジタル変革を支援してきました。エンジニアリングの力で、お客様のビジネスに新たな価値を創出します。',
+          'サンプルは2010年の創業以来、「技術で人と企業の可能性を広げる」という理念のもと、100社以上のデジタル変革を支援してきました。エンジニアリングの力で、お客様のビジネスに新たな価値を創出します。',
         ctaLabel: '会社概要を見る',
         ctaHref: '/about',
       },
@@ -105,7 +139,7 @@ async function seed() {
       hero: {
         enabled: true,
         title: '会社概要',
-        subtitle: 'インタラクティブ株式会社について',
+        subtitle: 'サンプル株式会社について',
       },
       mission: {
         enabled: true,
@@ -139,15 +173,15 @@ async function seed() {
         enabled: true,
         heading: '会社情報',
         rows: [
-          { label: '会社名', value: 'インタラクティブ株式会社' },
-          { label: '英語名', value: 'Interactive Inc.' },
+          { label: '会社名', value: 'サンプル株式会社' },
+          { label: '英語名', value: 'SAMPLE Inc.' },
           { label: '設立', value: '2010年4月1日' },
           { label: '代表取締役', value: '田中 誠一郎' },
           { label: '資本金', value: '5,000万円' },
           { label: '従業員数', value: '87名（2024年4月現在）' },
           {
             label: '所在地',
-            value: '〒100-0005\n東京都千代田区丸の内1丁目1番1号\nインタラクティブビル 8F',
+            value: '〒100-0005\n東京都千代田区丸の内1丁目1番1号\nサンプルビル 8F',
           },
           { label: '電話番号', value: '03-1234-5678' },
           {
@@ -165,7 +199,7 @@ async function seed() {
           {
             name: '田中 誠一郎',
             position: '代表取締役 CEO',
-            bio: '早稲田大学理工学部卒業後、大手SIerでエンタープライズシステムの設計・開発に従事。2010年にインタラクティブを創業。テクノロジーで日本企業のDXを加速させることを使命とする。',
+            bio: '早稲田大学理工学部卒業後、大手SIerでエンタープライズシステムの設計・開発に従事。2010年にサンプルを創業。テクノロジーで日本企業のDXを加速させることを使命とする。',
           },
           {
             name: '鈴木 美咲',
@@ -363,15 +397,21 @@ async function seed() {
   }
 
   console.log('Seeding news...')
-  const existingNews = await payload.find({ collection: 'news', limit: 1, draft: true })
-  if (existingNews.totalDocs === 0) {
+  // 既存ニュースを一度削除してから作り直す（本文などの更新を反映するため）。
+  await payload.delete({ collection: 'news', where: { id: { exists: true } }, depth: 0 })
+  {
     await payload.create({
       collection: 'news',
       data: {
-        title: 'インタラクティブ株式会社のWebサイトをリニューアルしました',
+        title: 'サンプル株式会社のWebサイトをリニューアルしました',
         slug: 'website-renewal-2024',
         publishedAt: '2024-04-01',
         category: 'info',
+        body: richText([
+          'このたびサンプル株式会社は、コーポレートサイトを全面的にリニューアルいたしました。',
+          '新しいサイトでは、私たちが大切にしているプログラミングとデザインの考え方を、より分かりやすくお伝えできる構成にしています。サービス内容や制作実績、お客様の声などのコンテンツを拡充しました。',
+          '今後も情報発信を続けてまいります。引き続きサンプル株式会社をよろしくお願いいたします。',
+        ]),
         _status: 'published',
       },
     })
@@ -382,6 +422,11 @@ async function seed() {
         slug: 'inta-cms-open-source',
         publishedAt: '2024-03-15',
         category: 'press',
+        body: richText([
+          'サンプル株式会社は、自社開発のCMSテンプレート「Inta CMS」をオープンソースとして公開しました。',
+          'Inta CMSは、Payload CMSとNext.jsをベースに、Cloudflare Workers上で動作するように設計されています。中小規模のコーポレートサイトを、低コストかつ高速に立ち上げられることを目指しています。',
+          'ソースコードはGitHubで公開しており、どなたでも利用・改変いただけます。',
+        ]),
         _status: 'published',
       },
     })
@@ -392,6 +437,77 @@ async function seed() {
         slug: 'office-relocation-2024',
         publishedAt: '2024-02-01',
         category: 'info',
+        body: richText([
+          '事業拡大にともない、2024年2月よりサンプル株式会社の東京オフィスを千代田区丸の内に移転いたしました。',
+          '新オフィスは交通アクセスが良く、より広い執務スペースを確保しています。お客様との打ち合わせスペースも拡充し、よりよいご提案ができる環境を整えました。',
+          '新住所は、東京都千代田区丸の内1丁目1番1号 サンプルビル 8F です。お近くにお越しの際はお気軽にお立ち寄りください。',
+        ]),
+        _status: 'published',
+      },
+    })
+  }
+
+  console.log('Seeding works...')
+  // 既存の制作実績を一度削除してから作り直す。
+  await payload.delete({ collection: 'works', where: { id: { exists: true } }, depth: 0 })
+  const workSeeds = [
+    {
+      title: 'コーポレートサイト リニューアル',
+      slug: 'corporate-site-renewal',
+      category: 'web' as const,
+      publishedAt: '2024-03-01',
+      summary:
+        'ブランドの世界観を伝えるコーポレートサイトを、設計から実装まで一貫して制作しました。',
+      body: [
+        '老舗メーカーのコーポレートサイトを全面的にリニューアルしました。',
+        'ブランドが大切にしてきた価値観を、余白とタイポグラフィを活かしたミニマルなデザインで表現。CMS を導入し、社内で継続的に情報発信できる体制を整えました。',
+        '公開後の問い合わせ数は前年比で大きく増加し、採用応募の導線としても機能しています。',
+      ],
+    },
+    {
+      title: '在庫管理 SaaS の新規開発',
+      slug: 'inventory-saas',
+      category: 'product' as const,
+      publishedAt: '2024-01-15',
+      summary: '中小製造業向けの在庫管理 SaaS を、要件定義から MVP リリースまで支援しました。',
+      body: [
+        '紙とExcelで管理されていた在庫業務を、クラウド上で一元管理できる SaaS として新規開発しました。',
+        '現場の業務フローを丁寧にヒアリングし、必要最小限の機能から段階的にリリース。リアルタイムの在庫反映とアラート機能により、欠品と過剰在庫の両方を削減しました。',
+      ],
+    },
+    {
+      title: 'ブランドアプリの UI 設計',
+      slug: 'brand-app-ui',
+      category: 'mobile' as const,
+      publishedAt: '2023-11-20',
+      summary: 'ライフスタイルブランドのモバイルアプリについて、UI/UX 設計を担当しました。',
+      body: [
+        'ライフスタイルブランドの公式アプリのリニューアルにあたり、UI/UX 設計を担当しました。',
+        'ユーザーインタビューをもとに情報設計を見直し、回遊性とコンバージョンを両立するデザインを提案。デザインシステムを整備し、今後の機能追加にも耐えられる土台を構築しました。',
+      ],
+    },
+    {
+      title: 'データ可視化ダッシュボード',
+      slug: 'data-dashboard',
+      category: 'frontend' as const,
+      publishedAt: '2023-09-05',
+      summary: '経営判断を支えるデータ可視化ダッシュボードのフロントエンドを構築しました。',
+      body: [
+        '社内に散在していた各種データを集約し、経営判断に使えるダッシュボードとして可視化しました。',
+        '大量データでも軽快に動作するよう描画処理を最適化。ドリルダウンやフィルタリングを備え、現場から経営層まで同じ画面で意思決定できる環境を実現しました。',
+      ],
+    },
+  ]
+  for (const work of workSeeds) {
+    await payload.create({
+      collection: 'works',
+      data: {
+        title: work.title,
+        slug: work.slug,
+        category: work.category,
+        publishedAt: work.publishedAt,
+        summary: work.summary,
+        body: richText(work.body),
         _status: 'published',
       },
     })
