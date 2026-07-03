@@ -1,5 +1,6 @@
 import { getPayload } from 'payload'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 import React from 'react'
 
 import config from '@/payload.config'
@@ -12,28 +13,45 @@ import {
 import { Button } from '@/project/shared/ui/button'
 import { Separator } from '@/project/shared/ui/separator'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import { isLocale } from '@/project/shared/lib/is-locale'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
+import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import type { Metadata } from 'next'
 
 import '../styles.css'
 
-export const metadata: Metadata = {
-  title: 'よくある質問',
+type Props = {
+  params: Promise<{ locale: string }>
 }
 
-const categoryLabel: Record<string, string> = {
-  general: '全般',
-  service: 'サービス',
-  pricing: '料金',
-  other: 'その他',
+function resolveLocale(locale: string): Locale {
+  if (!isLocale(locale)) notFound()
+  return locale
 }
 
-export default async function FaqPage() {
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const dictionary = getUiDictionary(locale)
+  return {
+    title: dictionary.faq.title,
+    alternates: { languages: buildLocaleAlternates('/faq') },
+  }
+}
+
+export default async function FaqPage(props: Props) {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const dictionary = getUiDictionary(locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const result = await payload.find({
     collection: 'faq',
     limit: 100,
     sort: 'order',
+    locale,
   })
 
   const grouped: Record<string, typeof result.docs> = {}
@@ -45,17 +63,19 @@ export default async function FaqPage() {
 
   return (
     <div>
-      <PageHeader title="よくある質問" description="FAQ" />
+      <PageHeader title={dictionary.faq.title} description="FAQ" />
 
       <section className="py-16">
         <div className="container-site">
           {result.docs.length === 0 ? (
-            <p className="text-center text-muted-foreground py-16">FAQはまだありません。</p>
+            <p className="text-center text-muted-foreground py-16">{dictionary.faq.empty}</p>
           ) : (
             <div className="space-y-12">
               {Object.entries(grouped).map(([category, items]) => (
                 <div key={category}>
-                  <h2 className="text-xl font-bold mb-6">{categoryLabel[category] ?? category}</h2>
+                  <h2 className="text-xl font-bold mb-6">
+                    {dictionary.faq.categoryLabels[category] ?? category}
+                  </h2>
                   <Accordion className="w-full">
                     {items.map((item) => (
                       <AccordionItem key={item.id} value={String(item.id)}>
@@ -82,9 +102,12 @@ export default async function FaqPage() {
           <Separator className="my-12" />
 
           <div className="text-center bg-muted/30 rounded-xl p-8">
-            <p className="text-foreground mb-4">解決しない場合はお気軽にお問い合わせください</p>
-            <Button nativeButton={false} render={<Link href="/contact" />}>
-              お問い合わせする
+            <p className="text-foreground mb-4">{dictionary.faq.ctaText}</p>
+            <Button
+              nativeButton={false}
+              render={<Link href={withLocalePrefix(locale, '/contact')} />}
+            >
+              {dictionary.faq.ctaButton}
             </Button>
           </div>
         </div>

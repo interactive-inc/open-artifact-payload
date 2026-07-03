@@ -1,4 +1,5 @@
 import React from 'react'
+import { notFound } from 'next/navigation'
 
 import type { Metadata } from 'next'
 
@@ -10,14 +11,24 @@ import { SiteAnalytics } from '@/project/shared/components/site-analytics'
 import { JsonLd } from '@/project/shared/components/json-ld'
 import { TooltipProvider } from '@/project/shared/ui/tooltip'
 import { Toaster } from '@/project/shared/ui/sonner'
+import { isLocale } from '@/project/shared/lib/is-locale'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import './styles.css'
 
 type Props = {
   children: React.ReactNode
+  params: Promise<{ locale: string }>
 }
 
-export async function generateMetadata(): Promise<Metadata> {
-  const settings = await loadSiteSettings()
+function resolveLocale(locale: string): Locale {
+  if (!isLocale(locale)) notFound()
+  return locale
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const settings = await loadSiteSettings(locale)
 
   return {
     // OG 画像などの相対 URL を絶対 URL に解決するための基準。本番では必ず NEXT_PUBLIC_SERVER_URL を設定する。
@@ -43,7 +54,9 @@ export async function generateMetadata(): Promise<Metadata> {
 export const dynamic = 'force-dynamic'
 
 export default async function RootLayout(props: Props) {
-  const settings = await loadSiteSettings()
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const settings = await loadSiteSettings(locale)
   const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
   const organizationJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -55,15 +68,15 @@ export default async function RootLayout(props: Props) {
   if (settings.companyInfo?.address) organizationJsonLd.address = settings.companyInfo.address
 
   return (
-    <html lang="ja">
+    <html lang={locale}>
       <body className="flex flex-col min-h-screen bg-background text-foreground">
         <JsonLd data={organizationJsonLd} />
         {/* ライブプレビューを成立させるため、ドラフトモード判定なしで常時マウントする */}
         <RefreshRouteOnSave />
         <TooltipProvider>
-          <SiteHeader settings={settings} />
+          <SiteHeader settings={settings} locale={locale} />
           <main className="flex-1">{props.children}</main>
-          <SiteFooter settings={settings} />
+          <SiteFooter settings={settings} locale={locale} />
         </TooltipProvider>
         <Toaster />
         <SiteAnalytics gaTagId={settings.analytics?.gaTagId} gtmId={settings.analytics?.gtmId} />

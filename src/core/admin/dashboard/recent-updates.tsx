@@ -23,7 +23,7 @@ export function RecentUpdates(props: Props) {
       <h2 className="ictms-dashboard__section-title">最近の更新</h2>
       <ul className="ictms-dashboard__recent-list">
         {props.items.map((item) => {
-          const updatedAt = formatNewsDate(item.updatedAt)
+          const updatedAt = formatNewsDate(item.updatedAt, 'ja')
           return (
             <li key={item.id} className="ictms-dashboard__recent-item">
               <Link href={`/admin/collections/news/${item.id}`}>

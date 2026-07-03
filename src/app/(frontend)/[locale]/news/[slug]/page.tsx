@@ -16,6 +16,10 @@ import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
 import { JsonLd } from '@/project/shared/components/json-ld'
 import { Badge } from '@/project/shared/ui/badge'
+import { isLocale } from '@/project/shared/lib/is-locale'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -28,18 +32,17 @@ import { Separator } from '@/project/shared/ui/separator'
 import { Button } from '@/project/shared/ui/button'
 import '../../styles.css'
 
-const categoryLabel: Record<string, string> = {
-  info: 'お知らせ',
-  press: 'プレスリリース',
-  event: 'イベント',
+type Props = {
+  params: Promise<{ locale: string; slug: string }>
 }
 
-type Props = {
-  params: Promise<{ slug: string }>
+function resolveLocale(locale: string): Locale {
+  if (!isLocale(locale)) notFound()
+  return locale
 }
 
 // generateMetadata と本体で同一クエリを共有するため React.cache で memo 化する。
-const loadNewsBySlug = cache(async (slug: string, isDraft: boolean) => {
+const loadNewsBySlug = cache(async (slug: string, locale: Locale, isDraft: boolean) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   // 公開フロントでは下書きを除外。ライブプレビュー時のみ下書きも対象。
@@ -53,28 +56,36 @@ const loadNewsBySlug = cache(async (slug: string, isDraft: boolean) => {
     limit: 1,
     depth: 1,
     draft: isDraft,
+    locale,
   })
   return result.docs[0] ?? null
 })
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
+  const locale = resolveLocale(params.locale)
   const draftState = await draftMode()
-  const item = await loadNewsBySlug(params.slug, draftState.isEnabled)
+  const item = await loadNewsBySlug(params.slug, locale, draftState.isEnabled)
   if (!item) return {}
-  return buildPageMetadata({ meta: item.meta, fallbackTitle: item.title })
+  return buildPageMetadata({
+    meta: item.meta,
+    fallbackTitle: item.title,
+    basePath: `/news/${params.slug}`,
+  })
 }
 
 export default async function NewsDetailPage(props: Props) {
   const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const dictionary = getUiDictionary(locale)
   const draftState = await draftMode()
-  const item = await loadNewsBySlug(params.slug, draftState.isEnabled)
+  const item = await loadNewsBySlug(params.slug, locale, draftState.isEnabled)
   if (!item) {
     notFound()
   }
 
-  const publishedDate = formatNewsDate(item.publishedAt)
-  const settings = await loadSiteSettings()
+  const publishedDate = formatNewsDate(item.publishedAt, locale)
+  const settings = await loadSiteSettings(locale)
   const metaImageUrl = resolveMediaUrl(item.meta?.image as never)
   const articleJsonLd: Record<string, unknown> = {
     '@context': 'https://schema.org',
@@ -97,11 +108,15 @@ export default async function NewsDetailPage(props: Props) {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/">ホーム</BreadcrumbLink>
+                <BreadcrumbLink href={withLocalePrefix(locale, '/')}>
+                  {dictionary.common.home}
+                </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/news">お知らせ</BreadcrumbLink>
+                <BreadcrumbLink href={withLocalePrefix(locale, '/news')}>
+                  {dictionary.news.title}
+                </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
@@ -116,7 +131,9 @@ export default async function NewsDetailPage(props: Props) {
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             {item.category ? (
-              <Badge variant="secondary">{categoryLabel[item.category] ?? item.category}</Badge>
+              <Badge variant="secondary">
+                {dictionary.news.categoryLabels[item.category] ?? item.category}
+              </Badge>
             ) : null}
             {publishedDate ? (
               <time dateTime={publishedDate.dateTime} className="text-sm text-muted-foreground">
@@ -131,9 +148,13 @@ export default async function NewsDetailPage(props: Props) {
           <RichText data={item.body} />
         </div>
         <Separator className="mt-12 mb-8" />
-        <Button nativeButton={false} render={<Link href="/news" />} variant="ghost">
+        <Button
+          nativeButton={false}
+          render={<Link href={withLocalePrefix(locale, '/news')} />}
+          variant="ghost"
+        >
           <ArrowLeftIcon data-icon="inline-start" />
-          お知らせ一覧へ戻る
+          {dictionary.news.backToList}
         </Button>
       </article>
     </div>

@@ -13,8 +13,8 @@ export const aboutGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'title', label: 'タイトル', type: 'text', required: true },
-        { name: 'subtitle', label: 'サブタイトル', type: 'textarea' },
+        { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+        { name: 'subtitle', label: 'サブタイトル', type: 'textarea', localized: true },
       ],
     },
     {
@@ -23,16 +23,16 @@ export const aboutGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
-        { name: 'description', label: '説明', type: 'textarea' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
+        { name: 'description', label: '説明', type: 'textarea', localized: true },
         {
           name: 'values',
           label: 'バリュー一覧',
           type: 'array',
           maxRows: 4,
           fields: [
-            { name: 'title', label: 'タイトル', type: 'text', required: true },
-            { name: 'description', label: '説明', type: 'textarea' },
+            { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+            { name: 'description', label: '説明', type: 'textarea', localized: true },
           ],
         },
       ],
@@ -43,14 +43,14 @@ export const aboutGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
         {
           name: 'rows',
           label: '情報一覧',
           type: 'array',
           fields: [
-            { name: 'label', label: '項目名', type: 'text', required: true },
-            { name: 'value', label: '内容', type: 'textarea', required: true },
+            { name: 'label', label: '項目名', type: 'text', required: true, localized: true },
+            { name: 'value', label: '内容', type: 'textarea', required: true, localized: true },
           ],
         },
       ],
@@ -61,16 +61,16 @@ export const aboutGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
         {
           name: 'items',
           label: 'メンバー一覧',
           type: 'array',
           maxRows: 8,
           fields: [
-            { name: 'name', label: '氏名', type: 'text', required: true },
-            { name: 'position', label: '役職・肩書', type: 'text' },
-            { name: 'bio', label: '自己紹介', type: 'textarea' },
+            { name: 'name', label: '氏名', type: 'text', required: true, localized: true },
+            { name: 'position', label: '役職・肩書', type: 'text', localized: true },
+            { name: 'bio', label: '自己紹介', type: 'textarea', localized: true },
             { name: 'image', label: '写真', type: 'upload', relationTo: 'media' },
           ],
         },

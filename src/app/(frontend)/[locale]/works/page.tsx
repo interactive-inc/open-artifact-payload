@@ -1,4 +1,5 @@
 import { draftMode } from 'next/headers'
+import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import Image from 'next/image'
 import { getPayload } from 'payload'
@@ -11,16 +12,40 @@ import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
 import { PageHeader } from '@/project/shared/sections/page-header'
 import { workCategoryLabels } from '@/project/shared/lib/work-category-labels'
+import { isLocale } from '@/project/shared/lib/is-locale'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
+import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import '../styles.css'
-
-export const metadata: Metadata = {
-  title: '制作実績',
-}
 
 // サムネイル未設定時の仮画像。slug ごとに固定 ID を割り当て、毎回同じ写真を出す。
 const fallbackImageIds = [1059, 180, 160, 0, 1062, 119, 20, 48]
 
-export default async function WorksListPage() {
+type Props = {
+  params: Promise<{ locale: string }>
+}
+
+function resolveLocale(locale: string): Locale {
+  if (!isLocale(locale)) notFound()
+  return locale
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const dictionary = getUiDictionary(locale)
+
+  return {
+    title: dictionary.works.title,
+    alternates: { languages: buildLocaleAlternates('/works') },
+  }
+}
+
+export default async function WorksListPage(props: Props) {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const dictionary = getUiDictionary(locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const draftState = await draftMode()
@@ -31,16 +56,17 @@ export default async function WorksListPage() {
     sort: '-publishedAt',
     draft: isDraft,
     depth: 1,
+    locale,
   })
 
   return (
     <div>
-      <PageHeader title="制作実績" description="WORKS" />
+      <PageHeader title={dictionary.works.title} description="WORKS" />
 
       <section className="py-16 md:py-24">
         <div className="container-site">
           {result.docs.length === 0 ? (
-            <p className="py-16 text-center text-muted-foreground">まだ制作実績がありません。</p>
+            <p className="py-16 text-center text-muted-foreground">{dictionary.works.empty}</p>
           ) : (
             <div className="grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2">
               {result.docs.map((item, index) => {
@@ -50,7 +76,11 @@ export default async function WorksListPage() {
                 const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ''
 
                 return (
-                  <Link key={item.id} href={`/works/${item.slug}`} className="group flex flex-col">
+                  <Link
+                    key={item.id}
+                    href={withLocalePrefix(locale, `/works/${item.slug}`)}
+                    className="group flex flex-col"
+                  >
                     <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
                       <Image
                         src={imageUrl}

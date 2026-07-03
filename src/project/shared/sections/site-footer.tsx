@@ -6,23 +6,28 @@ import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
 import { Separator } from '@/project/shared/ui/separator'
 import { Button } from '@/project/shared/ui/button'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import type { SiteSetting } from '@/payload-types'
 
 type Props = {
   settings: SiteSetting
+  locale: Locale
 }
 
 export function SiteFooter(props: Props) {
   const logoUrl = resolveMediaUrl(props.settings.logo as never)
   const logoAlt = resolveMediaAlt(props.settings.logo as never) ?? props.settings.siteName
   const currentYear = new Date().getFullYear()
+  const dictionary = getUiDictionary(props.locale)
 
   return (
     <footer className="bg-foreground text-background">
       <div className="container-site py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <Link href="/" className="inline-block mb-4">
+            <Link href={withLocalePrefix(props.locale, '/')} className="inline-block mb-4">
               {logoUrl ? (
                 <Image
                   src={logoUrl}
@@ -48,12 +53,14 @@ export function SiteFooter(props: Props) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">メニュー</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+              {dictionary.footer.menuHeading}
+            </h3>
             <nav className="flex flex-col gap-2">
               {(props.settings.footerNav ?? []).map((item) => (
                 <Link
                   key={item.id ?? item.href}
-                  href={item.href}
+                  href={withLocalePrefix(props.locale, item.href)}
                   className="text-sm text-background/60 hover:text-background transition-colors"
                 >
                   {item.label}
@@ -63,7 +70,9 @@ export function SiteFooter(props: Props) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">SNS</h3>
+            <h3 className="text-sm font-semibold uppercase tracking-wider mb-4">
+              {dictionary.footer.snsHeading}
+            </h3>
             <div className="flex gap-3">
               {props.settings.social?.twitter ? (
                 <a
@@ -95,12 +104,12 @@ export function SiteFooter(props: Props) {
             <div className="mt-6">
               <Button
                 nativeButton={false}
-                render={<Link href="/contact" />}
+                render={<Link href={withLocalePrefix(props.locale, '/contact')} />}
                 variant="outline"
                 size="sm"
                 className="border-background/30 text-background hover:bg-background/10 hover:text-background"
               >
-                お問い合わせ
+                {dictionary.nav.contact}
               </Button>
             </div>
           </div>
@@ -110,14 +119,15 @@ export function SiteFooter(props: Props) {
 
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-background/50">
-            {props.settings.footerText ?? `© ${currentYear} SAMPLE inc. All rights reserved.`}
+            {props.settings.footerText ??
+              `© ${currentYear} SAMPLE inc. ${dictionary.footer.defaultCopyright}`}
           </p>
           {(props.settings.policyLinks ?? []).length > 0 ? (
             <nav className="flex flex-wrap gap-4">
               {(props.settings.policyLinks ?? []).map((item) => (
                 <Link
                   key={item.id ?? item.href}
-                  href={item.href}
+                  href={withLocalePrefix(props.locale, item.href)}
                   className="text-xs text-background/40 hover:text-background/70 transition-colors"
                 >
                   {item.label}

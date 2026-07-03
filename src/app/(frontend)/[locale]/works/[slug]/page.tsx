@@ -16,17 +16,26 @@ import { RichText } from '@/core/lib/lexical'
 import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
 import { Button } from '@/project/shared/ui/button'
 import { workCategoryLabels } from '@/project/shared/lib/work-category-labels'
+import { isLocale } from '@/project/shared/lib/is-locale'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import '../../styles.css'
 
 // 制作実績の画像が無いときの仮表示。固定 ID で毎回同じ写真が出る。
 const fallbackImageUrl = 'https://picsum.photos/id/1059/1600/900'
 
 type Props = {
-  params: Promise<{ slug: string }>
+  params: Promise<{ locale: string; slug: string }>
+}
+
+function resolveLocale(locale: string): Locale {
+  if (!isLocale(locale)) notFound()
+  return locale
 }
 
 // generateMetadata と本体で同一クエリを共有するため React.cache で memo 化する。
-const loadWorkBySlug = cache(async (slug: string, isDraft: boolean) => {
+const loadWorkBySlug = cache(async (slug: string, locale: Locale, isDraft: boolean) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const conditions: Record<string, { equals: string }>[] = [{ slug: { equals: slug } }]
@@ -37,14 +46,16 @@ const loadWorkBySlug = cache(async (slug: string, isDraft: boolean) => {
     limit: 1,
     depth: 1,
     draft: isDraft,
+    locale,
   })
   return result.docs[0] ?? null
 })
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
+  const locale = resolveLocale(params.locale)
   const draftState = await draftMode()
-  const item = await loadWorkBySlug(params.slug, draftState.isEnabled)
+  const item = await loadWorkBySlug(params.slug, locale, draftState.isEnabled)
   if (!item) return {}
 
   // meta.description 未入力時は概要文を SEO ディスクリプションとして流用する。
@@ -55,13 +66,16 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
       image: item.meta?.image,
     },
     fallbackTitle: item.title,
+    basePath: `/works/${item.slug}`,
   })
 }
 
 export default async function WorkDetailPage(props: Props) {
   const params = await props.params
+  const locale = resolveLocale(params.locale)
+  const dictionary = getUiDictionary(locale)
   const draftState = await draftMode()
-  const item = await loadWorkBySlug(params.slug, draftState.isEnabled)
+  const item = await loadWorkBySlug(params.slug, locale, draftState.isEnabled)
   if (!item) {
     notFound()
   }
@@ -69,6 +83,7 @@ export default async function WorkDetailPage(props: Props) {
   const imageUrl = resolveMediaUrl(item.thumbnail as never) ?? fallbackImageUrl
   const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ''
   const publishedDate = new Date(item.publishedAt)
+  const dateLocale = locale === 'en' ? 'en-US' : 'ja-JP'
 
   return (
     <article>
@@ -95,15 +110,15 @@ export default async function WorkDetailPage(props: Props) {
           <div className="md:col-span-4">
             <dl className="flex flex-col gap-6 border-t border-border pt-6 text-sm">
               <div>
-                <dt className="text-muted-foreground">カテゴリ</dt>
+                <dt className="text-muted-foreground">{dictionary.works.category}</dt>
                 <dd className="mt-1 font-medium">
                   {workCategoryLabels[item.category] ?? item.category}
                 </dd>
               </div>
               <div>
-                <dt className="text-muted-foreground">公開日</dt>
+                <dt className="text-muted-foreground">{dictionary.works.publishedAt}</dt>
                 <dd className="mt-1 font-medium tabular-nums">
-                  {publishedDate.toLocaleDateString('ja-JP', {
+                  {publishedDate.toLocaleDateString(dateLocale, {
                     year: 'numeric',
                     month: 'long',
                   })}
@@ -119,9 +134,13 @@ export default async function WorkDetailPage(props: Props) {
         </div>
 
         <div className="mt-16 border-t border-border pt-8">
-          <Button nativeButton={false} render={<Link href="/works" />} variant="ghost">
+          <Button
+            nativeButton={false}
+            render={<Link href={withLocalePrefix(locale, '/works')} />}
+            variant="ghost"
+          >
             <ArrowLeftIcon data-icon="inline-start" />
-            制作実績一覧へ戻る
+            {dictionary.works.backToList}
           </Button>
         </div>
       </div>

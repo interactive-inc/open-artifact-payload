@@ -93,7 +93,12 @@ function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
 
 const defaultLivePreviewUrl: LivePreviewUrlFn = (args) => {
   const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
-  const toPreview = (urlPath: string) => `${base}/next/preview?path=${encodeURIComponent(urlPath)}`
+  const localeCode = typeof args.locale === 'string' ? args.locale : args.locale.code
+  const localePrefix = localeCode && localeCode !== 'ja' ? `/${localeCode}` : ''
+  const toPreview = (urlPath: string) => {
+    const localizedPath = urlPath === '/' ? localePrefix || '/' : `${localePrefix}${urlPath}`
+    return `${base}/next/preview?path=${encodeURIComponent(localizedPath)}`
+  }
   if (args.globalConfig) {
     const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
     return toPreview(globalPath)
@@ -181,6 +186,14 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         collections: props.features.enableFreePages ? ['news', 'pages'] : ['news'],
         globals: ['home-page'],
         uploadsCollection: 'media',
+        // title/description は言語ごとに翻訳が必要なため localized にする。image は共用のまま。
+        fields: (args) =>
+          args.defaultFields.map((field) => {
+            if ('name' in field && (field.name === 'title' || field.name === 'description')) {
+              return { ...field, localized: true }
+            }
+            return field
+          }),
         generateTitle: (args) => {
           const doc = args.doc
           const title =
@@ -194,6 +207,14 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     i18n: {
       supportedLanguages: { ja },
       fallbackLanguage: 'ja',
+    },
+    localization: {
+      locales: [
+        { code: 'ja', label: '日本語' },
+        { code: 'en', label: 'English' },
+      ],
+      defaultLocale: 'ja',
+      fallback: true,
     },
   })
 }

@@ -13,8 +13,8 @@ export const serviceGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'title', label: 'タイトル', type: 'text', required: true },
-        { name: 'subtitle', label: 'サブタイトル', type: 'textarea' },
+        { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+        { name: 'subtitle', label: 'サブタイトル', type: 'textarea', localized: true },
       ],
     },
     {
@@ -23,7 +23,7 @@ export const serviceGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
         {
           name: 'items',
           label: 'サービス',
@@ -31,14 +31,16 @@ export const serviceGlobal: GlobalConfig = {
           maxRows: 10,
           fields: [
             { name: 'icon', label: 'アイコン（絵文字）', type: 'text' },
-            { name: 'title', label: 'タイトル', type: 'text', required: true },
-            { name: 'description', label: '説明', type: 'textarea' },
+            { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+            { name: 'description', label: '説明', type: 'textarea', localized: true },
             {
               name: 'features',
               label: '特徴・機能リスト',
               type: 'array',
               maxRows: 6,
-              fields: [{ name: 'text', label: 'テキスト', type: 'text', required: true }],
+              fields: [
+                { name: 'text', label: 'テキスト', type: 'text', required: true, localized: true },
+              ],
             },
           ],
         },
@@ -50,15 +52,15 @@ export const serviceGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
         {
           name: 'steps',
           label: 'ステップ一覧',
           type: 'array',
           maxRows: 6,
           fields: [
-            { name: 'title', label: 'タイトル', type: 'text', required: true },
-            { name: 'description', label: '説明', type: 'textarea' },
+            { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+            { name: 'description', label: '説明', type: 'textarea', localized: true },
           ],
         },
       ],
@@ -69,9 +71,9 @@ export const serviceGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: false },
-        { name: 'heading', label: '見出し', type: 'text' },
-        { name: 'description', label: '説明', type: 'textarea' },
-        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
+        { name: 'description', label: '説明', type: 'textarea', localized: true },
+        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text', localized: true },
         { name: 'ctaHref', label: 'ボタンリンク', type: 'text' },
       ],
     },

@@ -94,7 +94,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ja' | 'en') | ('ja' | 'en')[];
   globals: {
     'site-settings': SiteSetting;
     'home-page': HomePage;
@@ -107,7 +107,7 @@ export interface Config {
     about: AboutSelect<false> | AboutSelect<true>;
     service: ServiceSelect<false> | ServiceSelect<true>;
   };
-  locale: null;
+  locale: 'ja' | 'en';
   widgets: {
     collections: CollectionsWidget;
   };

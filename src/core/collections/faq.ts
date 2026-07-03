@@ -26,12 +26,14 @@ export const faq: CollectionConfig = {
       label: '質問',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'answer',
       label: '回答',
       type: 'textarea',
       required: true,
+      localized: true,
     },
     {
       name: 'category',

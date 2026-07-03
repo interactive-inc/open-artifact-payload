@@ -7,6 +7,9 @@ import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
 import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
 import { Button } from '@/project/shared/ui/button'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import type { News, Work } from '@/payload-types'
 
 type ServiceItem = {
@@ -16,6 +19,7 @@ type ServiceItem = {
 }
 
 type Props = {
+  locale: Locale
   hero: {
     title?: string | null
     ctaLabel?: string | null
@@ -41,26 +45,8 @@ type Props = {
   }
 }
 
-type Stat = {
-  value: string
-  label: string
-}
-
-// 実績数値。サンプル値。本番では CMS 化するか実数に差し替える。
-const stats: ReadonlyArray<Stat> = [
-  { value: '120+', label: '制作実績' },
-  { value: '15年', label: '事業継続' },
-  { value: '98%', label: '継続率' },
-  { value: '40名', label: 'メンバー' },
-]
-
-// 以下はワイヤーフレーム用のサンプルデータ。本番では CMS 化または実データに差し替える。
-
-type TechItem = {
-  name: string
-}
-
-const techStack: ReadonlyArray<TechItem> = [
+// 使用技術の一覧。ワイヤーフレーム用のサンプルデータ。本番では CMS 化または実データに差し替える。
+const techStack: ReadonlyArray<{ name: string }> = [
   { name: 'TypeScript' },
   { name: 'React' },
   { name: 'Next.js' },
@@ -82,41 +68,15 @@ const workCategoryLabel: Record<string, string> = {
   branding: 'Branding',
 }
 
-type Voice = {
-  quote: string
-  name: string
-  role: string
-  avatarId: number
-}
-
-const voices: ReadonlyArray<Voice> = [
-  {
-    quote: '要件が曖昧な段階から並走してくれて、想像以上の成果物に仕上がりました。',
-    name: '田村 直樹',
-    role: '製造業 / 事業企画部長',
-    avatarId: 1005,
-  },
-  {
-    quote: '公開後の改善提案まで含めて、長期的なパートナーとして信頼しています。',
-    name: '小林 美咲',
-    role: '小売 / マーケティング責任者',
-    avatarId: 1011,
-  },
-]
-
-const categoryLabel: Record<string, string> = {
-  info: 'お知らせ',
-  press: 'プレスリリース',
-  event: 'イベント',
-}
-
 // 枠線を使わないミニマリスト構成。余白と文字サイズの対比（マイクロラベル → 大見出し →
 // 巨大数字 → 墨ベタ CTA）でメリハリを作る。装飾は KV のアトラクター1箇所だけ。
 export function HomeGrid(props: Props) {
+  const dictionary = getUiDictionary(props.locale)
   const serviceItems = props.services.items ?? []
   const newsItems = (props.news.items ?? []).filter(
     (item): item is News => typeof item === 'object' && item !== null,
   )
+  const localeDateCode = props.locale === 'ja' ? 'ja-JP' : 'en-US'
 
   return (
     <>
@@ -129,12 +89,12 @@ export function HomeGrid(props: Props) {
         />
         <div className="container-site flex flex-col items-end text-right">
           <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            SAMPLE, then ship.
+            {dictionary.home.heroTitle}
           </h1>
           {props.hero.ctaLabel && props.hero.ctaHref ? (
             <Button
               nativeButton={false}
-              render={<Link href={props.hero.ctaHref} />}
+              render={<Link href={withLocalePrefix(props.locale, props.hero.ctaHref)} />}
               size="lg"
               className="mt-8 w-fit transition-transform active:scale-[0.98]"
             >
@@ -148,7 +108,7 @@ export function HomeGrid(props: Props) {
       {/* サービス：枠もカードも使わず、番号と余白だけで区切る。 */}
       <section className="container-site py-24 md:py-32">
         <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-          What we do
+          {dictionary.home.whatWeDo}
         </p>
         {props.services.heading ? (
           <h2 className="mt-5 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance md:text-5xl">
@@ -177,7 +137,7 @@ export function HomeGrid(props: Props) {
 
         {/* 実績数値：タイルをやめ、巨大な数字そのものをビジュアルにする。 */}
         <div className="mt-24 grid grid-cols-2 gap-x-10 gap-y-16 md:mt-32 md:grid-cols-4">
-          {stats.map((stat) => (
+          {dictionary.home.stats.map((stat) => (
             <div key={stat.label}>
               <span className="block text-5xl font-bold tracking-tight tabular-nums md:text-7xl">
                 {stat.value}
@@ -192,7 +152,7 @@ export function HomeGrid(props: Props) {
       <section className="container-site grid grid-cols-1 gap-8 py-24 md:grid-cols-12 md:gap-16 md:py-32">
         <div className="md:col-span-4">
           <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-            About
+            {dictionary.home.aboutLabel}
           </p>
           {props.about.heading ? (
             <h2 className="mt-5 text-3xl font-semibold leading-snug tracking-tight whitespace-pre-wrap md:text-4xl">
@@ -202,13 +162,12 @@ export function HomeGrid(props: Props) {
         </div>
         <div className="md:col-span-8 md:pt-14">
           <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            プログラミングとデザインの両輪で、企業の課題をかたちにします。
-            設計から実装、運用まで一貫して伴走し、長く使えるプロダクトを届けます。
+            {dictionary.home.aboutBody}
           </p>
           {props.about.ctaLabel && props.about.ctaHref ? (
             <Button
               nativeButton={false}
-              render={<Link href={props.about.ctaHref} />}
+              render={<Link href={withLocalePrefix(props.locale, props.about.ctaHref)} />}
               variant="outline"
               className="mt-8"
             >
@@ -222,7 +181,7 @@ export function HomeGrid(props: Props) {
       {/* 使用技術：タグをやめ、大きなインラインテキスト1本にまとめる。 */}
       <section className="container-site py-24 md:py-32">
         <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-          Stack
+          {dictionary.home.stackLabel}
         </p>
         <p className="mt-8 max-w-4xl text-2xl font-semibold leading-snug tracking-tight md:text-4xl">
           {techStack.map((tech, index) => (
@@ -239,12 +198,19 @@ export function HomeGrid(props: Props) {
         <div className="flex items-end justify-between">
           <div>
             <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-              Works
+              {dictionary.home.worksLabel}
             </p>
-            <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl">制作実績</h2>
+            <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl">
+              {dictionary.home.worksHeading}
+            </h2>
           </div>
-          <Button nativeButton={false} render={<Link href="/works" />} variant="ghost" size="sm">
-            一覧を見る
+          <Button
+            nativeButton={false}
+            render={<Link href={withLocalePrefix(props.locale, '/works')} />}
+            variant="ghost"
+            size="sm"
+          >
+            {dictionary.home.viewAll}
             <ArrowRightIcon data-icon="inline-end" />
           </Button>
         </div>
@@ -256,7 +222,11 @@ export function HomeGrid(props: Props) {
             const imageAlt = resolveMediaAlt(work.thumbnail as never) ?? ''
 
             return (
-              <Link key={work.id} href={`/works/${work.slug}`} className="group block">
+              <Link
+                key={work.id}
+                href={withLocalePrefix(props.locale, `/works/${work.slug}`)}
+                className="group block"
+              >
                 <div className="relative aspect-[16/10] w-full overflow-hidden bg-muted">
                   <Image
                     src={imageUrl}
@@ -280,10 +250,10 @@ export function HomeGrid(props: Props) {
       {/* お客様の声：罫線を消し、引用文の文字サイズで読ませる。 */}
       <section className="container-site py-24 md:py-32">
         <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-          Voice
+          {dictionary.home.voiceLabel}
         </p>
         <div className="mt-12 grid grid-cols-1 gap-16 md:mt-16 md:grid-cols-2 md:gap-10">
-          {voices.map((voice) => (
+          {dictionary.home.voices.map((voice) => (
             <figure key={voice.name}>
               <blockquote className="text-xl leading-relaxed md:text-2xl">
                 「{voice.quote}」
@@ -313,12 +283,19 @@ export function HomeGrid(props: Props) {
           <div className="flex items-end justify-between">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-                News
+                {dictionary.home.newsLabel}
               </p>
-              <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl">お知らせ</h2>
+              <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl">
+                {dictionary.home.newsHeading}
+              </h2>
             </div>
-            <Button nativeButton={false} render={<Link href="/news" />} variant="ghost" size="sm">
-              一覧を見る
+            <Button
+              nativeButton={false}
+              render={<Link href={withLocalePrefix(props.locale, '/news')} />}
+              variant="ghost"
+              size="sm"
+            >
+              {dictionary.home.viewAll}
               <ArrowRightIcon data-icon="inline-end" />
             </Button>
           </div>
@@ -329,18 +306,18 @@ export function HomeGrid(props: Props) {
               return (
                 <li key={item.id}>
                   <Link
-                    href={`/news/${item.slug}`}
+                    href={withLocalePrefix(props.locale, `/news/${item.slug}`)}
                     className="group flex flex-col gap-1 py-5 md:flex-row md:items-baseline md:gap-8"
                   >
                     <time
                       dateTime={publishedDate.toISOString().slice(0, 10)}
                       className="shrink-0 text-sm text-muted-foreground tabular-nums md:w-32"
                     >
-                      {publishedDate.toLocaleDateString('ja-JP')}
+                      {publishedDate.toLocaleDateString(localeDateCode)}
                     </time>
                     {item.category ? (
                       <span className="shrink-0 text-xs text-muted-foreground md:w-28">
-                        {categoryLabel[item.category] ?? item.category}
+                        {dictionary.news.categoryLabels[item.category] ?? item.category}
                       </span>
                     ) : null}
                     <p className="font-medium leading-snug underline-offset-4 group-hover:underline">
@@ -364,7 +341,7 @@ export function HomeGrid(props: Props) {
             {props.cta.ctaLabel && props.cta.ctaHref ? (
               <Button
                 nativeButton={false}
-                render={<Link href={props.cta.ctaHref} />}
+                render={<Link href={withLocalePrefix(props.locale, props.cta.ctaHref)} />}
                 variant="secondary"
                 size="lg"
                 className="mt-10 transition-transform active:scale-[0.98]"

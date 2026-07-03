@@ -1,4 +1,5 @@
 import { draftMode } from 'next/headers'
+import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import Link from 'next/link'
 import React from 'react'
@@ -9,20 +10,40 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/ca
 import { Badge } from '@/project/shared/ui/badge'
 import { Button } from '@/project/shared/ui/button'
 import { PageHeader } from '@/project/shared/sections/page-header'
+import { isLocale } from '@/project/shared/lib/is-locale'
+import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
+import type { Locale } from '@/project/shared/lib/locale-types'
 import type { Metadata } from 'next'
 
 import '../styles.css'
 
-export const metadata: Metadata = {
-  title: 'サービス',
+type Props = {
+  params: Promise<{ locale: string }>
 }
 
-export default async function ServicePage() {
+function resolveLocale(locale: string): Locale {
+  if (!isLocale(locale)) notFound()
+  return locale
+}
+
+export async function generateMetadata(props: Props): Promise<Metadata> {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
+  return {
+    title: locale === 'ja' ? 'サービス' : 'Service',
+    alternates: { languages: buildLocaleAlternates('/service') },
+  }
+}
+
+export default async function ServicePage(props: Props) {
+  const params = await props.params
+  const locale = resolveLocale(params.locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const draftState = await draftMode()
   const isDraft = draftState.isEnabled
-  const service = await payload.findGlobal({ slug: 'service', depth: 1, draft: isDraft })
+  const service = await payload.findGlobal({ slug: 'service', depth: 1, draft: isDraft, locale })
 
   return (
     <>
@@ -135,7 +156,7 @@ export default async function ServicePage() {
             {service.cta.ctaLabel && service.cta.ctaHref ? (
               <Button
                 nativeButton={false}
-                render={<Link href={service.cta.ctaHref} />}
+                render={<Link href={withLocalePrefix(locale, service.cta.ctaHref)} />}
                 size="lg"
                 variant="secondary"
               >

@@ -38,6 +38,7 @@ export const news: CollectionConfig = {
       label: 'タイトル',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'slug',
@@ -83,6 +84,7 @@ export const news: CollectionConfig = {
       name: 'body',
       label: '本文',
       type: 'richText',
+      localized: true,
     },
   ],
   versions: {

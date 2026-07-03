@@ -24,6 +24,7 @@ export const siteSettings: GlobalConfig = {
       label: 'サイト名',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'logo',
@@ -35,13 +36,14 @@ export const siteSettings: GlobalConfig = {
       name: 'footerText',
       label: 'フッターテキスト',
       type: 'textarea',
+      localized: true,
     },
     {
       name: 'companyInfo',
       label: '会社情報',
       type: 'group',
       fields: [
-        { name: 'address', label: '住所', type: 'text' },
+        { name: 'address', label: '住所', type: 'text', localized: true },
         { name: 'tel', label: 'TEL', type: 'text' },
         { name: 'fax', label: 'FAX', type: 'text' },
       ],
@@ -55,7 +57,7 @@ export const siteSettings: GlobalConfig = {
           '表示順で並べる。href は `/about` のような絶対パス、外部 URL なら https:// から書く',
       },
       fields: [
-        { name: 'label', label: 'ラベル', type: 'text', required: true },
+        { name: 'label', label: 'ラベル', type: 'text', required: true, localized: true },
         { name: 'href', label: 'リンク', type: 'text', required: true },
       ],
     },
@@ -64,7 +66,7 @@ export const siteSettings: GlobalConfig = {
       label: 'フッターナビゲーション',
       type: 'array',
       fields: [
-        { name: 'label', label: 'ラベル', type: 'text', required: true },
+        { name: 'label', label: 'ラベル', type: 'text', required: true, localized: true },
         { name: 'href', label: 'リンク', type: 'text', required: true },
       ],
     },
@@ -77,7 +79,7 @@ export const siteSettings: GlobalConfig = {
           'プライバシーポリシー、特定商取引法、サイトマップなど、フッター下部に出すリンク',
       },
       fields: [
-        { name: 'label', label: 'ラベル', type: 'text', required: true },
+        { name: 'label', label: 'ラベル', type: 'text', required: true, localized: true },
         { name: 'href', label: 'リンク', type: 'text', required: true },
       ],
     },

@@ -30,7 +30,7 @@ export function FeaturedNewsSection(props: Props) {
         <h2 className="text-2xl font-bold mb-6">{props.data.heading ?? '最新のお知らせ'}</h2>
         <ul className="grid gap-6 md:grid-cols-3">
           {items.map((item) => {
-            const publishedDate = formatNewsDate(item.publishedAt)
+            const publishedDate = formatNewsDate(item.publishedAt, 'ja')
             return (
               <li key={item.id} className="border border-border rounded-lg p-6">
                 <Link href={`/news/${item.slug}`}>

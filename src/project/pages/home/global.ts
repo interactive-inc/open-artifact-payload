@@ -19,10 +19,10 @@ export const homeGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'title', label: 'タイトル', type: 'text', required: true },
-        { name: 'subtitle', label: 'サブタイトル', type: 'textarea' },
+        { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+        { name: 'subtitle', label: 'サブタイトル', type: 'textarea', localized: true },
         { name: 'image', label: '背景画像', type: 'upload', relationTo: 'media' },
-        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text' },
+        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text', localized: true },
         { name: 'ctaHref', label: 'ボタンリンク', type: 'text' },
       ],
     },
@@ -32,8 +32,8 @@ export const homeGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
-        { name: 'subheading', label: 'サブ見出し', type: 'textarea' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
+        { name: 'subheading', label: 'サブ見出し', type: 'textarea', localized: true },
         {
           name: 'items',
           label: 'サービス一覧',
@@ -41,8 +41,8 @@ export const homeGlobal: GlobalConfig = {
           maxRows: 6,
           fields: [
             { name: 'icon', label: 'アイコン（絵文字）', type: 'text' },
-            { name: 'title', label: 'タイトル', type: 'text', required: true },
-            { name: 'description', label: '説明', type: 'textarea' },
+            { name: 'title', label: 'タイトル', type: 'text', required: true, localized: true },
+            { name: 'description', label: '説明', type: 'textarea', localized: true },
           ],
         },
       ],
@@ -53,10 +53,10 @@ export const homeGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
-        { name: 'description', label: '説明', type: 'textarea' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
+        { name: 'description', label: '説明', type: 'textarea', localized: true },
         { name: 'image', label: '画像', type: 'upload', relationTo: 'media' },
-        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text' },
+        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text', localized: true },
         { name: 'ctaHref', label: 'ボタンリンク', type: 'text' },
       ],
     },
@@ -66,7 +66,7 @@ export const homeGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: true },
-        { name: 'heading', label: '見出し', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
         {
           name: 'items',
           label: '表示する記事',
@@ -83,9 +83,9 @@ export const homeGlobal: GlobalConfig = {
       type: 'group',
       fields: [
         { name: 'enabled', label: '表示する', type: 'checkbox', defaultValue: false },
-        { name: 'heading', label: '見出し', type: 'text' },
-        { name: 'description', label: '説明', type: 'textarea' },
-        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text' },
+        { name: 'heading', label: '見出し', type: 'text', localized: true },
+        { name: 'description', label: '説明', type: 'textarea', localized: true },
+        { name: 'ctaLabel', label: 'ボタンテキスト', type: 'text', localized: true },
         { name: 'ctaHref', label: 'ボタンリンク', type: 'text' },
       ],
     },

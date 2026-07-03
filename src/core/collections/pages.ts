@@ -37,6 +37,7 @@ export const pages: CollectionConfig = {
       label: 'タイトル',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'slug',
@@ -49,6 +50,7 @@ export const pages: CollectionConfig = {
       name: 'body',
       label: '本文',
       type: 'richText',
+      localized: true,
     },
     // SEO の meta フィールドは seoPlugin が付与する (config-base の enableFreePages 分岐参照)。
   ],

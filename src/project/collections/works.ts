@@ -37,6 +37,7 @@ export const works: CollectionConfig = {
       label: 'タイトル',
       type: 'text',
       required: true,
+      localized: true,
     },
     {
       name: 'slug',
@@ -84,11 +85,13 @@ export const works: CollectionConfig = {
       name: 'summary',
       label: '概要',
       type: 'textarea',
+      localized: true,
     },
     {
       name: 'body',
       label: '本文',
       type: 'richText',
+      localized: true,
     },
     {
       // seoPlugin は core 設定で対象コレクションが固定されているため、
@@ -97,8 +100,8 @@ export const works: CollectionConfig = {
       label: 'SEO',
       type: 'group',
       fields: [
-        MetaTitleField({ hasGenerateFn: false }),
-        MetaDescriptionField({ hasGenerateFn: false }),
+        MetaTitleField({ hasGenerateFn: false, overrides: { localized: true } }),
+        MetaDescriptionField({ hasGenerateFn: false, overrides: { localized: true } }),
         MetaImageField({ relationTo: 'media' }),
       ],
     },

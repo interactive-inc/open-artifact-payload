@@ -13,6 +13,7 @@ import * as migration_20260521_065500_add_user_roles from './20260521_065500_add
 import * as migration_20260602_121751 from './20260602_121751';
 import * as migration_20260603_170022_works_collection from './20260603_170022_works_collection';
 import * as migration_20260702_170857_works_seo_meta from './20260702_170857_works_seo_meta';
+import * as migration_20260703_122632_add_localization from './20260703_122632_add_localization';
 
 export const migrations = [
   {
@@ -88,6 +89,11 @@ export const migrations = [
   {
     up: migration_20260702_170857_works_seo_meta.up,
     down: migration_20260702_170857_works_seo_meta.down,
-    name: '20260702_170857_works_seo_meta'
+    name: '20260702_170857_works_seo_meta',
+  },
+  {
+    up: migration_20260703_122632_add_localization.up,
+    down: migration_20260703_122632_add_localization.down,
+    name: '20260703_122632_add_localization'
   },
 ];
