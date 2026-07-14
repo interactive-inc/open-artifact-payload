@@ -25,9 +25,6 @@ export async function AiTranslateControls(props: ServerProps) {
   if (targetLocales.length === 0) return null
 
   return (
-    <AiTranslateButton
-      targetLocales={targetLocales}
-      apiRoute={props.payload.config.routes.api}
-    />
+    <AiTranslateButton targetLocales={targetLocales} apiRoute={props.payload.config.routes.api} />
   )
 }

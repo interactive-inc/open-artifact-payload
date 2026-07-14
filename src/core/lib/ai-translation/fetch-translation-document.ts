@@ -53,6 +53,8 @@ export async function fetchTranslationDocument(props: Props): Promise<object | E
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
 
-    return new Error(`対象ドキュメントを取得できませんでした（存在と権限を確認してください）: ${message}`)
+    return new Error(
+      `対象ドキュメントを取得できませんでした（存在と権限を確認してください）: ${message}`,
+    )
   }
 }

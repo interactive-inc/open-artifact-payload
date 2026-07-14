@@ -52,7 +52,10 @@ export const translateWithOpenai: TranslateFn = async (request) => {
         ? firstChoice.message
         : null
     const rawText =
-      message && typeof message === 'object' && 'content' in message && typeof message.content === 'string'
+      message &&
+      typeof message === 'object' &&
+      'content' in message &&
+      typeof message.content === 'string'
         ? message.content
         : null
 

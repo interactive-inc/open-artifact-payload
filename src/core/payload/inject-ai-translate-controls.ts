@@ -25,10 +25,7 @@ export function injectAiTranslateControls(collection: CollectionConfig): Collect
         ...components,
         edit: {
           ...edit,
-          beforeDocumentControls: [
-            ...(edit.beforeDocumentControls ?? []),
-            aiTranslateControlsPath,
-          ],
+          beforeDocumentControls: [...(edit.beforeDocumentControls ?? []), aiTranslateControlsPath],
         },
       },
     },

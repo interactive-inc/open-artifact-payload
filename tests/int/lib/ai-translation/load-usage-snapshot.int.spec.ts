@@ -48,9 +48,24 @@ describe('loadUsageSnapshot', () => {
     const now = new Date()
     const before = await loadUsageSnapshot({ payload, userId: user.id, now })
 
-    await createLog({ status: 'succeeded', characterCount: 100, estimatedCostUsd: 0.01, executedBy: user.id })
-    await createLog({ status: 'succeeded', characterCount: 50, estimatedCostUsd: 0.02, executedBy: user.id })
-    await createLog({ status: 'rejected', characterCount: 999, estimatedCostUsd: 0, executedBy: user.id })
+    await createLog({
+      status: 'succeeded',
+      characterCount: 100,
+      estimatedCostUsd: 0.01,
+      executedBy: user.id,
+    })
+    await createLog({
+      status: 'succeeded',
+      characterCount: 50,
+      estimatedCostUsd: 0.02,
+      executedBy: user.id,
+    })
+    await createLog({
+      status: 'rejected',
+      characterCount: 999,
+      estimatedCostUsd: 0,
+      executedBy: user.id,
+    })
 
     const after = await loadUsageSnapshot({ payload, userId: user.id, now })
 
@@ -71,13 +86,23 @@ describe('loadUsageSnapshot', () => {
 
     const now = new Date()
 
-    await createLog({ status: 'rejected', characterCount: 1, estimatedCostUsd: 0, executedBy: user.id })
+    await createLog({
+      status: 'rejected',
+      characterCount: 1,
+      estimatedCostUsd: 0,
+      executedBy: user.id,
+    })
 
     const afterRejected = await loadUsageSnapshot({ payload, userId: user.id, now })
 
     expect(afterRejected.lastRunAt).toBeNull()
 
-    await createLog({ status: 'failed', characterCount: 1, estimatedCostUsd: 0, executedBy: user.id })
+    await createLog({
+      status: 'failed',
+      characterCount: 1,
+      estimatedCostUsd: 0,
+      executedBy: user.id,
+    })
 
     const afterFailed = await loadUsageSnapshot({ payload, userId: user.id, now })
 

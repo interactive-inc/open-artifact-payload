@@ -16,7 +16,14 @@ export const aiTranslationLogs: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'targetTitle',
-    defaultColumns: ['targetTitle', 'status', 'targetLocale', 'characterCount', 'estimatedCostUsd', 'createdAt'],
+    defaultColumns: [
+      'targetTitle',
+      'status',
+      'targetLocale',
+      'characterCount',
+      'estimatedCostUsd',
+      'createdAt',
+    ],
     group: 'システム',
     hidden: (args) => !hasAdminRole(args.user),
   },
@@ -38,7 +45,13 @@ export const aiTranslationLogs: CollectionConfig = {
       ],
       admin: { readOnly: true },
     },
-    { name: 'targetSlug', label: '対象スラッグ', type: 'text', required: true, admin: { readOnly: true } },
+    {
+      name: 'targetSlug',
+      label: '対象スラッグ',
+      type: 'text',
+      required: true,
+      admin: { readOnly: true },
+    },
     { name: 'targetId', label: '対象ID', type: 'text', admin: { readOnly: true } },
     { name: 'targetTitle', label: '対象タイトル', type: 'text', admin: { readOnly: true } },
     {
@@ -48,8 +61,20 @@ export const aiTranslationLogs: CollectionConfig = {
       relationTo: 'users',
       admin: { readOnly: true },
     },
-    { name: 'sourceLocale', label: '翻訳元言語', type: 'text', required: true, admin: { readOnly: true } },
-    { name: 'targetLocale', label: '翻訳先言語', type: 'text', required: true, admin: { readOnly: true } },
+    {
+      name: 'sourceLocale',
+      label: '翻訳元言語',
+      type: 'text',
+      required: true,
+      admin: { readOnly: true },
+    },
+    {
+      name: 'targetLocale',
+      label: '翻訳先言語',
+      type: 'text',
+      required: true,
+      admin: { readOnly: true },
+    },
     { name: 'model', label: '使用モデル', type: 'text', required: true, admin: { readOnly: true } },
     {
       name: 'status',

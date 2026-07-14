@@ -33,10 +33,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
     (sum, log) => sum + (log.characterCount ?? 0),
     0,
   )
-  const monthlyCostUsd = monthlyLogs.docs.reduce(
-    (sum, log) => sum + (log.estimatedCostUsd ?? 0),
-    0,
-  )
+  const monthlyCostUsd = monthlyLogs.docs.reduce((sum, log) => sum + (log.estimatedCostUsd ?? 0), 0)
 
   if (props.userId === null) {
     return {
@@ -50,10 +47,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
   const lastRuns = await props.payload.find({
     collection: 'ai-translation-logs',
     where: {
-      and: [
-        { executedBy: { equals: props.userId } },
-        { status: { in: ['succeeded', 'failed'] } },
-      ],
+      and: [{ executedBy: { equals: props.userId } }, { status: { in: ['succeeded', 'failed'] } }],
     },
     sort: '-createdAt',
     limit: 1,

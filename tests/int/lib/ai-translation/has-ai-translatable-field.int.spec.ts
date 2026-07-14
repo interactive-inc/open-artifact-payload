@@ -37,9 +37,7 @@ describe('hasAiTranslatableField', () => {
       {
         name: 'sections',
         type: 'blocks',
-        blocks: [
-          { slug: 'card', fields: [{ name: 'heading', type: 'text', localized: true }] },
-        ],
+        blocks: [{ slug: 'card', fields: [{ name: 'heading', type: 'text', localized: true }] }],
       },
     ]
 

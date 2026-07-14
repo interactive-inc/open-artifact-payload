@@ -60,7 +60,8 @@ export const aiTranslationSettings: GlobalConfig = {
       label: '利用上限',
       type: 'group',
       admin: {
-        description: '上限に達すると AI API を呼び出す前に翻訳を停止します（日本時間の月初に集計をリセット）。',
+        description:
+          '上限に達すると AI API を呼び出す前に翻訳を停止します（日本時間の月初に集計をリセット）。',
       },
       fields: [
         {

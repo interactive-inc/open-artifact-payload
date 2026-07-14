@@ -110,6 +110,9 @@ wrangler secret put TURNSTILE_SECRET_KEY --env=production
 wrangler secret put RESEND_API_KEY --env=production
 wrangler secret put CONTACT_NOTIFICATION_EMAIL --env=production
 wrangler secret put CONTACT_NOTIFICATION_FROM --env=production
+# 任意: AI翻訳を使う場合のみ（選択モデルのプロバイダ分だけ）
+wrangler secret put ANTHROPIC_API_KEY --env=production
+wrangler secret put OPENAI_API_KEY --env=production
 ```
 
 staging 環境は `--env=staging` に置き換えて各シークレットを登録する。
@@ -128,6 +131,19 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - ユーザーは `admin` / `editor` のロールを持つ。コレクションの削除など破壊的操作は admin のみ可能。共通アクセス制御は `src/core/lib/access/` 配下を参照。
 - 問い合わせフォーム送信時の通知メールは Resend を使う。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` がすべて設定されたときのみ送信、失敗してもフォーム保存はブロックしない。
 - ニュース / ページ更新後は `src/core/lib/revalidate/build-collection-revalidate-after-change.ts` などの hook ビルダー経由で対象パスを `revalidatePath()` する (削除側は `build-collection-revalidate-after-delete.ts`、グローバルは `build-global-revalidate-after-change.ts`)。案件側で新コレクションを追加した場合も同 hook を使うこと。
+
+## AI翻訳機能
+
+多言語入力（Payload Localization）と AI 翻訳は別機能。AI 翻訳を止めても手動の多言語入力と保存済み翻訳はそのまま残る。実装は `src/core/lib/ai-translation/`、管理画面 UI は `src/core/admin/ai-translation/`。
+
+- 出し分けは二段構え。コード側は `src/project/project-features.ts` の `enableAiTranslation`（false なら設定 Global・監査ログ・エンドポイント・ボタンごと消える）、運用側は管理画面「AI翻訳設定」の `enabled` チェックボックス（admin のみ変更可、オフで即停止）。月額課金の停止・再開は `enabled` で行う。
+- 対応言語は `buildCoreConfig` の `locales` prop で変更する（デフォルトは ja / en）。単一言語運用は `locales: [{ code: 'ja', label: '日本語' }]` を渡し、`src/project/shared/lib/locale-types.ts` の `locales` も合わせる。
+- 翻訳対象は「`localized: true` の text / textarea / richText」を再帰抽出する共通ルール。新しいセクションやコレクションを追加しても、localized を付ければ自動で翻訳対象になり個別実装は不要。多言語入力はさせたいが AI 翻訳はさせたくないフィールドは `custom: { aiTranslate: false }` を付ける。
+- array / blocks / group 自体への `localized: true` は AI 翻訳非対応（抽出をスキップ）。テンプレートの規約どおりフィールド単位の localized を使うこと。
+- モデルは管理画面の select（`src/core/lib/ai-translation/translation-models.ts` のレジストリ）から admin が選ぶ。gpt / claude の切り替えはここ。モデル追加はレジストリに 1 エントリ足すだけ。API キーは DB に保存せず環境変数 `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` のみ（ローカルは `.env`、本番は wrangler secret）。
+- 利用上限（月間実行回数・文字数・推定費用・1回あたり文字数・クールダウン）は「AI翻訳設定」で管理し、上限到達時は AI API を呼ぶ前に拒否する。集計は `ai-translation-logs`（監査ログ、admin のみ閲覧・サーバー内部のみ作成）を日本時間の月初から集計する。
+- エンドポイント `POST /api/ai-translate` は対象ドキュメントの参照と翻訳先言語だけを受け付ける。原稿はサーバー側で CMS から取得し、プロンプト・モデル名・フィールド指定などの自由入力は受け付けない（チャット用途への流用防止）。応答は件数・型・長さを検証してから保存し、想定外の出力は保存しない。
+- 既存翻訳は上書きしないのがデフォルト（未入力フィールドのみ翻訳）。上書きは管理画面の「再翻訳（上書き）」から確認ダイアログ付きで実行する。versions.drafts のあるエンティティへの翻訳保存は draft 扱いで、編集者の確認後に公開する。
 
 ## 生成 AI のガードレール
 

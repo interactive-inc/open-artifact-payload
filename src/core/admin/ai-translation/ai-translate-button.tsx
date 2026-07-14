@@ -32,10 +32,7 @@ export function AiTranslateButton(props: Props) {
   if (!collectionSlug && !globalSlug) return null
 
   const runTranslation = async (overwrite: boolean) => {
-    if (
-      overwrite &&
-      !window.confirm('既存の翻訳文も上書きして再翻訳します。よろしいですか？')
-    ) {
+    if (overwrite && !window.confirm('既存の翻訳文も上書きして再翻訳します。よろしいですか？')) {
       return
     }
 

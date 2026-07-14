@@ -22,9 +22,9 @@ describe('guardTranslations', () => {
   })
 
   it('件数不一致は Error', () => {
-    expect(
-      guardTranslations({ sourceUnits: ['a', 'b'], translations: ['A'] }),
-    ).toBeInstanceOf(Error)
+    expect(guardTranslations({ sourceUnits: ['a', 'b'], translations: ['A'] })).toBeInstanceOf(
+      Error,
+    )
   })
 
   it('原文に対して異常に長い翻訳は Error（暴走ガード）', () => {
