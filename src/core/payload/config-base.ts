@@ -31,6 +31,8 @@ type BuildCoreConfigProps = {
   livePreviewCollections?: string[]
   livePreviewGlobals?: string[]
   livePreviewUrl?: LivePreviewUrlFn
+  // 案件の対応言語。単一言語運用は [{ code: 'ja', label: '日本語' }] だけを渡す
+  locales?: { code: string; label: string }[]
 }
 
 const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
@@ -209,7 +211,7 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       fallbackLanguage: 'ja',
     },
     localization: {
-      locales: [
+      locales: props.locales ?? [
         { code: 'ja', label: '日本語' },
         { code: 'en', label: 'English' },
       ],
