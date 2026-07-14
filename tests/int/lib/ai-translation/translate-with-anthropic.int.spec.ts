@@ -38,11 +38,11 @@ describe('translateWithAnthropic', () => {
     expect(outcome.inputTokens).toBe(100)
     expect(outcome.outputTokens).toBe(20)
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const [url, init] = fetchMock.mock.calls[0] as [string, { body: string }]
 
     expect(url).toBe('https://api.anthropic.com/v1/messages')
 
-    const body = JSON.parse(String(init.body)) as Record<string, unknown>
+    const body = JSON.parse(init.body) as Record<string, unknown>
 
     expect(body.model).toBe('claude-haiku-4-5')
     expect(body.temperature).toBe(0)

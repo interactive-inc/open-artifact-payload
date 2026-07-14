@@ -6,7 +6,7 @@ import { visitLexicalNode } from '@/core/lib/ai-translation/visit-lexical-node'
  * 構造・リンク・画像・順序は原文のまま維持される（プロンプトインジェクション対策の
  * 「構造を検証してから保存する」ガードを兼ねる）。
  */
-export function applyLexicalTexts(value: unknown, texts: ReadonlyArray<string>): unknown | Error {
+export function applyLexicalTexts(value: unknown, texts: ReadonlyArray<string>): object | Error {
   const sourceTexts = collectLexicalTexts(value)
 
   if (sourceTexts.length !== texts.length) {
@@ -14,6 +14,10 @@ export function applyLexicalTexts(value: unknown, texts: ReadonlyArray<string>):
   }
 
   const cloned: unknown = structuredClone(value)
+
+  if (!cloned || typeof cloned !== 'object') {
+    return new Error('リッチテキストの形式が不正です')
+  }
 
   visitLexicalNode(cloned, [...texts])
 

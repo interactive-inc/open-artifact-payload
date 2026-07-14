@@ -38,11 +38,11 @@ describe('translateWithOpenai', () => {
     expect(outcome.inputTokens).toBe(80)
     expect(outcome.outputTokens).toBe(10)
 
-    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit]
+    const [url, init] = fetchMock.mock.calls[0] as [string, { body: string }]
 
     expect(url).toBe('https://api.openai.com/v1/chat/completions')
 
-    const body = JSON.parse(String(init.body)) as Record<string, unknown>
+    const body = JSON.parse(init.body) as Record<string, unknown>
 
     expect(body.model).toBe('gpt-4o-mini')
     expect(body.response_format).toEqual({ type: 'json_object' })
