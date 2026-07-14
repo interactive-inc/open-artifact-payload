@@ -73,6 +73,7 @@ export interface Config {
     faq: Faq;
     'contact-submissions': ContactSubmission;
     works: Work;
+    'ai-translation-logs': AiTranslationLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -86,6 +87,7 @@ export interface Config {
     faq: FaqSelect<false> | FaqSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     works: WorksSelect<false> | WorksSelect<true>;
+    'ai-translation-logs': AiTranslationLogsSelect<false> | AiTranslationLogsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -100,12 +102,14 @@ export interface Config {
     'home-page': HomePage;
     about: About;
     service: Service;
+    'ai-translation-settings': AiTranslationSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'home-page': HomePageSelect<false> | HomePageSelect<true>;
     about: AboutSelect<false> | AboutSelect<true>;
     service: ServiceSelect<false> | ServiceSelect<true>;
+    'ai-translation-settings': AiTranslationSettingsSelect<false> | AiTranslationSettingsSelect<true>;
   };
   locale: 'ja' | 'en';
   widgets: {
@@ -301,6 +305,31 @@ export interface Work {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-translation-logs".
+ */
+export interface AiTranslationLog {
+  id: number;
+  targetKind: 'collection' | 'global';
+  targetSlug: string;
+  targetId?: string | null;
+  targetTitle?: string | null;
+  executedBy?: (number | null) | User;
+  sourceLocale: string;
+  targetLocale: string;
+  model: string;
+  status: 'succeeded' | 'failed' | 'rejected';
+  characterCount?: number | null;
+  inputTokens?: number | null;
+  outputTokens?: number | null;
+  estimatedCostUsd?: number | null;
+  translatedFieldCount?: number | null;
+  skippedFieldCount?: number | null;
+  errorMessage?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -346,6 +375,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'works';
         value: number | Work;
+      } | null)
+    | ({
+        relationTo: 'ai-translation-logs';
+        value: number | AiTranslationLog;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -499,6 +532,30 @@ export interface WorksSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-translation-logs_select".
+ */
+export interface AiTranslationLogsSelect<T extends boolean = true> {
+  targetKind?: T;
+  targetSlug?: T;
+  targetId?: T;
+  targetTitle?: T;
+  executedBy?: T;
+  sourceLocale?: T;
+  targetLocale?: T;
+  model?: T;
+  status?: T;
+  characterCount?: T;
+  inputTokens?: T;
+  outputTokens?: T;
+  estimatedCostUsd?: T;
+  translatedFieldCount?: T;
+  skippedFieldCount?: T;
+  errorMessage?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -761,6 +818,33 @@ export interface Service {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-translation-settings".
+ */
+export interface AiTranslationSetting {
+  id: number;
+  /**
+   * 月額プランの停止時はオフにすると即座に翻訳機能が止まります。保存済みの翻訳文は残り、手動での多言語入力も引き続き使えます。
+   */
+  enabled?: boolean | null;
+  /**
+   * API キーは環境変数（ANTHROPIC_API_KEY / OPENAI_API_KEY）で設定します。管理画面からは設定できません。
+   */
+  model: 'anthropic/claude-haiku-4-5' | 'anthropic/claude-sonnet-5' | 'openai/gpt-4o-mini' | 'openai/gpt-4.1';
+  /**
+   * 上限に達すると AI API を呼び出す前に翻訳を停止します（日本時間の月初に集計をリセット）。
+   */
+  limits: {
+    monthlyRunLimit: number;
+    monthlyCharacterLimit: number;
+    monthlyCostLimitUsd: number;
+    perRunCharacterLimit: number;
+    cooldownSeconds: number;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -996,6 +1080,26 @@ export interface ServiceSelect<T extends boolean = true> {
         ctaHref?: T;
       };
   _status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ai-translation-settings_select".
+ */
+export interface AiTranslationSettingsSelect<T extends boolean = true> {
+  enabled?: T;
+  model?: T;
+  limits?:
+    | T
+    | {
+        monthlyRunLimit?: T;
+        monthlyCharacterLimit?: T;
+        monthlyCostLimitUsd?: T;
+        perRunCharacterLimit?: T;
+        cooldownSeconds?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

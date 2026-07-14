@@ -15,7 +15,9 @@ import { news } from '@/core/collections/news'
 import { faq } from '@/core/collections/faq'
 import { contactSubmissions } from '@/core/collections/contact-submissions'
 import { pages } from '@/core/collections/pages'
+import { aiTranslationLogs } from '@/core/collections/ai-translation-logs'
 import { siteSettings } from '@/core/globals/site-settings'
+import { aiTranslationSettings } from '@/core/globals/ai-translation-settings'
 import type { ProjectFeatures } from '@/project/types'
 
 type LivePreviewUrlValue = NonNullable<
@@ -129,9 +131,15 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     contactSubmissions,
     ...(props.features.enableFreePages ? [pages] : []),
     ...(props.projectCollections ?? []),
+    // AI翻訳の設定・監査ログは feature flag が有効な案件でのみ登録される
+    ...(props.features.enableAiTranslation ? [aiTranslationLogs] : []),
   ]
 
-  const allGlobals = [siteSettings, ...(props.projectGlobals ?? [])]
+  const allGlobals = [
+    siteSettings,
+    ...(props.projectGlobals ?? []),
+    ...(props.features.enableAiTranslation ? [aiTranslationSettings] : []),
+  ]
 
   // フロントにルートが存在するコレクション/グローバルのみ Live Preview 対象にする。
   // 案件でコレクションのフロントページを追加したら、ここにも slug を追加する。
