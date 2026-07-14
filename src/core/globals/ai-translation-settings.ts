@@ -24,6 +24,16 @@ export const aiTranslationSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: 'usageSummary',
+      label: '利用状況',
+      type: 'ui',
+      admin: {
+        components: {
+          Field: '@/core/admin/ai-translation/usage-summary-field#UsageSummaryField',
+        },
+      },
+    },
+    {
       name: 'enabled',
       label: 'AI翻訳を有効にする',
       type: 'checkbox',

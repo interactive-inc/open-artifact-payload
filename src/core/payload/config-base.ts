@@ -18,6 +18,9 @@ import { pages } from '@/core/collections/pages'
 import { aiTranslationLogs } from '@/core/collections/ai-translation-logs'
 import { siteSettings } from '@/core/globals/site-settings'
 import { aiTranslationSettings } from '@/core/globals/ai-translation-settings'
+import { aiTranslateEndpoint } from '@/core/lib/ai-translation/ai-translate-endpoint'
+import { injectAiTranslateControls } from '@/core/payload/inject-ai-translate-controls'
+import { injectAiTranslateControlsIntoGlobal } from '@/core/payload/inject-ai-translate-controls-into-global'
 import type { ProjectFeatures } from '@/project/types'
 
 type LivePreviewUrlValue = NonNullable<
@@ -123,7 +126,9 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       ? await getCloudflareContextFromWrangler()
       : await getCloudflareContext({ async: true })
 
-  const allCollections = [
+  const enableAiTranslation = props.features.enableAiTranslation
+
+  const baseCollections = [
     users,
     media,
     news,
@@ -131,15 +136,19 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     contactSubmissions,
     ...(props.features.enableFreePages ? [pages] : []),
     ...(props.projectCollections ?? []),
-    // AI翻訳の設定・監査ログは feature flag が有効な案件でのみ登録される
-    ...(props.features.enableAiTranslation ? [aiTranslationLogs] : []),
   ]
 
-  const allGlobals = [
-    siteSettings,
-    ...(props.projectGlobals ?? []),
-    ...(props.features.enableAiTranslation ? [aiTranslationSettings] : []),
-  ]
+  const baseGlobals = [siteSettings, ...(props.projectGlobals ?? [])]
+
+  // AI翻訳が有効な案件では、localized なテキストを持つ全エンティティの編集画面へ
+  // 翻訳ボタンを一括注入し、設定 Global と監査ログを追加登録する。
+  const allCollections = enableAiTranslation
+    ? [...baseCollections.map(injectAiTranslateControls), aiTranslationLogs]
+    : baseCollections
+
+  const allGlobals = enableAiTranslation
+    ? [...baseGlobals.map(injectAiTranslateControlsIntoGlobal), aiTranslationSettings]
+    : baseGlobals
 
   // フロントにルートが存在するコレクション/グローバルのみ Live Preview 対象にする。
   // 案件でコレクションのフロントページを追加したら、ここにも slug を追加する。
@@ -178,6 +187,7 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     },
     collections: allCollections,
     globals: allGlobals,
+    endpoints: enableAiTranslation ? [aiTranslateEndpoint] : [],
     editor: lexicalEditor(),
     secret: resolveSecret(),
     typescript: {

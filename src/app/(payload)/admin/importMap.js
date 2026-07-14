@@ -26,6 +26,8 @@ import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c08
 import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { AiTranslateControls as AiTranslateControls_7863ade4781e5f738b335edf4a6ecd9e } from '@/core/admin/ai-translation/ai-translate-controls'
+import { UsageSummaryField as UsageSummaryField_6d27d244c7dcf25c024a4f2e07241227 } from '@/core/admin/ai-translation/usage-summary-field'
 import { OpenPublicSite as OpenPublicSite_a32f58d12f662118787c60bde32ef7d1 } from '@/core/admin/nav/open-public-site'
 import { AdminThemeProvider as AdminThemeProvider_7a4c7f5d682695795df5b02d5a624dd0 } from '@/core/admin/theme/admin-theme-provider'
 import { R2ClientUploadHandler as R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d } from '@payloadcms/storage-r2/client'
@@ -62,6 +64,8 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#MetaDescriptionComponent": MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "@/core/admin/ai-translation/ai-translate-controls#AiTranslateControls": AiTranslateControls_7863ade4781e5f738b335edf4a6ecd9e,
+  "@/core/admin/ai-translation/usage-summary-field#UsageSummaryField": UsageSummaryField_6d27d244c7dcf25c024a4f2e07241227,
   "@/core/admin/nav/open-public-site#OpenPublicSite": OpenPublicSite_a32f58d12f662118787c60bde32ef7d1,
   "@/core/admin/theme/admin-theme-provider#AdminThemeProvider": AdminThemeProvider_7a4c7f5d682695795df5b02d5a624dd0,
   "@payloadcms/storage-r2/client#R2ClientUploadHandler": R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d,
