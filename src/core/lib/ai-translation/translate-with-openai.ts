@@ -1,0 +1,84 @@
+import { buildTranslationPrompt } from '@/core/lib/ai-translation/build-translation-prompt'
+import { parseTranslationResponse } from '@/core/lib/ai-translation/parse-translation-response'
+import type { TranslateFn } from '@/core/lib/ai-translation/translation-types'
+
+/**
+ * OpenAI Chat Completions API で翻訳する。SDK は追加せず fetch 直（Workers 互換・依存最小）。
+ * 失敗は throw せず Error で返し、呼び出し側で既存データを守る。
+ */
+export const translateWithOpenai: TranslateFn = async (request) => {
+  try {
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        authorization: `Bearer ${request.apiKey}`,
+      },
+      signal: AbortSignal.timeout(90000),
+      body: JSON.stringify({
+        model: request.modelId,
+        temperature: 0,
+        max_completion_tokens: request.maxOutputTokens,
+        response_format: { type: 'json_object' },
+        messages: [
+          {
+            role: 'system',
+            content: buildTranslationPrompt({
+              sourceLocaleLabel: request.sourceLocaleLabel,
+              targetLocaleLabel: request.targetLocaleLabel,
+            }),
+          },
+          { role: 'user', content: JSON.stringify({ units: request.units }) },
+        ],
+      }),
+    })
+
+    if (!response.ok) {
+      const errorBody = await response.text()
+
+      return new Error(`OpenAI API エラー (${response.status}): ${errorBody.slice(0, 300)}`)
+    }
+
+    const responseBody: unknown = await response.json()
+
+    if (!responseBody || typeof responseBody !== 'object') {
+      return new Error('OpenAI API の応答形式が不正です')
+    }
+
+    const choices = 'choices' in responseBody ? responseBody.choices : null
+    const firstChoice: unknown = Array.isArray(choices) ? choices[0] : null
+    const message =
+      firstChoice && typeof firstChoice === 'object' && 'message' in firstChoice
+        ? firstChoice.message
+        : null
+    const rawText =
+      message && typeof message === 'object' && 'content' in message && typeof message.content === 'string'
+        ? message.content
+        : null
+
+    if (rawText === null) return new Error('OpenAI API の応答にテキストがありません')
+
+    const translations = parseTranslationResponse({ rawText, expectedCount: request.units.length })
+
+    if (translations instanceof Error) return translations
+
+    const usage =
+      'usage' in responseBody && responseBody.usage && typeof responseBody.usage === 'object'
+        ? responseBody.usage
+        : null
+    const inputTokens =
+      usage && 'prompt_tokens' in usage && typeof usage.prompt_tokens === 'number'
+        ? usage.prompt_tokens
+        : 0
+    const outputTokens =
+      usage && 'completion_tokens' in usage && typeof usage.completion_tokens === 'number'
+        ? usage.completion_tokens
+        : 0
+
+    return { translations, inputTokens, outputTokens }
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+
+    return new Error(`OpenAI API の呼び出しに失敗しました: ${message}`)
+  }
+}
