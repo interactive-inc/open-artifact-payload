@@ -11,11 +11,27 @@ describe('ai-translation の設定とログ', () => {
     payload = await getPayload({ config: payloadConfig })
   })
 
-  it('ai-translation-settings がデフォルト値で取得できる', async () => {
+  it('ai-translation-settings を保存して読み戻せる', async () => {
+    await payload.updateGlobal({
+      slug: 'ai-translation-settings',
+      data: {
+        enabled: false,
+        model: 'anthropic/claude-haiku-4-5',
+        limits: {
+          monthlyRunLimit: 100,
+          monthlyCharacterLimit: 300000,
+          monthlyCostLimitUsd: 10,
+          perRunCharacterLimit: 20000,
+          cooldownSeconds: 30,
+        },
+      },
+    })
+
     const settings = await payload.findGlobal({ slug: 'ai-translation-settings' })
 
-    expect(settings.enabled ?? false).toBe(false)
-    expect(settings.model ?? 'anthropic/claude-haiku-4-5').toBe('anthropic/claude-haiku-4-5')
+    expect(settings.enabled).toBe(false)
+    expect(settings.model).toBe('anthropic/claude-haiku-4-5')
+    expect(settings.limits?.monthlyRunLimit).toBe(100)
   })
 
   it('editor は ai-translation-logs を作成できない', async () => {
