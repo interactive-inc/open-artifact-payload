@@ -1,5 +1,6 @@
 import type { Payload } from 'payload'
 
+import { resolveEffectiveUsageLimits } from '@/core/lib/ai-translation/resolve-effective-usage-limits'
 import { resolveTranslationModel } from '@/core/lib/ai-translation/resolve-translation-model'
 import type { TranslationModel } from '@/core/lib/ai-translation/translation-models'
 import type { UsageLimits } from '@/core/lib/ai-translation/translation-types'
@@ -11,7 +12,7 @@ type TranslationSettings = {
 
 /**
  * AI翻訳設定を読み込む。enabled でなければ Error（管理画面のオフ操作が即時に効く）。
- * 未保存の Global でも安全なようにデフォルト値で補完する。
+ * 上限は管理画面の設定値と環境変数の天井（実装側ガード）の小さい方を採用する。
  */
 export async function loadTranslationSettings(
   payload: Payload,
@@ -26,16 +27,8 @@ export async function loadTranslationSettings(
 
   if (model instanceof Error) return model
 
-  const limits = settingsGlobal.limits
-
   return {
     model,
-    limits: {
-      monthlyRunLimit: limits?.monthlyRunLimit ?? 100,
-      monthlyCharacterLimit: limits?.monthlyCharacterLimit ?? 300000,
-      monthlyCostLimitUsd: limits?.monthlyCostLimitUsd ?? 10,
-      perRunCharacterLimit: limits?.perRunCharacterLimit ?? 20000,
-      cooldownSeconds: limits?.cooldownSeconds ?? 30,
-    },
+    limits: resolveEffectiveUsageLimits({ limitsGroup: settingsGlobal.limits, env: process.env }),
   }
 }

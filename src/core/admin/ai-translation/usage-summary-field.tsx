@@ -1,9 +1,11 @@
 import type { UIFieldServerProps } from 'payload'
 
 import { loadUsageSnapshot } from '@/core/lib/ai-translation/load-usage-snapshot'
+import { resolveEffectiveUsageLimits } from '@/core/lib/ai-translation/resolve-effective-usage-limits'
 
 /**
  * AI翻訳設定画面に当月の利用状況（実行回数・文字数・推定費用）を表示する読み取り専用パネル。
+ * 上限は env 天井を適用した実効値を表示する（実際の拒否判定と同じ値）。
  * サーバーコンポーネントとしてリクエスト時に集計する（ハイドレーションなし）。
  */
 export async function UsageSummaryField(props: UIFieldServerProps) {
@@ -15,19 +17,19 @@ export async function UsageSummaryField(props: UIFieldServerProps) {
     now: new Date(),
   })
 
-  const limits = settings.limits
+  const limits = resolveEffectiveUsageLimits({ limitsGroup: settings.limits, env: process.env })
   const rows = [
     {
       label: '翻訳実行回数',
-      value: `${snapshot.monthlyRunCount} / ${limits?.monthlyRunLimit ?? '未設定'} 回`,
+      value: `${snapshot.monthlyRunCount} / ${limits.monthlyRunLimit} 回`,
     },
     {
       label: '翻訳文字数',
-      value: `${snapshot.monthlyCharacterCount.toLocaleString('ja-JP')} / ${(limits?.monthlyCharacterLimit ?? 0).toLocaleString('ja-JP')} 文字`,
+      value: `${snapshot.monthlyCharacterCount.toLocaleString('ja-JP')} / ${limits.monthlyCharacterLimit.toLocaleString('ja-JP')} 文字`,
     },
     {
       label: '推定API費用',
-      value: `$${snapshot.monthlyCostUsd.toFixed(4)} / $${limits?.monthlyCostLimitUsd ?? '未設定'}`,
+      value: `$${snapshot.monthlyCostUsd.toFixed(4)} / $${limits.monthlyCostLimitUsd}`,
     },
   ]
 

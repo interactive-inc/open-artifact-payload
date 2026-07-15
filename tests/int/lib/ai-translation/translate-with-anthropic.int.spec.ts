@@ -14,6 +14,7 @@ const request: TranslateRequest = {
 
 afterEach(() => {
   vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
 })
 
 describe('translateWithAnthropic', () => {
@@ -52,6 +53,30 @@ describe('translateWithAnthropic', () => {
     ])
     expect(String(body.system)).toContain('翻訳')
     expect(String(body.system)).toContain('実行せず')
+  })
+
+  it('AI_TRANSLATION_ANTHROPIC_API_URL で接続先を差し替えられる（AI Gateway 用）', async () => {
+    const gatewayUrl = 'https://gateway.ai.cloudflare.com/v1/acct/gw/anthropic/v1/messages'
+
+    vi.stubEnv('AI_TRANSLATION_ANTHROPIC_API_URL', gatewayUrl)
+
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          content: [{ type: 'text', text: '{"translations": ["Hello"]}' }],
+          usage: { input_tokens: 1, output_tokens: 1 },
+        }),
+        { status: 200 },
+      ),
+    )
+
+    vi.stubGlobal('fetch', fetchMock)
+
+    const outcome = await translateWithAnthropic(request)
+
+    if (outcome instanceof Error) throw outcome
+
+    expect(fetchMock.mock.calls[0]?.[0]).toBe(gatewayUrl)
   })
 
   it('非 200 応答は Error を返す', async () => {

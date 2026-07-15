@@ -142,6 +142,9 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - array / blocks / group 自体への `localized: true` は AI 翻訳非対応（抽出をスキップ）。テンプレートの規約どおりフィールド単位の localized を使うこと。
 - モデルは管理画面の select（`src/core/lib/ai-translation/translation-models.ts` のレジストリ）から admin が選ぶ。gpt / claude の切り替えはここ。モデル追加はレジストリに 1 エントリ足すだけ。API キーは DB に保存せず環境変数 `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` のみ（ローカルは `.env`、本番は wrangler secret）。
 - 利用上限（月間実行回数・文字数・推定費用・1回あたり文字数・クールダウン）は「AI翻訳設定」で管理し、上限到達時は AI API を呼ぶ前に拒否する。集計は `ai-translation-logs`（監査ログ、admin のみ閲覧・サーバー内部のみ作成）を日本時間の月初から集計する。
+- 上限には実装側だけが触れる「天井」を環境変数で設定できる: `AI_TRANSLATION_MAX_MONTHLY_RUNS` / `AI_TRANSLATION_MAX_MONTHLY_CHARACTERS` / `AI_TRANSLATION_MAX_MONTHLY_COST_USD` / `AI_TRANSLATION_MAX_PER_RUN_CHARACTERS`。管理画面の設定値と env の小さい方が有効になるため、クライアント admin が管理画面で上限を引き上げても天井を超えられない。管理画面の利用状況パネルにも天井適用後の実効値が表示される。
+- API の接続先は `AI_TRANSLATION_ANTHROPIC_API_URL` / `AI_TRANSLATION_OPENAI_API_URL` で差し替えられる（未設定なら公式 API 直）。Cloudflare AI Gateway を挟む場合はゲートウェイのエンドポイント（例: `https://gateway.ai.cloudflare.com/v1/<account>/<gateway>/anthropic/v1/messages`）を指定すると、複数サイトの利用量集計・レート制限・一括停止を Cloudflare ダッシュボード側で管理できる。
+- サイト運用を他社へ移管するときのチェックリスト: 1. プロバイダのコンソールで該当サイト用の API キーを失効させる（キーはサイトごとに個別発行しておく） 2. 移管先が自前のキーを wrangler secret に登録する 3. AI Gateway 経由の場合はゲートウェイ側の設定・トークンも無効化する。キーは env にしか存在しないため、失効すれば管理画面の状態に関わらず確実に止まる。
 - エンドポイント `POST /api/ai-translate` は対象ドキュメントの参照と翻訳先言語だけを受け付ける。原稿はサーバー側で CMS から取得し、プロンプト・モデル名・フィールド指定などの自由入力は受け付けない（チャット用途への流用防止）。応答は件数・型・長さを検証してから保存し、想定外の出力は保存しない。
 - 既存翻訳は上書きしないのがデフォルト（未入力フィールドのみ翻訳）。上書きは管理画面の「再翻訳（上書き）」から確認ダイアログ付きで実行する。versions.drafts のあるエンティティへの翻訳保存は draft 扱いで、編集者の確認後に公開する。
 

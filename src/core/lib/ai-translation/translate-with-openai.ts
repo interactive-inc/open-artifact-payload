@@ -4,11 +4,15 @@ import type { TranslateFn } from '@/core/lib/ai-translation/translation-types'
 
 /**
  * OpenAI Chat Completions API で翻訳する。SDK は追加せず fetch 直（Workers 互換・依存最小）。
+ * 接続先は AI_TRANSLATION_OPENAI_API_URL で差し替え可能（Cloudflare AI Gateway 経由など）。
  * 失敗は throw せず Error で返し、呼び出し側で既存データを守る。
  */
 export const translateWithOpenai: TranslateFn = async (request) => {
+  const apiUrl =
+    process.env.AI_TRANSLATION_OPENAI_API_URL ?? 'https://api.openai.com/v1/chat/completions'
+
   try {
-    const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
