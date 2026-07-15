@@ -2,9 +2,12 @@ import type { CollectionConfig } from 'payload'
 
 import { hasAdminRole } from '@/core/lib/access/has-admin-role'
 import { isAdmin } from '@/core/lib/access/is-admin'
+import { isServiceAdminField } from '@/core/lib/access/is-service-admin-field'
 
 /**
- * AI翻訳の監査ログ。作成はサーバー内部処理（overrideAccess）のみで、
+ * AI翻訳の監査ログ。クライアントの admin も閲覧できる利用状況の画面を兼ねる
+ * （一覧上部に当月の利用状況パネルを表示）。推定API費用はサービス管理者のみ閲覧可。
+ * 作成はサーバー内部処理（overrideAccess）のみで、
  * 管理画面・REST からの作成/編集/削除は全ロールに対して禁止。
  * 月間利用上限の集計元にもなる。
  */
@@ -16,16 +19,14 @@ export const aiTranslationLogs: CollectionConfig = {
   },
   admin: {
     useAsTitle: 'targetTitle',
-    defaultColumns: [
-      'targetTitle',
-      'status',
-      'targetLocale',
-      'characterCount',
-      'estimatedCostUsd',
-      'createdAt',
-    ],
+    defaultColumns: ['targetTitle', 'status', 'targetLocale', 'characterCount', 'createdAt'],
     group: 'システム',
     hidden: (args) => !hasAdminRole(args.user),
+    components: {
+      beforeListTable: [
+        '@/core/admin/ai-translation/usage-summary-before-list#UsageSummaryBeforeList',
+      ],
+    },
   },
   access: {
     read: isAdmin,
@@ -95,6 +96,10 @@ export const aiTranslationLogs: CollectionConfig = {
       name: 'estimatedCostUsd',
       label: '推定API費用（USD）',
       type: 'number',
+      access: {
+        // 原価はクライアントに見せない（サービス管理者のみ）
+        read: isServiceAdminField,
+      },
       admin: { readOnly: true },
     },
     {

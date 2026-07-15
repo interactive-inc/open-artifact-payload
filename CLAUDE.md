@@ -128,7 +128,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - メディアファイルは R2 (`media` コレクション) 経由でのみ扱う。ローカルファイルシステムには置かない。
 - Payload 管理画面 / フロントエンドは `app/(payload)` と `app/(frontend)` のルートグループで分離されている。
 - リンターは ESLint ではなく vite-plus (`vp lint` / oxlint ベース) を使う。Turbopack デフォルトの仕様で webpack 設定が必要な dev/build には `--webpack` を付けて回避している。
-- ユーザーは `admin` / `editor` のロールを持つ。コレクションの削除など破壊的操作は admin のみ可能。共通アクセス制御は `src/core/lib/access/` 配下を参照。
+- ユーザーは `admin` / `editor` / `serviceAdmin` のロールを持つ。コレクションの削除など破壊的操作は admin のみ可能。`serviceAdmin` はサービス提供側（実装会社）専用で、AI翻訳設定の閲覧・変更に使う。serviceAdmin の付け外しは serviceAdmin 自身のみ可能（クライアント admin の自己昇格を hook で防止）。初回セットアップ時に実装会社のアカウントへ付与しておくこと。共通アクセス制御は `src/core/lib/access/` 配下を参照。
 - 問い合わせフォーム送信時の通知メールは Resend を使う。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` がすべて設定されたときのみ送信、失敗してもフォーム保存はブロックしない。
 - ニュース / ページ更新後は `src/core/lib/revalidate/build-collection-revalidate-after-change.ts` などの hook ビルダー経由で対象パスを `revalidatePath()` する (削除側は `build-collection-revalidate-after-delete.ts`、グローバルは `build-global-revalidate-after-change.ts`)。案件側で新コレクションを追加した場合も同 hook を使うこと。
 
@@ -136,7 +136,8 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 
 多言語入力（Payload Localization）と AI 翻訳は別機能。AI 翻訳を止めても手動の多言語入力と保存済み翻訳はそのまま残る。実装は `src/core/lib/ai-translation/`、管理画面 UI は `src/core/admin/ai-translation/`。
 
-- 出し分けは二段構え。コード側は `src/project/project-features.ts` の `enableAiTranslation`（false なら設定 Global・監査ログ・エンドポイント・ボタンごと消える）、運用側は管理画面「AI翻訳設定」の `enabled` チェックボックス（admin のみ変更可、オフで即停止）。月額課金の停止・再開は `enabled` で行う。
+- 出し分けは二段構え。コード側は `src/project/project-features.ts` の `enableAiTranslation`（false なら設定 Global・監査ログ・エンドポイント・ボタンごと消える）、運用側は管理画面「AI翻訳設定」の `enabled` チェックボックス（オフで即停止）。月額課金の停止・再開は `enabled` で行う。
+- 画面の見せ方はロールで分離している。「AI翻訳設定」（enabled・モデル・上限・費用込みの利用状況）は `serviceAdmin` のみ閲覧・変更可。「AI翻訳ログ」はクライアントの admin も閲覧でき、一覧上部に当月の利用状況パネル（実行回数・文字数のみ、費用なし）を表示する。ログの `estimatedCostUsd` フィールドは field access で serviceAdmin のみ読める。
 - 対応言語は `buildCoreConfig` の `locales` prop で変更する（デフォルトは ja / en）。単一言語運用は `locales: [{ code: 'ja', label: '日本語' }]` を渡し、`src/project/shared/lib/locale-types.ts` の `locales` も合わせる。
 - 翻訳対象は「`localized: true` の text / textarea / richText」を再帰抽出する共通ルール。新しいセクションやコレクションを追加しても、localized を付ければ自動で翻訳対象になり個別実装は不要。多言語入力はさせたいが AI 翻訳はさせたくないフィールドは `custom: { aiTranslate: false }` を付ける。
 - array / blocks / group 自体への `localized: true` は AI 翻訳非対応（抽出をスキップ）。テンプレートの規約どおりフィールド単位の localized を使うこと。

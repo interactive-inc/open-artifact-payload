@@ -1,13 +1,14 @@
 import type { GlobalConfig } from 'payload'
 
-import { hasAdminRole } from '@/core/lib/access/has-admin-role'
-import { isAdmin } from '@/core/lib/access/is-admin'
-import { isAuthenticated } from '@/core/lib/access/is-authenticated'
+import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { isServiceAdmin } from '@/core/lib/access/is-service-admin'
 import { translationModels } from '@/core/lib/ai-translation/translation-models'
 
 /**
  * AI翻訳の運用設定。enabled のオン/オフが即時の提供開始・停止スイッチになる
  * （オフにしても保存済みの翻訳データはそのまま残る）。
+ * サブスク管理の実体なので、閲覧・変更ともサービス管理者（実装会社）のみ。
+ * クライアント向けの利用状況は「AI翻訳ログ」一覧の上部パネルで見せる。
  * API キーは DB に保存せず、環境変数（ANTHROPIC_API_KEY / OPENAI_API_KEY）でのみ扱う。
  */
 export const aiTranslationSettings: GlobalConfig = {
@@ -15,12 +16,11 @@ export const aiTranslationSettings: GlobalConfig = {
   label: 'AI翻訳設定',
   admin: {
     group: 'システム',
-    hidden: (args) => !hasAdminRole(args.user),
+    hidden: (args) => !hasServiceAdminRole(args.user),
   },
   access: {
-    // 管理画面のボタン表示判定などで editor も読むが、設定変更は admin のみ
-    read: isAuthenticated,
-    update: isAdmin,
+    read: isServiceAdmin,
+    update: isServiceAdmin,
   },
   fields: [
     {

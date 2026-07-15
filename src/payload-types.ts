@@ -146,9 +146,9 @@ export interface UserAuthOperations {
 export interface User {
   id: number;
   /**
-   * 管理者: 全権限。編集者: コンテンツ編集のみ可能（ユーザー追加・削除や設定変更は不可）。
+   * 管理者: 全権限。編集者: コンテンツ編集のみ可能（ユーザー追加・削除や設定変更は不可）。サービス管理者: AI翻訳設定などサービス提供側の設定を扱う実装会社用ロール（付け外しはサービス管理者のみ可能）。
    */
-  roles: ('admin' | 'editor')[];
+  roles: ('admin' | 'editor' | 'serviceAdmin')[];
   updatedAt: string;
   createdAt: string;
   email: string;
