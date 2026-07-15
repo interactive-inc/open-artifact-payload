@@ -107,6 +107,18 @@ $icon-external-link: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/sv
   --accessibility-outline: 2px solid #d9dbdb;
 }
 
+// ─── ヘッダー ロケールセレクタ ───
+
+// Payload 標準はロケールセレクタを right: 90px の絶対配置にしており、
+// --gutter-h を 72px に広げた本テンプレートではアカウントアイコンと重なる。
+// gutter に追従させ、アイコン幅 (25px) + 余白 12px 分だけ左に配置する。
+// 768px 以下は Payload 標準 (right: 40px、アイコン非表示) に任せる。
+@media (min-width: 769px) {
+  .app-header__localizer.localizer {
+    right: calc(var(--gutter-h) + 37px);
+  }
+}
+
 // ─── サイドバー ナビゲーション ───
 
 .nav-group {
