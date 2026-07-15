@@ -41,6 +41,25 @@ describe('aiTranslateEndpoint', () => {
     expect(response.status).toBe(401)
   })
 
+  it('JSON として不正な body も 500 ではなく 400', async () => {
+    const admin = await payload.create({
+      collection: 'users',
+      data: {
+        email: `endpoint-badjson-${Date.now()}@example.com`,
+        password: 'test-password-1234',
+        roles: ['admin'],
+      },
+    })
+
+    const response = await aiTranslateEndpoint.handler({
+      payload,
+      user: admin,
+      json: () => Promise.reject(new SyntaxError('Unexpected token')),
+    } as unknown as PayloadRequest)
+
+    expect(response.status).toBe(400)
+  })
+
   it('不正な body は 400', async () => {
     const admin = await payload.create({
       collection: 'users',

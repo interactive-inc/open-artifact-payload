@@ -27,6 +27,15 @@ describe('guardTranslations', () => {
     )
   })
 
+  it('非空の原文に対する空の翻訳は Error（上書きでの消去防止）', () => {
+    expect(guardTranslations({ sourceUnits: ['テキスト'], translations: [''] })).toBeInstanceOf(
+      Error,
+    )
+    expect(guardTranslations({ sourceUnits: ['テキスト'], translations: ['   '] })).toBeInstanceOf(
+      Error,
+    )
+  })
+
   it('原文に対して異常に長い翻訳は Error（暴走ガード）', () => {
     const guarded = guardTranslations({
       sourceUnits: ['短い'],

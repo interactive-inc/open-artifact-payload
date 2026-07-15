@@ -151,12 +151,22 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   const snapshot = await loadUsageSnapshot({
     payload: props.payload,
     userId: props.user.id,
+    targetSlug: request.targetSlug,
+    targetId: request.targetId,
+    targetLocale: targetLocaleCode,
     now,
+  })
+  // 今回の実行費用の概算。日本語原文はほぼ 1文字=1トークン、出力も同規模とみなす保守的な見積もり
+  const projectedCostUsd = estimateTranslationCost({
+    model: settings.model,
+    inputTokens: characterCount,
+    outputTokens: characterCount,
   })
   const verdict = checkUsageLimits({
     snapshot,
     limits: settings.limits,
     requestedCharacterCount: characterCount,
+    projectedCostUsd,
     now,
   })
 
@@ -204,7 +214,8 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     targetLocaleLabel,
     modelId: settings.model.modelId,
     apiKey,
-    maxOutputTokens: Math.min(characterCount * 4 + 1000, 32000),
+    // モデルの出力上限を超える値を送ると API が 400 を返すため、レジストリの上限でクランプする
+    maxOutputTokens: Math.min(characterCount * 4 + 1000, settings.model.maxOutputTokens),
   })
 
   if (outcome instanceof Error) {
@@ -243,6 +254,31 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     })
 
     return guarded
+  }
+
+  // 楽観ロック: AI 呼び出し中（最大90秒）に翻訳先が編集されていたら、古いスナップショットで
+  // 上書きしないよう保存を中止する
+  const latestTargetDoc = await fetchTranslationDocument({
+    payload: props.payload,
+    user: props.user,
+    targetKind: request.targetKind,
+    targetSlug: request.targetSlug,
+    targetId: request.targetId,
+    locale: targetLocaleCode,
+  })
+  const targetUpdatedAt = Reflect.get(targetDoc, 'updatedAt')
+  const latestUpdatedAt =
+    latestTargetDoc instanceof Error ? null : Reflect.get(latestTargetDoc, 'updatedAt')
+
+  if (latestTargetDoc instanceof Error || targetUpdatedAt !== latestUpdatedAt) {
+    const reason = '翻訳中にドキュメントが更新されたため保存を中止しました。再実行してください'
+
+    await createAiTranslationLog({
+      payload: props.payload,
+      entry: { ...logBase, ...usageEntry, status: 'failed', errorMessage: reason },
+    })
+
+    return new Error(reason)
   }
 
   const updateData = applyTranslatedFields({

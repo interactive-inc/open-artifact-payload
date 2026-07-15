@@ -1,4 +1,4 @@
-import type { Payload } from 'payload'
+import type { Payload, Where } from 'payload'
 
 import { getJstMonthStart } from '@/core/lib/ai-translation/get-jst-month-start'
 import type { UsageSnapshot } from '@/core/lib/ai-translation/translation-types'
@@ -6,13 +6,19 @@ import type { UsageSnapshot } from '@/core/lib/ai-translation/translation-types'
 type Props = {
   payload: Payload
   userId: number | string | null
+  // クールダウン判定の対象。null なら実行ユーザー単位（旧挙動）、指定があれば同一ドキュメント・
+  // 同一言語への連続実行だけを制限する（複数言語の順次翻訳を妨げないため）
+  targetSlug: string | null
+  targetId: string | null
+  targetLocale: string | null
   now: Date
 }
 
 /**
  * 当月（日本時間）の AI 翻訳利用実績を監査ログから集計する。
- * lastRunAt は実行ユーザーの直近の succeeded / failed のみ対象
- * （rejected を含めると拒否がクールダウンを延長し続けてしまうため）。
+ * 集計対象は「AI API を呼んだ run」= succeeded と failed の両方。
+ * 失敗した run も実費が発生しているため、成功のみ数えると費用天井を突破できてしまう。
+ * rejected は API を呼ぶ前の拒否なので含めない（拒否ループでクールダウンが伸び続けるのも防ぐ）。
  */
 export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
   const monthStartIso = getJstMonthStart(props.now).toISOString()
@@ -22,7 +28,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
     where: {
       and: [
         { createdAt: { greater_than_equal: monthStartIso } },
-        { status: { equals: 'succeeded' } },
+        { status: { in: ['succeeded', 'failed'] } },
       ],
     },
     pagination: false,
@@ -44,10 +50,20 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
     }
   }
 
+  const targetConditions: Where[] = [
+    ...(props.targetSlug !== null ? [{ targetSlug: { equals: props.targetSlug } }] : []),
+    ...(props.targetId !== null ? [{ targetId: { equals: props.targetId } }] : []),
+    ...(props.targetLocale !== null ? [{ targetLocale: { equals: props.targetLocale } }] : []),
+  ]
+
   const lastRuns = await props.payload.find({
     collection: 'ai-translation-logs',
     where: {
-      and: [{ executedBy: { equals: props.userId } }, { status: { in: ['succeeded', 'failed'] } }],
+      and: [
+        { executedBy: { equals: props.userId } },
+        { status: { in: ['succeeded', 'failed'] } },
+        ...targetConditions,
+      ],
     },
     sort: '-createdAt',
     limit: 1,

@@ -6,6 +6,8 @@ export type TranslationModel = {
   apiKeyEnvName: string
   inputCostUsdPerMTok: number
   outputCostUsdPerMTok: number
+  // モデルごとの最大出力トークン数。超える値を送ると API が 400 を返すため必ずクランプに使う
+  maxOutputTokens: number
 }
 
 // 対応モデルはここに追加する（value は「provider/モデルID」形式）。
@@ -19,6 +21,7 @@ export const translationModels: ReadonlyArray<TranslationModel> = [
     apiKeyEnvName: 'ANTHROPIC_API_KEY',
     inputCostUsdPerMTok: 1,
     outputCostUsdPerMTok: 5,
+    maxOutputTokens: 32000,
   },
   {
     value: 'anthropic/claude-sonnet-5',
@@ -28,6 +31,7 @@ export const translationModels: ReadonlyArray<TranslationModel> = [
     apiKeyEnvName: 'ANTHROPIC_API_KEY',
     inputCostUsdPerMTok: 3,
     outputCostUsdPerMTok: 15,
+    maxOutputTokens: 32000,
   },
   {
     value: 'openai/gpt-4o-mini',
@@ -37,6 +41,7 @@ export const translationModels: ReadonlyArray<TranslationModel> = [
     apiKeyEnvName: 'OPENAI_API_KEY',
     inputCostUsdPerMTok: 0.15,
     outputCostUsdPerMTok: 0.6,
+    maxOutputTokens: 16384,
   },
   {
     value: 'openai/gpt-4.1',
@@ -46,5 +51,6 @@ export const translationModels: ReadonlyArray<TranslationModel> = [
     apiKeyEnvName: 'OPENAI_API_KEY',
     inputCostUsdPerMTok: 2,
     outputCostUsdPerMTok: 8,
+    maxOutputTokens: 32768,
   },
 ]

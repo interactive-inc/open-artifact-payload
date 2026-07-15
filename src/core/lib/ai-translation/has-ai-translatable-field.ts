@@ -14,7 +14,14 @@ export function hasAiTranslatableField(fields: ReadonlyArray<Field>): boolean {
       return field.localized === true
     }
 
-    if (field.type === 'group' || field.type === 'row' || field.type === 'collapsible') {
+    if (field.type === 'group') {
+      // extractTranslatableFields と同じく localized なコンテナは翻訳対象外
+      if (field.localized === true) return false
+
+      return hasAiTranslatableField(field.fields)
+    }
+
+    if (field.type === 'row' || field.type === 'collapsible') {
       return hasAiTranslatableField(field.fields)
     }
 

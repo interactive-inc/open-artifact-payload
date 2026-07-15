@@ -1,7 +1,8 @@
 import type { CollectionConfig } from 'payload'
 
 import { hasAdminRole } from '@/core/lib/access/has-admin-role'
-import { isAdmin } from '@/core/lib/access/is-admin'
+import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { isAdminOrServiceAdmin } from '@/core/lib/access/is-admin-or-service-admin'
 import { isServiceAdminField } from '@/core/lib/access/is-service-admin-field'
 
 /**
@@ -21,7 +22,8 @@ export const aiTranslationLogs: CollectionConfig = {
     useAsTitle: 'targetTitle',
     defaultColumns: ['targetTitle', 'status', 'targetLocale', 'characterCount', 'createdAt'],
     group: 'システム',
-    hidden: (args) => !hasAdminRole(args.user),
+    // serviceAdmin 単独のアカウント（実装会社の推奨構成）でも費用監査のためログを読める
+    hidden: (args) => !hasAdminRole(args.user) && !hasServiceAdminRole(args.user),
     components: {
       beforeListTable: [
         '@/core/admin/ai-translation/usage-summary-before-list#UsageSummaryBeforeList',
@@ -29,7 +31,7 @@ export const aiTranslationLogs: CollectionConfig = {
     },
   },
   access: {
-    read: isAdmin,
+    read: isAdminOrServiceAdmin,
     create: () => false,
     update: () => false,
     delete: () => false,

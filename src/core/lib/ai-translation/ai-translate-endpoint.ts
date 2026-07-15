@@ -16,7 +16,8 @@ export const aiTranslateEndpoint: Endpoint = {
       return Response.json({ message: 'ログインが必要です' }, { status: 401 })
     }
 
-    const body: unknown = req.json ? await req.json() : null
+    // 不正な JSON ボディで 500 にならないよう、パース失敗も 400 に寄せる
+    const body: unknown = req.json ? await req.json().catch(() => null) : null
     const request = parseAiTranslateRequest(body)
 
     if (request instanceof Error) {

@@ -315,6 +315,53 @@ describe('runAiTranslation', () => {
     expect(logs.docs[0]).toBeDefined()
   })
 
+  it('AI 呼び出し中に翻訳先が編集されたら保存を中止する（楽観ロック）', async () => {
+    await enableSettings()
+
+    const outcome = await runAiTranslation({
+      payload,
+      user: admin,
+      request: {
+        targetKind: 'collection',
+        targetSlug: 'news',
+        targetId: newsId,
+        targetLocale: 'en',
+        overwrite: true,
+      },
+      translateFn: async (request) => {
+        // 翻訳 API の応答待ちの間に他の編集者が翻訳先を更新した状況を再現する
+        await payload.update({
+          collection: 'news',
+          id: newsId,
+          data: { title: 'CONCURRENT-EDIT' },
+          locale: 'en',
+          draft: true,
+          depth: 0,
+        })
+
+        return {
+          translations: request.units.map((unit) => `EN3:${unit}`),
+          inputTokens: 10,
+          outputTokens: 5,
+        }
+      },
+    })
+
+    expect(outcome).toBeInstanceOf(Error)
+    if (outcome instanceof Error) expect(outcome.message).toContain('更新された')
+
+    const enDoc = await payload.findByID({
+      collection: 'news',
+      id: newsId,
+      locale: 'en',
+      fallbackLocale: false,
+      draft: true,
+      depth: 0,
+    })
+
+    expect(enDoc.title).toBe('CONCURRENT-EDIT')
+  })
+
   it('翻訳先言語が defaultLocale や未定義の locale なら Error', async () => {
     await enableSettings()
 

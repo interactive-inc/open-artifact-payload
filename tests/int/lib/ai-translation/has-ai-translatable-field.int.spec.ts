@@ -46,6 +46,19 @@ describe('hasAiTranslatableField', () => {
     expect(hasAiTranslatableField(blocksFields)).toBe(true)
   })
 
+  it('localized な group は抽出ルールと同じく対象外（ボタンだけ出る状態を防ぐ）', () => {
+    const fields: Field[] = [
+      {
+        name: 'localizedGroup',
+        type: 'group',
+        localized: true,
+        fields: [{ name: 'caption', type: 'text', localized: true }],
+      },
+    ]
+
+    expect(hasAiTranslatableField(fields)).toBe(false)
+  })
+
   it('localized が無い・aiTranslate: false のみなら false', () => {
     const fields: Field[] = [
       { name: 'slug', type: 'text' },

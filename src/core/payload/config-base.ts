@@ -128,6 +128,11 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
 
   const enableAiTranslation = props.features.enableAiTranslation
 
+  const localizationLocales = props.locales ?? [
+    { code: 'ja', label: '日本語' },
+    { code: 'en', label: 'English' },
+  ]
+
   const baseCollections = [
     users,
     media,
@@ -229,11 +234,9 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       fallbackLanguage: 'ja',
     },
     localization: {
-      locales: props.locales ?? [
-        { code: 'ja', label: '日本語' },
-        { code: 'en', label: 'English' },
-      ],
-      defaultLocale: 'ja',
+      locales: localizationLocales,
+      // 先頭の locale がデフォルト言語（= AI 翻訳の翻訳元）。locales prop と矛盾しないよう固定値にしない
+      defaultLocale: localizationLocales[0]?.code ?? 'ja',
       fallback: true,
     },
   })

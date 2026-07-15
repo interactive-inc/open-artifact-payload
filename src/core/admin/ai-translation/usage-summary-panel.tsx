@@ -19,6 +19,9 @@ export async function UsageSummaryPanel(props: Props) {
   const snapshot = await loadUsageSnapshot({
     payload: props.payload,
     userId: null,
+    targetSlug: null,
+    targetId: null,
+    targetLocale: null,
     now: new Date(),
   })
 

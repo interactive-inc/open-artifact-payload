@@ -27,6 +27,11 @@ export function guardTranslations(props: Props): string[] | Error {
       return new Error('翻訳結果が原文に対して長すぎるため保存を中止しました')
     }
 
+    // 非空の原文に空の翻訳を許すと、上書きモードで既存訳が消去されてしまう
+    if (translated.trim() === '') {
+      return new Error('翻訳結果に空の項目が含まれるため保存を中止しました')
+    }
+
     guardedTranslations.push(translated)
   }
 

@@ -4,6 +4,8 @@ type Props = {
   snapshot: UsageSnapshot
   limits: UsageLimits
   requestedCharacterCount: number
+  // 今回の実行で発生する費用の概算（USD）。実績と合算して費用上限を判定する
+  projectedCostUsd: number
   now: Date
 }
 
@@ -37,10 +39,10 @@ export function checkUsageLimits(props: Props): Verdict {
     }
   }
 
-  if (props.snapshot.monthlyCostUsd >= props.limits.monthlyCostLimitUsd) {
+  if (props.snapshot.monthlyCostUsd + props.projectedCostUsd > props.limits.monthlyCostLimitUsd) {
     return {
       allowed: false,
-      reason: `今月の推定API費用上限（$${props.limits.monthlyCostLimitUsd}）に達しています`,
+      reason: `今月の推定API費用上限（$${props.limits.monthlyCostLimitUsd}）を超えます`,
     }
   }
 

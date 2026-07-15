@@ -54,6 +54,43 @@ describe('serviceAdmin ロール', () => {
     ).rejects.toThrow()
   })
 
+  it('クライアント admin は serviceAdmin のパスワード・メールを変更できない（乗っ取り防止）', async () => {
+    await expect(
+      payload.update({
+        collection: 'users',
+        id: serviceAdmin.id,
+        data: { password: 'hijacked-password-1234' },
+        overrideAccess: false,
+        user: clientAdmin,
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('クライアント admin は serviceAdmin アカウントを削除できない', async () => {
+    await expect(
+      payload.delete({
+        collection: 'users',
+        id: serviceAdmin.id,
+        overrideAccess: false,
+        user: clientAdmin,
+      }),
+    ).rejects.toThrow()
+  })
+
+  it('serviceAdmin 単独のロールでも AI翻訳ログを閲覧できる', async () => {
+    const serviceOnly = await createUser(['serviceAdmin'])
+
+    const logs = await payload.find({
+      collection: 'ai-translation-logs',
+      limit: 1,
+      depth: 0,
+      overrideAccess: false,
+      user: serviceOnly,
+    })
+
+    expect(logs.totalDocs).toBeGreaterThanOrEqual(0)
+  })
+
   it('serviceAdmin は付与できる', async () => {
     const target = await createUser(['editor'])
 

@@ -26,6 +26,7 @@ describe('checkUsageLimits', () => {
       snapshot: emptySnapshot,
       limits: baseLimits,
       requestedCharacterCount: 1000,
+      projectedCostUsd: 0,
       now,
     })
 
@@ -37,6 +38,7 @@ describe('checkUsageLimits', () => {
       snapshot: emptySnapshot,
       limits: baseLimits,
       requestedCharacterCount: 20001,
+      projectedCostUsd: 0,
       now,
     })
 
@@ -49,6 +51,7 @@ describe('checkUsageLimits', () => {
       snapshot: { ...emptySnapshot, monthlyRunCount: 100 },
       limits: baseLimits,
       requestedCharacterCount: 10,
+      projectedCostUsd: 0,
       now,
     })
 
@@ -61,6 +64,7 @@ describe('checkUsageLimits', () => {
       snapshot: { ...emptySnapshot, monthlyCharacterCount: 299995 },
       limits: baseLimits,
       requestedCharacterCount: 10,
+      projectedCostUsd: 0,
       now,
     })
 
@@ -68,16 +72,27 @@ describe('checkUsageLimits', () => {
     if (!verdict.allowed) expect(verdict.reason).toContain('文字数')
   })
 
-  it('月間費用上限に達していると拒否する', () => {
+  it('実績と今回の見込み費用の合算が月間費用上限を超えると拒否する', () => {
     const verdict = checkUsageLimits({
-      snapshot: { ...emptySnapshot, monthlyCostUsd: 10 },
+      snapshot: { ...emptySnapshot, monthlyCostUsd: 9.99 },
       limits: baseLimits,
       requestedCharacterCount: 10,
+      projectedCostUsd: 0.02,
       now,
     })
 
     expect(verdict.allowed).toBe(false)
     if (!verdict.allowed) expect(verdict.reason).toContain('費用')
+
+    const withinLimit = checkUsageLimits({
+      snapshot: { ...emptySnapshot, monthlyCostUsd: 9.99 },
+      limits: baseLimits,
+      requestedCharacterCount: 10,
+      projectedCostUsd: 0.005,
+      now,
+    })
+
+    expect(withinLimit.allowed).toBe(true)
   })
 
   it('クールダウン中は拒否し、経過後は許可する', () => {
@@ -87,6 +102,7 @@ describe('checkUsageLimits', () => {
       snapshot: { ...emptySnapshot, lastRunAt },
       limits: baseLimits,
       requestedCharacterCount: 10,
+      projectedCostUsd: 0,
       now,
     })
 
@@ -97,6 +113,7 @@ describe('checkUsageLimits', () => {
       snapshot: { ...emptySnapshot, lastRunAt: new Date(now.getTime() - 31 * 1000) },
       limits: baseLimits,
       requestedCharacterCount: 10,
+      projectedCostUsd: 0,
       now,
     })
 
