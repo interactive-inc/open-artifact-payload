@@ -15,7 +15,12 @@ import { news } from '@/core/collections/news'
 import { faq } from '@/core/collections/faq'
 import { contactSubmissions } from '@/core/collections/contact-submissions'
 import { pages } from '@/core/collections/pages'
+import { aiTranslationLogs } from '@/core/collections/ai-translation-logs'
 import { siteSettings } from '@/core/globals/site-settings'
+import { aiTranslationSettings } from '@/core/globals/ai-translation-settings'
+import { aiTranslateEndpoint } from '@/core/lib/ai-translation/ai-translate-endpoint'
+import { injectAiTranslateControls } from '@/core/payload/inject-ai-translate-controls'
+import { injectAiTranslateControlsIntoGlobal } from '@/core/payload/inject-ai-translate-controls-into-global'
 import type { ProjectFeatures } from '@/project/types'
 
 type LivePreviewUrlValue = NonNullable<
@@ -31,6 +36,8 @@ type BuildCoreConfigProps = {
   livePreviewCollections?: string[]
   livePreviewGlobals?: string[]
   livePreviewUrl?: LivePreviewUrlFn
+  // 案件の対応言語。単一言語運用は [{ code: 'ja', label: '日本語' }] だけを渡す
+  locales?: { code: string; label: string }[]
 }
 
 const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
@@ -91,27 +98,30 @@ function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
   )
 }
 
-const defaultLivePreviewUrl: LivePreviewUrlFn = (args) => {
-  const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
-  const localeCode = typeof args.locale === 'string' ? args.locale : args.locale.code
-  const localePrefix = localeCode && localeCode !== 'ja' ? `/${localeCode}` : ''
-  const toPreview = (urlPath: string) => {
-    const localizedPath = urlPath === '/' ? localePrefix || '/' : `${localePrefix}${urlPath}`
-    return `${base}/next/preview?path=${encodeURIComponent(localizedPath)}`
-  }
-  if (args.globalConfig) {
-    const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
-    return toPreview(globalPath)
-  }
-  if (args.collectionConfig) {
-    const data = args.data
-    if (data && typeof data === 'object' && 'slug' in data && typeof data.slug === 'string') {
-      return toPreview(`/${args.collectionConfig.slug}/${data.slug}`)
+// デフォルト言語は locales prop に追従するため、'ja' 固定ではなくファクトリで受け取る
+const buildDefaultLivePreviewUrl =
+  (defaultLocaleCode: string): LivePreviewUrlFn =>
+  (args) => {
+    const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+    const localeCode = typeof args.locale === 'string' ? args.locale : args.locale.code
+    const localePrefix = localeCode && localeCode !== defaultLocaleCode ? `/${localeCode}` : ''
+    const toPreview = (urlPath: string) => {
+      const localizedPath = urlPath === '/' ? localePrefix || '/' : `${localePrefix}${urlPath}`
+      return `${base}/next/preview?path=${encodeURIComponent(localizedPath)}`
     }
-    return toPreview(`/${args.collectionConfig.slug}`)
+    if (args.globalConfig) {
+      const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
+      return toPreview(globalPath)
+    }
+    if (args.collectionConfig) {
+      const data = args.data
+      if (data && typeof data === 'object' && 'slug' in data && typeof data.slug === 'string') {
+        return toPreview(`/${args.collectionConfig.slug}/${data.slug}`)
+      }
+      return toPreview(`/${args.collectionConfig.slug}`)
+    }
+    return toPreview('/')
   }
-  return toPreview('/')
-}
 
 export async function buildCoreConfig(props: BuildCoreConfigProps) {
   const cloudflare =
@@ -119,7 +129,14 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       ? await getCloudflareContextFromWrangler()
       : await getCloudflareContext({ async: true })
 
-  const allCollections = [
+  const enableAiTranslation = props.features.enableAiTranslation
+
+  const localizationLocales = props.locales ?? [
+    { code: 'ja', label: '日本語' },
+    { code: 'en', label: 'English' },
+  ]
+
+  const baseCollections = [
     users,
     media,
     news,
@@ -129,7 +146,17 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     ...(props.projectCollections ?? []),
   ]
 
-  const allGlobals = [siteSettings, ...(props.projectGlobals ?? [])]
+  const baseGlobals = [siteSettings, ...(props.projectGlobals ?? [])]
+
+  // AI翻訳が有効な案件では、localized なテキストを持つ全エンティティの編集画面へ
+  // 翻訳ボタンを一括注入し、設定 Global と監査ログを追加登録する。
+  const allCollections = enableAiTranslation
+    ? [...baseCollections.map(injectAiTranslateControls), aiTranslationLogs]
+    : baseCollections
+
+  const allGlobals = enableAiTranslation
+    ? [...baseGlobals.map(injectAiTranslateControlsIntoGlobal), aiTranslationSettings]
+    : baseGlobals
 
   // フロントにルートが存在するコレクション/グローバルのみ Live Preview 対象にする。
   // 案件でコレクションのフロントページを追加したら、ここにも slug を追加する。
@@ -163,11 +190,13 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
           { name: 'tablet', width: 768, height: 1024, label: 'タブレット' },
           { name: 'desktop', width: 1440, height: 900, label: 'デスクトップ' },
         ],
-        url: props.livePreviewUrl ?? defaultLivePreviewUrl,
+        url:
+          props.livePreviewUrl ?? buildDefaultLivePreviewUrl(localizationLocales[0]?.code ?? 'ja'),
       },
     },
     collections: allCollections,
     globals: allGlobals,
+    endpoints: enableAiTranslation ? [aiTranslateEndpoint] : [],
     editor: lexicalEditor(),
     secret: resolveSecret(),
     typescript: {
@@ -209,11 +238,9 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       fallbackLanguage: 'ja',
     },
     localization: {
-      locales: [
-        { code: 'ja', label: '日本語' },
-        { code: 'en', label: 'English' },
-      ],
-      defaultLocale: 'ja',
+      locales: localizationLocales,
+      // 先頭の locale がデフォルト言語（= AI 翻訳の翻訳元）。locales prop と矛盾しないよう固定値にしない
+      defaultLocale: localizationLocales[0]?.code ?? 'ja',
       fallback: true,
     },
   })
