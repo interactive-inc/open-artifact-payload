@@ -244,7 +244,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   }
 
   // API 呼び出しの予約行。並行リクエストはこの行を集計に含めて見るため、
-  // 上限・クールダウンの同時すり抜けを防げる
+  // 上限・クールダウンの同時すり抜けを防げる。費用も見込み額で予約し、finalize で実費に置換する
   const pendingLogId = await createAiTranslationLog({
     payload: props.payload,
     entry: {
@@ -252,7 +252,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
       status: 'pending',
       inputTokens: 0,
       outputTokens: 0,
-      estimatedCostUsd: 0,
+      estimatedCostUsd: projectedCostUsd,
       errorMessage: null,
     },
   })
@@ -282,6 +282,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   }
 
   const translateFn = props.translateFn ?? resolveTranslateFn(settings.model.provider)
+  // translateFn が reject/throw しても pending を failed で確定できるよう Error に畳む
   const outcome = await translateFn({
     units: sourceUnits,
     sourceLocaleLabel,
@@ -290,7 +291,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     apiKey,
     // モデルの出力上限を超える値を送ると API が 400 を返すため、レジストリの上限でクランプする
     maxOutputTokens: Math.min(characterCount * 4 + 1000, settings.model.maxOutputTokens),
-  })
+  }).catch((thrown: unknown) => (thrown instanceof Error ? thrown : new Error(String(thrown))))
 
   if (outcome instanceof Error) {
     await finalize({

@@ -3,6 +3,10 @@ import type { Payload, Where } from 'payload'
 import { getJstMonthStart } from '@/core/lib/ai-translation/get-jst-month-start'
 import type { UsageSnapshot } from '@/core/lib/ai-translation/translation-types'
 
+// pending 予約の有効期限。API タイムアウト（90秒）より十分長く取り、異常終了で
+// finalize されなかった行が月末まで上限を消費し続けないようにする
+const pendingStaleMs = 10 * 60 * 1000
+
 type Props = {
   payload: Payload
   userId: number | string | null
@@ -24,14 +28,23 @@ type Props = {
  */
 export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
   const monthStartIso = getJstMonthStart(props.now).toISOString()
+  const pendingFreshIso = new Date(props.now.getTime() - pendingStaleMs).toISOString()
+  const countableStatusCondition: Where = {
+    or: [
+      { status: { in: ['succeeded', 'failed'] } },
+      {
+        and: [
+          { status: { equals: 'pending' } },
+          { createdAt: { greater_than_equal: pendingFreshIso } },
+        ],
+      },
+    ],
+  }
 
   const monthlyLogs = await props.payload.find({
     collection: 'ai-translation-logs',
     where: {
-      and: [
-        { createdAt: { greater_than_equal: monthStartIso } },
-        { status: { in: ['pending', 'succeeded', 'failed'] } },
-      ],
+      and: [{ createdAt: { greater_than_equal: monthStartIso } }, countableStatusCondition],
     },
     pagination: false,
     depth: 0,
@@ -64,7 +77,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
     where: {
       and: [
         { executedBy: { equals: props.userId } },
-        { status: { in: ['pending', 'succeeded', 'failed'] } },
+        countableStatusCondition,
         ...targetConditions,
       ],
     },

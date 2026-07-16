@@ -358,6 +358,7 @@ describe('runAiTranslation', () => {
     await enableSettings()
 
     const pendingSeen: number[] = []
+    const pendingReservedCosts: number[] = []
 
     const outcome = await runAiTranslation({
       payload,
@@ -379,6 +380,7 @@ describe('runAiTranslation', () => {
           depth: 0,
         })
         pendingSeen.push(...pendingLogs.docs.map((log) => log.id))
+        pendingReservedCosts.push(...pendingLogs.docs.map((log) => log.estimatedCostUsd ?? 0))
 
         return {
           translations: request.units.map((unit) => `EN4:${unit}`),
@@ -391,6 +393,8 @@ describe('runAiTranslation', () => {
     if (outcome instanceof Error) throw outcome
 
     expect(pendingSeen).toHaveLength(1)
+    // 費用も見込み額で予約され、並行リクエストの費用上限判定に含まれる
+    expect(pendingReservedCosts[0]).toBeGreaterThan(0)
 
     const finalizedLog = await payload.findByID({
       collection: 'ai-translation-logs',
