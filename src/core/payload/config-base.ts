@@ -98,27 +98,30 @@ function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
   )
 }
 
-const defaultLivePreviewUrl: LivePreviewUrlFn = (args) => {
-  const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
-  const localeCode = typeof args.locale === 'string' ? args.locale : args.locale.code
-  const localePrefix = localeCode && localeCode !== 'ja' ? `/${localeCode}` : ''
-  const toPreview = (urlPath: string) => {
-    const localizedPath = urlPath === '/' ? localePrefix || '/' : `${localePrefix}${urlPath}`
-    return `${base}/next/preview?path=${encodeURIComponent(localizedPath)}`
-  }
-  if (args.globalConfig) {
-    const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
-    return toPreview(globalPath)
-  }
-  if (args.collectionConfig) {
-    const data = args.data
-    if (data && typeof data === 'object' && 'slug' in data && typeof data.slug === 'string') {
-      return toPreview(`/${args.collectionConfig.slug}/${data.slug}`)
+// デフォルト言語は locales prop に追従するため、'ja' 固定ではなくファクトリで受け取る
+const buildDefaultLivePreviewUrl =
+  (defaultLocaleCode: string): LivePreviewUrlFn =>
+  (args) => {
+    const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+    const localeCode = typeof args.locale === 'string' ? args.locale : args.locale.code
+    const localePrefix = localeCode && localeCode !== defaultLocaleCode ? `/${localeCode}` : ''
+    const toPreview = (urlPath: string) => {
+      const localizedPath = urlPath === '/' ? localePrefix || '/' : `${localePrefix}${urlPath}`
+      return `${base}/next/preview?path=${encodeURIComponent(localizedPath)}`
     }
-    return toPreview(`/${args.collectionConfig.slug}`)
+    if (args.globalConfig) {
+      const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
+      return toPreview(globalPath)
+    }
+    if (args.collectionConfig) {
+      const data = args.data
+      if (data && typeof data === 'object' && 'slug' in data && typeof data.slug === 'string') {
+        return toPreview(`/${args.collectionConfig.slug}/${data.slug}`)
+      }
+      return toPreview(`/${args.collectionConfig.slug}`)
+    }
+    return toPreview('/')
   }
-  return toPreview('/')
-}
 
 export async function buildCoreConfig(props: BuildCoreConfigProps) {
   const cloudflare =
@@ -187,7 +190,8 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
           { name: 'tablet', width: 768, height: 1024, label: 'タブレット' },
           { name: 'desktop', width: 1440, height: 900, label: 'デスクトップ' },
         ],
-        url: props.livePreviewUrl ?? defaultLivePreviewUrl,
+        url:
+          props.livePreviewUrl ?? buildDefaultLivePreviewUrl(localizationLocales[0]?.code ?? 'ja'),
       },
     },
     collections: allCollections,

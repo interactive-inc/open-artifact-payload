@@ -9,7 +9,7 @@ type LogEntry = {
   sourceLocale: string
   targetLocale: string
   model: string
-  status: 'succeeded' | 'failed' | 'rejected'
+  status: 'pending' | 'succeeded' | 'failed' | 'rejected'
   characterCount: number
   inputTokens: number
   outputTokens: number
@@ -25,18 +25,24 @@ type Props = {
 }
 
 /**
- * AI翻訳の監査ログを保存する（アクセス制御はサーバー内部作成のため override）。
- * ログ保存自体の失敗で翻訳処理を壊さないよう、例外は握ってロガーに流すだけにする。
+ * AI翻訳の監査ログを保存し、作成したログの id を返す（アクセス制御はサーバー内部作成のため override）。
+ * pending の予約行としても使う: AI 呼び出し前に作成しておくことで、並行リクエストが互いの実行を
+ * 上限・クールダウン集計で見られるようにする。
+ * ログ保存自体の失敗で翻訳処理を壊さないよう、例外は握って null を返す。
  */
-export async function createAiTranslationLog(props: Props): Promise<void> {
+export async function createAiTranslationLog(props: Props): Promise<number | null> {
   try {
-    await props.payload.create({
+    const created = await props.payload.create({
       collection: 'ai-translation-logs',
       data: props.entry,
     })
+
+    return created.id
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
 
     props.payload.logger.error(`AI翻訳ログの保存に失敗しました: ${message}`)
+
+    return null
   }
 }

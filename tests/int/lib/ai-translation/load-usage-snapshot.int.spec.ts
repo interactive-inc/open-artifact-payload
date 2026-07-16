@@ -50,6 +50,7 @@ describe('loadUsageSnapshot', () => {
     const before = await loadUsageSnapshot({
       payload,
       userId: user.id,
+      targetKind: null,
       targetSlug: null,
       targetId: null,
       targetLocale: null,
@@ -84,6 +85,7 @@ describe('loadUsageSnapshot', () => {
     const after = await loadUsageSnapshot({
       payload,
       userId: user.id,
+      targetKind: null,
       targetSlug: null,
       targetId: null,
       targetLocale: null,
@@ -118,6 +120,7 @@ describe('loadUsageSnapshot', () => {
     const sameLocale = await loadUsageSnapshot({
       payload,
       userId: user.id,
+      targetKind: 'collection',
       targetSlug: 'news',
       targetId: null,
       targetLocale: 'en',
@@ -129,6 +132,7 @@ describe('loadUsageSnapshot', () => {
     const otherLocale = await loadUsageSnapshot({
       payload,
       userId: user.id,
+      targetKind: 'collection',
       targetSlug: 'news',
       targetId: null,
       targetLocale: 'zh',
@@ -160,6 +164,7 @@ describe('loadUsageSnapshot', () => {
     const afterRejected = await loadUsageSnapshot({
       payload,
       userId: user.id,
+      targetKind: null,
       targetSlug: null,
       targetId: null,
       targetLocale: null,
@@ -178,6 +183,7 @@ describe('loadUsageSnapshot', () => {
     const afterFailed = await loadUsageSnapshot({
       payload,
       userId: user.id,
+      targetKind: null,
       targetSlug: null,
       targetId: null,
       targetLocale: null,
@@ -191,6 +197,7 @@ describe('loadUsageSnapshot', () => {
     const snapshot = await loadUsageSnapshot({
       payload,
       userId: null,
+      targetKind: null,
       targetSlug: null,
       targetId: null,
       targetLocale: null,

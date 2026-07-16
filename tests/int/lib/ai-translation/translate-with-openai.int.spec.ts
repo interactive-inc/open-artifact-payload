@@ -33,7 +33,8 @@ describe('translateWithOpenai', () => {
 
     const outcome = await translateWithOpenai(request)
 
-    if (outcome instanceof Error) throw outcome
+    if (outcome instanceof Error || 'failureMessage' in outcome)
+      throw new Error('unexpected failure')
 
     expect(outcome.translations).toEqual(['Hello'])
     expect(outcome.inputTokens).toBe(80)

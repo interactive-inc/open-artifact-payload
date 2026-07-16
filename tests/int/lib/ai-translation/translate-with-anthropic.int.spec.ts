@@ -33,7 +33,8 @@ describe('translateWithAnthropic', () => {
 
     const outcome = await translateWithAnthropic(request)
 
-    if (outcome instanceof Error) throw outcome
+    if (outcome instanceof Error || 'failureMessage' in outcome)
+      throw new Error('unexpected failure')
 
     expect(outcome.translations).toEqual(['Hello'])
     expect(outcome.inputTokens).toBe(100)
@@ -77,6 +78,29 @@ describe('translateWithAnthropic', () => {
     if (outcome instanceof Error) throw outcome
 
     expect(fetchMock.mock.calls[0]?.[0]).toBe(gatewayUrl)
+  })
+
+  it('応答が不正 JSON でも使用量（課金分）を失敗として返す', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            content: [{ type: 'text', text: '旅行プランはこちらです…' }],
+            usage: { input_tokens: 77, output_tokens: 33 },
+          }),
+          { status: 200 },
+        ),
+      ),
+    )
+
+    const outcome = await translateWithAnthropic(request)
+
+    if (outcome instanceof Error) throw outcome
+    if (!('failureMessage' in outcome)) throw new Error('failure expected')
+
+    expect(outcome.inputTokens).toBe(77)
+    expect(outcome.outputTokens).toBe(33)
   })
 
   it('非 200 応答は Error を返す', async () => {

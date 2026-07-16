@@ -317,7 +317,7 @@ export interface AiTranslationLog {
   sourceLocale: string;
   targetLocale: string;
   model: string;
-  status: 'succeeded' | 'failed' | 'rejected';
+  status: 'pending' | 'succeeded' | 'failed' | 'rejected';
   characterCount?: number | null;
   inputTokens?: number | null;
   outputTokens?: number | null;

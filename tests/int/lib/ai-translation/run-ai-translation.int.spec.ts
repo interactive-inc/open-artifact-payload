@@ -315,6 +315,93 @@ describe('runAiTranslation', () => {
     expect(logs.docs[0]).toBeDefined()
   })
 
+  it('更新権限が無いユーザーは AI を呼ぶ前に拒否される（site-settings は editor 更新不可）', async () => {
+    await enableSettings()
+
+    const editor = await payload.create({
+      collection: 'users',
+      data: {
+        email: `run-ai-editor-${Date.now()}@example.com`,
+        password: 'test-password-1234',
+        roles: ['editor'],
+      },
+    })
+
+    const calls: string[] = []
+
+    const outcome = await runAiTranslation({
+      payload,
+      user: editor,
+      request: {
+        targetKind: 'global',
+        targetSlug: 'site-settings',
+        targetId: null,
+        targetLocale: 'en',
+        overwrite: true,
+      },
+      translateFn: (request) => {
+        calls.push('called')
+        return Promise.resolve({
+          translations: request.units.map((unit) => `EN:${unit}`),
+          inputTokens: 1,
+          outputTokens: 1,
+        })
+      },
+    })
+
+    expect(outcome).toBeInstanceOf(Error)
+    if (outcome instanceof Error) expect(outcome.message).toContain('権限')
+    expect(calls).toHaveLength(0)
+  })
+
+  it('実行中は pending の予約ログが存在し、完了後に同じ行が succeeded になる', async () => {
+    await enableSettings()
+
+    const pendingSeen: number[] = []
+
+    const outcome = await runAiTranslation({
+      payload,
+      user: admin,
+      request: {
+        targetKind: 'collection',
+        targetSlug: 'news',
+        targetId: newsId,
+        targetLocale: 'en',
+        overwrite: true,
+      },
+      translateFn: async (request) => {
+        const pendingLogs = await payload.find({
+          collection: 'ai-translation-logs',
+          where: {
+            and: [{ targetId: { equals: newsId } }, { status: { equals: 'pending' } }],
+          },
+          limit: 5,
+          depth: 0,
+        })
+        pendingSeen.push(...pendingLogs.docs.map((log) => log.id))
+
+        return {
+          translations: request.units.map((unit) => `EN4:${unit}`),
+          inputTokens: 10,
+          outputTokens: 5,
+        }
+      },
+    })
+
+    if (outcome instanceof Error) throw outcome
+
+    expect(pendingSeen).toHaveLength(1)
+
+    const finalizedLog = await payload.findByID({
+      collection: 'ai-translation-logs',
+      id: pendingSeen[0] ?? 0,
+      depth: 0,
+    })
+
+    expect(finalizedLog.status).toBe('succeeded')
+    expect(finalizedLog.estimatedCostUsd).toBeGreaterThan(0)
+  })
+
   it('AI 呼び出し中に翻訳先が編集されたら保存を中止する（楽観ロック）', async () => {
     await enableSettings()
 

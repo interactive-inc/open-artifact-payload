@@ -19,7 +19,17 @@ export type TranslateSuccess = {
   outputTokens: number
 }
 
-export type TranslateFn = (request: TranslateRequest) => Promise<TranslateSuccess | Error>
+// API は応答した（= 課金された）が応答内容が不正だったケース。実トークンを監査ログへ残すため
+// Error ではなく使用量付きで返す。通信エラーなど課金が確定しないケースは従来どおり Error。
+export type TranslateFailure = {
+  failureMessage: string
+  inputTokens: number
+  outputTokens: number
+}
+
+export type TranslateFn = (
+  request: TranslateRequest,
+) => Promise<TranslateSuccess | TranslateFailure | Error>
 
 export type UsageSnapshot = {
   monthlyRunCount: number

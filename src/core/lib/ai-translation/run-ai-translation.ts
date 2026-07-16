@@ -1,13 +1,16 @@
 import type { Payload } from 'payload'
 
 import { applyTranslatedFields } from '@/core/lib/ai-translation/apply-translated-fields'
+import { canUpdateTranslationTarget } from '@/core/lib/ai-translation/can-update-translation-target'
 import { checkUsageLimits } from '@/core/lib/ai-translation/check-usage-limits'
 import { createAiTranslationLog } from '@/core/lib/ai-translation/create-ai-translation-log'
 import { estimateTranslationCost } from '@/core/lib/ai-translation/estimate-translation-cost'
 import { extractTranslatableFields } from '@/core/lib/ai-translation/extract-translatable-fields'
 import { fetchTranslationDocument } from '@/core/lib/ai-translation/fetch-translation-document'
 import { filterUntranslatedFields } from '@/core/lib/ai-translation/filter-untranslated-fields'
+import { finalizeAiTranslationLog } from '@/core/lib/ai-translation/finalize-ai-translation-log'
 import { guardTranslations } from '@/core/lib/ai-translation/guard-translations'
+import { isTranslateFailure } from '@/core/lib/ai-translation/is-translate-failure'
 import { isTypedLocale } from '@/core/lib/ai-translation/is-typed-locale'
 import { loadTranslationSettings } from '@/core/lib/ai-translation/load-translation-settings'
 import { loadUsageSnapshot } from '@/core/lib/ai-translation/load-usage-snapshot'
@@ -35,9 +38,15 @@ export type AiTranslationSummary = {
   message: string
 }
 
+// システムプロンプトと JSON ラッパー分の入力トークン概算（見込み費用の過小評価を防ぐ）
+const promptOverheadTokens = 1500
+
 /**
- * AI翻訳の一連の流れ（設定確認 → 権限付き取得 → 抽出 → 上限判定 → 翻訳 → 検証 → 保存 → 監査ログ）。
+ * AI翻訳の一連の流れ（設定確認 → 権限付き取得 → 抽出 → 更新権限の事前確認 → 上限判定 →
+ * pending 予約 → 翻訳 → 検証 → 楽観ロック → 保存 → 監査ログ確定）。
  * どの段階で失敗しても既存データは変更せず、Error を返す。
+ * pending 行を先に作ることで、並行リクエストが互いの実行を上限・クールダウン集計で見られる
+ * （完全な原子性ではないが、競合窓を AI 呼び出しの 90 秒からミリ秒単位まで縮める）。
  */
 export async function runAiTranslation(props: Props): Promise<AiTranslationSummary | Error> {
   const now = props.now ?? new Date()
@@ -148,18 +157,45 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     skippedFieldCount,
   }
 
+  // AI を呼ぶ前に更新権限を確認する（閲覧のみ可能なユーザーが API 費用だけ発生させるのを防ぐ）
+  const canUpdate = await canUpdateTranslationTarget({
+    payload: props.payload,
+    user: props.user,
+    targetKind: request.targetKind,
+    targetSlug: request.targetSlug,
+  })
+
+  if (!canUpdate) {
+    const reason = 'このドキュメントを更新する権限がないため翻訳できません'
+
+    await createAiTranslationLog({
+      payload: props.payload,
+      entry: {
+        ...logBase,
+        status: 'rejected',
+        inputTokens: 0,
+        outputTokens: 0,
+        estimatedCostUsd: 0,
+        errorMessage: reason,
+      },
+    })
+
+    return new Error(reason)
+  }
+
   const snapshot = await loadUsageSnapshot({
     payload: props.payload,
     userId: props.user.id,
+    targetKind: request.targetKind,
     targetSlug: request.targetSlug,
     targetId: request.targetId,
     targetLocale: targetLocaleCode,
     now,
   })
-  // 今回の実行費用の概算。日本語原文はほぼ 1文字=1トークン、出力も同規模とみなす保守的な見積もり
+  // 今回の実行費用の概算。日本語原文はほぼ 1文字=1トークン、出力も同規模 + プロンプト分とみなす
   const projectedCostUsd = estimateTranslationCost({
     model: settings.model,
-    inputTokens: characterCount,
+    inputTokens: characterCount + promptOverheadTokens,
     outputTokens: characterCount,
   })
   const verdict = checkUsageLimits({
@@ -207,6 +243,44 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     return new Error(reason)
   }
 
+  // API 呼び出しの予約行。並行リクエストはこの行を集計に含めて見るため、
+  // 上限・クールダウンの同時すり抜けを防げる
+  const pendingLogId = await createAiTranslationLog({
+    payload: props.payload,
+    entry: {
+      ...logBase,
+      status: 'pending',
+      inputTokens: 0,
+      outputTokens: 0,
+      estimatedCostUsd: 0,
+      errorMessage: null,
+    },
+  })
+
+  const finalize = async (outcome: {
+    status: 'succeeded' | 'failed'
+    inputTokens: number
+    outputTokens: number
+    estimatedCostUsd: number
+    errorMessage: string | null
+  }) => {
+    if (pendingLogId !== null) {
+      await finalizeAiTranslationLog({
+        payload: props.payload,
+        logId: pendingLogId,
+        status: outcome.status,
+        inputTokens: outcome.inputTokens,
+        outputTokens: outcome.outputTokens,
+        estimatedCostUsd: outcome.estimatedCostUsd,
+        translatedFieldCount: logBase.translatedFieldCount,
+        errorMessage: outcome.errorMessage,
+      })
+      return
+    }
+
+    await createAiTranslationLog({ payload: props.payload, entry: { ...logBase, ...outcome } })
+  }
+
   const translateFn = props.translateFn ?? resolveTranslateFn(settings.model.provider)
   const outcome = await translateFn({
     units: sourceUnits,
@@ -219,16 +293,12 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   if (outcome instanceof Error) {
-    await createAiTranslationLog({
-      payload: props.payload,
-      entry: {
-        ...logBase,
-        status: 'failed',
-        inputTokens: 0,
-        outputTokens: 0,
-        estimatedCostUsd: 0,
-        errorMessage: outcome.message,
-      },
+    await finalize({
+      status: 'failed',
+      inputTokens: 0,
+      outputTokens: 0,
+      estimatedCostUsd: 0,
+      errorMessage: outcome.message,
     })
 
     return new Error(`翻訳に失敗しました: ${outcome.message}`)
@@ -245,13 +315,17 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     estimatedCostUsd,
   }
 
+  // API は応答した（課金済み）が内容が不正だったケース。実費を確定してから中止する
+  if (isTranslateFailure(outcome)) {
+    await finalize({ ...usageEntry, status: 'failed', errorMessage: outcome.failureMessage })
+
+    return new Error(`翻訳に失敗しました: ${outcome.failureMessage}`)
+  }
+
   const guarded = guardTranslations({ sourceUnits, translations: outcome.translations })
 
   if (guarded instanceof Error) {
-    await createAiTranslationLog({
-      payload: props.payload,
-      entry: { ...logBase, ...usageEntry, status: 'failed', errorMessage: guarded.message },
-    })
+    await finalize({ ...usageEntry, status: 'failed', errorMessage: guarded.message })
 
     return guarded
   }
@@ -273,10 +347,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   if (latestTargetDoc instanceof Error || targetUpdatedAt !== latestUpdatedAt) {
     const reason = '翻訳中にドキュメントが更新されたため保存を中止しました。再実行してください'
 
-    await createAiTranslationLog({
-      payload: props.payload,
-      entry: { ...logBase, ...usageEntry, status: 'failed', errorMessage: reason },
-    })
+    await finalize({ ...usageEntry, status: 'failed', errorMessage: reason })
 
     return new Error(reason)
   }
@@ -289,10 +360,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   if (updateData instanceof Error) {
-    await createAiTranslationLog({
-      payload: props.payload,
-      entry: { ...logBase, ...usageEntry, status: 'failed', errorMessage: updateData.message },
-    })
+    await finalize({ ...usageEntry, status: 'failed', errorMessage: updateData.message })
 
     return updateData
   }
@@ -309,18 +377,12 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   if (saved instanceof Error) {
-    await createAiTranslationLog({
-      payload: props.payload,
-      entry: { ...logBase, ...usageEntry, status: 'failed', errorMessage: saved.message },
-    })
+    await finalize({ ...usageEntry, status: 'failed', errorMessage: saved.message })
 
     return saved
   }
 
-  await createAiTranslationLog({
-    payload: props.payload,
-    entry: { ...logBase, ...usageEntry, status: 'succeeded', errorMessage: null },
-  })
+  await finalize({ ...usageEntry, status: 'succeeded', errorMessage: null })
 
   return {
     status: 'succeeded',

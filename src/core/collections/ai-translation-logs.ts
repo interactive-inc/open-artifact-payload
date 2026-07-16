@@ -85,6 +85,7 @@ export const aiTranslationLogs: CollectionConfig = {
       type: 'select',
       required: true,
       options: [
+        { label: '実行中', value: 'pending' },
         { label: '成功', value: 'succeeded' },
         { label: '失敗', value: 'failed' },
         { label: '上限・条件により拒否', value: 'rejected' },
