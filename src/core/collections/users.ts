@@ -4,7 +4,8 @@ import { guardServiceAdminAccountChange } from '@/core/lib/access/guard-service-
 import { guardServiceAdminAccountDelete } from '@/core/lib/access/guard-service-admin-account-delete'
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAdminField } from '@/core/lib/access/is-admin-field'
-import { isAuthenticated } from '@/core/lib/access/is-authenticated'
+import { isUserAccount } from '@/core/lib/access/is-user-account'
+import { readUsers } from '@/core/lib/access/read-users'
 
 export const users: CollectionConfig = {
   slug: 'users',
@@ -17,15 +18,17 @@ export const users: CollectionConfig = {
     defaultColumns: ['email', 'roles', 'updatedAt'],
     group: 'システム',
   },
-  auth: true,
+  auth: {
+    useAPIKey: true,
+  },
   access: {
-    // ログイン済みなら自分含むユーザー一覧を閲覧可。編集は admin 限定。
-    read: isAuthenticated,
+    // 管理ロール以外は自分自身だけを閲覧可。API Keyを含む他ユーザー情報を漏らさない。
+    read: readUsers,
     create: isAdmin,
     update: isAdmin,
     delete: isAdmin,
     // admin プロパティは boolean | Promise<boolean> しか返せない仕様のため直書き
-    admin: (args) => Boolean(args.req.user),
+    admin: (args) => isUserAccount(args.req.user),
   },
   hooks: {
     // serviceAdmin アカウントの更新・削除・ロール付与はサービス管理者のみ

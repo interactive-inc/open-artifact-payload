@@ -1,10 +1,16 @@
 import type { GlobalConfig } from 'payload'
 
+import { isAuthenticated } from '@/core/lib/access/is-authenticated'
+
 export const aboutGlobal: GlobalConfig = {
   slug: 'about',
   label: '会社概要',
   admin: {
     group: 'コンテンツ',
+  },
+  access: {
+    read: () => true,
+    update: isAuthenticated,
   },
   fields: [
     {

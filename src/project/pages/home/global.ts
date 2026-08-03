@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { isAuthenticated } from '@/core/lib/access/is-authenticated'
 import { buildGlobalRevalidateAfterChange } from '@/core/lib/revalidate/build-global-revalidate-after-change'
 
 export const homeGlobal: GlobalConfig = {
@@ -7,6 +8,10 @@ export const homeGlobal: GlobalConfig = {
   label: 'トップページ',
   admin: {
     group: 'コンテンツ',
+  },
+  access: {
+    read: () => true,
+    update: isAuthenticated,
   },
   hooks: {
     // トップページ編集後に / を revalidate する。

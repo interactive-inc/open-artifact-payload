@@ -15,6 +15,10 @@ import * as migration_20260603_170022_works_collection from './20260603_170022_w
 import * as migration_20260702_170857_works_seo_meta from './20260702_170857_works_seo_meta';
 import * as migration_20260703_122632_add_localization from './20260703_122632_add_localization';
 import * as migration_20260714_154413_ai_translation from './20260714_154413_ai_translation';
+import * as migration_20260803_070926_enable_user_api_keys from './20260803_070926_enable_user_api_keys';
+import * as migration_20260803_074553_official_mcp_plugin from './20260803_074553_official_mcp_plugin';
+import * as migration_20260803_142729_mcp_security_hardening from './20260803_142729_mcp_security_hardening';
+import * as migration_20260803_143601_mcp_key_expiry from './20260803_143601_mcp_key_expiry';
 
 export const migrations = [
   {
@@ -100,6 +104,26 @@ export const migrations = [
   {
     up: migration_20260714_154413_ai_translation.up,
     down: migration_20260714_154413_ai_translation.down,
-    name: '20260714_154413_ai_translation'
+    name: '20260714_154413_ai_translation',
+  },
+  {
+    up: migration_20260803_070926_enable_user_api_keys.up,
+    down: migration_20260803_070926_enable_user_api_keys.down,
+    name: '20260803_070926_enable_user_api_keys',
+  },
+  {
+    up: migration_20260803_074553_official_mcp_plugin.up,
+    down: migration_20260803_074553_official_mcp_plugin.down,
+    name: '20260803_074553_official_mcp_plugin',
+  },
+  {
+    up: migration_20260803_142729_mcp_security_hardening.up,
+    down: migration_20260803_142729_mcp_security_hardening.down,
+    name: '20260803_142729_mcp_security_hardening',
+  },
+  {
+    up: migration_20260803_143601_mcp_key_expiry.up,
+    down: migration_20260803_143601_mcp_key_expiry.down,
+    name: '20260803_143601_mcp_key_expiry'
   },
 ];

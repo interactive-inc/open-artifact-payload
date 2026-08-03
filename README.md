@@ -11,12 +11,23 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 - インフラ: Cloudflare D1 + R2 + Workers
 - ランタイム / パッケージマネージャー: bun
 
+## リポジトリ構成
+
+このリポジトリは Bun workspace のモノレポです。既存サイトをルート workspace に保ち、外部操作の境界を独立パッケージに分けています。
+
+- ルート — Next.js / Payload のサイト本体
+- `packages/site-management` — CLI向けサイト管理の Domain / Application / Infrastructure と composition root
+- `packages/cli` — Hiract型の `intacms` CLI（環境設定、JWTログイン、REST型コマンド）
+- ルートの Payload — 公式 `@payloadcms/plugin-mcp` による Streamable HTTP MCP サーバー
+
+設計判断は `.docs/architecture.md` と `.docs/domain.md`、操作手順は `.docs/features/site-tools.md` を参照してください。
+
 ## セットアップ
 
 前提: bun 1.3+ / wrangler CLI / Cloudflare アカウント
 
 ```bash
-bun install
+vp install
 
 # D1 と R2 を作成し、wrangler.jsonc の database_id / bucket_name を差し替える
 # (bun run setup:project で対話的に自動置換できる)
@@ -97,6 +108,9 @@ bun run build                   # プロダクションビルド
 bun run lint                    # vp lint (lint + 型チェック)
 bun run check                   # vp check (フォーマット + lint + 型チェック)
 bun run test                    # 統合テスト + E2E すべて
+bun run test:tools              # CLI / site-management のユニットテスト
+bun run intacms --help          # サイト操作 CLI のヘルプ
+bun run intacms commands        # 公開リソースと操作の一覧
 bun run payload migrate         # ローカル D1 にマイグレーション
 bun run seed                    # サンプルデータ投入
 bun run generate:types          # Cloudflare + Payload の型生成

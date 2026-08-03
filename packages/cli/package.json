@@ -1,0 +1,20 @@
+{
+  "name": "@open-artifact/cli",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CLI for reading and updating Open Artifact Payload sites",
+  "type": "module",
+  "bin": {
+    "intacms": "lib/index.ts",
+    "open-artifact": "lib/index.ts"
+  },
+  "scripts": {
+    "check": "vp check",
+    "test": "vp test run"
+  },
+  "dependencies": {
+    "@open-artifact/site-management": "workspace:*",
+    "hono": "4.12.34",
+    "zod": "4.4.3"
+  }
+}

@@ -64,6 +64,7 @@ export type SupportedTimezones =
 export interface Config {
   auth: {
     users: UserAuthOperations;
+    'payload-mcp-api-keys': PayloadMcpApiKeyAuthOperations;
   };
   blocks: {};
   collections: {
@@ -74,6 +75,7 @@ export interface Config {
     'contact-submissions': ContactSubmission;
     works: Work;
     'ai-translation-logs': AiTranslationLog;
+    'payload-mcp-api-keys': PayloadMcpApiKey;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +90,7 @@ export interface Config {
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     works: WorksSelect<false> | WorksSelect<true>;
     'ai-translation-logs': AiTranslationLogsSelect<false> | AiTranslationLogsSelect<true>;
+    'payload-mcp-api-keys': PayloadMcpApiKeysSelect<false> | PayloadMcpApiKeysSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -115,13 +118,31 @@ export interface Config {
   widgets: {
     collections: CollectionsWidget;
   };
-  user: User;
+  user: User | PayloadMcpApiKey;
   jobs: {
     tasks: unknown;
     workflows: unknown;
   };
 }
 export interface UserAuthOperations {
+  forgotPassword: {
+    email: string;
+    password: string;
+  };
+  login: {
+    email: string;
+    password: string;
+  };
+  registerFirstUser: {
+    email: string;
+    password: string;
+  };
+  unlock: {
+    email: string;
+    password: string;
+  };
+}
+export interface PayloadMcpApiKeyAuthOperations {
   forgotPassword: {
     email: string;
     password: string;
@@ -151,6 +172,9 @@ export interface User {
   roles: ('admin' | 'editor' | 'serviceAdmin')[];
   updatedAt: string;
   createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
   email: string;
   resetPasswordToken?: string | null;
   resetPasswordExpiration?: string | null;
@@ -329,6 +353,133 @@ export interface AiTranslationLog {
   createdAt: string;
 }
 /**
+ * API keys control which collections, resources, tools, and prompts MCP clients can access
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-mcp-api-keys".
+ */
+export interface PayloadMcpApiKey {
+  id: number;
+  /**
+   * The user that the API key is associated with.
+   */
+  user: number | User;
+  /**
+   * A useful label for the API key.
+   */
+  label?: string | null;
+  /**
+   * The purpose of the API key.
+   */
+  description?: string | null;
+  media?: {
+    /**
+     * Allow clients to find media.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create media.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update media.
+     */
+    update?: boolean | null;
+  };
+  news?: {
+    /**
+     * Allow clients to find news.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create news.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update news.
+     */
+    update?: boolean | null;
+  };
+  faq?: {
+    /**
+     * Allow clients to find faq.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create faq.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update faq.
+     */
+    update?: boolean | null;
+  };
+  works?: {
+    /**
+     * Allow clients to find works.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to create works.
+     */
+    create?: boolean | null;
+    /**
+     * Allow clients to update works.
+     */
+    update?: boolean | null;
+  };
+  siteSettings?: {
+    /**
+     * Allow clients to find site-settings global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update site-settings global.
+     */
+    update?: boolean | null;
+  };
+  homePage?: {
+    /**
+     * Allow clients to find home-page global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update home-page global.
+     */
+    update?: boolean | null;
+  };
+  about?: {
+    /**
+     * Allow clients to find about global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update about global.
+     */
+    update?: boolean | null;
+  };
+  service?: {
+    /**
+     * Allow clients to find service global.
+     */
+    find?: boolean | null;
+    /**
+     * Allow clients to update service global.
+     */
+    update?: boolean | null;
+  };
+  /**
+   * この日時を過ぎるとMCP接続を拒否します。未設定の既存キーも安全のため拒否されます。
+   */
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  enableAPIKey?: boolean | null;
+  apiKey?: string | null;
+  apiKeyIndex?: string | null;
+  collection: 'payload-mcp-api-keys';
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
@@ -379,12 +530,21 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'ai-translation-logs';
         value: number | AiTranslationLog;
+      } | null)
+    | ({
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
       } | null);
   globalSlug?: string | null;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
+      };
   updatedAt: string;
   createdAt: string;
 }
@@ -394,10 +554,15 @@ export interface PayloadLockedDocument {
  */
 export interface PayloadPreference {
   id: number;
-  user: {
-    relationTo: 'users';
-    value: number | User;
-  };
+  user:
+    | {
+        relationTo: 'users';
+        value: number | User;
+      }
+    | {
+        relationTo: 'payload-mcp-api-keys';
+        value: number | PayloadMcpApiKey;
+      };
   key?: string | null;
   value?:
     | {
@@ -430,6 +595,9 @@ export interface UsersSelect<T extends boolean = true> {
   roles?: T;
   updatedAt?: T;
   createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
   email?: T;
   resetPasswordToken?: T;
   resetPasswordExpiration?: T;
@@ -556,6 +724,73 @@ export interface AiTranslationLogsSelect<T extends boolean = true> {
   errorMessage?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-mcp-api-keys_select".
+ */
+export interface PayloadMcpApiKeysSelect<T extends boolean = true> {
+  user?: T;
+  label?: T;
+  description?: T;
+  media?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+      };
+  news?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+      };
+  faq?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+      };
+  works?:
+    | T
+    | {
+        find?: T;
+        create?: T;
+        update?: T;
+      };
+  siteSettings?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  homePage?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  about?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  service?:
+    | T
+    | {
+        find?: T;
+        update?: T;
+      };
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  enableAPIKey?: T;
+  apiKey?: T;
+  apiKeyIndex?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

@@ -10,7 +10,7 @@ export default defineConfig({
     globals: true,
     environment: 'node',
     setupFiles: ['./vitest.setup.ts'],
-    include: ['tests/int/**/*.int.spec.{ts,tsx}'],
+    include: ['tests/int/**/*.int.spec.{ts,tsx}', 'packages/**/*.test.ts'],
     fileParallelism: false,
   },
   lint: {
