@@ -1,0 +1,23 @@
+{
+  "name": "@open-artifact/site-management",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./lib/api.ts",
+  "module": "./lib/api.ts",
+  "types": "./lib/api.ts",
+  "exports": {
+    ".": {
+      "types": "./lib/api.ts",
+      "bun": "./lib/api.ts",
+      "default": "./lib/api.ts"
+    }
+  },
+  "scripts": {
+    "check": "vp check",
+    "test": "vp test run"
+  },
+  "dependencies": {
+    "zod": "4.4.3"
+  }
+}

@@ -3,6 +3,7 @@ import { fileURLToPath } from 'url'
 
 import { buildCoreConfig } from '@/core/payload/config-base'
 import { projectFeatures } from '@/project/project-features'
+import { projectMcpConfig } from '@/project/mcp'
 import { homeGlobal } from '@/project/pages/home/global'
 import { aboutGlobal } from '@/project/pages/about/global'
 import { serviceGlobal } from '@/project/pages/service/global'
@@ -16,6 +17,7 @@ const dirname = path.dirname(filename)
 export default buildCoreConfig({
   dirname,
   features: projectFeatures,
+  mcp: projectMcpConfig,
   projectCollections: [works],
   projectGlobals: [homeGlobal, aboutGlobal, serviceGlobal],
   livePreviewGlobals: ['home-page', 'about', 'service'],

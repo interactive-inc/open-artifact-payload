@@ -6,6 +6,7 @@ import { buildConfig, type Config } from 'payload'
 import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
 import { GetPlatformProxyOptions } from 'wrangler'
 import { r2Storage } from '@payloadcms/storage-r2'
+import { mcpPlugin, type MCPPluginConfig } from '@payloadcms/plugin-mcp'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { ja } from '@payloadcms/translations/languages/ja'
 
@@ -36,6 +37,7 @@ type BuildCoreConfigProps = {
   livePreviewCollections?: string[]
   livePreviewGlobals?: string[]
   livePreviewUrl?: LivePreviewUrlFn
+  mcp?: MCPPluginConfig
   // 案件の対応言語。単一言語運用は [{ code: 'ja', label: '日本語' }] だけを渡す
   locales?: { code: string; label: string }[]
 }
@@ -205,6 +207,7 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     db: sqliteD1Adapter({ binding: cloudflare.env.D1, push: false }),
     logger: isProduction ? cloudflareLogger : undefined,
     plugins: [
+      ...(props.mcp ? [mcpPlugin(props.mcp)] : []),
       r2Storage({
         bucket: cloudflare.env.R2,
         collections: { media: true },

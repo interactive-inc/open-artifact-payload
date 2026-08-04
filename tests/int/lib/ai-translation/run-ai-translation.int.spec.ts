@@ -317,6 +317,11 @@ describe('runAiTranslation', () => {
 
   it('更新権限が無いユーザーは AI を呼ぶ前に拒否される（site-settings は editor 更新不可）', async () => {
     await enableSettings()
+    await payload.updateGlobal({
+      slug: 'site-settings',
+      locale: 'ja',
+      data: { siteName: '権限確認用サイト' },
+    })
 
     const editor = await payload.create({
       collection: 'users',

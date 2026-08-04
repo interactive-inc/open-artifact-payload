@@ -1,5 +1,6 @@
 import type { Endpoint } from 'payload'
 
+import { isUserAccount } from '@/core/lib/access/is-user-account'
 import { parseAiTranslateRequest } from '@/core/lib/ai-translation/parse-ai-translate-request'
 import { runAiTranslation } from '@/core/lib/ai-translation/run-ai-translation'
 
@@ -12,7 +13,7 @@ export const aiTranslateEndpoint: Endpoint = {
   path: '/ai-translate',
   method: 'post',
   handler: async (req) => {
-    if (!req.user) {
+    if (!isUserAccount(req.user)) {
       return Response.json({ message: 'ログインが必要です' }, { status: 401 })
     }
 
