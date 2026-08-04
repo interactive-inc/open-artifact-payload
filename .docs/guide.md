@@ -6,13 +6,14 @@
 
 技術スタックの概要は以下のとおりです。
 
-- CMS: Payload CMS 3.84.1 (`@payloadcms/db-d1-sqlite`)
-- フレームワーク: Next.js 16.2.6 (App Router)
+- CMS: Payload CMS 3.87.0 (`@payloadcms/db-d1-sqlite`)
+- フレームワーク: Next.js 16.2.12 (App Router)
 - データベース: Cloudflare D1 (SQLite)
 - ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
-- 言語: TypeScript 5.7 (`strict: true`)
-- パッケージマネージャー: bun 1.3+
+- 言語: TypeScript 5.7.3 (`strict: true`)
+- ツールチェーン: Vite+ 0.2.7
+- ランタイム / パッケージマネージャー: Bun 1.3.14
 
 ## セットアップ
 
@@ -20,23 +21,22 @@
 
 以下のツールを事前にインストールしてください。
 
-- Node.js 20 以上
-- bun 1.3 以上
-- wrangler CLI (`bun add -g wrangler`)
-- Cloudflare アカウント (Workers Paid プランが必要)
+- Node.js `^18.20.2` または `20.9.0` 以上
+- Vite+ (`vp` コマンド)
+- Cloudflare アカウント (Free / Paid は Worker サイズと利用量に応じて選択)
 
 ### テンプレートからプロジェクトを作成
 
 GitHub の "Use this template" ボタンからリポジトリを複製します。複製後、依存関係をインストールします。
 
 ```bash
-bun install
+vp install
 ```
 
 続いてセットアップスクリプトを実行します。スクリプトは対話形式で以下の質問に答えながら進みます。
 
 ```bash
-bun run setup:project
+vp run setup:project
 ```
 
 質問の内容は以下のとおりです。
@@ -81,13 +81,13 @@ wrangler r2 bucket create <slug>
 D1 データベースに初回マイグレーションを適用します。
 
 ```bash
-bun run payload migrate
+vp run payload migrate
 ```
 
 その後、開発サーバーを起動します。
 
 ```bash
-bun dev
+vp run dev
 ```
 
 `http://localhost:3000/admin` にアクセスし、最初の管理者ユーザーを作成します。
@@ -97,45 +97,41 @@ bun dev
 ### 開発コマンド一覧
 
 ```bash
-bun dev                              # 開発サーバー (http://localhost:3000)
-bun run devsafe                      # .next / .open-next を削除してから dev 起動
-bun run build                        # プロダクションビルド
-bun run start                        # プロダクションサーバー起動
+vp run dev                           # 開発サーバー (http://localhost:3000)
+vp run devsafe                       # .next / .open-next を削除してから dev 起動
+vp run build                         # プロダクションビルド
+vp run start                         # プロダクションサーバー起動
 make preview                         # Cloudflare Workers ローカルプレビュー
 
-bun run lint                         # ESLint
-bun run test:int                     # vitest 統合テストのみ
-bun run test:e2e                     # Playwright E2E テストのみ
-bun run test                         # 統合テスト + E2E テスト
-bun run test:ci                      # lint + 統合テスト (CI 用)
+vp check                             # フォーマット + lint + 型チェック
+vp test                              # Vite+ / Vitest テスト
+vp run test:e2e                      # Playwright E2E テストのみ
+vp run test                          # 統合テスト + E2E テスト
+vp run test:ci                       # lint + 統合テスト (CI 用)
 
-bun run generate:types               # Payload 型定義 + Cloudflare 型を再生成
-bun run generate:importmap           # Payload Import Map 生成
+vp run generate:types                # Payload 型定義 + Cloudflare 型を再生成
+vp run generate:importmap            # Payload Import Map 生成
 
-bun run payload migrate              # ローカル D1 にマイグレーション適用
-bun run payload migrate:create <name>  # 新規マイグレーションファイル作成
+vp run payload migrate               # ローカル D1 にマイグレーション適用
+vp run payload migrate:create <name> # 新規マイグレーションファイル作成
 ```
 
-### PAYLOAD_MIGRATING 環境変数
+### ローカル D1 のスキーマ管理
 
-通常の `bun dev` では、起動時に `pushDevSchema` が走り D1 スキーマを自動同期しようとします。すでにマイグレーション済みのローカル D1 に対してこれを実行すると、既存インデックスとの衝突で 500 エラーが発生します。
+D1 アダプターは `push: false` で構成されており、開発環境でもスキーマ変更はマイグレーションで管理します。コレクションやグローバルの定義を変更したら、マイグレーションを作成してからローカル D1 に適用してください。
 
-この問題を回避するには `PAYLOAD_MIGRATING=true` を付けて起動します。
+`PAYLOAD_MIGRATING` はテストなど内部処理でのみ使用します。通常の開発起動時に手動設定する必要はありません。
 
-```bash
-PAYLOAD_MIGRATING=true bun dev
-```
+### CLI・MCP によるサイト操作
 
-この変数を設定すると `pushDevSchema` がスキップされ、既存のスキーマをそのまま使用します。既存マイグレーションが適用済みのローカル環境での通常開発時はこのモードを使用してください。
-
-インデックス競合が発生した場合の解消手順は後述のトラブルシューティングを参照してください。
+管理画面を開かずに記事などのコンテンツを操作する場合は `intacms` CLI を使います。AI エージェントからは同じユースケースを MCP Tool として実行できます。認証、環境の切り替え、CRUD コマンド、MCP の設定方法は [[features/site-tools|CLI・MCP によるサイト操作]] を参照してください。
 
 ### 型の再生成
 
 コレクションやグローバルのフィールドを変更したあとは必ず型を再生成します。
 
 ```bash
-bun run generate:types
+vp run generate:types
 ```
 
 これにより以下のファイルが更新されます。
@@ -162,14 +158,14 @@ Claude Code のスラッシュコマンドで追加するのが最も簡単で�
 - マイグレーションファイルを作成して適用する
 
 ```bash
-bun run payload migrate:create <name>
-bun run payload migrate
+vp run payload migrate:create <name>
+vp run payload migrate
 ```
 
 - 型を再生成する
 
 ```bash
-bun run generate:types
+vp run generate:types
 ```
 
 ライブプレビュー対象にするには `src/payload.config.ts` の `livePreviewCollections` 配列に slug を追加します。フロントエンドに対応するルート (`/news/[slug]` 等) が存在することが前提です。
@@ -233,7 +229,7 @@ export const projectFeatures: ProjectFeatures = {
 }
 ```
 
-変更後、マイグレーションを作成して適用し、`bun run generate:types` で型を再生成します。SEO プラグインは `enableFreePages` が true のとき自動的に `pages` を対象に含めるため、追加設定は不要です (`config-base.ts` がフラグに応じて切り替えます)。
+変更後、マイグレーションを作成して適用し、`vp run generate:types` で型を再生成します。SEO プラグインは `enableFreePages` が true のとき自動的に `pages` を対象に含めるため、追加設定は不要です (`config-base.ts` がフラグに応じて切り替えます)。
 
 フロントで固定ページを表示するには、対応する `src/app/(frontend)/[slug]/page.tsx` ルートを案件側で追加してください (テンプレートには同梱していません。`enableFreePages` が false のときは `pages` コレクション型が生成されず、ルートを同梱すると型エラーになるため)。ルートは `payload.find({ collection: 'pages', where: { slug: { equals: params.slug } } })` で取得し、`RichText` で本文を、`generateMetadata` で `doc.meta` を描画します。実装例は `src/app/(frontend)/news/[slug]/page.tsx` を参考にしてください。
 
@@ -355,7 +351,7 @@ i18n は `@payloadcms/translations/languages/ja` を使って自動的に日本�
 
 ### Cloudflare Workers (デフォルト)
 
-デプロイには Cloudflare Workers Paid プランが必要です。
+Cloudflare Workers Free プランでは Worker の圧縮後サイズ上限が 3 MiB、Paid プランでは 10 MiB です。デプロイ前にバンドルサイズと想定利用量を確認し、上限に合うプランを選択してください。最新の条件は [Workers Pricing](https://developers.cloudflare.com/workers/platform/pricing/) と [OpenNext の Worker Size Limits](https://opennext.js.org/cloudflare#note-on-worker-size-limits) を参照してください。
 
 デプロイ系タスクは `Makefile` に集約しています。
 
@@ -381,10 +377,14 @@ make deploy-db         # DB マイグレーションのみ
 
 - `PAYLOAD_SECRET` — 必須。`openssl rand -hex 32` で生成した 32 バイトのランダム文字列
 - `NEXT_PUBLIC_SERVER_URL` — ライブプレビューの URL 解決に使用。デプロイ先の URL を設定
-- `TURNSTILE_SECRET_KEY` — 問い合わせフォームの Cloudflare Turnstile 検証用 (サーバー側シークレット)
-- `RESEND_API_KEY` — メール通知 (任意)
+- `TURNSTILE_SECRET_KEY` — 問い合わせフォームの Cloudflare Turnstile 検証用 (サーバー側のみ。サイトキーは管理画面のサイト設定で入力する)
+- `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メール (任意。3 つすべて設定で通知有効)
 - `SUPPORT_EMAIL` — ダッシュボードのヘルプリンク用 (任意)
-- `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — CI やバックアップ自動化用 (任意)
+- `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` — AI 翻訳で使用するプロバイダーの API キー (任意)
+- `AI_TRANSLATION_MAX_*` — AI 翻訳の月間・実行単位の上限。管理画面と環境変数の小さい方を採用 (任意)
+- `AI_TRANSLATION_ANTHROPIC_API_URL` / `AI_TRANSLATION_OPENAI_API_URL` — AI Gateway などへ接続先を差し替える場合に使用 (任意)
+- `PAYLOAD_LOG_LEVEL` — Payload のログレベル。未設定時は `info` (任意)
+- `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — デプロイやバックアップ自動化を追加する場合に使用 (任意)
 
 ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
 
@@ -392,7 +392,7 @@ Turnstile の公開サイトキー (フロントエンド用) は環境変数で
 
 ### SSG モード (骨格)
 
-`bun run setup:project` で `ssg` を選択すると SSG モードが適用されます。これは xserver 等 Node.js が動かない環境向けの静的書き出し用モードです。
+`vp run setup:project` で `ssg` を選択すると SSG モードが適用されます。これは xserver 等 Node.js が動かない環境向けの静的書き出し用モードです。
 
 SSG モード適用時の変更内容は以下のとおりです。
 
@@ -413,8 +413,8 @@ SSG モードは現時点では骨格のみです。Payload REST API の接続�
 ```bash
 git remote add upstream <テンプレートリポジトリURL>
 git subtree pull --prefix=src/core upstream main
-bun run generate:types
-bun run test:int
+vp run generate:types
+vp run test:int
 ```
 
 テストが通ることを確認してから案件ブランチにマージしてください。
@@ -475,78 +475,51 @@ export default buildCoreConfig({
 
 ### GitHub Actions ワークフロー
 
-`.github/workflows/` に 2 つのワークフローが用意されています。
+テンプレートには GitHub Actions ワークフローを同梱していません。案件ごとに `.github/workflows/` を追加し、少なくとも `vp check` と `vp test` を実行してください。D1 の定期バックアップを追加する場合は、リモート D1 のダンプと R2 への保存を別ジョブとして構成します。
 
-- `ci.yml` — push to main / PR で lint + 統合テストを自動実行
-- `backup-d1.yml` — 週次 (毎週月曜 0:00 JST) で D1 をダンプし R2 にバックアップ
-
-テンプレートリポジトリでは両方 `disabled_manually` にしています。案件で CI を使い始めるタイミングで以下のコマンドで有効化してください。
-
-```bash
-gh workflow enable ci
-gh workflow enable backup-d1
-```
-
-CI を動かすには GitHub リポジトリの Settings > Secrets に以下を設定します。
+デプロイやバックアップを自動化する場合は GitHub リポジトリの Settings > Secrets に以下を設定します。
 
 - `PAYLOAD_SECRET` — Payload 用シークレット (統合テストは vitest.setup.ts のテスト専用フォールバックで動作する。本番は未設定だと起動失敗する)
-- `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — バックアップワークフロー用 (ci.yml には不要)
-
-無効化するには以下のコマンドです。
-
-```bash
-gh workflow disable ci
-gh workflow disable backup-d1
-```
+- `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — Cloudflare へのデプロイやバックアップ用
 
 ## トラブルシューティング
 
-### dev 起動で 500 エラー (CREATE INDEX 競合)
+### ローカル D1 のマイグレーションでエラーになる
 
-原因: `bun dev` 起動時の `pushDevSchema` が既存 D1 インデックスと衝突している。
+D1 アダプターは `push: false` のため、スキーマはマイグレーションだけで更新します。エラーが出た場合は開発サーバーを停止し、次の順で確認してください。
 
-解決手順は以下のとおりです。
-
-- ローカル D1 の状態ディレクトリを削除する
-
-```bash
-rm -rf .wrangler/state/v3/d1/miniflare-D1DatabaseObject
-```
-
-- マイグレーションを再適用する
+- `src/migrations/` の内容と `wrangler.jsonc` の D1 バインディングが対象環境に合っているか確認する
+- 生成された SQL に既存テーブルやインデックスとの重複がないか確認する
+- ローカル D1 に未適用のマイグレーションを適用する
 
 ```bash
-bun run payload migrate
+vp run payload migrate
 ```
 
-- `PAYLOAD_MIGRATING=true` を付けて起動する
-
-```bash
-PAYLOAD_MIGRATING=true bun dev
-```
+ローカルデータベースを作り直す場合は、必要なデータを先にバックアップし、その環境が破棄可能であることを確認してください。
 
 ### array フィールドのマイグレーションと autosave
 
 `type: 'array'` フィールドを持つ Global/Collection でマイグレーションを手動作成する場合、version 用の array サブテーブルに `_uuid` カラムを含める必要があります。Payload は version の array 項目を `_uuid` で追跡しているため、このカラムが欠落すると autosave/publish 時に array データが version テーブルにコピーされず、admin 画面で入力が消える現象が発生します。
 
-`migrate:create` がインタラクティブ入力を求めて失敗し、手動でマイグレーション SQL を書く場合は特に注意してください。dev-push (`bun dev` 起動時に自動生成されるスキーマ) と手動マイグレーションのテーブル定義が一致しているか、以下のコマンドで比較確認できます。
+`migrate:create` がインタラクティブ入力を求めて失敗し、手動でマイグレーション SQL を書く場合は特に注意してください。適用後のローカル D1 とマイグレーションのテーブル定義が一致しているか、以下のコマンドで確認できます。
 
 ```bash
 bunx wrangler d1 execute D1 --local --command="PRAGMA table_info(_<global>_v_version_<array_field>)"
 ```
 
-dev-push で生成されるスキーマが正解なので、開発中は `PAYLOAD_MIGRATING` なしの `bun dev` で dev-push に任せ、本番デプロイ時のみマイグレーションを整備するのが安全です。
+生成されたマイグレーションをスキーマ更新の正として扱い、`_uuid` を含むテーブル定義をレビューしてからローカルで適用し、autosave と publish の動作を確認してください。
 
 関連 Issue:
 
 - [Autosave with SQLite interfering with publishing (payloadcms/payload#8659)](https://github.com/payloadcms/payload/issues/8659)
-- [Migrations ドキュメント](https://payloadcms.com/docs/database/migrations) — dev-push とマイグレーションの併用は推奨されていない
+- [Migrations ドキュメント](https://payloadcms.com/docs/database/migrations) — マイグレーションの作成・適用方法
 
 ### マイグレーション作成時の注意
 
 SQLite の二重引用符フォールバック問題に注意してください。生成されたマイグレーション SQL で `INSERT INTO ... SELECT` を使う場合、新規カラムに既存テーブルから値を SELECT すると文字列リテラルとして解釈される場合があります。
 
-既存データがある状態でカラムのデフォルト値を設定する場合は、`'published'` や `NULL` などのリテラルを明示的に指定してください。マイグレーションファイル (`src/migrations/` 配下) を必ず内容確認してから `bun run payload migrate` を実行してください。
+既存データがある状態でカラムのデフォルト値を設定する場合は、`'published'` や `NULL` などのリテラルを明示的に指定してください。マイグレーションファイル (`src/migrations/` 配下) を必ず内容確認してから `vp run payload migrate` を実行してください。
 
 ### ライブプレビューが表示されない
 
@@ -561,11 +534,12 @@ SQLite の二重引用符フォールバック問題に注意してください�
 
 `TURNSTILE_SECRET_KEY` が未設定のときはローカル開発モードとして Turnstile 検証がスキップされます。フォームが送信できない場合は以下を確認してください。
 
-- 本番環境で `TURNSTILE_SECRET_KEY` と `TURNSTILE_SITE_KEY` が設定されているか
+- 本番環境で `TURNSTILE_SECRET_KEY` (env) が設定されているか
+- 管理画面のサイト設定 (site-settings) で Turnstile サイトキーが入力されているか
 - Turnstile のサイトキーがドメインに紐づいているか (Cloudflare ダッシュボードで確認)
 
-### bun run build が失敗する
+### vp run build が失敗する
 
 メモリ不足が原因の場合は `build` スクリプトに `--max-old-space-size=8000` が付いているため、ホストに 8GB 以上のメモリが必要です。
 
-型エラーが原因の場合は `bun run generate:types` を実行してから再ビルドしてください。
+型エラーが原因の場合は `vp run generate:types` を実行してから再ビルドしてください。
