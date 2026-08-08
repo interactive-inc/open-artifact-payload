@@ -23,7 +23,15 @@ function resolveLocale(locale: string): Locale {
 const loadHome = cache(async (locale: Locale, isDraft: boolean) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  return payload.findGlobal({ slug: 'home-page', depth: 2, draft: isDraft, locale })
+  return payload.findGlobal({
+    slug: 'home-page',
+    depth: 2,
+    draft: isDraft,
+    locale,
+    // 公開表示では relationship 先の access も適用し、下書き記事の populate を防ぐ。
+    // ライブプレビューでは編集中の relationship を表示するため、従来どおりバイパスする。
+    overrideAccess: isDraft,
+  })
 })
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -51,6 +59,7 @@ export default async function HomePage(props: Props) {
     limit: 4,
     sort: '-publishedAt',
     draft: isDraft,
+    where: isDraft ? undefined : { _status: { equals: 'published' } },
     depth: 1,
     locale,
   })
@@ -58,6 +67,7 @@ export default async function HomePage(props: Props) {
   return (
     <HomeGrid
       locale={locale}
+      isDraft={isDraft}
       hero={home.hero ?? {}}
       services={home.services ?? {}}
       about={home.aboutPreview ?? {}}

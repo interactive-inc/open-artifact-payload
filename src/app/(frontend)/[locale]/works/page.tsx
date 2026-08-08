@@ -55,6 +55,7 @@ export default async function WorksListPage(props: Props) {
     limit: 50,
     sort: '-publishedAt',
     draft: isDraft,
+    where: isDraft ? undefined : { _status: { equals: 'published' } },
     depth: 1,
     locale,
   })

@@ -40,7 +40,9 @@ export function SiteHeader(props: Props) {
                 className="h-8 w-auto object-contain"
               />
             ) : (
-              <span className="text-xl font-bold tracking-tight text-foreground">SAMPLE inc.</span>
+              <span className="text-xl font-bold tracking-tight text-foreground">
+                {props.settings.siteName}
+              </span>
             )}
           </Link>
 

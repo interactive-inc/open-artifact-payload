@@ -5,6 +5,7 @@ import { ArrowRightIcon } from 'lucide-react'
 
 import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
 import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
+import type { MediaOrId } from '@/core/lib/media/types'
 import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
 import { Button } from '@/project/shared/ui/button'
 import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
@@ -20,26 +21,39 @@ type ServiceItem = {
 
 type Props = {
   locale: Locale
+  isDraft: boolean
   hero: {
+    enabled?: boolean | null
     title?: string | null
+    subtitle?: string | null
+    image?: MediaOrId
     ctaLabel?: string | null
     ctaHref?: string | null
   }
   services: {
+    enabled?: boolean | null
     heading?: string | null
+    subheading?: string | null
     items?: ServiceItem[] | null
   }
   about: {
+    enabled?: boolean | null
     heading?: string | null
+    description?: string | null
+    image?: MediaOrId
     ctaLabel?: string | null
     ctaHref?: string | null
   }
   works: Work[]
   news: {
+    enabled?: boolean | null
+    heading?: string | null
     items?: (number | News)[] | null
   }
   cta: {
+    enabled?: boolean | null
     heading?: string | null
+    description?: string | null
     ctaLabel?: string | null
     ctaHref?: string | null
   }
@@ -74,109 +88,159 @@ export function HomeGrid(props: Props) {
   const dictionary = getUiDictionary(props.locale)
   const serviceItems = props.services.items ?? []
   const newsItems = (props.news.items ?? []).filter(
-    (item): item is News => typeof item === 'object' && item !== null,
+    (item): item is News =>
+      typeof item === 'object' && item !== null && (props.isDraft || item._status === 'published'),
   )
   const localeDateCode = props.locale === 'ja' ? 'ja-JP' : 'en-US'
+  const heroImageUrl = resolveMediaUrl(props.hero.image)
+  const heroImageAlt = resolveMediaAlt(props.hero.image) ?? ''
+  const aboutImageUrl = resolveMediaUrl(props.about.image)
+  const aboutImageAlt = resolveMediaAlt(props.about.image) ?? ''
 
   return (
     <>
       {/* KV：ページ内で唯一の動きのある装飾。 */}
-      <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-white pb-16 pt-24 md:pb-24">
-        <GenerativeCanvas variant="attractor" className="absolute inset-0 -z-20 size-full" />
-        <div
-          aria-hidden
-          className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_80%,rgba(255,255,255,0.7)_0%,transparent_55%)]"
-        />
-        <div className="container-site flex flex-col items-end text-right">
-          <h1 className="text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
-            {dictionary.home.heroTitle}
-          </h1>
-          {props.hero.ctaLabel && props.hero.ctaHref ? (
-            <Button
-              nativeButton={false}
-              render={<Link href={withLocalePrefix(props.locale, props.hero.ctaHref)} />}
-              size="lg"
-              className="mt-8 w-fit transition-transform active:scale-[0.98]"
-            >
-              {props.hero.ctaLabel}
-              <ArrowRightIcon data-icon="inline-end" />
-            </Button>
-          ) : null}
-        </div>
-      </section>
+      {props.hero.enabled !== false ? (
+        <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-white pb-16 pt-24 md:pb-24">
+          {heroImageUrl ? (
+            <Image
+              src={heroImageUrl}
+              alt={heroImageAlt}
+              fill
+              priority
+              sizes="100vw"
+              className="-z-20 object-cover"
+            />
+          ) : (
+            <GenerativeCanvas variant="attractor" className="absolute inset-0 -z-20 size-full" />
+          )}
+          <div
+            aria-hidden
+            className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_80%,rgba(255,255,255,0.82)_0%,transparent_65%)]"
+          />
+          <div className="container-site flex flex-col items-end text-right">
+            <h1 className="max-w-5xl whitespace-pre-wrap text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+              {props.hero.title ?? dictionary.home.heroTitle}
+            </h1>
+            {props.hero.subtitle ? (
+              <p className="mt-6 max-w-2xl whitespace-pre-wrap text-lg leading-relaxed text-muted-foreground">
+                {props.hero.subtitle}
+              </p>
+            ) : null}
+            {props.hero.ctaLabel && props.hero.ctaHref ? (
+              <Button
+                nativeButton={false}
+                render={<Link href={withLocalePrefix(props.locale, props.hero.ctaHref)} />}
+                size="lg"
+                className="mt-8 w-fit transition-transform active:scale-[0.98]"
+              >
+                {props.hero.ctaLabel}
+                <ArrowRightIcon data-icon="inline-end" />
+              </Button>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       {/* サービス：枠もカードも使わず、番号と余白だけで区切る。 */}
-      <section className="container-site py-24 md:py-32">
-        <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-          {dictionary.home.whatWeDo}
-        </p>
-        {props.services.heading ? (
-          <h2 className="mt-5 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance md:text-5xl">
-            {props.services.heading}
-          </h2>
-        ) : null}
-        <div className="mt-16 grid grid-cols-1 gap-12 md:mt-24 md:grid-cols-3 md:gap-10">
-          {serviceItems.map((item, index) => (
-            <article key={index}>
-              <span className="text-sm text-muted-foreground tabular-nums">
-                {String(index + 1).padStart(2, '0')}
-              </span>
-              {item.title ? (
-                <h3 className="mt-3 text-xl font-semibold tracking-tight md:text-2xl">
-                  {item.title}
-                </h3>
-              ) : null}
-              {item.description ? (
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-                  {item.description}
-                </p>
-              ) : null}
-            </article>
-          ))}
-        </div>
-
-        {/* 実績数値：タイルをやめ、巨大な数字そのものをビジュアルにする。 */}
-        <div className="mt-24 grid grid-cols-2 gap-x-10 gap-y-16 md:mt-32 md:grid-cols-4">
-          {dictionary.home.stats.map((stat) => (
-            <div key={stat.label}>
-              <span className="block text-5xl font-bold tracking-tight tabular-nums md:text-7xl">
-                {stat.value}
-              </span>
-              <span className="mt-3 block text-sm text-muted-foreground">{stat.label}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 会社紹介：左に見出し、右に本文の 2 カラム。 */}
-      <section className="container-site grid grid-cols-1 gap-8 py-24 md:grid-cols-12 md:gap-16 md:py-32">
-        <div className="md:col-span-4">
+      {props.services.enabled !== false ? (
+        <section className="container-site py-24 md:py-32">
           <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
-            {dictionary.home.aboutLabel}
+            {dictionary.home.whatWeDo}
           </p>
-          {props.about.heading ? (
-            <h2 className="mt-5 text-3xl font-semibold leading-snug tracking-tight whitespace-pre-wrap md:text-4xl">
-              {props.about.heading}
+          {props.services.heading ? (
+            <h2 className="mt-5 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance md:text-5xl">
+              {props.services.heading}
             </h2>
           ) : null}
-        </div>
-        <div className="md:col-span-8 md:pt-14">
-          <p className="max-w-2xl text-lg leading-relaxed text-muted-foreground">
-            {dictionary.home.aboutBody}
-          </p>
-          {props.about.ctaLabel && props.about.ctaHref ? (
-            <Button
-              nativeButton={false}
-              render={<Link href={withLocalePrefix(props.locale, props.about.ctaHref)} />}
-              variant="outline"
-              className="mt-8"
-            >
-              {props.about.ctaLabel}
-              <ArrowRightIcon data-icon="inline-end" />
-            </Button>
+          {props.services.subheading ? (
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
+              {props.services.subheading}
+            </p>
           ) : null}
-        </div>
-      </section>
+          <div className="mt-16 grid grid-cols-1 gap-12 md:mt-24 md:grid-cols-3 md:gap-10">
+            {serviceItems.map((item, index) => (
+              <article key={index}>
+                <div className="flex items-center gap-3 text-sm text-muted-foreground tabular-nums">
+                  <span>{String(index + 1).padStart(2, '0')}</span>
+                  {item.icon ? (
+                    <span className="text-xl" aria-hidden>
+                      {item.icon}
+                    </span>
+                  ) : null}
+                </div>
+                {item.title ? (
+                  <h3 className="mt-3 text-xl font-semibold tracking-tight md:text-2xl">
+                    {item.title}
+                  </h3>
+                ) : null}
+                {item.description ? (
+                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                    {item.description}
+                  </p>
+                ) : null}
+              </article>
+            ))}
+          </div>
+
+          {/* 実績数値：タイルをやめ、巨大な数字そのものをビジュアルにする。 */}
+          <div className="mt-24 grid grid-cols-2 gap-x-10 gap-y-16 md:mt-32 md:grid-cols-4">
+            {dictionary.home.stats.map((stat) => (
+              <div key={stat.label}>
+                <span className="block text-5xl font-bold tracking-tight tabular-nums md:text-7xl">
+                  {stat.value}
+                </span>
+                <span className="mt-3 block text-sm text-muted-foreground">{stat.label}</span>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      {/* 会社紹介：左に見出し、右に本文の 2 カラム。 */}
+      {props.about.enabled !== false ? (
+        <section className="container-site grid grid-cols-1 gap-8 py-24 md:grid-cols-12 md:gap-16 md:py-32">
+          <div className="md:col-span-4">
+            <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
+              {dictionary.home.aboutLabel}
+            </p>
+            {props.about.heading ? (
+              <h2 className="mt-5 text-3xl font-semibold leading-snug tracking-tight whitespace-pre-wrap md:text-4xl">
+                {props.about.heading}
+              </h2>
+            ) : null}
+          </div>
+          <div className="md:col-span-8 md:pt-14">
+            {aboutImageUrl ? (
+              <div className="relative mb-8 aspect-[16/9] w-full max-w-3xl overflow-hidden bg-muted">
+                <Image
+                  src={aboutImageUrl}
+                  alt={aboutImageAlt}
+                  fill
+                  sizes="(min-width: 768px) 66vw, 100vw"
+                  className="object-cover"
+                />
+              </div>
+            ) : null}
+            {props.about.description ? (
+              <p className="max-w-2xl whitespace-pre-wrap text-lg leading-relaxed text-muted-foreground">
+                {props.about.description}
+              </p>
+            ) : null}
+            {props.about.ctaLabel && props.about.ctaHref ? (
+              <Button
+                nativeButton={false}
+                render={<Link href={withLocalePrefix(props.locale, props.about.ctaHref)} />}
+                variant="outline"
+                className="mt-8"
+              >
+                {props.about.ctaLabel}
+                <ArrowRightIcon data-icon="inline-end" />
+              </Button>
+            ) : null}
+          </div>
+        </section>
+      ) : null}
 
       {/* 使用技術：タグをやめ、大きなインラインテキスト1本にまとめる。 */}
       <section className="container-site py-24 md:py-32">
@@ -278,7 +342,7 @@ export function HomeGrid(props: Props) {
       </section>
 
       {/* お知らせ：罫線なしのリスト。行間とホバー下線だけで整える。 */}
-      {newsItems.length > 0 ? (
+      {props.news.enabled !== false && newsItems.length > 0 ? (
         <section className="container-site py-24 md:py-32">
           <div className="flex items-end justify-between">
             <div>
@@ -286,7 +350,7 @@ export function HomeGrid(props: Props) {
                 {dictionary.home.newsLabel}
               </p>
               <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl">
-                {dictionary.home.newsHeading}
+                {props.news.heading ?? dictionary.home.newsHeading}
               </h2>
             </div>
             <Button
@@ -332,12 +396,17 @@ export function HomeGrid(props: Props) {
       ) : null}
 
       {/* CTA：墨ベタの全幅バンド。ページ唯一の反転ブロックとして締める。 */}
-      {props.cta.heading ? (
+      {props.cta.enabled !== false && props.cta.heading ? (
         <section className="bg-primary py-24 text-primary-foreground md:py-32">
           <div className="container-site">
             <h2 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight md:text-5xl">
               {props.cta.heading}
             </h2>
+            {props.cta.description ? (
+              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-primary-foreground/75">
+                {props.cta.description}
+              </p>
+            ) : null}
             {props.cta.ctaLabel && props.cta.ctaHref ? (
               <Button
                 nativeButton={false}

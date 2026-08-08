@@ -5,7 +5,9 @@ import { defaultLocale } from '@/project/shared/lib/locale-types'
 
 export const config = {
   // 管理画面 / API / Payload 内部ルート / 静的アセットは locale rewrite の対象外にする。
-  matcher: ['/((?!admin|api|next|_next|favicon.ico|og-default.png|sitemap.xml|robots.txt).*)'],
+  matcher: [
+    '/((?!admin|api|next|_next|favicon.ico|icon.svg|og-default.png|sitemap.xml|robots.txt).*)',
+  ],
 }
 
 // x-locale ヘッダーは、Next.js の仕様で params を受け取れない not-found.tsx が

@@ -2,6 +2,7 @@ import type { CollectionConfig } from 'payload'
 
 import { guardServiceAdminAccountChange } from '@/core/lib/access/guard-service-admin-account-change'
 import { guardServiceAdminAccountDelete } from '@/core/lib/access/guard-service-admin-account-delete'
+import { deleteUserDocumentLocks } from '@/core/lib/access/delete-user-document-locks'
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAdminField } from '@/core/lib/access/is-admin-field'
 import { isUserAccount } from '@/core/lib/access/is-user-account'
@@ -34,7 +35,7 @@ export const users: CollectionConfig = {
     // serviceAdmin アカウントの更新・削除・ロール付与はサービス管理者のみ
     // （クライアント admin の自己昇格や、パスワード変更・削除による乗っ取り/無効化を防ぐ）
     beforeChange: [guardServiceAdminAccountChange],
-    beforeDelete: [guardServiceAdminAccountDelete],
+    beforeDelete: [guardServiceAdminAccountDelete, deleteUserDocumentLocks],
   },
   fields: [
     {

@@ -3,6 +3,7 @@ import { MetaDescriptionField, MetaImageField, MetaTitleField } from '@payloadcm
 
 import { isAdmin } from '@/core/lib/access/is-admin'
 import { isAuthenticated } from '@/core/lib/access/is-authenticated'
+import { publishedOrAuthenticated } from '@/core/lib/access/published-or-authenticated'
 import { buildCollectionRevalidateAfterChange } from '@/core/lib/revalidate/build-collection-revalidate-after-change'
 import { buildCollectionRevalidateAfterDelete } from '@/core/lib/revalidate/build-collection-revalidate-after-delete'
 
@@ -26,7 +27,7 @@ export const works: CollectionConfig = {
     group: 'コンテンツ',
   },
   access: {
-    read: () => true,
+    read: publishedOrAuthenticated,
     create: isAuthenticated,
     update: isAuthenticated,
     delete: isAdmin,

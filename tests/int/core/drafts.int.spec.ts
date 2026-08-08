@@ -42,6 +42,46 @@ describe('drafts', () => {
     await payload.delete({ collection: 'news', id: draft.id })
   })
 
+  it('works の下書きは匿名の一覧取得から除外される', async () => {
+    const unique = Date.now()
+    const draft = await payload.create({
+      collection: 'works',
+      data: {
+        title: '非公開の制作実績',
+        slug: `private-work-${unique}`,
+        category: 'web',
+        publishedAt: new Date().toISOString(),
+        _status: 'draft',
+      },
+      draft: true,
+    })
+    const published = await payload.create({
+      collection: 'works',
+      data: {
+        title: '公開済みの制作実績',
+        slug: `published-work-${unique}`,
+        category: 'web',
+        publishedAt: new Date().toISOString(),
+        _status: 'published',
+      },
+    })
+
+    try {
+      const anonymousResult = await payload.find({
+        collection: 'works',
+        where: {
+          slug: { in: [draft.slug, published.slug] },
+        },
+        overrideAccess: false,
+      })
+
+      expect(anonymousResult.docs.map((doc) => doc.slug)).toEqual([published.slug])
+    } finally {
+      await payload.delete({ collection: 'works', id: draft.id })
+      await payload.delete({ collection: 'works', id: published.id })
+    }
+  })
+
   it('home-page グローバルでドラフトを作成できる', async () => {
     const draft = await payload.updateGlobal({
       slug: 'home-page',

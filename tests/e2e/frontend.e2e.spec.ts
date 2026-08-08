@@ -1,6 +1,15 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Frontend', () => {
+  test.describe.configure({ timeout: 90_000 })
+
+  test('サイトアイコンがロケール変換されず配信される', async ({ request }) => {
+    const response = await request.get('http://localhost:3000/icon.svg')
+
+    expect(response.ok()).toBe(true)
+    expect(response.headers()['content-type']).toContain('image/svg+xml')
+  })
+
   test('トップページが表示される', async ({ page }) => {
     await page.goto('http://localhost:3000')
     // タイトルは site-settings のサイト名から動的生成されるため、空でないことだけ確認する
