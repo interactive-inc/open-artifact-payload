@@ -1,7 +1,7 @@
-import type { Payload } from 'payload'
+import type { Payload } from "payload"
 
 type LogEntry = {
-  targetKind: 'collection' | 'global'
+  targetKind: "collection" | "global"
   targetSlug: string
   targetId: string | null
   targetTitle: string | null
@@ -9,7 +9,7 @@ type LogEntry = {
   sourceLocale: string
   targetLocale: string
   model: string
-  status: 'pending' | 'succeeded' | 'failed' | 'rejected'
+  status: "pending" | "succeeded" | "failed" | "rejected"
   characterCount: number
   inputTokens: number
   outputTokens: number
@@ -33,7 +33,7 @@ type Props = {
 export async function createAiTranslationLog(props: Props): Promise<number | null> {
   try {
     const created = await props.payload.create({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       data: props.entry,
     })
 

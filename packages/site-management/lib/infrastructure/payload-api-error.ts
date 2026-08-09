@@ -1,4 +1,4 @@
-import type { JsonValue } from '../domain/json-value'
+import type { JsonValue } from "../domain/json-value"
 
 export class PayloadApiError extends Error {
   constructor(
@@ -6,7 +6,7 @@ export class PayloadApiError extends Error {
     readonly details: JsonValue,
   ) {
     super(`Payload API request failed with HTTP ${status}`)
-    this.name = 'PayloadApiError'
+    this.name = "PayloadApiError"
     Object.freeze(this)
   }
 }

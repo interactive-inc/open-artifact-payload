@@ -54,7 +54,7 @@ if (event.outcome === 500) {
 }
 
 // ✅ CORRECT
-if (event.outcome === 'exception') {
+if (event.outcome === "exception") {
   /* script threw */
 }
 if (event.event?.response?.status === 500) {
@@ -78,7 +78,7 @@ if (event.event?.response?.status === 500) {
 **Cause:** Old docs used `TailItem`, SDK uses `TraceItem`
 
 ```typescript
-import type { TraceItem } from '@cloudflare/workers-types'
+import type { TraceItem } from "@cloudflare/workers-types"
 export default {
   async tail(events: TraceItem[], env, ctx) {
     /* ... */
@@ -135,7 +135,7 @@ ctx.waitUntil(
     try {
       await fetch(env.ENDPOINT, { body: JSON.stringify(events) })
     } catch (error) {
-      console.error('Tail error:', error)
+      console.error("Tail error:", error)
       await env.FALLBACK_KV.put(`failed:${Date.now()}`, JSON.stringify(events))
     }
   })(),
@@ -178,11 +178,11 @@ Add test endpoint to producer:
 ```typescript
 export default {
   async fetch(request) {
-    if (request.url.includes('/test')) {
-      console.log('Test log')
-      throw new Error('Test error')
+    if (request.url.includes("/test")) {
+      console.log("Test log")
+      throw new Error("Test error")
     }
-    return new Response('OK')
+    return new Response("OK")
   },
 }
 ```

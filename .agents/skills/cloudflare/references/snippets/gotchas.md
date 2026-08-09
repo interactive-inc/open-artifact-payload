@@ -40,7 +40,7 @@ Clone before modifying:
 
 ```javascript
 const modifiedRequest = new Request(request)
-modifiedRequest.headers.set('X-Custom', 'value')
+modifiedRequest.headers.set("X-Custom", "value")
 ```
 
 ### "caches is not defined"
@@ -70,7 +70,7 @@ Snippets don't support `import`. Use inline code or Workers.
 ### Debugging
 
 ```javascript
-newResponse.headers.set('X-Debug-Country', request.cf.country)
+newResponse.headers.set("X-Debug-Country", request.cf.country)
 ```
 
 ```bash

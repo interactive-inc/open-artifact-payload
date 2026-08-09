@@ -1,11 +1,11 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it } from "vite-plus/test"
 
-import { estimateTranslationCost } from '@/core/lib/ai-translation/estimate-translation-cost'
-import { resolveTranslationModel } from '@/core/lib/ai-translation/resolve-translation-model'
+import { estimateTranslationCost } from "@/core/lib/ai-translation/estimate-translation-cost"
+import { resolveTranslationModel } from "@/core/lib/ai-translation/resolve-translation-model"
 
-describe('estimateTranslationCost', () => {
-  it('入出力トークンから USD 費用を概算する', () => {
-    const model = resolveTranslationModel('anthropic/claude-haiku-4-5')
+describe("estimateTranslationCost", () => {
+  it("入出力トークンから USD 費用を概算する", () => {
+    const model = resolveTranslationModel("anthropic/claude-haiku-4-5")
 
     if (model instanceof Error) throw model
 
@@ -15,8 +15,8 @@ describe('estimateTranslationCost', () => {
     expect(cost).toBeCloseTo(0.2, 4)
   })
 
-  it('小さなトークン数でも 0 にならず小数第4位で丸める', () => {
-    const model = resolveTranslationModel('anthropic/claude-haiku-4-5')
+  it("小さなトークン数でも 0 にならず小数第4位で丸める", () => {
+    const model = resolveTranslationModel("anthropic/claude-haiku-4-5")
 
     if (model instanceof Error) throw model
 

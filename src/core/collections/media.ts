@@ -1,16 +1,16 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload"
 
-import { isAdmin } from '@/core/lib/access/is-admin'
-import { isAuthenticated } from '@/core/lib/access/is-authenticated'
+import { isAdmin } from "@/core/lib/access/is-admin"
+import { isAuthenticated } from "@/core/lib/access/is-authenticated"
 
 export const media: CollectionConfig = {
-  slug: 'media',
+  slug: "media",
   labels: {
-    singular: 'メディア',
-    plural: 'メディア一覧',
+    singular: "メディア",
+    plural: "メディア一覧",
   },
   admin: {
-    group: 'システム',
+    group: "システム",
   },
   access: {
     read: () => true,
@@ -20,9 +20,9 @@ export const media: CollectionConfig = {
   },
   fields: [
     {
-      name: 'alt',
-      label: '代替テキスト',
-      type: 'text',
+      name: "alt",
+      label: "代替テキスト",
+      type: "text",
       required: true,
     },
   ],

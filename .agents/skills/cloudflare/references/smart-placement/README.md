@@ -91,9 +91,9 @@ Deploy and wait 15 minutes for analysis. Check status via API or dashboard metri
 ```typescript
 type PlacementStatus =
   | undefined // Not yet analyzed
-  | 'SUCCESS' // Successfully optimized
-  | 'INSUFFICIENT_INVOCATIONS' // Not enough traffic
-  | 'UNSUPPORTED_APPLICATION' // Made Worker slower (reverted)
+  | "SUCCESS" // Successfully optimized
+  | "INSUFFICIENT_INVOCATIONS" // Not enough traffic
+  | "UNSUPPORTED_APPLICATION" // Made Worker slower (reverted)
 ```
 
 ## CLI Commands

@@ -14,8 +14,8 @@ Secure isolated code execution in containers on Cloudflare's edge. Run untrusted
 ## Quick Start
 
 ```typescript
-import { getSandbox, proxyToSandbox, type Sandbox } from '@cloudflare/sandbox'
-export { Sandbox } from '@cloudflare/sandbox'
+import { getSandbox, proxyToSandbox, type Sandbox } from "@cloudflare/sandbox"
+export { Sandbox } from "@cloudflare/sandbox"
 
 type Env = { Sandbox: DurableObjectNamespace<Sandbox> }
 
@@ -25,7 +25,7 @@ export default {
     const proxyResponse = await proxyToSandbox(request, env)
     if (proxyResponse) return proxyResponse
 
-    const sandbox = getSandbox(env.Sandbox, 'my-sandbox')
+    const sandbox = getSandbox(env.Sandbox, "my-sandbox")
     const result = await sandbox.exec('python3 -c "print(2 + 2)"')
     return Response.json({ output: result.stdout })
   },

@@ -44,7 +44,7 @@
 ```typescript
 export default {
   async scheduled(controller, env, ctx) {
-    console.log('Cron triggered')
+    console.log("Cron triggered")
   },
 }
 ```
@@ -86,7 +86,7 @@ export default {
     // GOOD: Explicit error handling
     ctx.waitUntil(
       riskyOperation().catch((err) => {
-        console.error('Background task failed:', err)
+        console.error("Background task failed:", err)
         return logError(err, env)
       }),
     )
@@ -107,12 +107,12 @@ export default {
     const existing = await env.EXECUTIONS.get(executionId)
 
     if (existing) {
-      console.log('Already executed, skipping')
+      console.log("Already executed, skipping")
       controller.noRetry()
       return
     }
 
-    await env.EXECUTIONS.put(executionId, '1', { expirationTtl: 86400 }) // 24h TTL
+    await env.EXECUTIONS.put(executionId, "1", { expirationTtl: 86400 }) // 24h TTL
     await performIdempotentOperation(env)
   },
 }
@@ -130,8 +130,8 @@ export default {
     const url = new URL(request.url)
 
     // Block __scheduled in production
-    if (url.pathname === '/__scheduled' && env.ENVIRONMENT === 'production') {
-      return new Response('Not Found', { status: 404 })
+    if (url.pathname === "/__scheduled" && env.ENVIRONMENT === "production") {
+      return new Response("Not Found", { status: 404 })
     }
 
     return handleRequest(request, env, ctx)
@@ -152,11 +152,11 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url)
 
-    if (url.pathname === '/__scheduled') {
+    if (url.pathname === "/__scheduled") {
       // Check Cloudflare headers to verify internal request
-      const cfRay = request.headers.get('cf-ray')
-      if (!cfRay && env.ENVIRONMENT === 'production') {
-        return new Response('Not Found', { status: 404 })
+      const cfRay = request.headers.get("cf-ray")
+      if (!cfRay && env.ENVIRONMENT === "production") {
+        return new Response("Not Found", { status: 404 })
       }
     }
 

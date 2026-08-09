@@ -1,6 +1,6 @@
 ---
 name: project-bootstrap
-description: '.docs/project-brief.md を読み込んで案件の骨格ファイルを一気に生成する。案件セットアップ、プロジェクト初期化、骨格生成、ボイラープレート生成などのリクエスト時に使用。/project-bootstrap で呼び出す。'
+description: ".docs/project-brief.md を読み込んで案件の骨格ファイルを一気に生成する。案件セットアップ、プロジェクト初期化、骨格生成、ボイラープレート生成などのリクエスト時に使用。/project-bootstrap で呼び出す。"
 user_invocable: true
 ---
 

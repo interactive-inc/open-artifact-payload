@@ -1,8 +1,8 @@
-'use client'
+"use client"
 
-import React from 'react'
+import React from "react"
 
-type Variant = 'attractor' | 'metaballs' | 'truchet' | 'apollonian' | 'penrose' | 'wang'
+type Variant = "attractor" | "metaballs" | "truchet" | "apollonian" | "penrose" | "wang"
 
 type Props = {
   variant: Variant
@@ -26,11 +26,11 @@ export function GenerativeCanvas(props: Props) {
   const setupCanvas = (canvas: HTMLCanvasElement | null) => {
     if (canvas === null) return
 
-    const context = canvas.getContext('2d')
+    const context = canvas.getContext("2d")
 
     if (context === null) return
 
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches
 
     let width = 0
     let height = 0
@@ -47,14 +47,14 @@ export function GenerativeCanvas(props: Props) {
     }
 
     const clearWhite = () => {
-      context.globalCompositeOperation = 'source-over'
-      context.fillStyle = 'rgb(255,255,255)'
+      context.globalCompositeOperation = "source-over"
+      context.fillStyle = "rgb(255,255,255)"
       context.fillRect(0, 0, width, height)
     }
 
     // 粒状ノイズを重ねてフィルムのような質感を出す。決定的な擬似乱数で毎回同じ模様にする。
     const addNoise = (density: number, alpha: number) => {
-      context.globalCompositeOperation = 'source-over'
+      context.globalCompositeOperation = "source-over"
       const count = Math.floor(width * height * density)
 
       for (let i = 0; i < count; i++) {
@@ -71,7 +71,7 @@ export function GenerativeCanvas(props: Props) {
     // 発光する有機的なブロブが漂い融合する液体的表現。
     const drawMetaballs = () => {
       clearWhite()
-      context.globalCompositeOperation = 'multiply'
+      context.globalCompositeOperation = "multiply"
 
       const blobCount = 9
 
@@ -93,7 +93,7 @@ export function GenerativeCanvas(props: Props) {
         const gradient = context.createRadialGradient(cx, cy, 0, cx, cy, r * pulse)
         gradient.addColorStop(0, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.85)`)
         gradient.addColorStop(0.5, `rgba(${rgb[0]},${rgb[1]},${rgb[2]},0.4)`)
-        gradient.addColorStop(1, 'rgba(255,255,255,0)')
+        gradient.addColorStop(1, "rgba(255,255,255,0)")
 
         context.fillStyle = gradient
         context.beginPath()
@@ -101,7 +101,7 @@ export function GenerativeCanvas(props: Props) {
         context.fill()
       }
 
-      context.globalCompositeOperation = 'source-over'
+      context.globalCompositeOperation = "source-over"
     }
 
     // トルシェタイル。各セルにランダムな向きの四分円を2本描き、繋がる迷路状の曲線を作る。
@@ -216,10 +216,10 @@ export function GenerativeCanvas(props: Props) {
     }
 
     const renderOnce = () => {
-      if (props.variant === 'truchet') drawTruchet()
-      else if (props.variant === 'apollonian') drawApollonian()
-      else if (props.variant === 'penrose') drawPenrose()
-      else if (props.variant === 'wang') drawWang()
+      if (props.variant === "truchet") drawTruchet()
+      else if (props.variant === "apollonian") drawApollonian()
+      else if (props.variant === "penrose") drawPenrose()
+      else if (props.variant === "wang") drawWang()
       else drawMetaballs()
 
       addNoise(0.04, 0.5)
@@ -243,16 +243,16 @@ export function GenerativeCanvas(props: Props) {
       let x = 0.1
       let y = 0.1
 
-      context.globalCompositeOperation = 'source-over'
-      context.fillStyle = 'rgb(255,255,255)'
+      context.globalCompositeOperation = "source-over"
+      context.fillStyle = "rgb(255,255,255)"
       context.fillRect(0, 0, width, height)
 
       const tick = () => {
         // 直前のフレームを薄い紙色で覆い、軌跡をゆっくり堆積させる。
-        context.fillStyle = 'rgba(255,255,255,0.04)'
+        context.fillStyle = "rgba(255,255,255,0.04)"
         context.fillRect(0, 0, width, height)
 
-        context.fillStyle = 'rgba(20,20,24,0.25)'
+        context.fillStyle = "rgba(20,20,24,0.25)"
         const iterations = reduceMotion ? 120000 : 3000
 
         for (let i = 0; i < iterations; i++) {
@@ -270,11 +270,11 @@ export function GenerativeCanvas(props: Props) {
     }
 
     resize()
-    window.addEventListener('resize', resize)
+    window.addEventListener("resize", resize)
 
-    if (props.variant === 'attractor') {
+    if (props.variant === "attractor") {
       startAttractor()
-    } else if (props.variant === 'metaballs' && !reduceMotion) {
+    } else if (props.variant === "metaballs" && !reduceMotion) {
       loop()
     } else {
       renderOnce()
@@ -282,7 +282,7 @@ export function GenerativeCanvas(props: Props) {
 
     return () => {
       window.cancelAnimationFrame(frameId)
-      window.removeEventListener('resize', resize)
+      window.removeEventListener("resize", resize)
     }
   }
 

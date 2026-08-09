@@ -1,6 +1,6 @@
-import type { UIFieldServerProps } from 'payload'
+import type { UIFieldServerProps } from "payload"
 
-import { UsageSummaryPanel } from '@/core/admin/ai-translation/usage-summary-panel'
+import { UsageSummaryPanel } from "@/core/admin/ai-translation/usage-summary-panel"
 
 /**
  * AI翻訳設定画面（サービス管理者のみ閲覧可）の利用状況フィールド。

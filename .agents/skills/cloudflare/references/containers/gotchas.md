@@ -44,7 +44,7 @@ return container.fetch(request)
 
 ```typescript
 const interval = setInterval(() => {
-  this.ctx.storage.put('keepalive', Date.now())
+  this.ctx.storage.put("keepalive", Date.now())
 }, 60000)
 
 try {

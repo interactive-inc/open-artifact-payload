@@ -24,8 +24,8 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 
 :root {
   --font-body:
-    'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'YuGothic', 'Yu Gothic', 'Avenir',
-    'Helvetica Neue', sans-serif;
+    "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "YuGothic", "Yu Gothic", "Avenir",
+    "Helvetica Neue", sans-serif;
   --base-body-size: 15;
   font-size: 15px;
   --base: 1.5rem;
@@ -35,7 +35,7 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 // ─── ライトテーマ ───
 
 :root,
-[data-theme='light'] {
+[data-theme="light"] {
   --theme-bg: #ffffff;
   --theme-elevation-0: #ffffff;
   --theme-elevation-50: #f0f2f2;
@@ -68,7 +68,7 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 
 // ─── ダークテーマ ───
 
-[data-theme='dark'] {
+[data-theme="dark"] {
   --theme-bg: #111213;
   --theme-elevation-0: #191a1b;
   --theme-elevation-50: #202122;
@@ -105,7 +105,7 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   --accessibility-outline-offset: 2px;
 }
 
-[data-theme='dark'] {
+[data-theme="dark"] {
   --accessibility-outline: 2px solid #d9dbdb;
 }
 
@@ -194,15 +194,15 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   font-weight: 500;
 }
 
-[data-theme='dark'] .nav__link {
+[data-theme="dark"] .nav__link {
   background: var(--theme-elevation-50);
   border-color: var(--theme-elevation-150);
 }
-[data-theme='dark'] .nav__link:hover {
+[data-theme="dark"] .nav__link:hover {
   background: var(--theme-elevation-100);
   border-color: var(--theme-elevation-200);
 }
-[data-theme='dark'] .nav__link--active {
+[data-theme="dark"] .nav__link--active {
   background: var(--theme-elevation-100);
   border-color: var(--theme-elevation-250);
 }
@@ -254,7 +254,7 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   display: none;
 }
 .ictms-open-public-site__link::after {
-  content: '';
+  content: "";
   display: inline-block;
   width: 14px;
   height: 14px;
@@ -298,14 +298,14 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   color: var(--theme-error-500);
 }
 .nav__log-out::after {
-  content: 'ログアウト';
+  content: "ログアウト";
   font-size: 13px;
 }
 
 // ─── ナビアイコン ───
 
 .nav__link::before {
-  content: '';
+  content: "";
   flex-shrink: 0;
   display: inline-block;
   width: 16px;

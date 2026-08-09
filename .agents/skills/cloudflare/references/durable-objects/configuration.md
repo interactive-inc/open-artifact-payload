@@ -43,10 +43,10 @@ Specify jurisdiction at ID creation for data residency compliance:
 
 ```typescript
 // EU data residency
-const id = env.MY_DO.idFromName('user:123', { jurisdiction: 'eu' })
+const id = env.MY_DO.idFromName("user:123", { jurisdiction: "eu" })
 
 // Available jurisdictions
-const jurisdictions = ['eu', 'fedramp'] // More may be added
+const jurisdictions = ["eu", "fedramp"] // More may be added
 
 // All operations on this DO stay within jurisdiction
 const stub = env.MY_DO.get(id)
@@ -119,7 +119,7 @@ See [Gotchas](./gotchas.md) for complete limits table.
 ## Types
 
 ```typescript
-import { DurableObject } from 'cloudflare:workers'
+import { DurableObject } from "cloudflare:workers"
 
 interface Env {
   MY_DO: DurableObjectNamespace<MyDO>

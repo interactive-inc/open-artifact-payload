@@ -175,8 +175,8 @@ export default buildCoreConfig({
   dirname,
   features: projectFeatures,
   projectGlobals: [homeGlobal],
-  livePreviewCollections: ['news', 'tours'], // 追加した slug を列挙
-  livePreviewGlobals: ['home-page'],
+  livePreviewCollections: ["news", "tours"], // 追加した slug を列挙
+  livePreviewGlobals: ["home-page"],
 })
 ```
 
@@ -193,7 +193,7 @@ export default buildCoreConfig({
   dirname,
   features: projectFeatures,
   projectGlobals: [homeGlobal, accessGlobal], // 追加したグローバルを列挙
-  livePreviewGlobals: ['home-page', 'access-page'], // ライブプレビュー対象にする場合
+  livePreviewGlobals: ["home-page", "access-page"], // ライブプレビュー対象にする場合
 })
 ```
 
@@ -320,16 +320,16 @@ export const projectFeatures: ProjectFeatures = {
 export const projectTailwindTheme = {
   colors: {
     brand: {
-      DEFAULT: '#1a5f7a',
-      light: '#3a7a94',
-      dark: '#0f4558',
+      DEFAULT: "#1a5f7a",
+      light: "#3a7a94",
+      dark: "#0f4558",
     },
     accent: {
-      DEFAULT: '#ff6b35',
+      DEFAULT: "#ff6b35",
     },
   },
   fontFamily: {
-    sans: ['"Noto Sans JP"', 'Hiragino Sans', 'sans-serif'],
+    sans: ['"Noto Sans JP"', "Hiragino Sans", "sans-serif"],
   },
 }
 ```

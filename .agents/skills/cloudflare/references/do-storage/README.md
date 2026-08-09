@@ -25,14 +25,14 @@ export class Counter extends DurableObject {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env)
     this.sql = ctx.storage.sql
-    this.sql.exec('CREATE TABLE IF NOT EXISTS data(key TEXT PRIMARY KEY, value INTEGER)')
+    this.sql.exec("CREATE TABLE IF NOT EXISTS data(key TEXT PRIMARY KEY, value INTEGER)")
   }
 
   async increment(): Promise<number> {
     const result = this.sql
       .exec(
-        'INSERT INTO data VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = value + 1 RETURNING value',
-        'counter',
+        "INSERT INTO data VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = value + 1 RETURNING value",
+        "counter",
         1,
       )
       .one()

@@ -26,19 +26,19 @@ Programmatic management of Cloudflare resources: Workers, Pages, D1, KV, R2, DNS
 ## Authentication
 
 ```typescript
-import * as cloudflare from '@pulumi/cloudflare'
+import * as cloudflare from "@pulumi/cloudflare"
 
 // API Token (recommended): CLOUDFLARE_API_TOKEN env
-const provider = new cloudflare.Provider('cf', { apiToken: process.env.CLOUDFLARE_API_TOKEN })
+const provider = new cloudflare.Provider("cf", { apiToken: process.env.CLOUDFLARE_API_TOKEN })
 
 // API Key (legacy): CLOUDFLARE_API_KEY + CLOUDFLARE_EMAIL env
-const provider = new cloudflare.Provider('cf', {
+const provider = new cloudflare.Provider("cf", {
   apiKey: process.env.CLOUDFLARE_API_KEY,
   email: process.env.CLOUDFLARE_EMAIL,
 })
 
 // API User Service Key: CLOUDFLARE_API_USER_SERVICE_KEY env
-const provider = new cloudflare.Provider('cf', {
+const provider = new cloudflare.Provider("cf", {
   apiUserServiceKey: process.env.CLOUDFLARE_API_USER_SERVICE_KEY,
 })
 ```
@@ -59,15 +59,15 @@ config:
 
 ```yaml
 config:
-  cloudflare:accountId: 'abc123...'
+  cloudflare:accountId: "abc123..."
 ```
 
 **index.ts:**
 
 ```typescript
-import * as pulumi from '@pulumi/pulumi'
-import * as cloudflare from '@pulumi/cloudflare'
-const accountId = new pulumi.Config('cloudflare').require('accountId')
+import * as pulumi from "@pulumi/pulumi"
+import * as cloudflare from "@pulumi/cloudflare"
+const accountId = new pulumi.Config("cloudflare").require("accountId")
 ```
 
 ## Common Resource Types

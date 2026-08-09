@@ -1,37 +1,37 @@
-import { getPayload } from 'payload'
-import { describe, expect, test } from 'vite-plus/test'
+import { getPayload } from "payload"
+import { describe, expect, test } from "vite-plus/test"
 
-import config from '@/payload.config'
+import config from "@/payload.config"
 
-describe('users read access', () => {
-  test('editors can read only themselves while administrators can list users', async () => {
+describe("users read access", () => {
+  test("editors can read only themselves while administrators can list users", async () => {
     const payloadConfig = await config
     const payload = await getPayload({ config: payloadConfig })
     const editorApiKey = `editor-key-${crypto.randomUUID()}`
     const administratorApiKey = `admin-key-${crypto.randomUUID()}`
     const editor = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `users-editor-${crypto.randomUUID()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['editor'],
+        password: "test-password-1234",
+        roles: ["editor"],
         enableAPIKey: true,
         apiKey: editorApiKey,
       },
     })
     const administrator = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `users-admin-${crypto.randomUUID()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['admin'],
+        password: "test-password-1234",
+        roles: ["admin"],
         enableAPIKey: true,
         apiKey: administratorApiKey,
       },
     })
 
     const editorView = await payload.find({
-      collection: 'users',
+      collection: "users",
       depth: 0,
       limit: 100,
       overrideAccess: false,
@@ -41,7 +41,7 @@ describe('users read access', () => {
     expect(editorView.docs.some((user) => user.apiKey === administratorApiKey)).toBe(false)
 
     const administratorView = await payload.find({
-      collection: 'users',
+      collection: "users",
       depth: 0,
       limit: 100,
       overrideAccess: false,

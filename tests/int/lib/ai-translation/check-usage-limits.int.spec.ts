@@ -1,7 +1,7 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it } from "vite-plus/test"
 
-import { checkUsageLimits } from '@/core/lib/ai-translation/check-usage-limits'
-import type { UsageLimits, UsageSnapshot } from '@/core/lib/ai-translation/translation-types'
+import { checkUsageLimits } from "@/core/lib/ai-translation/check-usage-limits"
+import type { UsageLimits, UsageSnapshot } from "@/core/lib/ai-translation/translation-types"
 
 const baseLimits: UsageLimits = {
   monthlyRunLimit: 100,
@@ -18,10 +18,10 @@ const emptySnapshot: UsageSnapshot = {
   lastRunAt: null,
 }
 
-const now = new Date('2026-07-15T03:00:00.000Z')
+const now = new Date("2026-07-15T03:00:00.000Z")
 
-describe('checkUsageLimits', () => {
-  it('上限内なら許可する', () => {
+describe("checkUsageLimits", () => {
+  it("上限内なら許可する", () => {
     const verdict = checkUsageLimits({
       snapshot: emptySnapshot,
       limits: baseLimits,
@@ -33,7 +33,7 @@ describe('checkUsageLimits', () => {
     expect(verdict.allowed).toBe(true)
   })
 
-  it('1回の文字数上限を超えると拒否する', () => {
+  it("1回の文字数上限を超えると拒否する", () => {
     const verdict = checkUsageLimits({
       snapshot: emptySnapshot,
       limits: baseLimits,
@@ -43,10 +43,10 @@ describe('checkUsageLimits', () => {
     })
 
     expect(verdict.allowed).toBe(false)
-    if (!verdict.allowed) expect(verdict.reason).toContain('20000')
+    if (!verdict.allowed) expect(verdict.reason).toContain("20000")
   })
 
-  it('月間実行回数上限に達していると拒否する', () => {
+  it("月間実行回数上限に達していると拒否する", () => {
     const verdict = checkUsageLimits({
       snapshot: { ...emptySnapshot, monthlyRunCount: 100 },
       limits: baseLimits,
@@ -56,10 +56,10 @@ describe('checkUsageLimits', () => {
     })
 
     expect(verdict.allowed).toBe(false)
-    if (!verdict.allowed) expect(verdict.reason).toContain('回数')
+    if (!verdict.allowed) expect(verdict.reason).toContain("回数")
   })
 
-  it('月間文字数上限を超える場合は拒否する', () => {
+  it("月間文字数上限を超える場合は拒否する", () => {
     const verdict = checkUsageLimits({
       snapshot: { ...emptySnapshot, monthlyCharacterCount: 299995 },
       limits: baseLimits,
@@ -69,10 +69,10 @@ describe('checkUsageLimits', () => {
     })
 
     expect(verdict.allowed).toBe(false)
-    if (!verdict.allowed) expect(verdict.reason).toContain('文字数')
+    if (!verdict.allowed) expect(verdict.reason).toContain("文字数")
   })
 
-  it('実績と今回の見込み費用の合算が月間費用上限を超えると拒否する', () => {
+  it("実績と今回の見込み費用の合算が月間費用上限を超えると拒否する", () => {
     const verdict = checkUsageLimits({
       snapshot: { ...emptySnapshot, monthlyCostUsd: 9.99 },
       limits: baseLimits,
@@ -82,7 +82,7 @@ describe('checkUsageLimits', () => {
     })
 
     expect(verdict.allowed).toBe(false)
-    if (!verdict.allowed) expect(verdict.reason).toContain('費用')
+    if (!verdict.allowed) expect(verdict.reason).toContain("費用")
 
     const withinLimit = checkUsageLimits({
       snapshot: { ...emptySnapshot, monthlyCostUsd: 9.99 },
@@ -95,7 +95,7 @@ describe('checkUsageLimits', () => {
     expect(withinLimit.allowed).toBe(true)
   })
 
-  it('クールダウン中は拒否し、経過後は許可する', () => {
+  it("クールダウン中は拒否し、経過後は許可する", () => {
     const lastRunAt = new Date(now.getTime() - 10 * 1000)
 
     const blocked = checkUsageLimits({
@@ -107,7 +107,7 @@ describe('checkUsageLimits', () => {
     })
 
     expect(blocked.allowed).toBe(false)
-    if (!blocked.allowed) expect(blocked.reason).toContain('秒')
+    if (!blocked.allowed) expect(blocked.reason).toContain("秒")
 
     const passed = checkUsageLimits({
       snapshot: { ...emptySnapshot, lastRunAt: new Date(now.getTime() - 31 * 1000) },

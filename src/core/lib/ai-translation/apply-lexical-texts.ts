@@ -1,5 +1,5 @@
-import { collectLexicalTexts } from '@/core/lib/ai-translation/collect-lexical-texts'
-import { visitLexicalNode } from '@/core/lib/ai-translation/visit-lexical-node'
+import { collectLexicalTexts } from "@/core/lib/ai-translation/collect-lexical-texts"
+import { visitLexicalNode } from "@/core/lib/ai-translation/visit-lexical-node"
 
 /**
  * Lexical JSON の複製に対して text ノードだけを翻訳文へ置き換える。
@@ -10,13 +10,13 @@ export function applyLexicalTexts(value: unknown, texts: ReadonlyArray<string>):
   const sourceTexts = collectLexicalTexts(value)
 
   if (sourceTexts.length !== texts.length) {
-    return new Error('翻訳結果の数がリッチテキストの構造と一致しません')
+    return new Error("翻訳結果の数がリッチテキストの構造と一致しません")
   }
 
   const cloned: unknown = structuredClone(value)
 
-  if (!cloned || typeof cloned !== 'object') {
-    return new Error('リッチテキストの形式が不正です')
+  if (!cloned || typeof cloned !== "object") {
+    return new Error("リッチテキストの形式が不正です")
   }
 
   visitLexicalNode(cloned, [...texts])

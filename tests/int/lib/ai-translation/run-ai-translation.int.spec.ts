@@ -1,10 +1,10 @@
-import { getPayload, type Payload } from 'payload'
-import { beforeAll, describe, expect, it } from 'vite-plus/test'
+import { getPayload, type Payload } from "payload"
+import { beforeAll, describe, expect, it } from "vite-plus/test"
 
-import config from '@/payload.config'
-import { runAiTranslation } from '@/core/lib/ai-translation/run-ai-translation'
-import type { TranslateFn } from '@/core/lib/ai-translation/translation-types'
-import type { User } from '@/payload-types'
+import config from "@/payload.config"
+import { runAiTranslation } from "@/core/lib/ai-translation/run-ai-translation"
+import type { TranslateFn } from "@/core/lib/ai-translation/translation-types"
+import type { User } from "@/payload-types"
 
 let payload: Payload
 let admin: User
@@ -19,16 +19,16 @@ const fakeTranslateFn: TranslateFn = (request) =>
 
 const buildLexicalBody = (text: string) => ({
   root: {
-    type: 'root',
+    type: "root",
     children: [
       {
-        type: 'paragraph',
+        type: "paragraph",
         version: 1,
-        children: [{ type: 'text', text, version: 1 }],
+        children: [{ type: "text", text, version: 1 }],
       },
     ],
     direction: null,
-    format: '' as const,
+    format: "" as const,
     indent: 0,
     version: 1,
   },
@@ -36,10 +36,10 @@ const buildLexicalBody = (text: string) => ({
 
 const enableSettings = async (overrides?: { monthlyRunLimit?: number }) => {
   await payload.updateGlobal({
-    slug: 'ai-translation-settings',
+    slug: "ai-translation-settings",
     data: {
       enabled: true,
-      model: 'anthropic/claude-haiku-4-5',
+      model: "anthropic/claude-haiku-4-5",
       limits: {
         monthlyRunLimit: overrides?.monthlyRunLimit ?? 10000,
         monthlyCharacterLimit: 10000000,
@@ -51,39 +51,39 @@ const enableSettings = async (overrides?: { monthlyRunLimit?: number }) => {
   })
 }
 
-describe('runAiTranslation', () => {
+describe("runAiTranslation", () => {
   beforeAll(async () => {
     const payloadConfig = await config
     payload = await getPayload({ config: payloadConfig })
 
     admin = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `run-ai-${Date.now()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['admin'],
+        password: "test-password-1234",
+        roles: ["admin"],
       },
     })
 
     const created = await payload.create({
-      collection: 'news',
+      collection: "news",
       data: {
-        title: 'お知らせタイトル',
+        title: "お知らせタイトル",
         slug: `run-ai-${Date.now()}`,
         publishedAt: new Date().toISOString(),
-        category: 'info',
-        body: buildLexicalBody('本文です'),
-        _status: 'published',
+        category: "info",
+        body: buildLexicalBody("本文です"),
+        _status: "published",
       },
-      locale: 'ja',
+      locale: "ja",
     })
 
     newsId = String(created.id)
   })
 
-  it('設定が無効なら Error を返し何も保存しない', async () => {
+  it("設定が無効なら Error を返し何も保存しない", async () => {
     await payload.updateGlobal({
-      slug: 'ai-translation-settings',
+      slug: "ai-translation-settings",
       data: { enabled: false },
     })
 
@@ -91,30 +91,30 @@ describe('runAiTranslation', () => {
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: false,
       },
       translateFn: fakeTranslateFn,
     })
 
     expect(outcome).toBeInstanceOf(Error)
-    if (outcome instanceof Error) expect(outcome.message).toContain('無効')
+    if (outcome instanceof Error) expect(outcome.message).toContain("無効")
   })
 
-  it('未入力の localized フィールドを翻訳して翻訳先 locale に保存する', async () => {
+  it("未入力の localized フィールドを翻訳して翻訳先 locale に保存する", async () => {
     await enableSettings()
 
     const outcome = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: false,
       },
       translateFn: fakeTranslateFn,
@@ -122,38 +122,38 @@ describe('runAiTranslation', () => {
 
     if (outcome instanceof Error) throw outcome
 
-    expect(outcome.status).toBe('succeeded')
+    expect(outcome.status).toBe("succeeded")
     expect(outcome.translatedFieldCount).toBeGreaterThanOrEqual(2)
 
     const enDoc = await payload.findByID({
-      collection: 'news',
+      collection: "news",
       id: newsId,
-      locale: 'en',
+      locale: "en",
       fallbackLocale: false,
       draft: true,
       depth: 0,
     })
 
-    expect(enDoc.title).toBe('EN:お知らせタイトル')
-    expect(JSON.stringify(enDoc.body)).toContain('EN:本文です')
+    expect(enDoc.title).toBe("EN:お知らせタイトル")
+    expect(JSON.stringify(enDoc.body)).toContain("EN:本文です")
 
     const jaDoc = await payload.findByID({
-      collection: 'news',
+      collection: "news",
       id: newsId,
-      locale: 'ja',
+      locale: "ja",
       fallbackLocale: false,
       draft: true,
       depth: 0,
     })
 
-    expect(jaDoc.title).toBe('お知らせタイトル')
+    expect(jaDoc.title).toBe("お知らせタイトル")
 
     const logs = await payload.find({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       where: {
-        and: [{ targetId: { equals: newsId } }, { status: { equals: 'succeeded' } }],
+        and: [{ targetId: { equals: newsId } }, { status: { equals: "succeeded" } }],
       },
-      sort: '-createdAt',
+      sort: "-createdAt",
       limit: 1,
       depth: 0,
     })
@@ -162,21 +162,21 @@ describe('runAiTranslation', () => {
 
     expect(log).toBeDefined()
     expect(log?.executedBy).toBe(admin.id)
-    expect(log?.characterCount).toBe('お知らせタイトル'.length + '本文です'.length)
+    expect(log?.characterCount).toBe("お知らせタイトル".length + "本文です".length)
     expect(log?.estimatedCostUsd).toBeGreaterThan(0)
   })
 
-  it('入力済みフィールドは overwrite=false ではスキップされる', async () => {
+  it("入力済みフィールドは overwrite=false ではスキップされる", async () => {
     await enableSettings()
 
     const outcome = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: false,
       },
       translateFn: (request) =>
@@ -189,31 +189,31 @@ describe('runAiTranslation', () => {
 
     if (outcome instanceof Error) throw outcome
 
-    expect(outcome.status).toBe('skipped')
+    expect(outcome.status).toBe("skipped")
 
     const enDoc = await payload.findByID({
-      collection: 'news',
+      collection: "news",
       id: newsId,
-      locale: 'en',
+      locale: "en",
       fallbackLocale: false,
       draft: true,
       depth: 0,
     })
 
-    expect(enDoc.title).toBe('EN:お知らせタイトル')
+    expect(enDoc.title).toBe("EN:お知らせタイトル")
   })
 
-  it('overwrite=true なら既存翻訳を上書きする', async () => {
+  it("overwrite=true なら既存翻訳を上書きする", async () => {
     await enableSettings()
 
     const outcome = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: true,
       },
       translateFn: (request) =>
@@ -226,45 +226,45 @@ describe('runAiTranslation', () => {
 
     if (outcome instanceof Error) throw outcome
 
-    expect(outcome.status).toBe('succeeded')
+    expect(outcome.status).toBe("succeeded")
 
     const enDoc = await payload.findByID({
-      collection: 'news',
+      collection: "news",
       id: newsId,
-      locale: 'en',
+      locale: "en",
       fallbackLocale: false,
       draft: true,
       depth: 0,
     })
 
-    expect(enDoc.title).toBe('EN2:お知らせタイトル')
+    expect(enDoc.title).toBe("EN2:お知らせタイトル")
   })
 
-  it('月間実行回数の上限に達していると rejected ログを残して Error', async () => {
+  it("月間実行回数の上限に達していると rejected ログを残して Error", async () => {
     await enableSettings({ monthlyRunLimit: 0 })
 
     const outcome = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: true,
       },
       translateFn: fakeTranslateFn,
     })
 
     expect(outcome).toBeInstanceOf(Error)
-    if (outcome instanceof Error) expect(outcome.message).toContain('回数')
+    if (outcome instanceof Error) expect(outcome.message).toContain("回数")
 
     const logs = await payload.find({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       where: {
-        and: [{ targetId: { equals: newsId } }, { status: { equals: 'rejected' } }],
+        and: [{ targetId: { equals: newsId } }, { status: { equals: "rejected" } }],
       },
-      sort: '-createdAt',
+      sort: "-createdAt",
       limit: 1,
       depth: 0,
     })
@@ -272,42 +272,42 @@ describe('runAiTranslation', () => {
     expect(logs.docs[0]).toBeDefined()
   })
 
-  it('翻訳結果の件数不一致は failed ログを残し、既存データを変更しない', async () => {
+  it("翻訳結果の件数不一致は failed ログを残し、既存データを変更しない", async () => {
     await enableSettings()
 
     const outcome = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: true,
       },
       translateFn: () =>
-        Promise.resolve({ translations: ['only-one'], inputTokens: 1, outputTokens: 1 }),
+        Promise.resolve({ translations: ["only-one"], inputTokens: 1, outputTokens: 1 }),
     })
 
     expect(outcome).toBeInstanceOf(Error)
 
     const enDoc = await payload.findByID({
-      collection: 'news',
+      collection: "news",
       id: newsId,
-      locale: 'en',
+      locale: "en",
       fallbackLocale: false,
       draft: true,
       depth: 0,
     })
 
-    expect(enDoc.title).toBe('EN2:お知らせタイトル')
+    expect(enDoc.title).toBe("EN2:お知らせタイトル")
 
     const logs = await payload.find({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       where: {
-        and: [{ targetId: { equals: newsId } }, { status: { equals: 'failed' } }],
+        and: [{ targetId: { equals: newsId } }, { status: { equals: "failed" } }],
       },
-      sort: '-createdAt',
+      sort: "-createdAt",
       limit: 1,
       depth: 0,
     })
@@ -315,20 +315,20 @@ describe('runAiTranslation', () => {
     expect(logs.docs[0]).toBeDefined()
   })
 
-  it('更新権限が無いユーザーは AI を呼ぶ前に拒否される（site-settings は editor 更新不可）', async () => {
+  it("更新権限が無いユーザーは AI を呼ぶ前に拒否される（site-settings は editor 更新不可）", async () => {
     await enableSettings()
     await payload.updateGlobal({
-      slug: 'site-settings',
-      locale: 'ja',
-      data: { siteName: '権限確認用サイト' },
+      slug: "site-settings",
+      locale: "ja",
+      data: { siteName: "権限確認用サイト" },
     })
 
     const editor = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `run-ai-editor-${Date.now()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['editor'],
+        password: "test-password-1234",
+        roles: ["editor"],
       },
     })
 
@@ -338,14 +338,14 @@ describe('runAiTranslation', () => {
       payload,
       user: editor,
       request: {
-        targetKind: 'global',
-        targetSlug: 'site-settings',
+        targetKind: "global",
+        targetSlug: "site-settings",
         targetId: null,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: true,
       },
       translateFn: (request) => {
-        calls.push('called')
+        calls.push("called")
         return Promise.resolve({
           translations: request.units.map((unit) => `EN:${unit}`),
           inputTokens: 1,
@@ -355,11 +355,11 @@ describe('runAiTranslation', () => {
     })
 
     expect(outcome).toBeInstanceOf(Error)
-    if (outcome instanceof Error) expect(outcome.message).toContain('権限')
+    if (outcome instanceof Error) expect(outcome.message).toContain("権限")
     expect(calls).toHaveLength(0)
   })
 
-  it('実行中は pending の予約ログが存在し、完了後に同じ行が succeeded になる', async () => {
+  it("実行中は pending の予約ログが存在し、完了後に同じ行が succeeded になる", async () => {
     await enableSettings()
 
     const pendingSeen: number[] = []
@@ -369,17 +369,17 @@ describe('runAiTranslation', () => {
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: true,
       },
       translateFn: async (request) => {
         const pendingLogs = await payload.find({
-          collection: 'ai-translation-logs',
+          collection: "ai-translation-logs",
           where: {
-            and: [{ targetId: { equals: newsId } }, { status: { equals: 'pending' } }],
+            and: [{ targetId: { equals: newsId } }, { status: { equals: "pending" } }],
           },
           limit: 5,
           depth: 0,
@@ -402,35 +402,35 @@ describe('runAiTranslation', () => {
     expect(pendingReservedCosts[0]).toBeGreaterThan(0)
 
     const finalizedLog = await payload.findByID({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       id: pendingSeen[0] ?? 0,
       depth: 0,
     })
 
-    expect(finalizedLog.status).toBe('succeeded')
+    expect(finalizedLog.status).toBe("succeeded")
     expect(finalizedLog.estimatedCostUsd).toBeGreaterThan(0)
   })
 
-  it('AI 呼び出し中に翻訳先が編集されたら保存を中止する（楽観ロック）', async () => {
+  it("AI 呼び出し中に翻訳先が編集されたら保存を中止する（楽観ロック）", async () => {
     await enableSettings()
 
     const outcome = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'en',
+        targetLocale: "en",
         overwrite: true,
       },
       translateFn: async (request) => {
         // 翻訳 API の応答待ちの間に他の編集者が翻訳先を更新した状況を再現する
         await payload.update({
-          collection: 'news',
+          collection: "news",
           id: newsId,
-          data: { title: 'CONCURRENT-EDIT' },
-          locale: 'en',
+          data: { title: "CONCURRENT-EDIT" },
+          locale: "en",
           draft: true,
           depth: 0,
         })
@@ -444,31 +444,31 @@ describe('runAiTranslation', () => {
     })
 
     expect(outcome).toBeInstanceOf(Error)
-    if (outcome instanceof Error) expect(outcome.message).toContain('更新された')
+    if (outcome instanceof Error) expect(outcome.message).toContain("更新された")
 
     const enDoc = await payload.findByID({
-      collection: 'news',
+      collection: "news",
       id: newsId,
-      locale: 'en',
+      locale: "en",
       fallbackLocale: false,
       draft: true,
       depth: 0,
     })
 
-    expect(enDoc.title).toBe('CONCURRENT-EDIT')
+    expect(enDoc.title).toBe("CONCURRENT-EDIT")
   })
 
-  it('翻訳先言語が defaultLocale や未定義の locale なら Error', async () => {
+  it("翻訳先言語が defaultLocale や未定義の locale なら Error", async () => {
     await enableSettings()
 
     const toJa = await runAiTranslation({
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'ja',
+        targetLocale: "ja",
         overwrite: false,
       },
       translateFn: fakeTranslateFn,
@@ -480,10 +480,10 @@ describe('runAiTranslation', () => {
       payload,
       user: admin,
       request: {
-        targetKind: 'collection',
-        targetSlug: 'news',
+        targetKind: "collection",
+        targetSlug: "news",
         targetId: newsId,
-        targetLocale: 'fr',
+        targetLocale: "fr",
         overwrite: false,
       },
       translateFn: fakeTranslateFn,

@@ -10,7 +10,7 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const userWorkerName = new URL(request.url).hostname.split('.')[0]
+    const userWorkerName = new URL(request.url).hostname.split(".")[0]
     const customerPlan = await env.CUSTOMERS_KV.get(userWorkerName)
 
     const plans = {
@@ -37,8 +37,8 @@ export default {
 ```typescript
 const bindings = [
   {
-    type: 'kv_namespace',
-    name: 'USER_KV',
+    type: "kv_namespace",
+    name: "USER_KV",
     namespace_id: `customer-${customerId}-kv`,
   },
 ]
@@ -69,10 +69,10 @@ Configure `*/*` route on SaaS domain → dispatch Worker
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const hostname = new URL(request.url).hostname
-    const hostnameData = await env.ROUTING_KV.get(`hostname:${hostname}`, { type: 'json' })
+    const hostnameData = await env.ROUTING_KV.get(`hostname:${hostname}`, { type: "json" })
 
     if (!hostnameData?.workerName) {
-      return new Response('Hostname not configured', { status: 404 })
+      return new Response("Hostname not configured", { status: 404 })
     }
 
     const userWorker = env.DISPATCHER.get(hostnameData.workerName)
@@ -121,7 +121,7 @@ For Cloudflare for SaaS: Store worker name in custom hostname `custom_metadata`,
 // Track violations
 env.ANALYTICS.writeDataPoint({
   indexes: [customerName],
-  blobs: ['cpu_limit_exceeded'],
+  blobs: ["cpu_limit_exceeded"],
 })
 ```
 
@@ -149,10 +149,10 @@ query {
 
 ```typescript
 async function deployGeneratedCode(name: string, code: string) {
-  const file = new File([code], `${name}.mjs`, { type: 'application/javascript+module' })
-  await client.workersForPlatforms.dispatch.namespaces.scripts.update('production', name, {
+  const file = new File([code], `${name}.mjs`, { type: "application/javascript+module" })
+  await client.workersForPlatforms.dispatch.namespaces.scripts.update("production", name, {
     account_id: accountId,
-    metadata: { main_module: `${name}.mjs`, tags: [name, 'ai-generated'] },
+    metadata: { main_module: `${name}.mjs`, tags: [name, "ai-generated"] },
     files: [file],
   })
 }
@@ -169,7 +169,7 @@ Reference: [AI Vibe Coding Platform Architecture](https://developers.cloudflare.
 
 ```typescript
 // Route: /customer-id/function-name
-const [customerId, functionName] = new URL(request.url).pathname.split('/').filter(Boolean)
+const [customerId, functionName] = new URL(request.url).pathname.split("/").filter(Boolean)
 const workerName = `${customerId}-${functionName}`
 const userWorker = env.DISPATCHER.get(workerName)
 ```

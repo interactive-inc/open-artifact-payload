@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import { exampleNewsItems } from '@/core/test-support/example-news-items'
+import { exampleNewsItems } from "@/core/test-support/example-news-items"
 
-import { FeaturedNewsSection } from './featured-news-section'
+import { FeaturedNewsSection } from "./featured-news-section"
 
 const meta: Meta<typeof FeaturedNewsSection> = {
-  title: 'Core/Sections/FeaturedNewsSection',
+  title: "Core/Sections/FeaturedNewsSection",
   component: FeaturedNewsSection,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   args: {
     data: {
       enabled: true,
-      heading: '最新のお知らせ',
+      heading: "最新のお知らせ",
       items: exampleNewsItems,
     },
   },
@@ -25,7 +25,7 @@ export const Default: Story = {
   args: {
     data: {
       enabled: true,
-      heading: '最新のお知らせ',
+      heading: "最新のお知らせ",
       items: exampleNewsItems,
     },
   },

@@ -3,7 +3,7 @@ export function formatCliOutput(input: string): string | Error {
   try {
     parsed = JSON.parse(input)
   } catch {
-    return new Error('CLI received an invalid JSON response')
+    return new Error("CLI received an invalid JSON response")
   }
 
   return `${JSON.stringify(parsed, null, 2)}\n`

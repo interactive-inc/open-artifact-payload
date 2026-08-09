@@ -1,10 +1,10 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload"
 
-import { isAdmin } from '@/core/lib/access/is-admin'
-import { isAuthenticated } from '@/core/lib/access/is-authenticated'
-import { publishedOrAuthenticated } from '@/core/lib/access/published-or-authenticated'
-import { buildCollectionRevalidateAfterChange } from '@/core/lib/revalidate/build-collection-revalidate-after-change'
-import { buildCollectionRevalidateAfterDelete } from '@/core/lib/revalidate/build-collection-revalidate-after-delete'
+import { isAdmin } from "@/core/lib/access/is-admin"
+import { isAuthenticated } from "@/core/lib/access/is-authenticated"
+import { publishedOrAuthenticated } from "@/core/lib/access/published-or-authenticated"
+import { buildCollectionRevalidateAfterChange } from "@/core/lib/revalidate/build-collection-revalidate-after-change"
+import { buildCollectionRevalidateAfterDelete } from "@/core/lib/revalidate/build-collection-revalidate-after-delete"
 
 type PageDoc = { slug?: string }
 
@@ -14,15 +14,15 @@ const resolvePaths = (props: { doc: PageDoc }): string[] => {
 }
 
 export const pages: CollectionConfig = {
-  slug: 'pages',
+  slug: "pages",
   labels: {
-    singular: 'ページ',
-    plural: 'ページ一覧',
+    singular: "ページ",
+    plural: "ページ一覧",
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'slug', 'updatedAt'],
-    group: 'コンテンツ',
+    useAsTitle: "title",
+    defaultColumns: ["title", "slug", "updatedAt"],
+    group: "コンテンツ",
   },
   access: {
     // 未ログイン訪問者には _status='published' のみ。エディタ/管理者は下書きも閲覧可。
@@ -33,23 +33,23 @@ export const pages: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      label: 'タイトル',
-      type: 'text',
+      name: "title",
+      label: "タイトル",
+      type: "text",
       required: true,
       localized: true,
     },
     {
-      name: 'slug',
-      label: 'スラッグ',
-      type: 'text',
+      name: "slug",
+      label: "スラッグ",
+      type: "text",
       required: true,
       unique: true,
     },
     {
-      name: 'body',
-      label: '本文',
-      type: 'richText',
+      name: "body",
+      label: "本文",
+      type: "richText",
       localized: true,
     },
     // SEO の meta フィールドは seoPlugin が付与する (config-base の enableFreePages 分岐参照)。

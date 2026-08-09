@@ -216,7 +216,7 @@ LAN mode depends on the system mDNS helpers that portless launches: macOS includ
   ```js
   // next.config.js
   module.exports = {
-    allowedDevOrigins: ['myapp.local', '*.myapp.local'],
+    allowedDevOrigins: ["myapp.local", "*.myapp.local"],
   }
   ```
 

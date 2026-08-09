@@ -1,5 +1,5 @@
-import Script from 'next/script'
-import React from 'react'
+import Script from "next/script"
+import React from "react"
 
 type Props = {
   gaTagId?: string | null
@@ -41,7 +41,7 @@ export function SiteAnalytics(props: Props) {
               src={`https://www.googletagmanager.com/ns.html?id=${gtmId}`}
               height="0"
               width="0"
-              style={{ display: 'none', visibility: 'hidden' }}
+              style={{ display: "none", visibility: "hidden" }}
               title="Google Tag Manager"
             />
           </noscript>

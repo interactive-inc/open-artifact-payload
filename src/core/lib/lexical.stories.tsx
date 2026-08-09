@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import { exampleRichText } from '@/core/test-support/example-rich-text'
+import { exampleRichText } from "@/core/test-support/example-rich-text"
 
-import { RichText } from './lexical'
+import { RichText } from "./lexical"
 
 const meta: Meta<typeof RichText> = {
-  title: 'Core/Lexical/RichText',
+  title: "Core/Lexical/RichText",
   component: RichText,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   args: {
     data: exampleRichText,
   },

@@ -1,4 +1,4 @@
-import type { TranslationModel } from '@/core/lib/ai-translation/translation-models'
+import type { TranslationModel } from "@/core/lib/ai-translation/translation-models"
 
 type Props = {
   model: TranslationModel

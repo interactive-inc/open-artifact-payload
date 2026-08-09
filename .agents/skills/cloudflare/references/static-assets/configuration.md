@@ -130,15 +130,15 @@ For Vite-based projects, use `@cloudflare/vite-plugin`:
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite'
-import { cloudflare } from '@cloudflare/vite-plugin'
+import { defineConfig } from "vite"
+import { cloudflare } from "@cloudflare/vite-plugin"
 
 export default defineConfig({
   plugins: [
     cloudflare({
       assets: {
-        directory: './dist',
-        binding: 'ASSETS',
+        directory: "./dist",
+        binding: "ASSETS",
       },
     }),
   ],

@@ -28,7 +28,7 @@
 
 ```typescript
 const worker = await startWorker({
-  config: 'wrangler.jsonc',
+  config: "wrangler.jsonc",
   remote: true, // or "minimal" for faster tests
 })
 ```
@@ -110,7 +110,7 @@ For local DOs in same Worker, `script_name` is optional.
 **Solution:** Use stable `startWorker` instead:
 
 ```typescript
-import { startWorker } from 'wrangler' // Not unstable_startWorker
+import { startWorker } from "wrangler" // Not unstable_startWorker
 ```
 
 ### "outboundService not mocking fetch"
@@ -122,7 +122,7 @@ import { startWorker } from 'wrangler' // Not unstable_startWorker
 const worker = await startWorker({
   outboundService: (req) => {
     if (shouldMock(req)) {
-      return new Response('mocked')
+      return new Response("mocked")
     }
     return fetch(req) // Required for non-mocked requests
   },

@@ -52,11 +52,11 @@ _dmarc.example.com. IN TXT "v=DMARC1; p=quarantine"
 
 ```typescript
 // Routing/auth: envelope
-if (message.from === 'trusted@example.com') {
+if (message.from === "trusted@example.com") {
 }
 
 // Display: headers
-const display = message.headers.get('from')
+const display = message.headers.get("from")
 ```
 
 ### SendEmail Limits
@@ -77,14 +77,14 @@ const display = message.headers.get('from')
 **Solution:**
 
 ```typescript
-const size = parseInt(message.headers.get('content-length') || '0') / 1024 / 1024
+const size = parseInt(message.headers.get("content-length") || "0") / 1024 / 1024
 if (size > 20) {
-  message.setReject('Too large')
+  message.setReject("Too large")
   return
 }
 
 ctx.waitUntil(expensiveWork())
-await message.forward('dest@example.com')
+await message.forward("dest@example.com")
 ```
 
 ### Rule Not Triggering
@@ -101,10 +101,10 @@ await message.forward('dest@example.com')
 
 ```typescript
 // ❌ WRONG
-const subj = message.headers.get('subject').toLowerCase()
+const subj = message.headers.get("subject").toLowerCase()
 
 // ✅ CORRECT
-const subj = message.headers.get('subject')?.toLowerCase() || ''
+const subj = message.headers.get("subject")?.toLowerCase() || ""
 ```
 
 ## Limits
@@ -145,7 +145,7 @@ npx wrangler tail
 export default {
   async email(message, env, ctx) {
     try {
-      console.log('From:', message.from)
+      console.log("From:", message.from)
       await process(message, env)
     } catch (err) {
       console.error(err)
@@ -160,15 +160,15 @@ export default {
 ### Check Status
 
 ```typescript
-const auth = message.headers.get('authentication-results') || ''
+const auth = message.headers.get("authentication-results") || ""
 console.log({
-  spf: auth.includes('spf=pass'),
-  dkim: auth.includes('dkim=pass'),
-  dmarc: auth.includes('dmarc=pass'),
+  spf: auth.includes("spf=pass"),
+  dkim: auth.includes("dkim=pass"),
+  dmarc: auth.includes("dmarc=pass"),
 })
 
-if (!auth.includes('pass')) {
-  message.setReject('Failed auth')
+if (!auth.includes("pass")) {
+  message.setReject("Failed auth")
   return
 }
 ```

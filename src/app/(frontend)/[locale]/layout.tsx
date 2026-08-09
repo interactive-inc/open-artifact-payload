@@ -1,19 +1,19 @@
-import React from 'react'
-import { notFound } from 'next/navigation'
+import React from "react"
+import { notFound } from "next/navigation"
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import { loadSiteSettings } from '@/core/lib/load-site-settings'
-import { RefreshRouteOnSave } from '@/core/frontend/components/refresh-route-on-save'
-import { SiteHeader } from '@/project/shared/sections/site-header'
-import { SiteFooter } from '@/project/shared/sections/site-footer'
-import { SiteAnalytics } from '@/project/shared/components/site-analytics'
-import { JsonLd } from '@/project/shared/components/json-ld'
-import { TooltipProvider } from '@/project/shared/ui/tooltip'
-import { Toaster } from '@/project/shared/ui/sonner'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import './styles.css'
+import { loadSiteSettings } from "@/core/lib/load-site-settings"
+import { RefreshRouteOnSave } from "@/core/frontend/components/refresh-route-on-save"
+import { SiteHeader } from "@/project/shared/sections/site-header"
+import { SiteFooter } from "@/project/shared/sections/site-footer"
+import { SiteAnalytics } from "@/project/shared/components/site-analytics"
+import { JsonLd } from "@/project/shared/components/json-ld"
+import { TooltipProvider } from "@/project/shared/ui/tooltip"
+import { Toaster } from "@/project/shared/ui/sonner"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import "./styles.css"
 
 type Props = {
   children: React.ReactNode
@@ -32,7 +32,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     // OG 画像などの相対 URL を絶対 URL に解決するための基準。本番では必ず NEXT_PUBLIC_SERVER_URL を設定する。
-    metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'),
+    metadataBase: new URL(process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"),
     title: {
       default: settings.siteName,
       template: `%s | ${settings.siteName}`,
@@ -41,26 +41,26 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
     // ページ (buildMetadata 経由) はそちらが優先される。画像はブランド素材に差し替える。
     openGraph: {
       siteName: settings.siteName,
-      images: [{ url: '/og-default.png', width: 1200, height: 630 }],
+      images: [{ url: "/og-default.png", width: 1200, height: 630 }],
     },
     twitter: {
-      card: 'summary_large_image',
+      card: "summary_large_image",
     },
   }
 }
 
 // フロントは D1 由来のコンテンツ (サイト設定・各ページ) をリクエスト時に取得するため、
 // ビルド時のプリレンダリング (D1 非接続) を避けて動的レンダリングに統一する。
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
 export default async function RootLayout(props: Props) {
   const params = await props.params
   const locale = resolveLocale(params.locale)
   const settings = await loadSiteSettings(locale)
-  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+  const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"
   const organizationJsonLd: Record<string, unknown> = {
-    '@context': 'https://schema.org',
-    '@type': 'Organization',
+    "@context": "https://schema.org",
+    "@type": "Organization",
     name: settings.siteName,
     url: baseUrl,
   }

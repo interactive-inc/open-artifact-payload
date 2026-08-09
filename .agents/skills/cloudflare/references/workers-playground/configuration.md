@@ -34,7 +34,7 @@ Must export default object with `fetch` handler:
 ```javascript
 export default {
   async fetch(request, env, ctx) {
-    return new Response('Hello World')
+    return new Response("Hello World")
   },
 }
 ```
@@ -52,7 +52,7 @@ Import from external URLs or inline modules:
 
 ```javascript
 // Import from CDN
-import { Hono } from 'https://esm.sh/hono@3'
+import { Hono } from "https://esm.sh/hono@3"
 
 // Or paste library code and import relatively
 // (See patterns.md for multi-module examples)
@@ -60,7 +60,7 @@ import { Hono } from 'https://esm.sh/hono@3'
 export default {
   async fetch(request) {
     const app = new Hono()
-    app.get('/', (c) => c.text('Hello'))
+    app.get("/", (c) => c.text("Hello"))
     return app.fetch(request)
   },
 }

@@ -3,9 +3,9 @@
 ## Vercel AI SDK (Recommended)
 
 ```typescript
-import { createAiGateway } from 'ai-gateway-provider'
-import { createOpenAI } from '@ai-sdk/openai'
-import { generateText } from 'ai'
+import { createAiGateway } from "ai-gateway-provider"
+import { createOpenAI } from "@ai-sdk/openai"
+import { generateText } from "ai"
 
 const gateway = createAiGateway({
   accountId: process.env.CF_ACCOUNT_ID,
@@ -17,25 +17,25 @@ const openai = createOpenAI({ apiKey: process.env.OPENAI_API_KEY })
 
 // Single model
 const { text } = await generateText({
-  model: gateway(openai('gpt-4o')),
-  prompt: 'Hello',
+  model: gateway(openai("gpt-4o")),
+  prompt: "Hello",
 })
 
 // Automatic fallback array
 const { text } = await generateText({
-  model: gateway([openai('gpt-4o'), anthropic('claude-sonnet-4-5'), openai('gpt-4o-mini')]),
-  prompt: 'Complex task',
+  model: gateway([openai("gpt-4o"), anthropic("claude-sonnet-4-5"), openai("gpt-4o-mini")]),
+  prompt: "Complex task",
 })
 ```
 
 ### Options
 
 ```typescript
-model: gateway(openai('gpt-4o'), {
-  cacheKey: 'my-key',
+model: gateway(openai("gpt-4o"), {
+  cacheKey: "my-key",
   cacheTtl: 3600,
-  metadata: { userId: 'u123', team: 'eng' }, // Max 5 entries
-  retries: { maxAttempts: 3, backoff: 'exponential' },
+  metadata: { userId: "u123", team: "eng" }, // Max 5 entries
+  retries: { maxAttempts: 3, backoff: "exponential" },
 })
 ```
 
@@ -45,11 +45,11 @@ model: gateway(openai('gpt-4o'), {
 const client = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
   baseURL: `https://gateway.ai.cloudflare.com/v1/${accountId}/${gatewayId}/openai`,
-  defaultHeaders: { 'cf-aig-authorization': `Bearer ${cfToken}` },
+  defaultHeaders: { "cf-aig-authorization": `Bearer ${cfToken}` },
 })
 
 // Unified API - switch providers via model name
-model: 'openai/gpt-4o' // or 'anthropic/claude-sonnet-4-5'
+model: "openai/gpt-4o" // or 'anthropic/claude-sonnet-4-5'
 ```
 
 ## Anthropic SDK
@@ -58,7 +58,7 @@ model: 'openai/gpt-4o' // or 'anthropic/claude-sonnet-4-5'
 const client = new Anthropic({
   apiKey: process.env.ANTHROPIC_API_KEY,
   baseURL: `https://gateway.ai.cloudflare.com/v1/${accountId}/${gatewayId}/anthropic`,
-  defaultHeaders: { 'cf-aig-authorization': `Bearer ${cfToken}` },
+  defaultHeaders: { "cf-aig-authorization": `Bearer ${cfToken}` },
 })
 ```
 

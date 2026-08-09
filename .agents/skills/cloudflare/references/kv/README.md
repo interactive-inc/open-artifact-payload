@@ -42,11 +42,11 @@ wrangler kv namespace create MY_NAMESPACE
 
 ```typescript
 // Write
-await env.MY_KV.put('key', 'value', { expirationTtl: 300 })
+await env.MY_KV.put("key", "value", { expirationTtl: 300 })
 
 // Read
-const value = await env.MY_KV.get('key')
-const json = await env.MY_KV.get<Config>('config', 'json')
+const value = await env.MY_KV.get("key")
+const json = await env.MY_KV.get<Config>("config", "json")
 ```
 
 ## Core Operations

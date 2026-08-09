@@ -1,17 +1,17 @@
-import { getPayload } from 'payload'
+import { getPayload } from "payload"
 
-import type { MetadataRoute } from 'next'
+import type { MetadataRoute } from "next"
 
-import config from '@/payload.config'
-import { locales, type Locale } from '@/project/shared/lib/locale-types'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import config from "@/payload.config"
+import { locales, type Locale } from "@/project/shared/lib/locale-types"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
 
 // コンテンツは D1 由来のため、ビルド時ではなくリクエスト時に生成する。
-export const dynamic = 'force-dynamic'
+export const dynamic = "force-dynamic"
 
-const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+const baseUrl = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"
 
-const staticPaths = ['/', '/about', '/service', '/works', '/news', '/faq', '/contact']
+const staticPaths = ["/", "/about", "/service", "/works", "/news", "/faq", "/contact"]
 
 function toLanguageAlternates(basePath: string): Record<string, string> {
   const entries: Record<string, string> = {}
@@ -42,19 +42,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   // news / works の slug は localized ではない (全 locale 共通) ため、
   // 取得は 1 回で済ませて両 locale 分の URL を組み立てる。
   const newsResult = await payload.find({
-    collection: 'news',
-    where: { _status: { equals: 'published' } },
+    collection: "news",
+    where: { _status: { equals: "published" } },
     limit: 1000,
     depth: 0,
-    sort: '-publishedAt',
+    sort: "-publishedAt",
   })
 
   const worksResult = await payload.find({
-    collection: 'works',
-    where: { _status: { equals: 'published' } },
+    collection: "works",
+    where: { _status: { equals: "published" } },
     limit: 1000,
     depth: 0,
-    sort: '-publishedAt',
+    sort: "-publishedAt",
   })
 
   const sitemapEntries: MetadataRoute.Sitemap = []

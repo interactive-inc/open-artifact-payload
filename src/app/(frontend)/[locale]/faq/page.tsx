@@ -1,26 +1,26 @@
-import { getPayload } from 'payload'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import React from 'react'
+import { getPayload } from "payload"
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import React from "react"
 
-import config from '@/payload.config'
+import config from "@/payload.config"
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from '@/project/shared/ui/accordion'
-import { Button } from '@/project/shared/ui/button'
-import { Separator } from '@/project/shared/ui/separator'
-import { PageHeader } from '@/project/shared/sections/page-header'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { Metadata } from 'next'
+} from "@/project/shared/ui/accordion"
+import { Button } from "@/project/shared/ui/button"
+import { Separator } from "@/project/shared/ui/separator"
+import { PageHeader } from "@/project/shared/sections/page-header"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Metadata } from "next"
 
-import '../styles.css'
+import "../styles.css"
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -37,7 +37,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const dictionary = getUiDictionary(locale)
   return {
     title: dictionary.faq.title,
-    alternates: { languages: buildLocaleAlternates('/faq') },
+    alternates: { languages: buildLocaleAlternates("/faq") },
   }
 }
 
@@ -48,15 +48,15 @@ export default async function FaqPage(props: Props) {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const result = await payload.find({
-    collection: 'faq',
+    collection: "faq",
     limit: 100,
-    sort: 'order',
+    sort: "order",
     locale,
   })
 
   const grouped: Record<string, typeof result.docs> = {}
   for (const item of result.docs) {
-    const cat = item.category ?? 'general'
+    const cat = item.category ?? "general"
     if (!grouped[cat]) grouped[cat] = []
     grouped[cat].push(item)
   }
@@ -105,7 +105,7 @@ export default async function FaqPage(props: Props) {
             <p className="text-foreground mb-4">{dictionary.faq.ctaText}</p>
             <Button
               nativeButton={false}
-              render={<Link href={withLocalePrefix(locale, '/contact')} />}
+              render={<Link href={withLocalePrefix(locale, "/contact")} />}
             >
               {dictionary.faq.ctaButton}
             </Button>

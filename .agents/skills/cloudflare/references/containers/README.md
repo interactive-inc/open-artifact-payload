@@ -21,16 +21,16 @@ Use when working with Cloudflare Containers: deploying containerized apps on Wor
 ## Quick Start
 
 ```typescript
-import { Container } from '@cloudflare/containers'
+import { Container } from "@cloudflare/containers"
 
 export class MyContainer extends Container {
   defaultPort = 8080
-  sleepAfter = '30m'
+  sleepAfter = "30m"
 }
 
 export default {
   async fetch(request: Request, env: Env) {
-    const container = env.MY_CONTAINER.getByName('instance-1')
+    const container = env.MY_CONTAINER.getByName("instance-1")
     await container.startAndWaitForPorts()
     return container.fetch(request)
   },

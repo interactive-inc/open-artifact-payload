@@ -1,10 +1,10 @@
-import type { JsonValue } from '../domain/json-value'
-import { SiteResourceSlug } from '../domain/site-resource-slug'
-import type { PayloadRestClient } from '../infrastructure/payload-rest-client'
+import type { JsonValue } from "../domain/json-value"
+import { SiteResourceSlug } from "../domain/site-resource-slug"
+import type { PayloadRestClient } from "../infrastructure/payload-rest-client"
 import {
   listCollectionDocumentsInputSchema,
   type ListCollectionDocumentsInput,
-} from './site-management-inputs'
+} from "./site-management-inputs"
 
 export class ListCollectionDocuments {
   constructor(private readonly client: PayloadRestClient) {

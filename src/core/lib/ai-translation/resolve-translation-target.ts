@@ -1,8 +1,8 @@
-import type { Field, Payload } from 'payload'
+import type { Field, Payload } from "payload"
 
 type Props = {
   payload: Payload
-  targetKind: 'collection' | 'global'
+  targetKind: "collection" | "global"
   targetSlug: string
 }
 
@@ -16,12 +16,12 @@ type TranslationTarget = {
  * config に存在しない slug は Error（サーバー側 config が唯一の allowlist）。
  */
 export function resolveTranslationTarget(props: Props): TranslationTarget | Error {
-  if (props.targetKind === 'collection') {
+  if (props.targetKind === "collection") {
     const collection = props.payload.config.collections.find(
       (candidate) => candidate.slug === props.targetSlug,
     )
 
-    if (!collection) return new Error('翻訳対象が見つかりません')
+    if (!collection) return new Error("翻訳対象が見つかりません")
 
     return {
       fields: collection.fields,
@@ -33,7 +33,7 @@ export function resolveTranslationTarget(props: Props): TranslationTarget | Erro
     (candidate) => candidate.slug === props.targetSlug,
   )
 
-  if (!globalConfig) return new Error('翻訳対象が見つかりません')
+  if (!globalConfig) return new Error("翻訳対象が見つかりません")
 
   return {
     fields: globalConfig.fields,

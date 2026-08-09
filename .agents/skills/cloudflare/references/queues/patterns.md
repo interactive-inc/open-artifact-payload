@@ -8,7 +8,7 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const { userId, reportType } = await request.json()
     await env.REPORT_QUEUE.send({ userId, reportType, requestedAt: Date.now() })
-    return Response.json({ message: 'Report queued', status: 'pending' })
+    return Response.json({ message: "Report queued", status: "pending" })
   },
 }
 
@@ -69,9 +69,9 @@ export default {
   async queue(batch: MessageBatch, env: Env): Promise<void> {
     for (const msg of batch.messages) {
       const event = msg.body
-      if (event.action === 'PutObject') {
+      if (event.action === "PutObject") {
         await processNewFile(event.object.key, env)
-      } else if (event.action === 'DeleteObject') {
+      } else if (event.action === "DeleteObject") {
         await cleanupReferences(event.object.key, env)
       }
       msg.ack()

@@ -122,12 +122,12 @@ npx wrangler types  # Generates .wrangler/types/runtime.d.ts from wrangler.jsonc
 Import generated types:
 
 ```typescript
-import type { Env } from './.wrangler/types/runtime'
+import type { Env } from "./.wrangler/types/runtime"
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    await env.MY_KV.get('key') // Fully typed, autocomplete works
-    return new Response('OK')
+    await env.MY_KV.get("key") // Fully typed, autocomplete works
+    return new Response("OK")
   },
 }
 ```

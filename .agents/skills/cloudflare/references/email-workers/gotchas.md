@@ -19,11 +19,11 @@ const rawText = new TextDecoder().decode(buffer)
 
 ```typescript
 // ❌ Errors dropped silently
-ctx.waitUntil(fetch(webhookUrl, { method: 'POST', body: data }))
+ctx.waitUntil(fetch(webhookUrl, { method: "POST", body: data }))
 
 // ✅ Catch and log
 ctx.waitUntil(
-  fetch(webhookUrl, { method: 'POST', body: data }).catch((err) =>
+  fetch(webhookUrl, { method: "POST", body: data }).catch((err) =>
     env.ERROR_LOG.put(`error:${Date.now()}`, err.message),
   ),
 )
@@ -43,11 +43,11 @@ const headerFrom = (await PostalMime.parse(buffer)).from?.address // (untrusted)
 
 ```typescript
 if (message.rawSize > 5_000_000) {
-  message.setReject('Too large')
+  message.setReject("Too large")
   return
 }
-if ((message.headers.get('Subject') || '').length > 1000) {
-  message.setReject('Invalid subject')
+if ((message.headers.get("Subject") || "").length > 1000) {
+  message.setReject("Invalid subject")
   return
 }
 ```
@@ -62,7 +62,7 @@ Replies fail silently without DMARC. Verify: `dig TXT _dmarc.example.com`
 
 ```typescript
 const email = await PostalMime.parse(buffer)
-const fromAddress = email.from?.address || 'unknown'
+const fromAddress = email.from?.address || "unknown"
 const toAddresses = Array.isArray(email.to) ? email.to.map((t) => t.address) : [email.to?.address]
 ```
 
@@ -77,26 +77,26 @@ Let postal-mime handle decoding - `email.subject`, `email.text`, `email.html` ar
 ```typescript
 // setReject() for SMTP rejection
 if (blockList.includes(message.from)) {
-  message.setReject('Blocked')
+  message.setReject("Blocked")
   return
 }
 
 // throw for worker errors
-if (!env.KV) throw new Error('KV not configured')
+if (!env.KV) throw new Error("KV not configured")
 ```
 
 ### forward() Only X-\* Headers
 
 ```typescript
-headers.set('X-Processed-By', 'worker') // ✅ Works
-headers.set('Subject', 'Modified') // ❌ Dropped
+headers.set("X-Processed-By", "worker") // ✅ Works
+headers.set("Subject", "Modified") // ❌ Dropped
 ```
 
 ### Reply Requires Verified Domain
 
 ```typescript
 // Use same domain as receiving address
-const receivingDomain = message.to.split('@')[1]
+const receivingDomain = message.to.split("@")[1]
 await message.reply(new EmailMessage(`noreply@${receivingDomain}`, message.from, rawMime))
 ```
 
@@ -107,7 +107,7 @@ await message.reply(new EmailMessage(`noreply@${receivingDomain}`, message.from,
 ```typescript
 // Skip parsing large emails
 if (message.rawSize > 5_000_000) {
-  await message.forward('inbox@example.com')
+  await message.forward("inbox@example.com")
   return
 }
 ```

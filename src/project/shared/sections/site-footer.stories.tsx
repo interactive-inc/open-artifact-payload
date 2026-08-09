@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import { exampleSiteSettings } from '@/core/test-support/example-site-settings'
+import { exampleSiteSettings } from "@/core/test-support/example-site-settings"
 
-import { SiteFooter } from './site-footer'
+import { SiteFooter } from "./site-footer"
 
 const meta: Meta<typeof SiteFooter> = {
-  title: 'Shared/Sections/SiteFooter',
+  title: "Shared/Sections/SiteFooter",
   component: SiteFooter,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   args: {
     settings: exampleSiteSettings,
   },

@@ -88,7 +88,7 @@ Smart Placement is fundamentally limited to Workers with default `fetch` handler
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     // This runs close to backend when Smart Placement enabled
-    const data = await env.DATABASE.prepare('SELECT * FROM users').all()
+    const data = await env.DATABASE.prepare("SELECT * FROM users").all()
     return Response.json(data)
   },
 }
@@ -97,7 +97,7 @@ export default {
 export class MyRPC extends WorkerEntrypoint {
   async myMethod() {
     // This ALWAYS runs at edge, Smart Placement has NO EFFECT
-    const data = await this.env.DATABASE.prepare('SELECT * FROM users').all()
+    const data = await this.env.DATABASE.prepare("SELECT * FROM users").all()
     return data
   }
 }
@@ -147,7 +147,7 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const data = await env.DATABASE.prepare('SELECT * FROM table').all()
+    const data = await env.DATABASE.prepare("SELECT * FROM table").all()
     return Response.json(data)
   },
 } satisfies ExportedHandler<Env>

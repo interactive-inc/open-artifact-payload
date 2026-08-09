@@ -1,25 +1,25 @@
-import { cache } from 'react'
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { getPayload } from 'payload'
-import React from 'react'
-import { ArrowLeftIcon } from 'lucide-react'
+import { cache } from "react"
+import { draftMode } from "next/headers"
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import { getPayload } from "payload"
+import React from "react"
+import { ArrowLeftIcon } from "lucide-react"
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import config from '@/payload.config'
-import { RichText } from '@/core/lib/lexical'
-import { formatNewsDate } from '@/core/lib/format-news-date'
-import { loadSiteSettings } from '@/core/lib/load-site-settings'
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
-import { JsonLd } from '@/project/shared/components/json-ld'
-import { Badge } from '@/project/shared/ui/badge'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import type { Locale } from '@/project/shared/lib/locale-types'
+import config from "@/payload.config"
+import { RichText } from "@/core/lib/lexical"
+import { formatNewsDate } from "@/core/lib/format-news-date"
+import { loadSiteSettings } from "@/core/lib/load-site-settings"
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { buildPageMetadata } from "@/project/shared/lib/build-page-metadata"
+import { JsonLd } from "@/project/shared/components/json-ld"
+import { Badge } from "@/project/shared/ui/badge"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import type { Locale } from "@/project/shared/lib/locale-types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,10 +27,10 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/project/shared/ui/breadcrumb'
-import { Separator } from '@/project/shared/ui/separator'
-import { Button } from '@/project/shared/ui/button'
-import '../../styles.css'
+} from "@/project/shared/ui/breadcrumb"
+import { Separator } from "@/project/shared/ui/separator"
+import { Button } from "@/project/shared/ui/button"
+import "../../styles.css"
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>
@@ -49,9 +49,9 @@ const loadNewsBySlug = cache(async (slug: string, locale: Locale, isDraft: boole
   // collection の access 制御 (publishedOrAuthenticated) でも防御しているが、
   // クエリ側でも明示することで意図を明確にする。
   const conditions: Record<string, { equals: string }>[] = [{ slug: { equals: slug } }]
-  if (!isDraft) conditions.push({ _status: { equals: 'published' } })
+  if (!isDraft) conditions.push({ _status: { equals: "published" } })
   const result = await payload.find({
-    collection: 'news',
+    collection: "news",
     where: { and: conditions },
     limit: 1,
     depth: 1,
@@ -88,13 +88,13 @@ export default async function NewsDetailPage(props: Props) {
   const settings = await loadSiteSettings(locale)
   const metaImageUrl = resolveMediaUrl(item.meta?.image as never)
   const articleJsonLd: Record<string, unknown> = {
-    '@context': 'https://schema.org',
-    '@type': 'NewsArticle',
+    "@context": "https://schema.org",
+    "@type": "NewsArticle",
     headline: item.title,
     datePublished: item.publishedAt,
     dateModified: item.updatedAt,
     publisher: {
-      '@type': 'Organization',
+      "@type": "Organization",
       name: settings.siteName,
     },
   }
@@ -108,13 +108,13 @@ export default async function NewsDetailPage(props: Props) {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href={withLocalePrefix(locale, '/')}>
+                <BreadcrumbLink href={withLocalePrefix(locale, "/")}>
                   {dictionary.common.home}
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href={withLocalePrefix(locale, '/news')}>
+                <BreadcrumbLink href={withLocalePrefix(locale, "/news")}>
                   {dictionary.news.title}
                 </BreadcrumbLink>
               </BreadcrumbItem>
@@ -150,7 +150,7 @@ export default async function NewsDetailPage(props: Props) {
         <Separator className="mt-12 mb-8" />
         <Button
           nativeButton={false}
-          render={<Link href={withLocalePrefix(locale, '/news')} />}
+          render={<Link href={withLocalePrefix(locale, "/news")} />}
           variant="ghost"
         >
           <ArrowLeftIcon data-icon="inline-start" />

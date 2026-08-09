@@ -1,22 +1,22 @@
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
-import Link from 'next/link'
-import React from 'react'
-import { CheckIcon, ArrowRightIcon } from 'lucide-react'
+import { draftMode } from "next/headers"
+import { notFound } from "next/navigation"
+import { getPayload } from "payload"
+import Link from "next/link"
+import React from "react"
+import { CheckIcon, ArrowRightIcon } from "lucide-react"
 
-import config from '@/payload.config'
-import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
-import { Badge } from '@/project/shared/ui/badge'
-import { Button } from '@/project/shared/ui/button'
-import { PageHeader } from '@/project/shared/sections/page-header'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { Metadata } from 'next'
+import config from "@/payload.config"
+import { Card, CardContent, CardHeader, CardTitle } from "@/project/shared/ui/card"
+import { Badge } from "@/project/shared/ui/badge"
+import { Button } from "@/project/shared/ui/button"
+import { PageHeader } from "@/project/shared/sections/page-header"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Metadata } from "next"
 
-import '../styles.css'
+import "../styles.css"
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -31,8 +31,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const locale = resolveLocale(params.locale)
   return {
-    title: locale === 'ja' ? 'サービス' : 'Service',
-    alternates: { languages: buildLocaleAlternates('/service') },
+    title: locale === "ja" ? "サービス" : "Service",
+    alternates: { languages: buildLocaleAlternates("/service") },
   }
 }
 
@@ -43,12 +43,12 @@ export default async function ServicePage(props: Props) {
   const payload = await getPayload({ config: payloadConfig })
   const draftState = await draftMode()
   const isDraft = draftState.isEnabled
-  const service = await payload.findGlobal({ slug: 'service', depth: 1, draft: isDraft, locale })
+  const service = await payload.findGlobal({ slug: "service", depth: 1, draft: isDraft, locale })
 
   return (
     <>
       {service.hero?.enabled ? (
-        <PageHeader title={service.hero.title ?? ''} description={service.hero.subtitle} />
+        <PageHeader title={service.hero.title ?? ""} description={service.hero.subtitle} />
       ) : null}
 
       {service.services?.enabled ? (
@@ -64,7 +64,7 @@ export default async function ServicePage(props: Props) {
                 <Card key={index}>
                   <CardContent className="p-8">
                     <div
-                      className={`flex flex-col md:flex-row gap-10 items-start ${index % 2 === 1 ? 'md:flex-row-reverse' : ''}`}
+                      className={`flex flex-col md:flex-row gap-10 items-start ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
                     >
                       <div className="flex-1">
                         <div className="flex items-center gap-4 mb-4">

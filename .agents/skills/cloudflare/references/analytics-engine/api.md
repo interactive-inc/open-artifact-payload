@@ -14,9 +14,9 @@ interface AnalyticsEngineDataPoint {
 }
 
 env.ANALYTICS.writeDataPoint({
-  blobs: ['/api/users', 'GET', '200'],
+  blobs: ["/api/users", "GET", "200"],
   doubles: [145.2, 1], // latency_ms, count
-  indexes: ['customer_abc123'],
+  indexes: ["customer_abc123"],
 })
 ```
 
@@ -36,12 +36,12 @@ export default {
       env.ANALYTICS.writeDataPoint({
         blobs: [url.pathname, request.method, response.status.toString()],
         doubles: [Date.now() - start, 1],
-        indexes: [request.headers.get('x-api-key') || 'anonymous'],
+        indexes: [request.headers.get("x-api-key") || "anonymous"],
       })
       return response
     } catch (error) {
       env.ANALYTICS.writeDataPoint({
-        blobs: [url.pathname, request.method, '500'],
+        blobs: [url.pathname, request.method, "500"],
         doubles: [Date.now() - start, 1, 0],
       })
       throw error

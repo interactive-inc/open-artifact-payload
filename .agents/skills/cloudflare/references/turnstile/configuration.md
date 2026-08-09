@@ -25,7 +25,7 @@ Manual control over when/where widgets render via `window.turnstile.render()`.
 <script>
   function myCallback() {
     // API ready
-    window.turnstile.render('#container', { sitekey: 'YOUR_SITE_KEY' })
+    window.turnstile.render("#container", { sitekey: "YOUR_SITE_KEY" })
   }
 </script>
 ```
@@ -169,7 +169,7 @@ npm install @marsidev/react-turnstile
 ```
 
 ```jsx
-import Turnstile from '@marsidev/react-turnstile'
+import Turnstile from "@marsidev/react-turnstile"
 
 ;<Turnstile siteKey="YOUR_SITE_KEY" onSuccess={(token) => console.log(token)} />
 ```
@@ -185,7 +185,7 @@ npm install vue-turnstile
   <VueTurnstile site-key="YOUR_SITE_KEY" @success="onSuccess" />
 </template>
 <script setup>
-import VueTurnstile from 'vue-turnstile'
+import VueTurnstile from "vue-turnstile"
 </script>
 ```
 
@@ -206,8 +206,8 @@ import Turnstile from 'svelte-turnstile';
 
 ```tsx
 // app/components/TurnstileWidget.tsx
-'use client'
-import { useEffect, useRef } from 'react'
+"use client"
+import { useEffect, useRef } from "react"
 
 export default function TurnstileWidget({ sitekey, onSuccess }) {
   const ref = useRef<HTMLDivElement>(null)
@@ -234,10 +234,10 @@ npm install @cloudflare/pages-plugin-turnstile
 
 ```typescript
 // functions/_middleware.ts
-import turnstilePlugin from '@cloudflare/pages-plugin-turnstile'
+import turnstilePlugin from "@cloudflare/pages-plugin-turnstile"
 
 export const onRequest = turnstilePlugin({
-  secret: 'YOUR_SECRET_KEY',
-  onError: () => new Response('CAPTCHA failed', { status: 403 }),
+  secret: "YOUR_SECRET_KEY",
+  onError: () => new Response("CAPTCHA failed", { status: 403 }),
 })
 ```

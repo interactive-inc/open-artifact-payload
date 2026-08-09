@@ -1,4 +1,4 @@
-import { isLoopbackHostname, normalizeSiteManagementEndpoint } from '@open-artifact/site-management'
+import { isLoopbackHostname, normalizeSiteManagementEndpoint } from "@open-artifact/site-management"
 
 export { isLoopbackHostname }
 

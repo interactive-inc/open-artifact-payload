@@ -16,10 +16,10 @@ interface VectorizeVector {
 ```typescript
 const matches = await env.VECTORIZE.query(queryVector, {
   topK: 10, // Max 100 (or 20 with returnValues/returnMetadata:"all")
-  returnMetadata: 'indexed', // "none" | "indexed" | "all"
+  returnMetadata: "indexed", // "none" | "indexed" | "all"
   returnValues: false,
-  namespace: 'tenant-123',
-  filter: { category: 'docs' },
+  namespace: "tenant-123",
+  filter: { category: "docs" },
 })
 // matches.matches[0] = { id, score, metadata? }
 ```
@@ -29,7 +29,7 @@ const matches = await env.VECTORIZE.query(queryVector, {
 **queryById (V2 only):** Search using existing vector as query.
 
 ```typescript
-await env.VECTORIZE.queryById('doc-123', { topK: 5 })
+await env.VECTORIZE.queryById("doc-123", { topK: 5 })
 ```
 
 ## Insert/Upsert
@@ -48,10 +48,10 @@ await env.VECTORIZE.upsert([{ id, values, metadata }])
 
 ```typescript
 // Get by IDs
-const vectors = await env.VECTORIZE.getByIds(['id1', 'id2'])
+const vectors = await env.VECTORIZE.getByIds(["id1", "id2"])
 
 // Delete (max 1000 IDs per call)
-await env.VECTORIZE.deleteByIds(['id1', 'id2'])
+await env.VECTORIZE.deleteByIds(["id1", "id2"])
 
 // Index info
 const info = await env.VECTORIZE.describe()

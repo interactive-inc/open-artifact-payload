@@ -1,7 +1,7 @@
-import type { Payload, Where } from 'payload'
+import type { Payload, Where } from "payload"
 
-import { getJstMonthStart } from '@/core/lib/ai-translation/get-jst-month-start'
-import type { UsageSnapshot } from '@/core/lib/ai-translation/translation-types'
+import { getJstMonthStart } from "@/core/lib/ai-translation/get-jst-month-start"
+import type { UsageSnapshot } from "@/core/lib/ai-translation/translation-types"
 
 // pending 予約の有効期限。API タイムアウト（90秒）より十分長く取り、異常終了で
 // finalize されなかった行が月末まで上限を消費し続けないようにする
@@ -12,7 +12,7 @@ type Props = {
   userId: number | string | null
   // クールダウン判定の対象。null なら実行ユーザー単位、指定があれば同一ドキュメント・
   // 同一言語への連続実行だけを制限する（複数言語の順次翻訳を妨げないため）
-  targetKind: 'collection' | 'global' | null
+  targetKind: "collection" | "global" | null
   targetSlug: string | null
   targetId: string | null
   targetLocale: string | null
@@ -31,10 +31,10 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
   const pendingFreshIso = new Date(props.now.getTime() - pendingStaleMs).toISOString()
   const countableStatusCondition: Where = {
     or: [
-      { status: { in: ['succeeded', 'failed'] } },
+      { status: { in: ["succeeded", "failed"] } },
       {
         and: [
-          { status: { equals: 'pending' } },
+          { status: { equals: "pending" } },
           { createdAt: { greater_than_equal: pendingFreshIso } },
         ],
       },
@@ -42,7 +42,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
   }
 
   const monthlyLogs = await props.payload.find({
-    collection: 'ai-translation-logs',
+    collection: "ai-translation-logs",
     where: {
       and: [{ createdAt: { greater_than_equal: monthStartIso } }, countableStatusCondition],
     },
@@ -73,7 +73,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
   ]
 
   const lastRuns = await props.payload.find({
-    collection: 'ai-translation-logs',
+    collection: "ai-translation-logs",
     where: {
       and: [
         { executedBy: { equals: props.userId } },
@@ -81,7 +81,7 @@ export async function loadUsageSnapshot(props: Props): Promise<UsageSnapshot> {
         ...targetConditions,
       ],
     },
-    sort: '-createdAt',
+    sort: "-createdAt",
     limit: 1,
     depth: 0,
   })

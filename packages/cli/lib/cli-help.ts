@@ -1,4 +1,4 @@
-import { findSiteResource } from './resource-catalog'
+import { findSiteResource } from "./resource-catalog"
 
 export const CLI_HELP = `Inta CMS CLI
 
@@ -44,7 +44,7 @@ CIではOPEN_ARTIFACT_ENDPOINTとOPEN_ARTIFACT_API_KEYも利用できます。
 export function buildResourceHelp(slug: string): string {
   const resource = findSiteResource(slug)
   if (resource instanceof Error) return CLI_HELP
-  if (resource.kind === 'global') {
+  if (resource.kind === "global") {
     return `${resource.description} (${resource.slug})
 
   intacms ${resource.slug} [environment] [--locale ja] [--draft] [--depth 0]

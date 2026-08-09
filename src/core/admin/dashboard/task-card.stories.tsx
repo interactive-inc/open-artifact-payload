@@ -1,16 +1,16 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import { TaskCard } from '@/core/admin/dashboard/task-card'
-import './dashboard-view.css'
+import { TaskCard } from "@/core/admin/dashboard/task-card"
+import "./dashboard-view.css"
 
 const meta: Meta<typeof TaskCard> = {
-  title: 'Core/Admin/TaskCard',
+  title: "Core/Admin/TaskCard",
   component: TaskCard,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     size: {
-      control: 'inline-radio',
-      options: ['large', 'small'],
+      control: "inline-radio",
+      options: ["large", "small"],
     },
   },
 }
@@ -21,38 +21,38 @@ type Story = StoryObj<typeof TaskCard>
 
 export const Large: Story = {
   args: {
-    size: 'large',
+    size: "large",
     task: {
-      id: 'add-news',
-      icon: 'megaphone',
-      label: 'お知らせを追加する',
-      description: '新しいお知らせを作成して公開します',
-      href: '/admin/collections/news/create',
-      priority: 'primary',
+      id: "add-news",
+      icon: "megaphone",
+      label: "お知らせを追加する",
+      description: "新しいお知らせを作成して公開します",
+      href: "/admin/collections/news/create",
+      priority: "primary",
     },
   },
 }
 
 export const Small: Story = {
   args: {
-    size: 'small',
+    size: "small",
     task: {
-      id: 'check-contact',
-      icon: 'mail',
-      label: '問い合わせを確認する',
-      href: '/admin/collections/contact-submissions',
+      id: "check-contact",
+      icon: "mail",
+      label: "問い合わせを確認する",
+      href: "/admin/collections/contact-submissions",
     },
   },
 }
 
 export const WithoutDescription: Story = {
   args: {
-    size: 'large',
+    size: "large",
     task: {
-      id: 'site-settings',
-      icon: 'settings',
-      label: 'サイト設定を編集する',
-      href: '/admin/globals/site-settings',
+      id: "site-settings",
+      icon: "settings",
+      label: "サイト設定を編集する",
+      href: "/admin/globals/site-settings",
     },
   },
 }

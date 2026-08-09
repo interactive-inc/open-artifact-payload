@@ -1,6 +1,6 @@
 ---
 name: section-from-design
-description: 'Figma URL から案件固有セクションコンポーネントを生成する。Figmaデザインからのセクション生成、コンポーネント生成時に使用。/section-from-design で呼び出す。'
+description: "Figma URL から案件固有セクションコンポーネントを生成する。Figmaデザインからのセクション生成、コンポーネント生成時に使用。/section-from-design で呼び出す。"
 user_invocable: true
 arguments: Figma URL (figma.com/design/...)
 ---

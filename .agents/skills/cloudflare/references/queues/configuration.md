@@ -77,7 +77,7 @@ interface Env {
 
 interface MessageBody {
   id: string
-  action: 'create' | 'update' | 'delete'
+  action: "create" | "update" | "delete"
   data: Record<string, any>
 }
 
@@ -111,22 +111,22 @@ Choose content type based on consumer type and data requirements:
 
 ```typescript
 // JSON: Good for simple objects, pull consumers, dashboard visibility
-await env.QUEUE.send({ id: 123, name: 'test' }, { contentType: 'json' })
+await env.QUEUE.send({ id: 123, name: "test" }, { contentType: "json" })
 
 // V8: Good for Date, Map, Set (push consumers only)
 await env.QUEUE.send(
   {
     created: new Date(),
-    tags: new Set(['a', 'b']),
+    tags: new Set(["a", "b"]),
   },
-  { contentType: 'v8' },
+  { contentType: "v8" },
 )
 
 // Text: Simple strings
-await env.QUEUE.send('process-user-123', { contentType: 'text' })
+await env.QUEUE.send("process-user-123", { contentType: "text" })
 
 // Bytes: Binary data
-await env.QUEUE.send(imageBuffer, { contentType: 'bytes' })
+await env.QUEUE.send(imageBuffer, { contentType: "bytes" })
 ```
 
 **Default behavior:** If not specified, Cloudflare auto-selects `json` for JSON-serializable objects and `v8` for complex types.

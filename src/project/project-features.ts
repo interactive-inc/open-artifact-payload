@@ -1,4 +1,4 @@
-import type { ProjectFeatures } from '@/project/types'
+import type { ProjectFeatures } from "@/project/types"
 
 export const projectFeatures: ProjectFeatures = {
   enableFreePages: false,

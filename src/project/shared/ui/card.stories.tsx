@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './card'
-import { Button } from './button'
-import { Badge } from './badge'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "./card"
+import { Button } from "./button"
+import { Badge } from "./badge"
 
 const meta: Meta = {
-  title: 'UI/Card',
-  tags: ['autodocs'],
+  title: "UI/Card",
+  tags: ["autodocs"],
 }
 
 export default meta

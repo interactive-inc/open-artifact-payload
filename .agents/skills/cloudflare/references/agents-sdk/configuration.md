@@ -54,7 +54,7 @@ npx wrangler secret put OPENAI_API_KEY
 **Recommended: Use route helpers**
 
 ```typescript
-import { routeAgentRequest } from 'agents'
+import { routeAgentRequest } from "agents"
 
 export default {
   fetch(request: Request, env: Env) {
@@ -73,7 +73,7 @@ export default {
     const url = new URL(request.url)
 
     // Named ID (deterministic)
-    const id = env.MyAgent.idFromName('user-123')
+    const id = env.MyAgent.idFromName("user-123")
 
     // Random ID (from URL param)
     // const id = env.MyAgent.idFromString(url.searchParams.get("id"));
@@ -87,21 +87,21 @@ export default {
 **Multi-agent setup:**
 
 ```typescript
-import { routeAgentRequest } from 'agents'
+import { routeAgentRequest } from "agents"
 
 export default {
   fetch(request: Request, env: Env) {
     const url = new URL(request.url)
 
     // Route by path
-    if (url.pathname.startsWith('/chat')) {
-      return routeAgentRequest(request, env, 'ChatAgent')
+    if (url.pathname.startsWith("/chat")) {
+      return routeAgentRequest(request, env, "ChatAgent")
     }
-    if (url.pathname.startsWith('/task')) {
-      return routeAgentRequest(request, env, 'TaskAgent')
+    if (url.pathname.startsWith("/task")) {
+      return routeAgentRequest(request, env, "TaskAgent")
     }
 
-    return new Response('Not found', { status: 404 })
+    return new Response("Not found", { status: 404 })
   },
 }
 ```
@@ -111,7 +111,7 @@ export default {
 **Code setup:**
 
 ```typescript
-import { routeAgentEmail } from 'agents'
+import { routeAgentEmail } from "agents"
 
 export default {
   fetch: (req: Request, env: Env) => routeAgentRequest(req, env),
@@ -146,11 +146,11 @@ export class EmailAgent extends Agent<Env> {
 ```typescript
 // Enable caching/routing through AI Gateway
 const response = await this.env.AI.run(
-  '@cf/meta/llama-3.1-8b-instruct',
+  "@cf/meta/llama-3.1-8b-instruct",
   { prompt },
   {
     gateway: {
-      id: 'my-gateway-id',
+      id: "my-gateway-id",
       skipCache: false,
       cacheTtl: 3600,
     },

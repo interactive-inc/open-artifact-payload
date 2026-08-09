@@ -3,9 +3,9 @@
 ## Workers Binding
 
 ```typescript
-const answer = await env.AI.autorag('instance-name').aiSearch(options)
-const results = await env.AI.autorag('instance-name').search(options)
-const instances = await env.AI.autorag('_').listInstances()
+const answer = await env.AI.autorag("instance-name").aiSearch(options)
+const results = await env.AI.autorag("instance-name").search(options)
+const instances = await env.AI.autorag("_").listInstances()
 ```
 
 ## aiSearch() Options
@@ -64,8 +64,8 @@ interface SearchResult {
 ## Streaming
 
 ```typescript
-const stream = await env.AI.autorag('docs').aiSearch({ query, model, stream: true })
-return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' } })
+const stream = await env.AI.autorag("docs").aiSearch({ query, model, stream: true })
+return new Response(stream, { headers: { "Content-Type": "text/event-stream" } })
 ```
 
 ## Error Types

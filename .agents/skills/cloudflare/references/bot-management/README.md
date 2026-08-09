@@ -66,7 +66,7 @@ export default {
   async fetch(request: Request): Promise<Response> {
     const botScore = request.cf?.botManagement?.score
     if (botScore && botScore < 30 && !request.cf?.botManagement?.verifiedBot) {
-      return new Response('Bot detected', { status: 403 })
+      return new Response("Bot detected", { status: 403 })
     }
     return fetch(request)
   },

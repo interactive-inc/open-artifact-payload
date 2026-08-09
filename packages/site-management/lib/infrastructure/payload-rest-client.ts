@@ -1,9 +1,9 @@
-import { jsonValueSchema, type JsonObject, type JsonValue } from '../domain/json-value'
-import type { SiteDocumentId } from '../domain/site-document-id'
-import type { SiteResourceSlug } from '../domain/site-resource-slug'
-import type { SiteAuthentication } from '../runtime/load-site-management-config'
-import type { FetchPort } from './fetch-port'
-import { PayloadApiError } from './payload-api-error'
+import { jsonValueSchema, type JsonObject, type JsonValue } from "../domain/json-value"
+import type { SiteDocumentId } from "../domain/site-document-id"
+import type { SiteResourceSlug } from "../domain/site-resource-slug"
+import type { SiteAuthentication } from "../runtime/load-site-management-config"
+import type { FetchPort } from "./fetch-port"
+import { PayloadApiError } from "./payload-api-error"
 
 const requestTimeoutMilliseconds = 30_000
 
@@ -14,7 +14,7 @@ type ClientProps = {
 }
 
 type RequestProps = {
-  method: 'GET' | 'POST' | 'PATCH' | 'DELETE'
+  method: "GET" | "POST" | "PATCH" | "DELETE"
   path: string
   query: ReadonlyArray<readonly [string, string]>
   body: JsonObject | null
@@ -60,9 +60,9 @@ export class PayloadRestClient {
   private readonly fetchPort: FetchPort
 
   constructor(props: ClientProps) {
-    this.endpoint = `${props.endpoint.replace(/\/+$/, '')}/`
+    this.endpoint = `${props.endpoint.replace(/\/+$/, "")}/`
     this.authorization =
-      props.authentication.kind === 'api-key'
+      props.authentication.kind === "api-key"
         ? `${props.authentication.authCollection} API-Key ${props.authentication.apiKey}`
         : `JWT ${props.authentication.token}`
     this.fetchPort = props.fetchPort
@@ -71,15 +71,15 @@ export class PayloadRestClient {
 
   async listCollection(props: ListCollectionProps): Promise<JsonValue | Error> {
     const query: Array<readonly [string, string]> = [
-      ['limit', String(props.limit)],
-      ['page', String(props.page)],
-      ['draft', String(props.draft)],
-      ['depth', String(props.depth)],
+      ["limit", String(props.limit)],
+      ["page", String(props.page)],
+      ["draft", String(props.draft)],
+      ["depth", String(props.depth)],
     ]
-    if (props.locale !== null) query.push(['locale', props.locale])
+    if (props.locale !== null) query.push(["locale", props.locale])
 
     return await this.request({
-      method: 'GET',
+      method: "GET",
       path: `api/${props.slug.value}`,
       query,
       body: null,
@@ -88,7 +88,7 @@ export class PayloadRestClient {
 
   async findCollectionDocument(props: DocumentProps): Promise<JsonValue | Error> {
     return await this.request({
-      method: 'GET',
+      method: "GET",
       path: `api/${props.slug.value}/${encodeURIComponent(props.id.value)}`,
       query: [],
       body: null,
@@ -97,7 +97,7 @@ export class PayloadRestClient {
 
   async createCollectionDocument(props: CreateDocumentProps): Promise<JsonValue | Error> {
     return await this.request({
-      method: 'POST',
+      method: "POST",
       path: `api/${props.slug.value}`,
       query: [],
       body: props.data,
@@ -106,7 +106,7 @@ export class PayloadRestClient {
 
   async updateCollectionDocument(props: WriteDocumentProps): Promise<JsonValue | Error> {
     return await this.request({
-      method: 'PATCH',
+      method: "PATCH",
       path: `api/${props.slug.value}/${encodeURIComponent(props.id.value)}`,
       query: [],
       body: props.data,
@@ -115,7 +115,7 @@ export class PayloadRestClient {
 
   async deleteCollectionDocument(props: DocumentProps): Promise<JsonValue | Error> {
     return await this.request({
-      method: 'DELETE',
+      method: "DELETE",
       path: `api/${props.slug.value}/${encodeURIComponent(props.id.value)}`,
       query: [],
       body: null,
@@ -124,13 +124,13 @@ export class PayloadRestClient {
 
   async findGlobal(props: GlobalProps): Promise<JsonValue | Error> {
     const query: Array<readonly [string, string]> = [
-      ['draft', String(props.draft)],
-      ['depth', String(props.depth)],
+      ["draft", String(props.draft)],
+      ["depth", String(props.depth)],
     ]
-    if (props.locale !== null) query.push(['locale', props.locale])
+    if (props.locale !== null) query.push(["locale", props.locale])
 
     return await this.request({
-      method: 'GET',
+      method: "GET",
       path: `api/globals/${props.slug.value}`,
       query,
       body: null,
@@ -139,13 +139,13 @@ export class PayloadRestClient {
 
   async updateGlobal(props: WriteGlobalProps): Promise<JsonValue | Error> {
     const query: Array<readonly [string, string]> = [
-      ['draft', String(props.draft)],
-      ['depth', String(props.depth)],
+      ["draft", String(props.draft)],
+      ["depth", String(props.depth)],
     ]
-    if (props.locale !== null) query.push(['locale', props.locale])
+    if (props.locale !== null) query.push(["locale", props.locale])
 
     return await this.request({
-      method: 'POST',
+      method: "POST",
       path: `api/globals/${props.slug.value}`,
       query,
       body: props.data,
@@ -157,10 +157,10 @@ export class PayloadRestClient {
     for (const queryEntry of props.query) url.searchParams.set(queryEntry[0], queryEntry[1])
 
     const headers = new Headers({
-      Accept: 'application/json',
+      Accept: "application/json",
       Authorization: this.authorization,
     })
-    if (props.body !== null) headers.set('Content-Type', 'application/json')
+    if (props.body !== null) headers.set("Content-Type", "application/json")
 
     let response: Response
     try {
@@ -171,7 +171,7 @@ export class PayloadRestClient {
         signal: AbortSignal.timeout(requestTimeoutMilliseconds),
       })
     } catch (cause) {
-      return cause instanceof Error ? cause : new Error('Payload API request failed')
+      return cause instanceof Error ? cause : new Error("Payload API request failed")
     }
 
     const responseBody = await this.readResponse(response)
@@ -195,7 +195,7 @@ export class PayloadRestClient {
     }
 
     const parsed = jsonValueSchema.safeParse(raw)
-    if (!parsed.success) return new Error('Payload API returned an invalid JSON response')
+    if (!parsed.success) return new Error("Payload API returned an invalid JSON response")
 
     return parsed.data
   }

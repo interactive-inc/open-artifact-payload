@@ -10,28 +10,28 @@ type Props = {
 export function parseTranslationResponse(props: Props): string[] | Error {
   const stripped = props.rawText
     .trim()
-    .replace(/^```(?:json)?\s*/, '')
-    .replace(/\s*```$/, '')
+    .replace(/^```(?:json)?\s*/, "")
+    .replace(/\s*```$/, "")
 
   try {
     const parsed: unknown = JSON.parse(stripped)
 
-    if (!parsed || typeof parsed !== 'object' || !('translations' in parsed)) {
-      return new Error('翻訳結果の形式が不正です（translations がありません）')
+    if (!parsed || typeof parsed !== "object" || !("translations" in parsed)) {
+      return new Error("翻訳結果の形式が不正です（translations がありません）")
     }
 
     const translations = parsed.translations
 
     if (!Array.isArray(translations) || translations.length !== props.expectedCount) {
-      return new Error('翻訳結果の件数が翻訳対象と一致しません')
+      return new Error("翻訳結果の件数が翻訳対象と一致しません")
     }
 
-    if (!translations.every((item): item is string => typeof item === 'string')) {
-      return new Error('翻訳結果に文字列以外が含まれています')
+    if (!translations.every((item): item is string => typeof item === "string")) {
+      return new Error("翻訳結果に文字列以外が含まれています")
     }
 
     return translations
   } catch {
-    return new Error('翻訳結果を JSON として読み取れませんでした')
+    return new Error("翻訳結果を JSON として読み取れませんでした")
   }
 }

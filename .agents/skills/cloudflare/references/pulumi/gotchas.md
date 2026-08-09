@@ -10,20 +10,20 @@
 
 ```typescript
 // WRONG: Pulumi won't bundle this
-const worker = new cloudflare.WorkerScript('worker', {
-  content: fs.readFileSync('./src/index.ts', 'utf8'), // Raw TS file
+const worker = new cloudflare.WorkerScript("worker", {
+  content: fs.readFileSync("./src/index.ts", "utf8"), // Raw TS file
 })
 
 // RIGHT: Build first, then deploy
-import * as command from '@pulumi/command'
-const build = new command.local.Command('build', {
-  create: 'npm run build',
-  dir: './worker',
+import * as command from "@pulumi/command"
+const build = new command.local.Command("build", {
+  create: "npm run build",
+  dir: "./worker",
 })
 const worker = new cloudflare.WorkerScript(
-  'worker',
+  "worker",
   {
-    content: build.stdout.apply(() => fs.readFileSync('./worker/dist/index.js', 'utf8')),
+    content: build.stdout.apply(() => fs.readFileSync("./worker/dist/index.js", "utf8")),
   },
   { dependsOn: [build] },
 )
@@ -38,12 +38,12 @@ const worker = new cloudflare.WorkerScript(
 ```typescript
 // Pattern: Export Pulumi config to wrangler.toml
 const workerConfig = {
-  name: 'my-worker',
-  compatibilityDate: '2025-01-01',
-  compatibilityFlags: ['nodejs_compat'],
+  name: "my-worker",
+  compatibilityDate: "2025-01-01",
+  compatibilityFlags: ["nodejs_compat"],
 }
 
-new command.local.Command('generate-wrangler', {
+new command.local.Command("generate-wrangler", {
   create: pulumi.interpolate`cat > wrangler.toml <<EOF
 name = "${workerConfig.name}"
 compatibility_date = "${workerConfig.compatibilityDate}"
@@ -60,9 +60,9 @@ EOF`,
 
 ```typescript
 const version = Date.now().toString()
-const worker = new cloudflare.WorkerScript('worker', {
+const worker = new cloudflare.WorkerScript("worker", {
   content: code,
-  plainTextBindings: [{ name: 'VERSION', text: version }], // Forces new deployment
+  plainTextBindings: [{ name: "VERSION", text: version }], // Forces new deployment
 })
 ```
 
@@ -73,11 +73,11 @@ const worker = new cloudflare.WorkerScript('worker', {
 **Solution:** Use Command resource with dependsOn
 
 ```typescript
-const db = new cloudflare.D1Database('db', { accountId, name: 'mydb' })
+const db = new cloudflare.D1Database("db", { accountId, name: "mydb" })
 
 // Run migrations after DB created
 const migration = new command.local.Command(
-  'migrate',
+  "migrate",
   {
     create: pulumi.interpolate`wrangler d1 execute ${db.name} --file ./schema.sql`,
   },
@@ -86,9 +86,9 @@ const migration = new command.local.Command(
 
 // Worker depends on migrations
 const worker = new cloudflare.WorkerScript(
-  'worker',
+  "worker",
   {
-    d1DatabaseBindings: [{ name: 'DB', databaseId: db.id }],
+    d1DatabaseBindings: [{ name: "DB", databaseId: db.id }],
   },
   { dependsOn: [migration] },
 )
@@ -103,7 +103,7 @@ const worker = new cloudflare.WorkerScript(
 ```yaml
 # Pulumi.<stack>.yaml
 config:
-  cloudflare:accountId: 'abc123...'
+  cloudflare:accountId: "abc123..."
 ```
 
 ### "Binding name mismatch"
@@ -114,12 +114,12 @@ config:
 
 ```typescript
 // Pulumi
-kvNamespaceBindings: [{ name: 'MY_KV', namespaceId: kv.id }]
+kvNamespaceBindings: [{ name: "MY_KV", namespaceId: kv.id }]
 
 // Worker code
 export default {
   async fetch(request, env) {
-    await env.MY_KV.get('key')
+    await env.MY_KV.get("key")
   },
 }
 ```
@@ -149,21 +149,21 @@ pulumi preview # If shows changes, adjust Pulumi code to match actual resource
 
 ```typescript
 // SIMPLE: WorkerScript auto-versions (default behavior)
-const worker = new cloudflare.WorkerScript('worker', {
+const worker = new cloudflare.WorkerScript("worker", {
   accountId,
-  name: 'my-worker',
+  name: "my-worker",
   content: code,
 })
 
 // ADVANCED: Manual versioning for gradual rollouts (v6.x)
-const worker = new cloudflare.Worker('worker', { accountId, name: 'my-worker' })
-const version = new cloudflare.WorkerVersion('v1', {
+const worker = new cloudflare.Worker("worker", { accountId, name: "my-worker" })
+const version = new cloudflare.WorkerVersion("v1", {
   accountId,
   workerId: worker.id,
   content: code,
-  compatibilityDate: '2025-01-01',
+  compatibilityDate: "2025-01-01",
 })
-const deployment = new cloudflare.WorkersDeployment('prod', {
+const deployment = new cloudflare.WorkersDeployment("prod", {
   accountId,
   workerId: worker.id,
   versionId: version.id,

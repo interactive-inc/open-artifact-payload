@@ -1,10 +1,10 @@
-import type { CliPreferences } from './cli-configuration-store'
-import type { CliEnvironmentSelection } from './parse-cli-invocation'
-import type { CliProcessEnvironment } from './cli-process-environment'
-import { isLoopbackHostname, normalizeCliEndpoint } from './normalize-cli-endpoint'
+import type { CliPreferences } from "./cli-configuration-store"
+import type { CliEnvironmentSelection } from "./parse-cli-invocation"
+import type { CliProcessEnvironment } from "./cli-process-environment"
+import { isLoopbackHostname, normalizeCliEndpoint } from "./normalize-cli-endpoint"
 
 export type ResolvedCliEnvironment = {
-  name: CliEnvironmentSelection['name']
+  name: CliEnvironmentSelection["name"]
   endpoint: string
   production: boolean
   explicitlySelected: boolean
@@ -50,7 +50,7 @@ export function resolveCliEnvironment(props: {
     name: props.selection.name,
     endpoint,
     production:
-      props.selection.name === 'prod' ||
+      props.selection.name === "prod" ||
       productionEndpoints.includes(endpoint) ||
       (!isLocalEndpoint(endpoint) && !nonProductionEndpoints.includes(endpoint)),
     explicitlySelected: props.selection.explicit,
@@ -58,28 +58,28 @@ export function resolveCliEnvironment(props: {
 }
 
 function endpointFromProcessEnvironment(
-  name: CliEnvironmentSelection['name'],
+  name: CliEnvironmentSelection["name"],
   environment: CliProcessEnvironment,
 ): string | null {
   const endpoints = {
     local: environment.INTACMS_LOCAL_ENDPOINT,
     staging: environment.INTACMS_STAGING_ENDPOINT,
-    'staging-blue': environment.INTACMS_STAGING_BLUE_ENDPOINT,
+    "staging-blue": environment.INTACMS_STAGING_BLUE_ENDPOINT,
     prod: environment.INTACMS_PROD_ENDPOINT,
-  } satisfies Record<CliEnvironmentSelection['name'], string | undefined>
+  } satisfies Record<CliEnvironmentSelection["name"], string | undefined>
   return endpoints[name] ?? null
 }
 
 function endpointFromPreferences(
-  name: CliEnvironmentSelection['name'],
+  name: CliEnvironmentSelection["name"],
   preferences: CliPreferences,
 ): string | null {
   const endpoints = {
     local: preferences.endpoints.local,
     staging: preferences.endpoints.staging,
-    'staging-blue': preferences.endpoints.stagingBlue,
+    "staging-blue": preferences.endpoints.stagingBlue,
     prod: preferences.endpoints.prod,
-  } satisfies Record<CliEnvironmentSelection['name'], string | null>
+  } satisfies Record<CliEnvironmentSelection["name"], string | null>
   return endpoints[name]
 }
 

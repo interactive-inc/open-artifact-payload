@@ -1,7 +1,7 @@
-import type { JsonValue } from '../domain/json-value'
-import { SiteResourceSlug } from '../domain/site-resource-slug'
-import type { PayloadRestClient } from '../infrastructure/payload-rest-client'
-import { updateGlobalInputSchema, type UpdateGlobalInput } from './site-management-inputs'
+import type { JsonValue } from "../domain/json-value"
+import { SiteResourceSlug } from "../domain/site-resource-slug"
+import type { PayloadRestClient } from "../infrastructure/payload-rest-client"
+import { updateGlobalInputSchema, type UpdateGlobalInput } from "./site-management-inputs"
 
 export class UpdateGlobal {
   constructor(private readonly client: PayloadRestClient) {

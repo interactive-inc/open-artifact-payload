@@ -1,19 +1,19 @@
-import { SiteManagementRuntime, type FetchPort } from '@open-artifact/site-management'
+import { SiteManagementRuntime, type FetchPort } from "@open-artifact/site-management"
 
-import { buildCliApp } from './build-cli-app'
-import { CliConfigurationStore, type CliAccount } from './cli-configuration-store'
-import { CLI_HELP, buildResourceHelp } from './cli-help'
+import { buildCliApp } from "./build-cli-app"
+import { CliConfigurationStore, type CliAccount } from "./cli-configuration-store"
+import { CLI_HELP, buildResourceHelp } from "./cli-help"
 import {
   parseCliProcessEnvironment,
   resolveCliConfigDirectory,
   type CliProcessEnvironment,
-} from './cli-process-environment'
-import { formatCliOutput } from './format-cli-output'
-import { parseCliInvocation, type CliInvocation } from './parse-cli-invocation'
-import { PayloadAuthClient } from './payload-auth-client'
-import { resolveCliEnvironment, type ResolvedCliEnvironment } from './resolve-cli-environment'
-import { searchSiteCommands } from './resource-catalog'
-import { updateCliPreferences } from './update-cli-preferences'
+} from "./cli-process-environment"
+import { formatCliOutput } from "./format-cli-output"
+import { parseCliInvocation, type CliInvocation } from "./parse-cli-invocation"
+import { PayloadAuthClient } from "./payload-auth-client"
+import { resolveCliEnvironment, type ResolvedCliEnvironment } from "./resolve-cli-environment"
+import { searchSiteCommands } from "./resource-catalog"
+import { updateCliPreferences } from "./update-cli-preferences"
 
 type CliIo = {
   writeOutput: (value: string) => void
@@ -35,13 +35,13 @@ export async function runCli(props: RunCliProps): Promise<number> {
     return 1
   }
 
-  if (invocation.kind === 'help') {
+  if (invocation.kind === "help") {
     props.io.writeOutput(
       invocation.resourceSlug === null ? CLI_HELP : buildResourceHelp(invocation.resourceSlug),
     )
     return 0
   }
-  if (invocation.kind === 'commands') {
+  if (invocation.kind === "commands") {
     writeJson(props.io, searchSiteCommands(invocation.query))
     return 0
   }
@@ -54,11 +54,11 @@ export async function runCli(props: RunCliProps): Promise<number> {
   const preferences = await store.loadPreferences()
   if (preferences instanceof Error) return writeError(props.io, preferences)
 
-  if (invocation.kind === 'config-get') {
+  if (invocation.kind === "config-get") {
     writeJson(props.io, preferences)
     return 0
   }
-  if (invocation.kind === 'config-set') {
+  if (invocation.kind === "config-set") {
     const updated = updateCliPreferences(preferences, invocation.key, invocation.value)
     if (updated instanceof Error) return writeError(props.io, updated)
     const saved = await store.savePreferences(updated)
@@ -76,29 +76,29 @@ export async function runCli(props: RunCliProps): Promise<number> {
   if (
     preferences.prodLock &&
     environment.production &&
-    !(environment.name === 'prod' && environment.explicitlySelected)
+    !(environment.name === "prod" && environment.explicitlySelected)
   ) {
     return writeError(
       props.io,
-      new Error('Production is locked. Add --prod explicitly or disable prod-lock.'),
+      new Error("Production is locked. Add --prod explicitly or disable prod-lock."),
     )
   }
   if (
-    invocation.kind === 'runtime' &&
+    invocation.kind === "runtime" &&
     invocation.destructive &&
     environment.production &&
     !invocation.confirmed
   ) {
     return writeError(
       props.io,
-      new Error('Production deletion requires --confirm in addition to an explicit --prod.'),
+      new Error("Production deletion requires --confirm in addition to an explicit --prod."),
     )
   }
 
-  if (invocation.kind === 'login') {
+  if (invocation.kind === "login") {
     return await login({ invocation, environment, store, props })
   }
-  if (invocation.kind === 'logout') {
+  if (invocation.kind === "logout") {
     return await logout({ environment, store, props })
   }
 
@@ -109,7 +109,7 @@ export async function runCli(props: RunCliProps): Promise<number> {
   })
   if (authentication instanceof Error) return writeError(props.io, authentication)
 
-  if (invocation.kind === 'whoami') {
+  if (invocation.kind === "whoami") {
     const user = await new PayloadAuthClient(props.fetchPort).findCurrentUser({
       endpoint: environment.endpoint,
       authorization: authentication.authorization,
@@ -158,7 +158,7 @@ type Authentication = {
 }
 
 async function login(props: {
-  invocation: Extract<CliInvocation, { kind: 'login' }>
+  invocation: Extract<CliInvocation, { kind: "login" }>
   environment: ResolvedCliEnvironment
   store: CliConfigurationStore
   props: RunCliProps
@@ -166,7 +166,7 @@ async function login(props: {
   const previousAccount = await props.store.findAccount(props.environment.endpoint)
   if (previousAccount instanceof Error) return writeError(props.props.io, previousAccount)
 
-  const password = await props.props.io.readSecret('Password: ')
+  const password = await props.props.io.readSecret("Password: ")
   if (password instanceof Error) return writeError(props.props.io, password)
   const authClient = new PayloadAuthClient(props.props.fetchPort)
   const account = await authClient.login({
@@ -255,7 +255,7 @@ async function resolveAuthentication(props: {
   store: CliConfigurationStore
 }): Promise<Authentication | Error> {
   const apiKey = props.processEnvironment.OPEN_ARTIFACT_API_KEY
-  const authCollection = props.processEnvironment.OPEN_ARTIFACT_AUTH_COLLECTION ?? 'users'
+  const authCollection = props.processEnvironment.OPEN_ARTIFACT_AUTH_COLLECTION ?? "users"
   if (apiKey !== undefined) {
     return {
       authorization: `${authCollection} API-Key ${apiKey}`,

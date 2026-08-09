@@ -1,10 +1,10 @@
-import type { JsonValue } from '../domain/json-value'
-import { SiteDocumentTarget } from '../domain/site-document-target'
-import type { PayloadRestClient } from '../infrastructure/payload-rest-client'
+import type { JsonValue } from "../domain/json-value"
+import { SiteDocumentTarget } from "../domain/site-document-target"
+import type { PayloadRestClient } from "../infrastructure/payload-rest-client"
 import {
   deleteCollectionDocumentInputSchema,
   type DeleteCollectionDocumentInput,
-} from './site-management-inputs'
+} from "./site-management-inputs"
 
 export class DeleteCollectionDocument {
   constructor(private readonly client: PayloadRestClient) {

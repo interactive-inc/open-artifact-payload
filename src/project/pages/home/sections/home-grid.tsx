@@ -1,16 +1,16 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import React from 'react'
-import { ArrowRightIcon } from 'lucide-react'
+import Link from "next/link"
+import Image from "next/image"
+import React from "react"
+import { ArrowRightIcon } from "lucide-react"
 
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
-import { Button } from '@/project/shared/ui/button'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { News, Work } from '@/payload-types'
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { GenerativeCanvas } from "@/project/shared/components/generative-canvas"
+import { Button } from "@/project/shared/ui/button"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { News, Work } from "@/payload-types"
 
 type ServiceItem = {
   icon?: string | null
@@ -47,25 +47,25 @@ type Props = {
 
 // 使用技術の一覧。ワイヤーフレーム用のサンプルデータ。本番では CMS 化または実データに差し替える。
 const techStack: ReadonlyArray<{ name: string }> = [
-  { name: 'TypeScript' },
-  { name: 'React' },
-  { name: 'Next.js' },
-  { name: 'Cloudflare' },
-  { name: 'Payload CMS' },
-  { name: 'Tailwind CSS' },
-  { name: 'PostgreSQL' },
-  { name: 'Figma' },
+  { name: "TypeScript" },
+  { name: "React" },
+  { name: "Next.js" },
+  { name: "Cloudflare" },
+  { name: "Payload CMS" },
+  { name: "Tailwind CSS" },
+  { name: "PostgreSQL" },
+  { name: "Figma" },
 ]
 
 // 制作実績のサムネ未設定時の仮画像 ID。index ごとに固定で割り当てる。
 const workFallbackIds = [1059, 180, 160, 0, 1062, 119]
 
 const workCategoryLabel: Record<string, string> = {
-  web: 'Web Design',
-  product: 'Product',
-  mobile: 'Mobile',
-  frontend: 'Frontend',
-  branding: 'Branding',
+  web: "Web Design",
+  product: "Product",
+  mobile: "Mobile",
+  frontend: "Frontend",
+  branding: "Branding",
 }
 
 // 枠線を使わないミニマリスト構成。余白と文字サイズの対比（マイクロラベル → 大見出し →
@@ -74,9 +74,9 @@ export function HomeGrid(props: Props) {
   const dictionary = getUiDictionary(props.locale)
   const serviceItems = props.services.items ?? []
   const newsItems = (props.news.items ?? []).filter(
-    (item): item is News => typeof item === 'object' && item !== null,
+    (item): item is News => typeof item === "object" && item !== null,
   )
-  const localeDateCode = props.locale === 'ja' ? 'ja-JP' : 'en-US'
+  const localeDateCode = props.locale === "ja" ? "ja-JP" : "en-US"
 
   return (
     <>
@@ -119,7 +119,7 @@ export function HomeGrid(props: Props) {
           {serviceItems.map((item, index) => (
             <article key={index}>
               <span className="text-sm text-muted-foreground tabular-nums">
-                {String(index + 1).padStart(2, '0')}
+                {String(index + 1).padStart(2, "0")}
               </span>
               {item.title ? (
                 <h3 className="mt-3 text-xl font-semibold tracking-tight md:text-2xl">
@@ -206,7 +206,7 @@ export function HomeGrid(props: Props) {
           </div>
           <Button
             nativeButton={false}
-            render={<Link href={withLocalePrefix(props.locale, '/works')} />}
+            render={<Link href={withLocalePrefix(props.locale, "/works")} />}
             variant="ghost"
             size="sm"
           >
@@ -219,7 +219,7 @@ export function HomeGrid(props: Props) {
             const imageUrl =
               resolveMediaUrl(work.thumbnail as never) ??
               `https://picsum.photos/id/${workFallbackIds[index % workFallbackIds.length]}/1200/750`
-            const imageAlt = resolveMediaAlt(work.thumbnail as never) ?? ''
+            const imageAlt = resolveMediaAlt(work.thumbnail as never) ?? ""
 
             return (
               <Link
@@ -291,7 +291,7 @@ export function HomeGrid(props: Props) {
             </div>
             <Button
               nativeButton={false}
-              render={<Link href={withLocalePrefix(props.locale, '/news')} />}
+              render={<Link href={withLocalePrefix(props.locale, "/news")} />}
               variant="ghost"
               size="sm"
             >

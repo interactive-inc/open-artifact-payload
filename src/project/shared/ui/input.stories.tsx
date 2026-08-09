@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import React from 'react'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import React from "react"
 
-import { Input } from './input'
-import { Label } from './label'
-import { Textarea } from './textarea'
+import { Input } from "./input"
+import { Label } from "./label"
+import { Textarea } from "./textarea"
 
 const meta: Meta = {
-  title: 'UI/Form',
-  tags: ['autodocs'],
+  title: "UI/Form",
+  tags: ["autodocs"],
 }
 
 export default meta

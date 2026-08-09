@@ -13,7 +13,7 @@
 ```typescript
 const client = new OpenAI({
   baseURL: `https://gateway.ai.cloudflare.com/v1/${accountId}/${gatewayId}/openai`,
-  defaultHeaders: { 'cf-aig-authorization': `Bearer ${CF_API_TOKEN}` },
+  defaultHeaders: { "cf-aig-authorization": `Bearer ${CF_API_TOKEN}` },
 })
 ```
 
@@ -75,8 +75,8 @@ curl -v https://gateway.ai.cloudflare.com/v1/{account}/{gateway}/openai/models \
 
 ```typescript
 // Check response headers
-console.log('Cache:', response.headers.get('cf-aig-cache-status'))
-console.log('Request ID:', response.headers.get('cf-ray'))
+console.log("Cache:", response.headers.get("cf-aig-cache-status"))
+console.log("Request ID:", response.headers.get("cf-ray"))
 ```
 
 ## Analytics

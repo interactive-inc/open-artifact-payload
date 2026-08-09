@@ -44,7 +44,7 @@ if (!response) {
 return await fetch(request)
 
 // ✅ CORRECT: Use Cache API only for custom cache namespaces
-const customCache = await caches.open('my-custom-cache')
+const customCache = await caches.open("my-custom-cache")
 let response = await customCache.match(request)
 if (!response) {
   response = await fetch(request)
@@ -60,10 +60,10 @@ if (!response) {
 // Purge specific URL from Cache Reserve immediately
 const purgeCacheReserveByURL = async (zoneId: string, apiToken: string, urls: string[]) => {
   const response = await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
-    method: 'POST',
+    method: "POST",
     headers: {
       Authorization: `Bearer ${apiToken}`,
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({ files: urls }),
   })
@@ -71,9 +71,9 @@ const purgeCacheReserveByURL = async (zoneId: string, apiToken: string, urls: st
 }
 
 // Example usage
-await purgeCacheReserveByURL('zone123', 'token456', [
-  'https://example.com/image.jpg',
-  'https://example.com/video.mp4',
+await purgeCacheReserveByURL("zone123", "token456", [
+  "https://example.com/image.jpg",
+  "https://example.com/video.mp4",
 ])
 ```
 
@@ -82,9 +82,9 @@ await purgeCacheReserveByURL('zone123', 'token456', [
 ```typescript
 // Purge by cache tag - forces revalidation, not immediate removal
 await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, {
-  method: 'POST',
-  headers: { Authorization: `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
-  body: JSON.stringify({ tags: ['tag1', 'tag2'] }),
+  method: "POST",
+  headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+  body: JSON.stringify({ tags: ["tag1", "tag2"] }),
 })
 ```
 
@@ -98,7 +98,7 @@ await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/purge_cache`, 
 ```typescript
 // Requires Cache Reserve OFF first
 await fetch(`https://api.cloudflare.com/client/v4/zones/${zoneId}/cache/cache_reserve_clear`, {
-  method: 'POST',
+  method: "POST",
   headers: { Authorization: `Bearer ${apiToken}` },
 })
 

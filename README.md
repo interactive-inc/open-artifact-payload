@@ -9,7 +9,7 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 - CMS: Payload CMS 3 (`@payloadcms/db-d1-sqlite`)
 - フレームワーク: Next.js 16 (App Router) / React 19 / TypeScript
 - インフラ: Cloudflare D1 + R2 + Workers
-- ランタイム / パッケージマネージャー: bun
+- ツールチェーン: Vite+ / Bun
 
 ## リポジトリ構成
 
@@ -30,7 +30,7 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 vp install
 
 # D1 と R2 を作成し、wrangler.jsonc の database_id / bucket_name を差し替える
-# (bun run setup:project で対話的に自動置換できる)
+# (vp run setup:project で対話的に自動置換できる)
 wrangler d1 create <project-name>
 wrangler r2 bucket create <project-name>
 
@@ -38,10 +38,10 @@ wrangler r2 bucket create <project-name>
 cp .env.example .env
 
 # ローカル D1 にマイグレーション + サンプルデータ投入
-bun run payload migrate
-bun run seed
+vp run payload migrate
+vp run seed
 
-bun dev
+vp run dev
 ```
 
 起動後、フロントは http://localhost:3000 、管理画面は http://localhost:3000/admin 。初回アクセス時にユーザー作成画面が表示されます。
@@ -98,23 +98,22 @@ make preview          # ローカルで Workers ランタイムを使ったプ�
 制限事項:
 
 - Sharp が Workers 上で動かないため、画像の crop / focalPoint は本番では無効
-- `bun run build` の SSG プリレンダーはリモート D1 に接続する。先にリモートへ migrate を当てること
+- `vp run build` の SSG プリレンダーはリモート D1 に接続する。先にリモートへ migrate を当てること
 
 ## コマンド一覧
 
 ```bash
-bun dev                         # 開発サーバー
-bun run build                   # プロダクションビルド
-bun run lint                    # vp lint (lint + 型チェック)
-bun run check                   # vp check (フォーマット + lint + 型チェック)
-bun run test                    # 統合テスト + E2E すべて
-bun run test:tools              # CLI / site-management のユニットテスト
-bun run intacms --help          # サイト操作 CLI のヘルプ
-bun run intacms commands        # 公開リソースと操作の一覧
-bun run payload migrate         # ローカル D1 にマイグレーション
-bun run seed                    # サンプルデータ投入
-bun run generate:types          # Cloudflare + Payload の型生成
-bun run storybook               # Storybook (http://localhost:6006)
+vp run dev                      # 開発サーバー
+vp run build                    # プロダクションビルド
+vp lint                         # lint + 型チェック
+vp fmt                          # フォーマット確認
+vp test                         # Vite+ のテスト
+vp run test                     # 統合テスト + E2E すべて
+vp run intacms --help           # サイト操作 CLI のヘルプ
+vp run payload migrate          # ローカル D1 にマイグレーション
+vp run seed                     # サンプルデータ投入
+vp run generate:types           # Cloudflare + Payload の型生成
+vp run storybook                # Storybook (http://localhost:6006)
 ```
 
 詳細な運用ガイドは `.docs/guide.md` を参照してください。

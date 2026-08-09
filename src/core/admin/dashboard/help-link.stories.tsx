@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import './dashboard-view.css'
+import "./dashboard-view.css"
 
-import { HelpLink } from '@/core/admin/dashboard/help-link'
+import { HelpLink } from "@/core/admin/dashboard/help-link"
 
 const meta: Meta<typeof HelpLink> = {
-  title: 'Core/Admin/HelpLink',
+  title: "Core/Admin/HelpLink",
   component: HelpLink,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   args: {
-    email: 'support@example.com',
+    email: "support@example.com",
   },
 }
 

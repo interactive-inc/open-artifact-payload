@@ -1,10 +1,10 @@
-import type { JsonValue } from '../domain/json-value'
-import { SiteDocumentTarget } from '../domain/site-document-target'
-import type { PayloadRestClient } from '../infrastructure/payload-rest-client'
+import type { JsonValue } from "../domain/json-value"
+import { SiteDocumentTarget } from "../domain/site-document-target"
+import type { PayloadRestClient } from "../infrastructure/payload-rest-client"
 import {
   findCollectionDocumentInputSchema,
   type FindCollectionDocumentInput,
-} from './site-management-inputs'
+} from "./site-management-inputs"
 
 export class FindCollectionDocument {
   constructor(private readonly client: PayloadRestClient) {

@@ -7,10 +7,10 @@
 ```javascript
 export default {
   async fetch(request, env, ctx) {
-    const value = await env.KV.get('key') // Bindings in env
+    const value = await env.KV.get("key") // Bindings in env
     const response = await env.API.fetch(request) // Service binding
     ctx.waitUntil(logRequest(request)) // Background task
-    return new Response('OK')
+    return new Response("OK")
   },
   async adminApi(request, env, ctx) {
     /* Named entrypoint */
@@ -45,7 +45,7 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    return new Response(await env.CACHE.get('key'))
+    return new Response(await env.CACHE.get("key"))
   },
 }
 ```
@@ -64,13 +64,13 @@ npm install -D @cloudflare/workers-types
 ### Service Worker Syntax (Legacy)
 
 ```javascript
-addEventListener('fetch', (event) => {
+addEventListener("fetch", (event) => {
   event.respondWith(handleRequest(event.request))
 })
 
 async function handleRequest(request) {
-  const value = await KV.get('key') // Bindings as globals
-  return new Response('OK')
+  const value = await KV.get("key") // Bindings as globals
+  return new Response("OK")
 }
 ```
 
@@ -85,12 +85,12 @@ export class Room {
 
   async fetch(request) {
     const url = new URL(request.url)
-    if (url.pathname === '/increment') {
-      const value = (await this.state.storage.get('counter')) || 0
-      await this.state.storage.put('counter', value + 1)
+    if (url.pathname === "/increment") {
+      const value = (await this.state.storage.get("counter")) || 0
+      await this.state.storage.put("counter", value + 1)
       return new Response(String(value + 1))
     }
-    return new Response('Not found', { status: 404 })
+    return new Response("Not found", { status: 404 })
   }
 }
 ```
@@ -99,12 +99,12 @@ export class Room {
 
 ```javascript
 // Caller: env.AUTH.validateToken(token) returns structured data
-const user = await env.AUTH.validateToken(request.headers.get('Authorization'))
+const user = await env.AUTH.validateToken(request.headers.get("Authorization"))
 
 // Callee: export methods that return data
 export default {
   async validateToken(token) {
-    return { id: 123, name: 'Alice' }
+    return { id: 123, name: "Alice" }
   },
 }
 ```
@@ -143,21 +143,21 @@ export default {
 // Server-side SSE
 const { readable, writable } = new TransformStream()
 const writer = writable.getWriter()
-writer.write(new TextEncoder().encode('data: Hello\n\n'))
-return new Response(readable, { headers: { 'Content-Type': 'text/event-stream' } })
+writer.write(new TextEncoder().encode("data: Hello\n\n"))
+return new Response(readable, { headers: { "Content-Type": "text/event-stream" } })
 ```
 
 ### HTMLRewriter (HTML Parsing/Transformation)
 
 ```javascript
-const response = await fetch('https://example.com')
+const response = await fetch("https://example.com")
 return new HTMLRewriter()
-  .on('a[href]', {
+  .on("a[href]", {
     element(el) {
-      el.setAttribute('href', `/proxy?url=${encodeURIComponent(el.getAttribute('href'))}`)
+      el.setAttribute("href", `/proxy?url=${encodeURIComponent(el.getAttribute("href"))}`)
     },
   })
-  .on('script', {
+  .on("script", {
     element(el) {
       el.remove()
     },
@@ -168,9 +168,9 @@ return new HTMLRewriter()
 ### TCP Sockets (Experimental)
 
 ```javascript
-const socket = await connect({ hostname: 'example.com', port: 80 })
+const socket = await connect({ hostname: "example.com", port: 80 })
 const writer = socket.writable.getWriter()
-await writer.write(new TextEncoder().encode('GET / HTTP/1.1\r\n\r\n'))
+await writer.write(new TextEncoder().encode("GET / HTTP/1.1\r\n\r\n"))
 const reader = socket.readable.getReader()
 const { value } = await reader.read()
 return new Response(value)
@@ -188,10 +188,10 @@ return new Response(value)
 ### Node.js Compat (`nodejs_compat` flag)
 
 ```javascript
-import { Buffer } from 'node:buffer'
-import { randomBytes } from 'node:crypto'
+import { Buffer } from "node:buffer"
+import { randomBytes } from "node:crypto"
 
-const buf = Buffer.from('Hello')
+const buf = Buffer.from("Hello")
 const random = randomBytes(16)
 ```
 

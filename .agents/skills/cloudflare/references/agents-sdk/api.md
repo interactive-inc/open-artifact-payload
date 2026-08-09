@@ -7,17 +7,17 @@
 For AI chat with auto-streaming, message history, tools, resumable streaming.
 
 ```ts
-import { AIChatAgent } from '@cloudflare/ai-chat'
-import { openai } from '@ai-sdk/openai'
+import { AIChatAgent } from "@cloudflare/ai-chat"
+import { openai } from "@ai-sdk/openai"
 
 export class ChatAgent extends AIChatAgent<Env> {
   async onChatMessage(onFinish) {
     return this.streamText({
-      model: openai('gpt-4'),
+      model: openai("gpt-4"),
       messages: this.messages, // Auto-managed message history
       tools: {
         getWeather: {
-          description: 'Get weather',
+          description: "Get weather",
           parameters: z.object({ city: z.string() }),
           execute: async ({ city }) => `Sunny, 72°F in ${city}`,
         },
@@ -33,7 +33,7 @@ export class ChatAgent extends AIChatAgent<Env> {
 Full control for custom logic, WebSockets, email, and SQL.
 
 ```ts
-import { Agent } from 'agents'
+import { Agent } from "agents"
 
 export class MyAgent extends Agent<Env, State> {
   // Lifecycle methods below
@@ -85,22 +85,22 @@ this.sql`INSERT INTO users (id,name) VALUES (${userId},${name})`
 const users = this.sql<{ id; name }>`SELECT * FROM users WHERE id = ${userId}`
 
 // Scheduling
-await this.schedule(new Date('2026-12-25'), 'sendGreeting', { msg: 'Hi' }) // Date
-await this.schedule(60, 'checkStatus', {}) // Delay (sec)
-await this.schedule('0 0 * * *', 'dailyCleanup', {}) // Cron
+await this.schedule(new Date("2026-12-25"), "sendGreeting", { msg: "Hi" }) // Date
+await this.schedule(60, "checkStatus", {}) // Delay (sec)
+await this.schedule("0 0 * * *", "dailyCleanup", {}) // Cron
 await this.cancelSchedule(scheduleId)
 ```
 
 ## RPC Methods (@callable)
 
 ```ts
-import { Agent, callable } from 'agents'
+import { Agent, callable } from "agents"
 
 export class MyAgent extends Agent<Env> {
   @callable()
   async processTask(input: { text: string }): Promise<{ result: string }> {
     return {
-      result: await this.env.AI.run('@cf/meta/llama-3.1-8b-instruct', { prompt: input.text }),
+      result: await this.env.AI.run("@cf/meta/llama-3.1-8b-instruct", { prompt: input.text }),
     }
   }
 }
@@ -113,14 +113,14 @@ export class MyAgent extends Agent<Env> {
 ```ts
 // Connections (type: Agent<Env, State, ConnState>)
 this.connections.forEach((c) => c.send(JSON.stringify(msg))) // Broadcast
-conn.setState({ userId: '123' })
-conn.close(1000, 'Goodbye')
+conn.setState({ userId: "123" })
+conn.close(1000, "Goodbye")
 
 // Workers AI
-const r = await this.env.AI.run('@cf/meta/llama-3.1-8b-instruct', { prompt })
+const r = await this.env.AI.run("@cf/meta/llama-3.1-8b-instruct", { prompt })
 
 // Manual streaming (prefer AIChatAgent)
-const stream = await client.chat.completions.create({ model: 'gpt-4', messages, stream: true })
+const stream = await client.chat.completions.create({ model: "gpt-4", messages, stream: true })
 for await (const chunk of stream)
   conn.send(JSON.stringify({ chunk: chunk.choices[0].delta.content }))
 ```
@@ -133,18 +133,18 @@ Model Context Protocol for exposing tools:
 
 ```ts
 // Register & use MCP server
-await this.mcp.registerServer('github', {
+await this.mcp.registerServer("github", {
   url: env.MCP_SERVER_URL,
-  auth: { type: 'oauth', clientId: env.GITHUB_CLIENT_ID, clientSecret: env.GITHUB_CLIENT_SECRET },
+  auth: { type: "oauth", clientId: env.GITHUB_CLIENT_ID, clientSecret: env.GITHUB_CLIENT_SECRET },
 })
-const tools = await this.mcp.getAITools(['github'])
-return this.streamText({ model: openai('gpt-4'), messages: this.messages, tools, onFinish })
+const tools = await this.mcp.getAITools(["github"])
+return this.streamText({ model: openai("gpt-4"), messages: this.messages, tools, onFinish })
 ```
 
 ## Task Queue
 
 ```ts
-await this.queue('processVideo', { videoId: 'abc123' }) // Add task
+await this.queue("processVideo", { videoId: "abc123" }) // Add task
 const tasks = await this.dequeue(10) // Process up to 10
 ```
 
@@ -159,10 +159,10 @@ async destroy() { /* cleanup before agent destroyed */ }
 
 ```ts
 // Workers AI
-const r = await this.env.AI.run('@cf/meta/llama-3.1-8b-instruct', { prompt })
+const r = await this.env.AI.run("@cf/meta/llama-3.1-8b-instruct", { prompt })
 
 // Manual streaming (prefer AIChatAgent for auto-streaming)
-const stream = await client.chat.completions.create({ model: 'gpt-4', messages, stream: true })
+const stream = await client.chat.completions.create({ model: "gpt-4", messages, stream: true })
 for await (const chunk of stream) {
   if (chunk.choices[0]?.delta?.content)
     conn.send(JSON.stringify({ chunk: chunk.choices[0].delta.content }))
@@ -173,14 +173,14 @@ for await (const chunk of stream) {
 
 ```ts
 // useAgent() - WebSocket connection + RPC
-import { useAgent } from 'agents/react'
-const agent = useAgent({ agent: 'MyAgent', name: 'user-123' }) // name for idFromName
-const result = await agent.processTask({ text: 'Hello' }) // Call @callable methods
+import { useAgent } from "agents/react"
+const agent = useAgent({ agent: "MyAgent", name: "user-123" }) // name for idFromName
+const result = await agent.processTask({ text: "Hello" }) // Call @callable methods
 // agent.readyState: 0=CONNECTING, 1=OPEN, 2=CLOSING, 3=CLOSED
 
 // useAgentChat() - AI chat UI
-import { useAgentChat } from '@cloudflare/ai-chat/react'
-const agent = useAgent({ agent: 'ChatAgent' })
+import { useAgentChat } from "@cloudflare/ai-chat/react"
+const agent = useAgent({ agent: "ChatAgent" })
 const { messages, input, handleInputChange, handleSubmit, isLoading, stop, clearHistory } =
   useAgentChat({
     agent,
@@ -188,7 +188,7 @@ const { messages, input, handleInputChange, handleSubmit, isLoading, stop, clear
     resume: true, // Auto-resume on disconnect
     onToolCall: async (toolCall) => {
       // Client tools (human-in-the-loop)
-      if (toolCall.toolName === 'confirm') return { ok: window.confirm('Proceed?') }
+      if (toolCall.toolName === "confirm") return { ok: window.confirm("Proceed?") }
     },
   })
 // status: "ready" | "submitted" | "streaming" | "error"

@@ -29,22 +29,22 @@
 
 ```typescript
 // Basic step
-const data = await step.do('step name', async () => ({ result: 'value' }))
+const data = await step.do("step name", async () => ({ result: "value" }))
 
 // With retry config
 await step.do(
-  'api call',
+  "api call",
   {
     retries: {
       limit: 10, // Accepts number or Infinity
-      delay: '10 seconds', // Accepts number (ms) or duration string
-      backoff: 'exponential', // constant | linear | exponential
+      delay: "10 seconds", // Accepts number (ms) or duration string
+      backoff: "exponential", // constant | linear | exponential
     },
-    timeout: '30 minutes', // Per-attempt timeout
+    timeout: "30 minutes", // Per-attempt timeout
   },
   async () => {
-    const res = await fetch('https://api.example.com/data')
-    if (!res.ok) throw new Error('Failed')
+    const res = await fetch("https://api.example.com/data")
+    if (!res.ok) throw new Error("Failed")
     return res.json()
   },
 )
@@ -54,19 +54,19 @@ await step.do(
 
 ```typescript
 const [user, settings] = await Promise.all([
-  step.do('fetch user', async () => this.env.KV.get(`user:${id}`)),
-  step.do('fetch settings', async () => this.env.KV.get(`settings:${id}`)),
+  step.do("fetch user", async () => this.env.KV.get(`user:${id}`)),
+  step.do("fetch settings", async () => this.env.KV.get(`settings:${id}`)),
 ])
 ```
 
 ### Conditional Steps
 
 ```typescript
-const config = await step.do('fetch config', async () => this.env.KV.get('flags', { type: 'json' }))
+const config = await step.do("fetch config", async () => this.env.KV.get("flags", { type: "json" }))
 
 // ✅ Deterministic (based on step output)
 if (config.enableEmail) {
-  await step.do('send email', async () => sendEmail())
+  await step.do("send email", async () => sendEmail())
 }
 
 // ❌ Non-deterministic (Date.now outside step)
@@ -78,7 +78,7 @@ if (Date.now() > deadline) {
 ### Dynamic Steps (Loops)
 
 ```typescript
-const files = await step.do('list files', async () => this.env.BUCKET.list())
+const files = await step.do("list files", async () => this.env.BUCKET.list())
 
 for (const file of files.objects) {
   await step.do(`process ${file.key}`, async () => {
@@ -132,11 +132,11 @@ type Env = {
   VECTORIZE: VectorizeIndex
 }
 
-await step.do('use bindings', async () => {
-  const kv = await this.env.KV.get('key')
-  const db = await this.env.DB.prepare('SELECT * FROM users').first()
-  const file = await this.env.BUCKET.get('file.txt')
-  const ai = await this.env.AI.run('@cf/meta/llama-2-7b-chat-int8', { prompt: 'Hi' })
+await step.do("use bindings", async () => {
+  const kv = await this.env.KV.get("key")
+  const db = await this.env.DB.prepare("SELECT * FROM users").first()
+  const file = await this.env.BUCKET.get("file.txt")
+  const ai = await this.env.AI.run("@cf/meta/llama-2-7b-chat-int8", { prompt: "Hi" })
 })
 ```
 

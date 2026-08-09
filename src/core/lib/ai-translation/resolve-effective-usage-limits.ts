@@ -1,5 +1,5 @@
-import { resolveUsageLimitCeilings } from '@/core/lib/ai-translation/resolve-usage-limit-ceilings'
-import type { UsageLimits } from '@/core/lib/ai-translation/translation-types'
+import { resolveUsageLimitCeilings } from "@/core/lib/ai-translation/resolve-usage-limit-ceilings"
+import type { UsageLimits } from "@/core/lib/ai-translation/translation-types"
 
 type LimitsGroup = {
   monthlyRunLimit?: number | null

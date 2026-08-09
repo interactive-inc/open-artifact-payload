@@ -1,5 +1,5 @@
-import { SiteDocumentId } from './site-document-id'
-import { SiteResourceSlug } from './site-resource-slug'
+import { SiteDocumentId } from "./site-document-id"
+import { SiteResourceSlug } from "./site-resource-slug"
 
 export class SiteDocumentTarget {
   private constructor(

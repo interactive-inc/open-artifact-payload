@@ -1,25 +1,25 @@
-import { getPayload } from 'payload'
-import React from 'react'
+import { getPayload } from "payload"
+import React from "react"
 
-import config from '@/payload.config'
-import { dashboardTasks } from '@/project/admin/dashboard-tasks'
-import { HelpLink } from './help-link'
-import { RecentUpdates } from './recent-updates'
-import { TaskCard } from './task-card'
-import './dashboard-view.css'
+import config from "@/payload.config"
+import { dashboardTasks } from "@/project/admin/dashboard-tasks"
+import { HelpLink } from "./help-link"
+import { RecentUpdates } from "./recent-updates"
+import { TaskCard } from "./task-card"
+import "./dashboard-view.css"
 
-const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? 'support@yourcompany.jp'
+const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? "support@yourcompany.jp"
 
 export const DashboardView = async () => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const recent = await payload.find({
-    collection: 'news',
+    collection: "news",
     limit: 5,
-    sort: '-updatedAt',
+    sort: "-updatedAt",
   })
-  const primary = dashboardTasks.filter((task) => task.priority === 'primary')
-  const secondary = dashboardTasks.filter((task) => task.priority !== 'primary')
+  const primary = dashboardTasks.filter((task) => task.priority === "primary")
+  const secondary = dashboardTasks.filter((task) => task.priority !== "primary")
 
   return (
     <div className="ictms-dashboard">

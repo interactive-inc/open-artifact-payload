@@ -60,7 +60,7 @@ export default {
 export default {
   async fetch(req, env) {
     const tls = req.cf?.tlsClientAuth
-    if (tls?.certVerified === 'SUCCESS') {
+    if (tls?.certVerified === "SUCCESS") {
       const fingerprint = tls.certFingerprintSHA256
       // Authenticated client
     }
@@ -73,14 +73,14 @@ export default {
 ```js
 export default {
   async scheduled(event, env) {
-    const jwks = await (await fetch('https://auth.example.com/.well-known/jwks.json')).json()
+    const jwks = await (await fetch("https://auth.example.com/.well-known/jwks.json")).json()
     await fetch(
       `https://api.cloudflare.com/client/v4/zones/${env.ZONE_ID}/api_gateway/token_validation/${env.CONFIG_ID}`,
       {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
           Authorization: `Bearer ${env.CF_API_TOKEN}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ jwks: JSON.stringify(jwks) }),
       },
@@ -105,13 +105,13 @@ cf.tls_client_auth.cert_fingerprint_sha256
 
 ```js
 // Modern validation syntax
-is_jwt_valid(http.request.jwt.payload['{config_id}'][0])
+is_jwt_valid(http.request.jwt.payload["{config_id}"][0])
 
 // Legacy (still supported)
 cf.api_gateway.jwt_claims_valid
 
 // Extract claims
-lookup_json_string(http.request.jwt.payload['{config_id}'][0], 'claim_name')
+lookup_json_string(http.request.jwt.payload["{config_id}"][0], "claim_name")
 ```
 
 ### Risk Labels (2026)

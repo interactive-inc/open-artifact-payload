@@ -1,6 +1,6 @@
-import { APIError, type CollectionBeforeDeleteHook } from 'payload'
+import { APIError, type CollectionBeforeDeleteHook } from "payload"
 
-import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { hasServiceAdminRole } from "@/core/lib/access/has-service-admin-role"
 
 /**
  * serviceAdmin アカウントの削除を serviceAdmin 自身に限定する。
@@ -14,12 +14,12 @@ export const guardServiceAdminAccountDelete: CollectionBeforeDeleteHook = async 
   if (hasServiceAdminRole(args.req.user)) return
 
   const targetUser = await args.req.payload.findByID({
-    collection: 'users',
+    collection: "users",
     id: args.id,
     depth: 0,
   })
 
-  if (Array.isArray(targetUser.roles) && targetUser.roles.includes('serviceAdmin')) {
-    throw new APIError('サービス管理者アカウントを削除できるのはサービス管理者のみです', 403)
+  if (Array.isArray(targetUser.roles) && targetUser.roles.includes("serviceAdmin")) {
+    throw new APIError("サービス管理者アカウントを削除できるのはサービス管理者のみです", 403)
   }
 }

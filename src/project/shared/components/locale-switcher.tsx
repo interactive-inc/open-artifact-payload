@@ -1,21 +1,21 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
-import React from 'react'
+import Link from "next/link"
+import { usePathname } from "next/navigation"
+import React from "react"
 
-import { locales, type Locale } from '@/project/shared/lib/locale-types'
-import { withoutLocalePrefix } from '@/project/shared/lib/without-locale-prefix'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { cn } from '@/project/shared/lib/utils'
+import { locales, type Locale } from "@/project/shared/lib/locale-types"
+import { withoutLocalePrefix } from "@/project/shared/lib/without-locale-prefix"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { cn } from "@/project/shared/lib/utils"
 
 type Props = {
   locale: Locale
 }
 
 const localeLabels: Record<Locale, string> = {
-  ja: 'JA',
-  en: 'EN',
+  ja: "JA",
+  en: "EN",
 }
 
 // 言語切り替え。現在の pathname から locale を除いた基準パスを、切替先 locale のプレフィックスで組み直す。
@@ -31,8 +31,8 @@ export function LocaleSwitcher(props: Props) {
           <Link
             href={withLocalePrefix(locale, basePath)}
             className={cn(
-              'transition-colors hover:text-foreground',
-              locale === props.locale && 'text-foreground font-semibold',
+              "transition-colors hover:text-foreground",
+              locale === props.locale && "text-foreground font-semibold",
             )}
           >
             {localeLabels[locale]}

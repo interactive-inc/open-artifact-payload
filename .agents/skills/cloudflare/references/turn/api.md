@@ -141,7 +141,7 @@ interface RTCIceServer {
   urls: string | string[]
   username?: string
   credential?: string
-  credentialType?: 'password'
+  credentialType?: "password"
 }
 
 interface TURNKeyResponse {
@@ -157,21 +157,21 @@ interface TURNKeyResponse {
 
 ```typescript
 function validateRTCIceServer(obj: unknown): obj is RTCIceServer {
-  if (!obj || typeof obj !== 'object') {
+  if (!obj || typeof obj !== "object") {
     return false
   }
 
   const server = obj as Record<string, unknown>
 
-  if (typeof server.urls !== 'string' && !Array.isArray(server.urls)) {
+  if (typeof server.urls !== "string" && !Array.isArray(server.urls)) {
     return false
   }
 
-  if (server.username && typeof server.username !== 'string') {
+  if (server.username && typeof server.username !== "string") {
     return false
   }
 
-  if (server.credential && typeof server.credential !== 'string') {
+  if (server.credential && typeof server.credential !== "string") {
     return false
   }
 
@@ -186,16 +186,16 @@ async function fetchTURNServers(config: CloudflareTURNConfig): Promise<RTCIceSer
   // Validate TTL constraint
   const ttl = config.ttl ?? 3600
   if (ttl > 172800) {
-    throw new Error('TTL cannot exceed 172800 seconds (48 hours)')
+    throw new Error("TTL cannot exceed 172800 seconds (48 hours)")
   }
 
   const response = await fetch(
     `https://rtc.live.cloudflare.com/v1/turn/keys/${config.keyId}/credentials/generate`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${config.keySecret}`,
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({ ttl }),
     },
@@ -208,21 +208,21 @@ async function fetchTURNServers(config: CloudflareTURNConfig): Promise<RTCIceSer
   const data = await response.json()
 
   // Filter port 53 for browser clients
-  const filteredUrls = data.iceServers.urls.filter((url: string) => !url.includes(':53'))
+  const filteredUrls = data.iceServers.urls.filter((url: string) => !url.includes(":53"))
 
   const iceServers = [
-    { urls: 'stun:stun.cloudflare.com:3478' },
+    { urls: "stun:stun.cloudflare.com:3478" },
     {
       urls: filteredUrls,
       username: data.iceServers.username,
       credential: data.iceServers.credential,
-      credentialType: 'password' as const,
+      credentialType: "password" as const,
     },
   ]
 
   // Validate before returning
   if (!iceServers.every(validateRTCIceServer)) {
-    throw new Error('Invalid ICE server configuration received')
+    throw new Error("Invalid ICE server configuration received")
   }
 
   return iceServers

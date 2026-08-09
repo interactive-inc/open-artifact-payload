@@ -15,13 +15,13 @@ Complete API reference for Meeting object, REST endpoints, and SDK methods.
   disableVideo() /
   enableScreenShare() /
   disableScreenShare()
-await meeting.self.setName('Name') // Before join only
+await meeting.self.setName("Name") // Before join only
 await meeting.self.setDevice(device)
 const devices =
   (await meeting.self.getAllDevices()) / getAudioDevices() / getVideoDevices() / getSpeakerDevices()
 // Events: 'roomJoined', 'audioUpdate', 'videoUpdate', 'screenShareUpdate', 'deviceUpdate', 'deviceListUpdate'
-meeting.self.on('roomJoined', () => {})
-meeting.self.on('audioUpdate', ({ audioEnabled, audioTrack }) => {})
+meeting.self.on("roomJoined", () => {})
+meeting.self.on("audioUpdate", ({ audioEnabled, audioTrack }) => {})
 ```
 
 ### `meeting.participants` - Remote Participants
@@ -32,7 +32,7 @@ meeting.self.on('audioUpdate', ({ audioEnabled, audioTrack }) => {})
 meeting.participants.joined / active / waitlisted / pinned // Maps
 const participants = meeting.participants.joined.toArray()
 const count = meeting.participants.joined.size()
-const p = meeting.participants.joined.get('peer-id')
+const p = meeting.participants.joined.get("peer-id")
 ```
 
 **Participant Properties**:
@@ -46,8 +46,8 @@ participant.audioTrack / videoTrack / screenShareTracks
 **Events**:
 
 ```typescript
-meeting.participants.joined.on('participantJoined', (participant) => {})
-meeting.participants.joined.on('participantLeft', (participant) => {})
+meeting.participants.joined.on("participantJoined", (participant) => {})
+meeting.participants.joined.on("participantLeft", (participant) => {})
 ```
 
 ### `meeting.meta` - Metadata
@@ -60,8 +60,8 @@ meeting.meta.meetingId / meetingTitle / meetingStartedTimestamp
 
 ```typescript
 meeting.chat.messages // Array
-;(await meeting.chat.sendTextMessage('Hello')) / sendImageMessage(file)
-meeting.chat.on('chatUpdate', ({ message, messages }) => {})
+;(await meeting.chat.sendTextMessage("Hello")) / sendImageMessage(file)
+meeting.chat.on("chatUpdate", ({ message, messages }) => {})
 ```
 
 ### `meeting.polls` - Polling
@@ -95,7 +95,7 @@ await meeting.leave()
 ## TypeScript Types
 
 ```typescript
-import type { RealtimeKitClient, States, UIConfig, Participant } from '@cloudflare/realtimekit'
+import type { RealtimeKitClient, States, UIConfig, Participant } from "@cloudflare/realtimekit"
 
 // Main interface
 interface RealtimeKitClient {
@@ -130,8 +130,8 @@ RealtimeKit uses reactive store (event-driven updates, live Maps):
 
 ```typescript
 // Subscribe to state changes
-meeting.self.on('audioUpdate', ({ audioEnabled, audioTrack }) => {})
-meeting.participants.joined.on('participantJoined', (p) => {})
+meeting.self.on("audioUpdate", ({ audioEnabled, audioTrack }) => {})
+meeting.participants.joined.on("participantJoined", (p) => {})
 
 // Access current state synchronously
 const isAudioOn = meeting.self.audioEnabled

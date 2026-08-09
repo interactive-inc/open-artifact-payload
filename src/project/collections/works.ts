@@ -1,29 +1,29 @@
-import type { CollectionConfig } from 'payload'
-import { MetaDescriptionField, MetaImageField, MetaTitleField } from '@payloadcms/plugin-seo/fields'
+import type { CollectionConfig } from "payload"
+import { MetaDescriptionField, MetaImageField, MetaTitleField } from "@payloadcms/plugin-seo/fields"
 
-import { isAdmin } from '@/core/lib/access/is-admin'
-import { isAuthenticated } from '@/core/lib/access/is-authenticated'
-import { buildCollectionRevalidateAfterChange } from '@/core/lib/revalidate/build-collection-revalidate-after-change'
-import { buildCollectionRevalidateAfterDelete } from '@/core/lib/revalidate/build-collection-revalidate-after-delete'
+import { isAdmin } from "@/core/lib/access/is-admin"
+import { isAuthenticated } from "@/core/lib/access/is-authenticated"
+import { buildCollectionRevalidateAfterChange } from "@/core/lib/revalidate/build-collection-revalidate-after-change"
+import { buildCollectionRevalidateAfterDelete } from "@/core/lib/revalidate/build-collection-revalidate-after-delete"
 
 type WorkDoc = { slug?: string }
 
 const resolvePaths = ({ doc }: { doc: WorkDoc }): string[] => {
-  const paths = ['/', '/works']
+  const paths = ["/", "/works"]
   if (doc.slug) paths.push(`/works/${doc.slug}`)
   return paths
 }
 
 export const works: CollectionConfig = {
-  slug: 'works',
+  slug: "works",
   labels: {
-    singular: '制作実績',
-    plural: '制作実績一覧',
+    singular: "制作実績",
+    plural: "制作実績一覧",
   },
   admin: {
-    useAsTitle: 'title',
-    defaultColumns: ['title', 'category', 'publishedAt', 'updatedAt'],
-    group: 'コンテンツ',
+    useAsTitle: "title",
+    defaultColumns: ["title", "category", "publishedAt", "updatedAt"],
+    group: "コンテンツ",
   },
   access: {
     read: () => true,
@@ -33,76 +33,76 @@ export const works: CollectionConfig = {
   },
   fields: [
     {
-      name: 'title',
-      label: 'タイトル',
-      type: 'text',
+      name: "title",
+      label: "タイトル",
+      type: "text",
       required: true,
       localized: true,
     },
     {
-      name: 'slug',
-      label: 'スラッグ',
-      type: 'text',
+      name: "slug",
+      label: "スラッグ",
+      type: "text",
       required: true,
       unique: true,
       admin: {
-        description: '半角英数字とハイフンのみ。URL に使います。',
+        description: "半角英数字とハイフンのみ。URL に使います。",
       },
     },
     {
-      name: 'category',
-      label: 'カテゴリ',
-      type: 'select',
+      name: "category",
+      label: "カテゴリ",
+      type: "select",
       required: true,
-      defaultValue: 'web',
+      defaultValue: "web",
       options: [
-        { label: 'Webデザイン', value: 'web' },
-        { label: 'プロダクト', value: 'product' },
-        { label: 'モバイル', value: 'mobile' },
-        { label: 'フロントエンド', value: 'frontend' },
-        { label: 'ブランディング', value: 'branding' },
+        { label: "Webデザイン", value: "web" },
+        { label: "プロダクト", value: "product" },
+        { label: "モバイル", value: "mobile" },
+        { label: "フロントエンド", value: "frontend" },
+        { label: "ブランディング", value: "branding" },
       ],
     },
     {
-      name: 'publishedAt',
-      label: '公開日',
-      type: 'date',
+      name: "publishedAt",
+      label: "公開日",
+      type: "date",
       required: true,
       admin: {
         date: {
-          pickerAppearance: 'dayOnly',
-          displayFormat: 'yyyy-MM-dd',
+          pickerAppearance: "dayOnly",
+          displayFormat: "yyyy-MM-dd",
         },
       },
     },
     {
-      name: 'thumbnail',
-      label: 'サムネイル画像',
-      type: 'upload',
-      relationTo: 'media',
+      name: "thumbnail",
+      label: "サムネイル画像",
+      type: "upload",
+      relationTo: "media",
     },
     {
-      name: 'summary',
-      label: '概要',
-      type: 'textarea',
+      name: "summary",
+      label: "概要",
+      type: "textarea",
       localized: true,
     },
     {
-      name: 'body',
-      label: '本文',
-      type: 'richText',
+      name: "body",
+      label: "本文",
+      type: "richText",
       localized: true,
     },
     {
       // seoPlugin は core 設定で対象コレクションが固定されているため、
       // works は plugin-seo のフィールドヘルパーで同じ構造 (meta.title/description/image) を持たせる。
-      name: 'meta',
-      label: 'SEO',
-      type: 'group',
+      name: "meta",
+      label: "SEO",
+      type: "group",
       fields: [
         MetaTitleField({ hasGenerateFn: false, overrides: { localized: true } }),
         MetaDescriptionField({ hasGenerateFn: false, overrides: { localized: true } }),
-        MetaImageField({ relationTo: 'media' }),
+        MetaImageField({ relationTo: "media" }),
       ],
     },
   ],

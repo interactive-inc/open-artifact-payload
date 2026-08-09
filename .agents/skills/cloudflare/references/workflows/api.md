@@ -4,22 +4,22 @@
 
 ```typescript
 // step.do()
-const result = await step.do('step name', async () => {
+const result = await step.do("step name", async () => {
   /* logic */
 })
-const result = await step.do('step name', { retries, timeout }, async () => {})
+const result = await step.do("step name", { retries, timeout }, async () => {})
 
 // step.sleep()
-await step.sleep('description', '1 hour')
-await step.sleep('description', 5000) // ms
+await step.sleep("description", "1 hour")
+await step.sleep("description", 5000) // ms
 
 // step.sleepUntil()
-await step.sleepUntil('description', Date.parse('2024-12-31'))
+await step.sleepUntil("description", Date.parse("2024-12-31"))
 
 // step.waitForEvent()
-const data = await step.waitForEvent<PayloadType>('wait', { type: 'webhook-type', timeout: '24h' })
+const data = await step.waitForEvent<PayloadType>("wait", { type: "webhook-type", timeout: "24h" })
 try {
-  const event = await step.waitForEvent('wait', { type: 'approval', timeout: '1h' })
+  const event = await step.waitForEvent("wait", { type: "approval", timeout: "1h" })
 } catch (e) {
   /* Timeout */
 }
@@ -45,11 +45,11 @@ type WorkflowStepContext = {
 ```typescript
 // Adjust behavior based on retry attempt
 await step.do(
-  'call api',
-  { retries: { limit: 3, delay: '5 seconds', backoff: 'exponential' } },
+  "call api",
+  { retries: { limit: 3, delay: "5 seconds", backoff: "exponential" } },
   async (ctx) => {
     if (ctx.attempt > 1) console.log(`Retry attempt ${ctx.attempt} for step "${ctx.step.name}"`)
-    const res = await fetch('https://api.example.com/data')
+    const res = await fetch("https://api.example.com/data")
     if (!res.ok) throw new Error(`API failed (attempt ${ctx.attempt})`)
     return res.json()
   },
@@ -62,24 +62,24 @@ await step.do(
 // Create single
 const instance = await env.MY_WORKFLOW.create({
   id: crypto.randomUUID(),
-  params: { userId: 'user123' },
+  params: { userId: "user123" },
 }) // id optional, auto-generated if omitted; throws if ID already exists within retention period
 
 // Create with custom retention (check docs for default per plan)
 const instance = await env.MY_WORKFLOW.create({
   id: crypto.randomUUID(),
-  params: { userId: 'user123' },
-  retention: '30 days', // Override default retention period
+  params: { userId: "user123" },
+  retention: "30 days", // Override default retention period
 })
 
 // Batch (max 100, idempotent: skips existing IDs)
 const instances = await env.MY_WORKFLOW.createBatch([
-  { id: 'user1', params: { name: 'John' } },
-  { id: 'user2', params: { name: 'Jane' } },
+  { id: "user1", params: { name: "John" } },
+  { id: "user2", params: { name: "Jane" } },
 ])
 
 // Get & Status
-const instance = await env.MY_WORKFLOW.get('instance-id')
+const instance = await env.MY_WORKFLOW.get("instance-id")
 const status = await instance.status() // {status: 'queued' | 'running' | 'paused' | 'errored' | 'terminated' | 'complete' | 'waiting' | 'waitingForPause' | 'unknown', error?, output?}
 
 // Control
@@ -89,7 +89,7 @@ await instance.terminate()
 await instance.restart()
 
 // Send Events
-await instance.sendEvent({ type: 'approval', payload: { approved: true } }) // Must match waitForEvent type
+await instance.sendEvent({ type: "approval", payload: { approved: true } }) // Must match waitForEvent type
 ```
 
 ## Triggering Workflows
@@ -100,7 +100,7 @@ export default {
   async fetch(req, env) {
     const instance = await env.MY_WORKFLOW.create({
       id: crypto.randomUUID(),
-      params: { userId: 'user123' },
+      params: { userId: "user123" },
     })
     return Response.json({ id: instance.id })
   },
@@ -129,7 +129,7 @@ export default {
 export class ParentWorkflow extends WorkflowEntrypoint<Env, Params> {
   async run(event, step) {
     const child = await step.do(
-      'start child',
+      "start child",
       async () =>
         await this.env.CHILD_WORKFLOW.create({ id: `child-${event.instanceId}`, params: {} }),
     )
@@ -140,32 +140,32 @@ export class ParentWorkflow extends WorkflowEntrypoint<Env, Params> {
 ## Error Handling
 
 ```typescript
-import { NonRetryableError } from 'cloudflare:workflows'
+import { NonRetryableError } from "cloudflare:workflows"
 
 // NonRetryableError
-await step.do('validate', async () => {
-  if (!event.payload.paymentMethod) throw new NonRetryableError('Payment method required')
-  const res = await fetch('https://api.example.com/charge', { method: 'POST' })
-  if (res.status === 401) throw new NonRetryableError('Invalid credentials') // Don't retry
-  if (!res.ok) throw new Error('Retryable failure') // Will retry
+await step.do("validate", async () => {
+  if (!event.payload.paymentMethod) throw new NonRetryableError("Payment method required")
+  const res = await fetch("https://api.example.com/charge", { method: "POST" })
+  if (res.status === 401) throw new NonRetryableError("Invalid credentials") // Don't retry
+  if (!res.ok) throw new Error("Retryable failure") // Will retry
   return res.json()
 })
 
 // Catching Errors
 try {
-  await step.do('risky op', async () => {
-    throw new NonRetryableError('Failed')
+  await step.do("risky op", async () => {
+    throw new NonRetryableError("Failed")
   })
 } catch (e) {
-  await step.do('cleanup', async () => {})
+  await step.do("cleanup", async () => {})
 }
 
 // Idempotency
-await step.do('charge', async () => {
+await step.do("charge", async () => {
   const sub = await fetch(`https://api/subscriptions/${id}`).then((r) => r.json())
   if (sub.charged) return sub // Already done
   return await fetch(`https://api/subscriptions/${id}`, {
-    method: 'POST',
+    method: "POST",
     body: JSON.stringify({ amount: 10.0 }),
   }).then((r) => r.json())
 })
@@ -192,13 +192,13 @@ type InvalidParams = {
 }
 
 // Step returns follow same rules
-const result = await step.do('fetch', async () => {
-  return { userId: '123', data: [1, 2, 3] } // ✅ Plain object
+const result = await step.do("fetch", async () => {
+  return { userId: "123", data: [1, 2, 3] } // ✅ Plain object
 })
 
 // ✅ ReadableStream<Uint8Array> for large binary output (bypasses non-stream step result size limit)
-const stream = await step.do('read from R2', async () => {
-  const obj = await this.env.BUCKET.get('large-file.csv')
+const stream = await step.do("read from R2", async () => {
+  const obj = await this.env.BUCKET.get("large-file.csv")
   return obj.body // Return the ReadableStream directly
 })
 ```
@@ -207,13 +207,13 @@ const stream = await step.do('read from R2', async () => {
 
 ```typescript
 // Relative
-await step.sleep('wait 1 hour', '1 hour')
-await step.sleep('wait 30 days', '30 days')
-await step.sleep('wait 5s', 5000) // ms
+await step.sleep("wait 1 hour", "1 hour")
+await step.sleep("wait 30 days", "30 days")
+await step.sleep("wait 5s", 5000) // ms
 
 // Absolute
-await step.sleepUntil('launch date', Date.parse('24 Oct 2024 13:00:00 UTC'))
-await step.sleepUntil('deadline', new Date('2024-12-31T23:59:59Z'))
+await step.sleepUntil("launch date", Date.parse("24 Oct 2024 13:00:00 UTC"))
+await step.sleepUntil("deadline", new Date("2024-12-31T23:59:59Z"))
 ```
 
 Units: second, minute, hour, day, week, month, year.
@@ -226,7 +226,7 @@ Sleeping instances don't count toward concurrency.
 ```typescript
 const instance = await env.MY_WORKFLOW.create({
   id: crypto.randomUUID(),
-  params: { userId: 'user123', email: 'user@example.com' },
+  params: { userId: "user123", email: "user@example.com" },
 })
 ```
 

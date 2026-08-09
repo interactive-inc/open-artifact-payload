@@ -139,13 +139,13 @@ Global を追加するたびに、ライブプレビューが動く状態を保�
 ```ts
 buildCoreConfig({
   // ...
-  livePreviewGlobals: ['home', 'about', 'service'],
+  livePreviewGlobals: ["home", "about", "service"],
   livePreviewUrl: (args) => {
-    const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
+    const base = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"
     const toPreview = (urlPath: string) =>
       `${base}/next/preview?path=${encodeURIComponent(urlPath)}`
     if (args.globalConfig) {
-      const map: Record<string, string> = { home: '/', about: '/about' }
+      const map: Record<string, string> = { home: "/", about: "/about" }
       return toPreview(map[args.globalConfig.slug] ?? `/${args.globalConfig.slug}`)
     }
     // ...

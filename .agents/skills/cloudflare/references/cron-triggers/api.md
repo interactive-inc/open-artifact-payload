@@ -5,7 +5,7 @@
 ```typescript
 export default {
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
-    console.log('Cron executed:', new Date(controller.scheduledTime))
+    console.log("Cron executed:", new Date(controller.scheduledTime))
   },
 }
 ```
@@ -34,7 +34,7 @@ export default {
     } catch (error) {
       // Don't retry - failure is expected/acceptable
       controller.noRetry()
-      console.error('Operation failed, not retrying:', error)
+      console.error("Operation failed, not retrying:", error)
     }
   },
 }
@@ -69,13 +69,13 @@ export default {
 export default {
   async scheduled(controller, env, ctx) {
     switch (controller.cron) {
-      case '*/3 * * * *':
+      case "*/3 * * * *":
         ctx.waitUntil(updateRecentData(env))
         break
-      case '0 * * * *':
+      case "0 * * * *":
         ctx.waitUntil(processHourlyAggregation(env))
         break
-      case '0 2 * * *':
+      case "0 2 * * *":
         ctx.waitUntil(performDailyMaintenance(env))
         break
       default:
@@ -107,13 +107,13 @@ export default {
 ## Workflow Integration
 
 ```typescript
-import { WorkflowEntrypoint } from 'cloudflare:workers'
+import { WorkflowEntrypoint } from "cloudflare:workers"
 
 export class DataProcessingWorkflow extends WorkflowEntrypoint {
   async run(event, step) {
-    const data = await step.do('fetch-data', () => fetchLargeDataset())
-    const processed = await step.do('process-data', () => processDataset(data))
-    await step.do('store-results', () => storeResults(processed))
+    const data = await step.do("fetch-data", () => fetchLargeDataset())
+    const processed = await step.do("process-data", () => processDataset(data))
+    await step.do("store-results", () => storeResults(processed))
   }
 }
 
@@ -153,31 +153,31 @@ curl "http://localhost:8787/__scheduled?cron=0+2+*+*+*&scheduledTime=17040672000
 
 ```typescript
 // test/scheduled.test.ts
-import { describe, it, expect } from 'vitest'
-import { env } from 'cloudflare:test'
-import worker from '../src/index'
+import { describe, it, expect } from "vitest"
+import { env } from "cloudflare:test"
+import worker from "../src/index"
 
-describe('Scheduled Handler', () => {
-  it('processes scheduled event', async () => {
+describe("Scheduled Handler", () => {
+  it("processes scheduled event", async () => {
     const controller = {
       scheduledTime: Date.now(),
-      cron: '*/5 * * * *',
-      type: 'scheduled' as const,
+      cron: "*/5 * * * *",
+      type: "scheduled" as const,
       noRetry: () => {},
     }
     const ctx = { waitUntil: (p: Promise<any>) => p, passThroughOnException: () => {} }
     await worker.scheduled(controller, env, ctx)
-    expect(await env.MY_KV.get('last_run')).toBeDefined()
+    expect(await env.MY_KV.get("last_run")).toBeDefined()
   })
 
-  it('handles multiple crons', async () => {
+  it("handles multiple crons", async () => {
     const ctx = { waitUntil: () => {}, passThroughOnException: () => {} }
     await worker.scheduled(
-      { scheduledTime: Date.now(), cron: '*/5 * * * *', type: 'scheduled', noRetry: () => {} },
+      { scheduledTime: Date.now(), cron: "*/5 * * * *", type: "scheduled", noRetry: () => {} },
       env,
       ctx,
     )
-    expect(await env.MY_KV.get('last_type')).toBe('frequent')
+    expect(await env.MY_KV.get("last_type")).toBe("frequent")
   })
 })
 ```
@@ -199,7 +199,7 @@ export default {
       await criticalOperation(env)
     } catch (error) {
       // Log error details
-      console.error('Cron failed:', {
+      console.error("Cron failed:", {
         cron: controller.cron,
         scheduledTime: controller.scheduledTime,
         error: error.message,
@@ -207,7 +207,7 @@ export default {
       })
 
       // Decide: retry or skip
-      if (error.message.includes('rate limit')) {
+      if (error.message.includes("rate limit")) {
         controller.noRetry() // Skip retry for rate limits
       }
       // Otherwise allow automatic retry

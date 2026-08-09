@@ -1,4 +1,4 @@
-import type { UsageLimits } from '@/core/lib/ai-translation/translation-types'
+import type { UsageLimits } from "@/core/lib/ai-translation/translation-types"
 
 /**
  * 実装側（サービス提供側）が環境変数で設定する利用上限の天井を読み取る。
@@ -10,7 +10,7 @@ export function resolveUsageLimitCeilings(
   env: Record<string, string | undefined>,
 ): Partial<UsageLimits> {
   const toCeiling = (value: string | undefined): number | null => {
-    if (value === undefined || value.trim() === '') return null
+    if (value === undefined || value.trim() === "") return null
     const parsed = Number(value)
     if (!Number.isFinite(parsed) || parsed < 0) return null
     return parsed

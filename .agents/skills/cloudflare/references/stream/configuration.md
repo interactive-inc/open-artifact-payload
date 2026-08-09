@@ -99,22 +99,22 @@ const uploadConfig = {
   maxDurationSeconds: 3600,
   expiry: new Date(Date.now() + 3600000).toISOString(),
   requireSignedURLs: true,
-  allowedOrigins: ['https://yourdomain.com'],
-  meta: { creator: 'user-123' },
+  allowedOrigins: ["https://yourdomain.com"],
+  meta: { creator: "user-123" },
 }
 
 // Live input
 const liveConfig = {
-  recording: { mode: 'automatic', timeoutSeconds: 30 },
+  recording: { mode: "automatic", timeoutSeconds: 30 },
   deleteRecordingAfterDays: 30,
 }
 
 // Watermark
 const watermark = {
-  name: 'Logo',
+  name: "Logo",
   opacity: 0.7,
   padding: 20,
-  position: 'lowerRight',
+  position: "lowerRight",
   scale: 0.15,
 }
 ```
@@ -124,16 +124,16 @@ const watermark = {
 ```typescript
 // Access rules: allow US/CA, block CN/RU, or IP allowlist
 const geoRestrict = [
-  { type: 'ip.geoip.country', action: 'allow', country: ['US', 'CA'] },
-  { type: 'any', action: 'block' },
+  { type: "ip.geoip.country", action: "allow", country: ["US", "CA"] },
+  { type: "any", action: "block" },
 ]
 
 // Player params for iframe
 const playerParams = new URLSearchParams({
-  autoplay: 'true',
-  muted: 'true',
-  preload: 'auto',
-  defaultTextTrack: 'en',
+  autoplay: "true",
+  muted: "true",
+  preload: "auto",
+  defaultTextTrack: "en",
 })
 ```
 

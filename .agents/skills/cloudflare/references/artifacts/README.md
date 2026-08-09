@@ -45,7 +45,7 @@ interface Env {
   ARTIFACTS: Artifacts
 }
 
-const created = await env.ARTIFACTS.create('starter-repo')
+const created = await env.ARTIFACTS.create("starter-repo")
 // created.remote -> git remote URL
 // created.token -> initial repo token
 ```

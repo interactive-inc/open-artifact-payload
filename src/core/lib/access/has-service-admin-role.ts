@@ -4,10 +4,10 @@
  * 触れる領域の判定に使う。
  */
 export function hasServiceAdminRole(user: unknown): boolean {
-  if (!user || typeof user !== 'object') return false
-  if (!('roles' in user)) return false
+  if (!user || typeof user !== "object") return false
+  if (!("roles" in user)) return false
 
   const roles = user.roles
 
-  return Array.isArray(roles) && roles.includes('serviceAdmin')
+  return Array.isArray(roles) && roles.includes("serviceAdmin")
 }

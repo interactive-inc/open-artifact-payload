@@ -1,8 +1,8 @@
-import { cache } from 'react'
-import { getPayload } from 'payload'
+import { cache } from "react"
+import { getPayload } from "payload"
 
-import config from '@/payload.config'
-import type { Locale } from '@/project/shared/lib/locale-types'
+import config from "@/payload.config"
+import type { Locale } from "@/project/shared/lib/locale-types"
 
 /**
  * サイト設定グローバルを取得する。React.cache でメモ化しており、
@@ -11,5 +11,5 @@ import type { Locale } from '@/project/shared/lib/locale-types'
 export const loadSiteSettings = cache(async (locale: Locale) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  return payload.findGlobal({ slug: 'site-settings', depth: 1, locale })
+  return payload.findGlobal({ slug: "site-settings", depth: 1, locale })
 })

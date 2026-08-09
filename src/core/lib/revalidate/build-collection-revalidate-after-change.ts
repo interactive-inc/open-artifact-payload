@@ -1,7 +1,7 @@
-import type { CollectionAfterChangeHook } from 'payload'
+import type { CollectionAfterChangeHook } from "payload"
 
-import type { CollectionPathResolver } from '@/core/lib/revalidate/types'
-import { safeRevalidate } from '@/core/lib/revalidate/safe-revalidate'
+import type { CollectionPathResolver } from "@/core/lib/revalidate/types"
+import { safeRevalidate } from "@/core/lib/revalidate/safe-revalidate"
 
 /**
  * コレクション保存後に resolver が返したパスをまとめて revalidate する汎用 hook。

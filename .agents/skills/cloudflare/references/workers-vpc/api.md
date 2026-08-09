@@ -32,7 +32,7 @@ DNS names are resolved at connection time. IPv4, IPv6, and private IPs (10.x, 17
 
 ```typescript
 interface SocketOptions {
-  secureTransport?: 'off' | 'on' | 'starttls'
+  secureTransport?: "off" | "on" | "starttls"
   allowHalfOpen?: boolean
 }
 ```
@@ -91,7 +91,7 @@ Stream for writing data to the socket. Use `getWriter()` to send data.
 
 ```typescript
 const writer = socket.writable.getWriter()
-await writer.write(new TextEncoder().encode('HELLO\r\n'))
+await writer.write(new TextEncoder().encode("HELLO\r\n"))
 await writer.close()
 ```
 
@@ -123,7 +123,7 @@ Promise that resolves when socket is fully closed (both directions).
 Closes the socket gracefully, waiting for pending writes to complete.
 
 ```typescript
-const socket = connect({ hostname: 'api.internal', port: 443 })
+const socket = connect({ hostname: "api.internal", port: 443 })
 try {
   // Use socket
 } finally {
@@ -136,11 +136,11 @@ try {
 Upgrades connection to TLS. Only available when `secureTransport: "starttls"` was specified.
 
 ```typescript
-const socket = connect({ hostname: 'db.internal', port: 5432 }, { secureTransport: 'starttls' })
+const socket = connect({ hostname: "db.internal", port: 5432 }, { secureTransport: "starttls" })
 
 // Send protocol-specific StartTLS command
 const writer = socket.writable.getWriter()
-await writer.write(new TextEncoder().encode('STARTTLS\r\n'))
+await writer.write(new TextEncoder().encode("STARTTLS\r\n"))
 
 // Upgrade to TLS - use returned socket, not original
 const secureSocket = socket.startTls()
@@ -150,17 +150,17 @@ const secureWriter = secureSocket.writable.getWriter()
 ## Complete Example
 
 ```typescript
-import { connect } from 'cloudflare:sockets'
+import { connect } from "cloudflare:sockets"
 
 export default {
   async fetch(req: Request): Promise<Response> {
-    const socket = connect({ hostname: 'echo.example.com', port: 7 }, { secureTransport: 'on' })
+    const socket = connect({ hostname: "echo.example.com", port: 7 }, { secureTransport: "on" })
 
     try {
       await socket.opened
 
       const writer = socket.writable.getWriter()
-      await writer.write(new TextEncoder().encode('Hello, TCP!\n'))
+      await writer.write(new TextEncoder().encode("Hello, TCP!\n"))
       await writer.close()
 
       const reader = socket.readable.getReader()

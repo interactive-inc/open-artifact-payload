@@ -20,16 +20,16 @@ export class MyDurableObject extends DurableObject {
     const ver = this.sql
       .exec<{
         version: number
-      }>('SELECT COALESCE(MAX(id), 0) as version FROM _sql_schema_migrations')
+      }>("SELECT COALESCE(MAX(id), 0) as version FROM _sql_schema_migrations")
       .one().version
 
     if (ver < 1) {
       this.sql.exec(`CREATE TABLE users(id INTEGER PRIMARY KEY, name TEXT)`)
-      this.sql.exec('INSERT INTO _sql_schema_migrations (id) VALUES (1)')
+      this.sql.exec("INSERT INTO _sql_schema_migrations (id) VALUES (1)")
     }
     if (ver < 2) {
       this.sql.exec(`ALTER TABLE users ADD COLUMN email TEXT`)
-      this.sql.exec('INSERT INTO _sql_schema_migrations (id) VALUES (2)')
+      this.sql.exec("INSERT INTO _sql_schema_migrations (id) VALUES (2)")
     }
   }
 }
@@ -66,12 +66,12 @@ export class UserCache extends DurableObject {
 export class RateLimiter extends DurableObject {
   async checkLimit(key: string, limit: number, window: number): Promise<boolean> {
     const now = Date.now()
-    this.sql.exec('DELETE FROM requests WHERE key = ? AND timestamp < ?', key, now - window)
+    this.sql.exec("DELETE FROM requests WHERE key = ? AND timestamp < ?", key, now - window)
     const count = this.sql
-      .exec('SELECT COUNT(*) as count FROM requests WHERE key = ?', key)
+      .exec("SELECT COUNT(*) as count FROM requests WHERE key = ?", key)
       .one().count
     if (count >= limit) return false
-    this.sql.exec('INSERT INTO requests (key, timestamp) VALUES (?, ?)', key, now)
+    this.sql.exec("INSERT INTO requests (key, timestamp) VALUES (?, ?)", key, now)
     return true
   }
 }
@@ -90,7 +90,7 @@ export class BatchProcessor extends DurableObject {
     const items = [...this.pending]
     this.pending = []
     this.sql.exec(
-      `INSERT INTO processed_items (item, timestamp) VALUES ${items.map(() => '(?, ?)').join(', ')}`,
+      `INSERT INTO processed_items (item, timestamp) VALUES ${items.map(() => "(?, ?)").join(", ")}`,
       ...items.flatMap((item) => [item, Date.now()]),
     )
   }
@@ -105,12 +105,12 @@ export class Counter extends DurableObject {
   constructor(ctx: DurableObjectState, env: Env) {
     super(ctx, env)
     ctx.blockConcurrencyWhile(async () => {
-      this.value = (await ctx.storage.get('value')) || 0
+      this.value = (await ctx.storage.get("value")) || 0
     })
   }
   async increment() {
     this.value++
-    this.ctx.storage.put('value', this.value) // Don't await (output gate protects)
+    this.ctx.storage.put("value", this.value) // Don't await (output gate protects)
     return this.value
   }
 }
@@ -149,7 +149,7 @@ export class Workspace extends DurableObject {
 
     // Track child in parent storage
     this.sql.exec(
-      'INSERT INTO documents (id, name, created) VALUES (?, ?, ?)',
+      "INSERT INTO documents (id, name, created) VALUES (?, ?, ?)",
       docId,
       name,
       Date.now(),
@@ -159,7 +159,7 @@ export class Workspace extends DurableObject {
 
   async listDocuments(): Promise<string[]> {
     return this.sql
-      .exec('SELECT id FROM documents')
+      .exec("SELECT id FROM documents")
       .toArray()
       .map((r) => r.id)
   }
@@ -168,8 +168,8 @@ export class Workspace extends DurableObject {
 // Child DO
 export class Document extends DurableObject {
   async initialize(name: string) {
-    this.sql.exec('CREATE TABLE IF NOT EXISTS content(key TEXT PRIMARY KEY, value TEXT)')
-    this.sql.exec('INSERT INTO content VALUES (?, ?)', 'name', name)
+    this.sql.exec("CREATE TABLE IF NOT EXISTS content(key TEXT PRIMARY KEY, value TEXT)")
+    this.sql.exec("INSERT INTO content VALUES (?, ?)", "name", name)
   }
 }
 ```

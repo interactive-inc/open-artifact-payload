@@ -13,14 +13,14 @@ export default {
 **2. Fetch specific asset by path:**
 
 ```typescript
-const response = await env.ASSETS.fetch('https://assets.local/logo.png')
+const response = await env.ASSETS.fetch("https://assets.local/logo.png")
 ```
 
 **3. Modify request before fetching asset:**
 
 ```typescript
 const url = new URL(request.url)
-url.pathname = '/index.html'
+url.pathname = "/index.html"
 return env.ASSETS.fetch(new Request(url, request))
 ```
 
@@ -29,8 +29,8 @@ return env.ASSETS.fetch(new Request(url, request))
 ```typescript
 const response = await env.ASSETS.fetch(request)
 const modifiedResponse = new Response(response.body, response)
-modifiedResponse.headers.set('X-Custom-Header', 'value')
-modifiedResponse.headers.set('Cache-Control', 'public, max-age=3600')
+modifiedResponse.headers.set("X-Custom-Header", "value")
+modifiedResponse.headers.set("Cache-Control", "public, max-age=3600")
 return modifiedResponse
 ```
 
@@ -40,8 +40,8 @@ return modifiedResponse
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
-    if (url.pathname === '/') {
-      return env.ASSETS.fetch('/index.html')
+    if (url.pathname === "/") {
+      return env.ASSETS.fetch("/index.html")
     }
     return env.ASSETS.fetch(request)
   },
@@ -56,7 +56,7 @@ Most common full-stack pattern - static SPA with backend API:
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
-    if (url.pathname.startsWith('/api/')) {
+    if (url.pathname.startsWith("/api/")) {
       return handleAPI(request, env)
     }
     return env.ASSETS.fetch(request)
@@ -64,8 +64,8 @@ export default {
 }
 
 async function handleAPI(request: Request, env: Env): Promise<Response> {
-  return new Response(JSON.stringify({ status: 'ok' }), {
-    headers: { 'Content-Type': 'application/json' },
+  return new Response(JSON.stringify({ status: "ok" }), {
+    headers: { "Content-Type": "application/json" },
   })
 }
 ```
@@ -78,10 +78,10 @@ async function handleAPI(request: Request, env: Env): Promise<Response> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
-    if (url.pathname.startsWith('/admin/')) {
+    if (url.pathname.startsWith("/admin/")) {
       const session = await validateSession(request, env)
       if (!session) {
-        return Response.redirect('/login', 302)
+        return Response.redirect("/login", 302)
       }
     }
     return env.ASSETS.fetch(request)
@@ -98,9 +98,9 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const response = await env.ASSETS.fetch(request)
     const secureResponse = new Response(response.body, response)
-    secureResponse.headers.set('X-Frame-Options', 'DENY')
-    secureResponse.headers.set('X-Content-Type-Options', 'nosniff')
-    secureResponse.headers.set('Content-Security-Policy', "default-src 'self'")
+    secureResponse.headers.set("X-Frame-Options", "DENY")
+    secureResponse.headers.set("X-Content-Type-Options", "nosniff")
+    secureResponse.headers.set("Content-Security-Policy", "default-src 'self'")
     return secureResponse
   },
 }
@@ -111,10 +111,10 @@ export default {
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const cookies = request.headers.get('Cookie') || ''
-    const variant = cookies.includes('variant=b') ? 'b' : 'a'
+    const cookies = request.headers.get("Cookie") || ""
+    const variant = cookies.includes("variant=b") ? "b" : "a"
     const url = new URL(request.url)
-    if (url.pathname === '/') {
+    if (url.pathname === "/") {
       return env.ASSETS.fetch(`/index-${variant}.html`)
     }
     return env.ASSETS.fetch(request)
@@ -127,9 +127,9 @@ export default {
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const locale = request.headers.get('Accept-Language')?.split(',')[0] || 'en'
+    const locale = request.headers.get("Accept-Language")?.split(",")[0] || "en"
     const url = new URL(request.url)
-    if (url.pathname === '/') {
+    if (url.pathname === "/") {
       return env.ASSETS.fetch(`/${locale}/index.html`)
     }
     if (!url.pathname.startsWith(`/${locale}/`)) {
@@ -146,15 +146,15 @@ export default {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
-    if (url.pathname === '/auth/callback') {
-      const code = url.searchParams.get('code')
+    if (url.pathname === "/auth/callback") {
+      const code = url.searchParams.get("code")
       if (code) {
         const session = await exchangeCode(code, env)
         return new Response(null, {
           status: 302,
           headers: {
-            Location: '/',
-            'Set-Cookie': `session=${session}; HttpOnly; Secure; SameSite=Lax`,
+            Location: "/",
+            "Set-Cookie": `session=${session}; HttpOnly; Secure; SameSite=Lax`,
           },
         })
       }
@@ -179,7 +179,7 @@ export default {
         ...response,
         headers: {
           ...Object.fromEntries(response.headers),
-          'Cache-Control': 'public, max-age=31536000, immutable',
+          "Cache-Control": "public, max-age=31536000, immutable",
         },
       })
     }

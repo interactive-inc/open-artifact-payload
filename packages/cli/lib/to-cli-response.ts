@@ -1,5 +1,5 @@
-import { PayloadApiError, type JsonValue } from '@open-artifact/site-management'
-import type { Context } from 'hono'
+import { PayloadApiError, type JsonValue } from "@open-artifact/site-management"
+import type { Context } from "hono"
 
 export function toCliResponse(context: Context, result: JsonValue | Error): Response {
   if (result instanceof PayloadApiError) {

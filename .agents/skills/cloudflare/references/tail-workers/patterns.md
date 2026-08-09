@@ -35,7 +35,7 @@ export default {
 
     ctx.waitUntil(
       fetch(env.LOG_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(payload),
       }),
     )
@@ -48,13 +48,13 @@ export default {
 ```typescript
 export default {
   async tail(events, env, ctx) {
-    const errors = events.filter((e) => e.outcome === 'exception' || e.exceptions.length > 0)
+    const errors = events.filter((e) => e.outcome === "exception" || e.exceptions.length > 0)
 
     if (errors.length === 0) return
 
     ctx.waitUntil(
       fetch(env.ERROR_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(errors),
       }),
     )
@@ -95,7 +95,7 @@ export default {
           env.ANALYTICS.writeDataPoint({
             blobs: [event.scriptName, event.outcome],
             doubles: [1, event.event?.response?.status ?? 0],
-            indexes: [event.event?.request?.cf?.colo ?? 'unknown'],
+            indexes: [event.event?.request?.cf?.colo ?? "unknown"],
           }),
         ),
       ),
@@ -112,17 +112,17 @@ Filter by route, outcome, or other criteria:
 export default {
   async tail(events, env, ctx) {
     // Route filtering
-    const apiEvents = events.filter((e) => e.event?.request?.url?.includes('/api/'))
+    const apiEvents = events.filter((e) => e.event?.request?.url?.includes("/api/"))
 
     // Multi-destination routing
-    const errors = events.filter((e) => e.outcome === 'exception')
-    const success = events.filter((e) => e.outcome === 'ok')
+    const errors = events.filter((e) => e.outcome === "exception")
+    const success = events.filter((e) => e.outcome === "ok")
 
     const tasks = []
     if (errors.length > 0) {
       tasks.push(
         fetch(env.ERROR_ENDPOINT, {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify(errors),
         }),
       )
@@ -130,7 +130,7 @@ export default {
     if (success.length > 0) {
       tasks.push(
         fetch(env.SUCCESS_ENDPOINT, {
-          method: 'POST',
+          method: "POST",
           body: JSON.stringify(success),
         }),
       )
@@ -151,7 +151,7 @@ export default {
     if (Math.random() > 0.1) return // 10% sample rate
     ctx.waitUntil(
       fetch(env.LOG_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(events),
       }),
     )
@@ -168,10 +168,10 @@ Accumulate events before sending:
 ```typescript
 export default {
   async tail(events, env, ctx) {
-    const batch = env.BATCH_DO.get(env.BATCH_DO.idFromName('batch'))
+    const batch = env.BATCH_DO.get(env.BATCH_DO.idFromName("batch"))
     ctx.waitUntil(
-      batch.fetch('https://batch/add', {
-        method: 'POST',
+      batch.fetch("https://batch/add", {
+        method: "POST",
         body: JSON.stringify(events),
       }),
     )

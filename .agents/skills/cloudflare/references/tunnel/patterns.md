@@ -150,33 +150,33 @@ output "tunnel_token" {
 ### Pulumi
 
 ```typescript
-import * as cloudflare from '@pulumi/cloudflare'
-import * as random from '@pulumi/random'
+import * as cloudflare from "@pulumi/cloudflare"
+import * as random from "@pulumi/random"
 
-const secret = new random.RandomId('secret', { byteLength: 32 })
+const secret = new random.RandomId("secret", { byteLength: 32 })
 
-const tunnel = new cloudflare.ZeroTrustTunnelCloudflared('tunnel', {
+const tunnel = new cloudflare.ZeroTrustTunnelCloudflared("tunnel", {
   accountId: accountId,
-  name: 'app-tunnel',
+  name: "app-tunnel",
   secret: secret.b64Std,
 })
 
-const config = new cloudflare.ZeroTrustTunnelCloudflaredConfig('config', {
+const config = new cloudflare.ZeroTrustTunnelCloudflaredConfig("config", {
   accountId: accountId,
   tunnelId: tunnel.id,
   config: {
     ingressRules: [
-      { hostname: 'app.example.com', service: 'http://localhost:8000' },
-      { service: 'http_status:404' },
+      { hostname: "app.example.com", service: "http://localhost:8000" },
+      { service: "http_status:404" },
     ],
   },
 })
 
-new cloudflare.Record('dns', {
+new cloudflare.Record("dns", {
   zoneId: zoneId,
-  name: 'app',
+  name: "app",
   value: tunnel.cname,
-  type: 'CNAME',
+  type: "CNAME",
   proxied: true,
 })
 ```

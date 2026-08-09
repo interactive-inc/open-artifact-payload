@@ -1,4 +1,4 @@
-import type { GlobalSlug, Payload } from 'payload'
+import type { GlobalSlug, Payload } from "payload"
 
 /**
  * リクエストで渡された文字列が実在するグローバル slug かどうかの型ガード。

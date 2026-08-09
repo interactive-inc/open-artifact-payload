@@ -1,4 +1,4 @@
-import type { CollectionSlug, Payload } from 'payload'
+import type { CollectionSlug, Payload } from "payload"
 
 /**
  * リクエストで渡された文字列が実在するコレクション slug かどうかの型ガード。

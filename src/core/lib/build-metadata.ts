@@ -1,7 +1,7 @@
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import type { MediaOrId } from '@/core/lib/media/types'
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
+import type { MediaOrId } from "@/core/lib/media/types"
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
 
 type SeoMeta = {
   title?: string | null

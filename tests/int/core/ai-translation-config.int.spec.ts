@@ -1,22 +1,22 @@
-import { getPayload, type Payload } from 'payload'
-import { beforeAll, describe, expect, it } from 'vite-plus/test'
+import { getPayload, type Payload } from "payload"
+import { beforeAll, describe, expect, it } from "vite-plus/test"
 
-import config from '@/payload.config'
+import config from "@/payload.config"
 
 let payload: Payload
 
-describe('ai-translation の設定とログ', () => {
+describe("ai-translation の設定とログ", () => {
   beforeAll(async () => {
     const payloadConfig = await config
     payload = await getPayload({ config: payloadConfig })
   })
 
-  it('ai-translation-settings を保存して読み戻せる', async () => {
+  it("ai-translation-settings を保存して読み戻せる", async () => {
     await payload.updateGlobal({
-      slug: 'ai-translation-settings',
+      slug: "ai-translation-settings",
       data: {
         enabled: false,
-        model: 'anthropic/claude-haiku-4-5',
+        model: "anthropic/claude-haiku-4-5",
         limits: {
           monthlyRunLimit: 100,
           monthlyCharacterLimit: 300000,
@@ -27,30 +27,30 @@ describe('ai-translation の設定とログ', () => {
       },
     })
 
-    const settings = await payload.findGlobal({ slug: 'ai-translation-settings' })
+    const settings = await payload.findGlobal({ slug: "ai-translation-settings" })
 
     expect(settings.enabled).toBe(false)
-    expect(settings.model).toBe('anthropic/claude-haiku-4-5')
+    expect(settings.model).toBe("anthropic/claude-haiku-4-5")
     expect(settings.limits?.monthlyRunLimit).toBe(100)
   })
 
-  it('editor は ai-translation-logs を作成できない', async () => {
+  it("editor は ai-translation-logs を作成できない", async () => {
     const email = `ai-log-editor-${Date.now()}@example.com`
     const editor = await payload.create({
-      collection: 'users',
-      data: { email, password: 'test-password-1234', roles: ['editor'] },
+      collection: "users",
+      data: { email, password: "test-password-1234", roles: ["editor"] },
     })
 
     await expect(
       payload.create({
-        collection: 'ai-translation-logs',
+        collection: "ai-translation-logs",
         data: {
-          targetKind: 'collection',
-          targetSlug: 'news',
-          sourceLocale: 'ja',
-          targetLocale: 'en',
-          model: 'anthropic/claude-haiku-4-5',
-          status: 'succeeded',
+          targetKind: "collection",
+          targetSlug: "news",
+          sourceLocale: "ja",
+          targetLocale: "en",
+          model: "anthropic/claude-haiku-4-5",
+          status: "succeeded",
         },
         overrideAccess: false,
         user: editor,
@@ -58,22 +58,22 @@ describe('ai-translation の設定とログ', () => {
     ).rejects.toThrow()
   })
 
-  it('サーバー内部（overrideAccess）ではログを作成できる', async () => {
+  it("サーバー内部（overrideAccess）ではログを作成できる", async () => {
     const created = await payload.create({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       data: {
-        targetKind: 'collection',
-        targetSlug: 'news',
-        targetTitle: 'テスト記事',
-        sourceLocale: 'ja',
-        targetLocale: 'en',
-        model: 'anthropic/claude-haiku-4-5',
-        status: 'rejected',
-        errorMessage: 'テスト用ログ',
+        targetKind: "collection",
+        targetSlug: "news",
+        targetTitle: "テスト記事",
+        sourceLocale: "ja",
+        targetLocale: "en",
+        model: "anthropic/claude-haiku-4-5",
+        status: "rejected",
+        errorMessage: "テスト用ログ",
       },
     })
 
     expect(created.id).toBeDefined()
-    expect(created.status).toBe('rejected')
+    expect(created.status).toBe("rejected")
   })
 })

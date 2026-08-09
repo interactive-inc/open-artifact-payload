@@ -12,7 +12,7 @@ export default {
     // Process events from producer Worker
     ctx.waitUntil(
       fetch(env.LOG_ENDPOINT, {
-        method: 'POST',
+        method: "POST",
         body: JSON.stringify(events),
       }),
     )

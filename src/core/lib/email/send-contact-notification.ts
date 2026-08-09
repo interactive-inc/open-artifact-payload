@@ -1,4 +1,4 @@
-import { Resend } from 'resend'
+import { Resend } from "resend"
 
 type ContactPayload = {
   name: string
@@ -10,9 +10,9 @@ type ContactPayload = {
 }
 
 type NotificationResult =
-  | { status: 'sent' }
-  | { status: 'skipped'; reason: string }
-  | { status: 'failed'; error: string }
+  | { status: "sent" }
+  | { status: "skipped"; reason: string }
+  | { status: "failed"; error: string }
 
 /**
  * 問い合わせ受付の管理者通知メールを Resend 経由で送信する。
@@ -26,9 +26,9 @@ export async function sendContactNotification(
   const apiKey = process.env.RESEND_API_KEY
   const to = process.env.CONTACT_NOTIFICATION_EMAIL
   const from = process.env.CONTACT_NOTIFICATION_FROM
-  if (!apiKey) return { status: 'skipped', reason: 'RESEND_API_KEY 未設定' }
-  if (!to) return { status: 'skipped', reason: 'CONTACT_NOTIFICATION_EMAIL 未設定' }
-  if (!from) return { status: 'skipped', reason: 'CONTACT_NOTIFICATION_FROM 未設定' }
+  if (!apiKey) return { status: "skipped", reason: "RESEND_API_KEY 未設定" }
+  if (!to) return { status: "skipped", reason: "CONTACT_NOTIFICATION_EMAIL 未設定" }
+  if (!from) return { status: "skipped", reason: "CONTACT_NOTIFICATION_FROM 未設定" }
 
   const resend = new Resend(apiKey)
   const lines: string[] = [
@@ -37,8 +37,8 @@ export async function sendContactNotification(
     `メール: ${payload.email}`,
     payload.phone ? `電話: ${payload.phone}` : null,
     payload.inquiryType ? `種別: ${payload.inquiryType}` : null,
-    '',
-    '----- 本文 -----',
+    "",
+    "----- 本文 -----",
     payload.message,
   ].filter((line): line is string => line !== null)
 
@@ -48,11 +48,11 @@ export async function sendContactNotification(
       to,
       replyTo: payload.email,
       subject: `【お問い合わせ】${payload.name} 様より`,
-      text: lines.join('\n'),
+      text: lines.join("\n"),
     })
-    return { status: 'sent' }
+    return { status: "sent" }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    return { status: 'failed', error: message }
+    return { status: "failed", error: message }
   }
 }

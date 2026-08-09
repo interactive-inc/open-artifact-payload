@@ -19,10 +19,10 @@ while (listed.truncated) {
 
 ```typescript
 // ❌ WRONG: Using etag (unquoted) in headers
-headers.set('etag', object.etag) // Missing quotes
+headers.set("etag", object.etag) // Missing quotes
 
 // ✅ CORRECT: Use httpEtag (quoted)
-headers.set('etag', object.httpEtag)
+headers.set("etag", object.httpEtag)
 ```
 
 ## Checksum Limits
@@ -53,7 +53,7 @@ const object = await env.MY_BUCKET.get(key, {
 })
 
 // Check for body, not just null
-if (!object) return new Response('Not found', { status: 404 })
+if (!object) return new Response("Not found", { status: 404 })
 if (!object.body) return new Response(null, { status: 304 }) // Precondition failed
 ```
 
@@ -65,8 +65,8 @@ const key = url.pathname.slice(1) // Could be ../../../etc/passwd
 await env.MY_BUCKET.get(key)
 
 // ✅ SAFE: Validate keys
-if (!key || key.includes('..') || key.startsWith('/')) {
-  return new Response('Invalid key', { status: 400 })
+if (!key || key.includes("..") || key.startsWith("/")) {
+  return new Response("Invalid key", { status: 400 })
 }
 ```
 
@@ -90,7 +90,7 @@ await env.MY_BUCKET.put(key, data)
 // OR: Pass Content-Length if known
 const object = await env.MY_BUCKET.put(key, request.body, {
   httpMetadata: {
-    contentLength: parseInt(request.headers.get('content-length') || '0'),
+    contentLength: parseInt(request.headers.get("content-length") || "0"),
   },
 })
 ```

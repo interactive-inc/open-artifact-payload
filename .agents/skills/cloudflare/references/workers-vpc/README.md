@@ -45,21 +45,21 @@ Need private network connectivity from Workers?
 ## Quick Start
 
 ```typescript
-import { connect } from 'cloudflare:sockets'
+import { connect } from "cloudflare:sockets"
 
 export default {
   async fetch(req: Request): Promise<Response> {
     // Connect to private service
     const socket = connect(
-      { hostname: 'db.internal.company.net', port: 5432 },
-      { secureTransport: 'on' },
+      { hostname: "db.internal.company.net", port: 5432 },
+      { secureTransport: "on" },
     )
 
     try {
       await socket.opened // Wait for connection
 
       const writer = socket.writable.getWriter()
-      await writer.write(new TextEncoder().encode('QUERY\r\n'))
+      await writer.write(new TextEncoder().encode("QUERY\r\n"))
       await writer.close()
 
       const reader = socket.readable.getReader()

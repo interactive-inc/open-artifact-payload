@@ -9,12 +9,12 @@ await env.MY_BUCKET.put(key, value)
 // With metadata
 await env.MY_BUCKET.put(key, value, {
   httpMetadata: {
-    contentType: 'image/jpeg',
+    contentType: "image/jpeg",
     contentDisposition: 'attachment; filename="photo.jpg"',
-    cacheControl: 'max-age=3600',
+    cacheControl: "max-age=3600",
   },
-  customMetadata: { userId: '123', version: '2' },
-  storageClass: 'Standard', // or 'InfrequentAccess'
+  customMetadata: { userId: "123", version: "2" },
+  storageClass: "Standard", // or 'InfrequentAccess'
   sha256: arrayBufferOrHex, // Integrity check
   ssecKey: arrayBuffer32bytes, // SSE-C encryption
 })
@@ -26,7 +26,7 @@ await env.MY_BUCKET.put(key, value, {
 
 ```typescript
 const object = await env.MY_BUCKET.get(key)
-if (!object) return new Response('Not found', { status: 404 })
+if (!object) return new Response("Not found", { status: 404 })
 
 // Body: arrayBuffer(), text(), json(), blob(), body (ReadableStream)
 
@@ -55,10 +55,10 @@ await env.MY_BUCKET.delete([key1, key2, key3]) // Batch (max 1000)
 ```typescript
 const listed = await env.MY_BUCKET.list({
   limit: 1000,
-  prefix: 'photos/',
+  prefix: "photos/",
   cursor: cursorFromPrevious,
-  delimiter: '/',
-  include: ['httpMetadata', 'customMetadata'],
+  delimiter: "/",
+  include: ["httpMetadata", "customMetadata"],
 })
 
 // Pagination (always use truncated flag)
@@ -74,7 +74,7 @@ while (listed.truncated) {
 
 ```typescript
 const multipart = await env.MY_BUCKET.createMultipartUpload(key, {
-  httpMetadata: { contentType: 'video/mp4' },
+  httpMetadata: { contentType: "video/mp4" },
 })
 
 const uploadedParts: R2UploadedPart[] = []
@@ -93,16 +93,16 @@ const multipart = env.MY_BUCKET.resumeMultipartUpload(key, uploadId)
 ## Presigned URLs (S3 SDK)
 
 ```typescript
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner"
 
 const s3 = new S3Client({
-  region: 'auto',
+  region: "auto",
   endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
   credentials: { accessKeyId: env.R2_ACCESS_KEY_ID, secretAccessKey: env.R2_SECRET_ACCESS_KEY },
 })
 
-const uploadUrl = await getSignedUrl(s3, new PutObjectCommand({ Bucket: 'my-bucket', Key: key }), {
+const uploadUrl = await getSignedUrl(s3, new PutObjectCommand({ Bucket: "my-bucket", Key: key }), {
   expiresIn: 3600,
 })
 return Response.json({ uploadUrl })
@@ -134,7 +134,7 @@ interface R2Object {
   uploaded: Date
   httpMetadata?: R2HTTPMetadata
   customMetadata?: Record<string, string>
-  storageClass: 'Standard' | 'InfrequentAccess'
+  storageClass: "Standard" | "InfrequentAccess"
   checksums: R2Checksums
   writeHttpMetadata(headers: Headers): void
 }
@@ -161,7 +161,7 @@ interface R2PutOptions {
   httpMetadata?: R2HTTPMetadata | Headers
   customMetadata?: Record<string, string>
   sha256?: ArrayBuffer | string // Only ONE checksum allowed
-  storageClass?: 'Standard' | 'InfrequentAccess'
+  storageClass?: "Standard" | "InfrequentAccess"
   ssecKey?: ArrayBuffer
 }
 
@@ -177,7 +177,7 @@ interface R2ListOptions {
   cursor?: string
   delimiter?: string
   startAfter?: string
-  include?: ('httpMetadata' | 'customMetadata')[]
+  include?: ("httpMetadata" | "customMetadata")[]
 }
 
 interface R2Objects {

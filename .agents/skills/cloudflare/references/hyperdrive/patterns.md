@@ -25,13 +25,13 @@ interface Env {
 }
 
 // Reads: cached
-if (req.method === 'GET') {
+if (req.method === "GET") {
   const sql = postgres(env.HYPERDRIVE_CACHED.connectionString, { prepare: true })
   const products = await sql`SELECT * FROM products WHERE category = ${cat}`
 }
 
 // Writes: no cache (immediate consistency)
-if (req.method === 'POST') {
+if (req.method === "POST") {
   const sql = postgres(env.HYPERDRIVE_REALTIME.connectionString, { prepare: true })
   await sql`INSERT INTO orders ${sql(data)}`
 }
@@ -71,7 +71,7 @@ const topProducts = await client.query(
 ## Multi-Tenant
 
 ```typescript
-const tenantId = req.headers.get('X-Tenant-ID')
+const tenantId = req.headers.get("X-Tenant-ID")
 const sql = postgres(env.HYPERDRIVE.connectionString, { prepare: true })
 
 // Tenant-scoped queries cached separately
@@ -135,37 +135,37 @@ Operates in **transaction mode**: connection acquired per transaction, `RESET` o
 
 ```typescript
 // ✅ Within transaction
-await client.query('BEGIN')
+await client.query("BEGIN")
 await client.query("SET work_mem = '256MB'")
-await client.query('SELECT * FROM large_table') // Uses SET
-await client.query('COMMIT') // RESET after
+await client.query("SELECT * FROM large_table") // Uses SET
+await client.query("COMMIT") // RESET after
 
 // ✅ Single statement
 await client.query("SET work_mem = '256MB'; SELECT * FROM large_table")
 
 // ❌ Across queries (may get different connection)
 await client.query("SET work_mem = '256MB'")
-await client.query('SELECT * FROM large_table') // SET not applied
+await client.query("SELECT * FROM large_table") // SET not applied
 ```
 
 **Best practices:**
 
 ```typescript
 // ❌ Long transactions block pooling
-await client.query('BEGIN')
+await client.query("BEGIN")
 await processThousands() // Connection held entire time
-await client.query('COMMIT')
+await client.query("COMMIT")
 
 // ✅ Short transactions
-await client.query('BEGIN')
-await client.query('UPDATE users SET status = $1 WHERE id = $2', [status, id])
-await client.query('COMMIT')
+await client.query("BEGIN")
+await client.query("UPDATE users SET status = $1 WHERE id = $2", [status, id])
+await client.query("COMMIT")
 
 // ✅ SET LOCAL within transaction
-await client.query('BEGIN')
+await client.query("BEGIN")
 await client.query("SET LOCAL work_mem = '256MB'")
-await client.query('SELECT * FROM large_table')
-await client.query('COMMIT')
+await client.query("SELECT * FROM large_table")
+await client.query("COMMIT")
 ```
 
 ## Performance Tips

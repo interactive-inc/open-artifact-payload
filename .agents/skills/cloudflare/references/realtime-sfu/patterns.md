@@ -73,9 +73,9 @@ await pt.publishTrack(screen, {trackName: 'my-screen'});
 Express:
 
 ```js
-app.post('/api/new-session', async (req, res) => {
+app.post("/api/new-session", async (req, res) => {
   const r = await fetch(`${CALLS_API}/apps/${process.env.CALLS_APP_ID}/sessions/new`, {
-    method: 'POST',
+    method: "POST",
     headers: { Authorization: `Bearer ${process.env.CALLS_APP_SECRET}` },
   })
   res.json(await r.json())
@@ -100,7 +100,7 @@ function attachAudioLevelDetector(track: MediaStreamTrack) {
   const checkLevel = () => {
     analyzer.getByteFrequencyData(data)
     const level = data.reduce((a, b) => a + b) / data.length
-    if (level > 30) console.log('Speaking:', level) // Trigger UI update
+    if (level > 30) console.log("Speaking:", level) // Trigger UI update
     requestAnimationFrame(checkLevel)
   }
   checkLevel()
@@ -112,11 +112,11 @@ function attachAudioLevelDetector(track: MediaStreamTrack) {
 ```typescript
 pc.getStats().then((stats) => {
   stats.forEach((report) => {
-    if (report.type === 'inbound-rtp' && report.kind === 'video') {
+    if (report.type === "inbound-rtp" && report.kind === "video") {
       const { packetsLost, packetsReceived, jitter } = report
       const lossRate = packetsLost / (packetsLost + packetsReceived)
-      if (lossRate > 0.05) console.warn('High packet loss:', lossRate)
-      if (jitter > 100) console.warn('High jitter:', jitter)
+      if (lossRate > 0.05) console.warn("High packet loss:", lossRate)
+      if (jitter > 100) console.warn("High jitter:", jitter)
     }
   })
 })
@@ -140,7 +140,7 @@ function updateStage(topSpeakers: string[]) {
   })
 
   toAdd.forEach(async (id) => {
-    await fetch(`/api/subscribe`, { method: 'POST', body: JSON.stringify({ trackId: id }) })
+    await fetch(`/api/subscribe`, { method: "POST", body: JSON.stringify({ trackId: id }) })
     activeSubscriptions.add(id)
   })
 }
@@ -151,7 +151,7 @@ function updateStage(topSpeakers: string[]) {
 Bandwidth mgmt:
 
 ```ts
-const s = pc.getSenders().find((s) => s.track?.kind === 'video')
+const s = pc.getSenders().find((s) => s.track?.kind === "video")
 const p = s.getParameters()
 if (!p.encodings) p.encodings = [{}]
 p.encodings[0].maxBitrate = 1200000
@@ -162,12 +162,12 @@ await s.setParameters(p)
 Simulcast (CF auto-forwards best layer):
 
 ```ts
-pc.addTransceiver('video', {
-  direction: 'sendonly',
+pc.addTransceiver("video", {
+  direction: "sendonly",
   sendEncodings: [
-    { rid: 'high', maxBitrate: 1200000 },
-    { rid: 'med', maxBitrate: 600000, scaleResolutionDownBy: 2 },
-    { rid: 'low', maxBitrate: 200000, scaleResolutionDownBy: 4 },
+    { rid: "high", maxBitrate: 1200000 },
+    { rid: "med", maxBitrate: 600000, scaleResolutionDownBy: 2 },
+    { rid: "low", maxBitrate: 200000, scaleResolutionDownBy: 4 },
   ],
 })
 ```
@@ -175,9 +175,9 @@ pc.addTransceiver('video', {
 DataChannel:
 
 ```ts
-const dc = pc.createDataChannel('chat', { ordered: true, maxRetransmits: 3 })
-dc.onopen = () => dc.send(JSON.stringify({ type: 'chat', text: 'Hi' }))
-dc.onmessage = (e) => console.log('RX:', JSON.parse(e.data))
+const dc = pc.createDataChannel("chat", { ordered: true, maxRetransmits: 3 })
+dc.onopen = () => dc.send(JSON.stringify({ type: "chat", text: "Hi" }))
+dc.onmessage = (e) => console.log("RX:", JSON.parse(e.data))
 ```
 
 **WHIP/WHEP:** For streaming interop (OBS → SFU, SFU → video players), use WHIP (ingest) and WHEP (egress) protocols. See Cloudflare Stream integration docs.

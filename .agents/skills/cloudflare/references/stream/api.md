@@ -9,7 +9,7 @@ Upload, playback, live streaming, and management APIs.
 **Backend: Create upload URL (SDK)**
 
 ```typescript
-import Cloudflare from 'cloudflare'
+import Cloudflare from "cloudflare"
 
 const client = new Cloudflare({ apiToken: env.CF_API_TOKEN })
 
@@ -17,7 +17,7 @@ const uploadData = await client.stream.directUpload.create({
   account_id: env.CF_ACCOUNT_ID,
   maxDurationSeconds: 3600,
   requireSignedURLs: true,
-  meta: { creator: 'user-123' },
+  meta: { creator: "user-123" },
 })
 // Returns: { uploadURL: string, uid: string }
 ```
@@ -27,8 +27,8 @@ const uploadData = await client.stream.directUpload.create({
 ```typescript
 async function uploadVideo(file: File, uploadURL: string) {
   const formData = new FormData()
-  formData.append('file', file)
-  return fetch(uploadURL, { method: 'POST', body: formData }).then((r) => r.json())
+  formData.append("file", file)
+  return fetch(uploadURL, { method: "POST", body: formData }).then((r) => r.json())
 }
 ```
 
@@ -37,8 +37,8 @@ async function uploadVideo(file: File, uploadURL: string) {
 ```typescript
 const video = await client.stream.copy.create({
   account_id: env.CF_ACCOUNT_ID,
-  url: 'https://example.com/video.mp4',
-  meta: { name: 'My Video' },
+  url: "https://example.com/video.mp4",
+  meta: { name: "My Video" },
   requireSignedURLs: false,
 })
 ```
@@ -89,11 +89,11 @@ async function getSignedToken(accountId: string, videoId: string, apiToken: stri
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream/${videoId}/token`,
     {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         exp: Math.floor(Date.now() / 1000) + 3600,
-        accessRules: [{ type: 'ip.geoip.country', action: 'allow', country: ['US'] }],
+        accessRules: [{ type: "ip.geoip.country", action: "allow", country: ["US"] }],
       }),
     },
   )
@@ -116,11 +116,11 @@ async function uploadCaption(
   captionFile: File,
 ) {
   const formData = new FormData()
-  formData.append('file', captionFile)
+  formData.append("file", captionFile)
   return fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream/${videoId}/captions/${language}`,
     {
-      method: 'PUT',
+      method: "PUT",
       headers: { Authorization: `Bearer ${apiToken}` },
       body: formData,
     },
@@ -136,9 +136,9 @@ async function generateAICaptions(accountId: string, videoId: string, apiToken: 
   return fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/stream/${videoId}/captions/generate`,
     {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ language: 'en' }),
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ language: "en" }),
     },
   ).then((r) => r.json())
 }
@@ -155,8 +155,8 @@ async function clipVideo(
   endTime: number,
 ) {
   return fetch(`https://api.cloudflare.com/client/v4/accounts/${accountId}/stream/clip`, {
-    method: 'POST',
-    headers: { Authorization: `Bearer ${apiToken}`, 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { Authorization: `Bearer ${apiToken}`, "Content-Type": "application/json" },
     body: JSON.stringify({
       clippedFromVideoUID: videoId,
       startTimeSeconds: startTime,
@@ -172,7 +172,7 @@ async function clipVideo(
 // List videos
 const videos = await client.stream.videos.list({
   account_id: env.CF_ACCOUNT_ID,
-  search: 'keyword', // optional
+  search: "keyword", // optional
 })
 
 // Get video details
@@ -183,7 +183,7 @@ const video = await client.stream.videos.get(videoId, {
 // Update video
 await client.stream.videos.update(videoId, {
   account_id: env.CF_ACCOUNT_ID,
-  meta: { title: 'New Title' },
+  meta: { title: "New Title" },
   requireSignedURLs: true,
 })
 

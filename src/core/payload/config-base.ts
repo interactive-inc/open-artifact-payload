@@ -1,39 +1,39 @@
-import fs from 'fs'
-import path from 'path'
-import { sqliteD1Adapter } from '@payloadcms/db-d1-sqlite'
-import { lexicalEditor } from '@payloadcms/richtext-lexical'
-import { buildConfig, type Config } from 'payload'
-import { CloudflareContext, getCloudflareContext } from '@opennextjs/cloudflare'
-import { GetPlatformProxyOptions } from 'wrangler'
-import { r2Storage } from '@payloadcms/storage-r2'
-import { mcpPlugin, type MCPPluginConfig } from '@payloadcms/plugin-mcp'
-import { seoPlugin } from '@payloadcms/plugin-seo'
-import { ja } from '@payloadcms/translations/languages/ja'
+import fs from "fs"
+import path from "path"
+import { sqliteD1Adapter } from "@payloadcms/db-d1-sqlite"
+import { lexicalEditor } from "@payloadcms/richtext-lexical"
+import { buildConfig, type Config } from "payload"
+import { CloudflareContext, getCloudflareContext } from "@opennextjs/cloudflare"
+import { GetPlatformProxyOptions } from "wrangler"
+import { r2Storage } from "@payloadcms/storage-r2"
+import { mcpPlugin, type MCPPluginConfig } from "@payloadcms/plugin-mcp"
+import { seoPlugin } from "@payloadcms/plugin-seo"
+import { ja } from "@payloadcms/translations/languages/ja"
 
-import { users } from '@/core/collections/users'
-import { media } from '@/core/collections/media'
-import { news } from '@/core/collections/news'
-import { faq } from '@/core/collections/faq'
-import { contactSubmissions } from '@/core/collections/contact-submissions'
-import { pages } from '@/core/collections/pages'
-import { aiTranslationLogs } from '@/core/collections/ai-translation-logs'
-import { siteSettings } from '@/core/globals/site-settings'
-import { aiTranslationSettings } from '@/core/globals/ai-translation-settings'
-import { aiTranslateEndpoint } from '@/core/lib/ai-translation/ai-translate-endpoint'
-import { injectAiTranslateControls } from '@/core/payload/inject-ai-translate-controls'
-import { injectAiTranslateControlsIntoGlobal } from '@/core/payload/inject-ai-translate-controls-into-global'
-import type { ProjectFeatures } from '@/project/types'
+import { users } from "@/core/collections/users"
+import { media } from "@/core/collections/media"
+import { news } from "@/core/collections/news"
+import { faq } from "@/core/collections/faq"
+import { contactSubmissions } from "@/core/collections/contact-submissions"
+import { pages } from "@/core/collections/pages"
+import { aiTranslationLogs } from "@/core/collections/ai-translation-logs"
+import { siteSettings } from "@/core/globals/site-settings"
+import { aiTranslationSettings } from "@/core/globals/ai-translation-settings"
+import { aiTranslateEndpoint } from "@/core/lib/ai-translation/ai-translate-endpoint"
+import { injectAiTranslateControls } from "@/core/payload/inject-ai-translate-controls"
+import { injectAiTranslateControlsIntoGlobal } from "@/core/payload/inject-ai-translate-controls-into-global"
+import type { ProjectFeatures } from "@/project/types"
 
 type LivePreviewUrlValue = NonNullable<
-  NonNullable<NonNullable<Config['admin']>['livePreview']>['url']
+  NonNullable<NonNullable<Config["admin"]>["livePreview"]>["url"]
 >
 type LivePreviewUrlFn = Extract<LivePreviewUrlValue, (...args: never[]) => unknown>
 
 type BuildCoreConfigProps = {
   dirname: string
   features: ProjectFeatures
-  projectCollections?: Config['collections']
-  projectGlobals?: Config['globals']
+  projectCollections?: Config["collections"]
+  projectGlobals?: Config["globals"]
   livePreviewCollections?: string[]
   livePreviewGlobals?: string[]
   livePreviewUrl?: LivePreviewUrlFn
@@ -45,9 +45,9 @@ type BuildCoreConfigProps = {
 const realpath = (value: string) => (fs.existsSync(value) ? fs.realpathSync(value) : undefined)
 
 const isCLI = process.argv.some((value) =>
-  realpath(value)?.endsWith(path.join('payload', 'bin.js')),
+  realpath(value)?.endsWith(path.join("payload", "bin.js")),
 )
-const isProduction = process.env.NODE_ENV === 'production'
+const isProduction = process.env.NODE_ENV === "production"
 
 // 本番で PAYLOAD_SECRET が未設定のまま空文字で起動すると認証トークンの署名が無防備になる。
 // 空文字へ暗黙フォールバックせず、本番では明示的に起動を失敗させる。
@@ -56,21 +56,21 @@ function resolveSecret(): string {
   if (secret) return secret
   if (isProduction) {
     throw new Error(
-      'PAYLOAD_SECRET is required in production. Register it with `wrangler secret put PAYLOAD_SECRET`.',
+      "PAYLOAD_SECRET is required in production. Register it with `wrangler secret put PAYLOAD_SECRET`.",
     )
   }
-  return ''
+  return ""
 }
 
 const createLog =
   (level: string, logFunction: typeof console.log) =>
   (payloadOrMessage: object | string, message?: string) => {
-    if (typeof payloadOrMessage === 'string') {
+    if (typeof payloadOrMessage === "string") {
       logFunction(JSON.stringify({ level, msg: payloadOrMessage }))
       return
     }
     const existingMessage =
-      'msg' in payloadOrMessage && typeof payloadOrMessage.msg === 'string'
+      "msg" in payloadOrMessage && typeof payloadOrMessage.msg === "string"
         ? payloadOrMessage.msg
         : undefined
     logFunction(JSON.stringify({ level, ...payloadOrMessage, msg: message ?? existingMessage }))
@@ -80,18 +80,18 @@ const createLog =
 // Payload の logger スロットに渡すため、外部型 (pino.Logger) との相互運用として
 // ここだけアサーションを許容する (ts.md の適用除外を参照)。
 const cloudflareLogger = {
-  level: process.env.PAYLOAD_LOG_LEVEL || 'info',
-  trace: createLog('trace', console.debug),
-  debug: createLog('debug', console.debug),
-  info: createLog('info', console.log),
-  warn: createLog('warn', console.warn),
-  error: createLog('error', console.error),
-  fatal: createLog('fatal', console.error),
+  level: process.env.PAYLOAD_LOG_LEVEL || "info",
+  trace: createLog("trace", console.debug),
+  debug: createLog("debug", console.debug),
+  info: createLog("info", console.log),
+  warn: createLog("warn", console.warn),
+  error: createLog("error", console.error),
+  fatal: createLog("fatal", console.error),
   silent: () => {},
-} as unknown as Config['logger']
+} as unknown as Config["logger"]
 
 function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
-  return import(/* webpackIgnore: true */ `${'__wrangler'.replaceAll('_', '')}`).then(
+  return import(/* webpackIgnore: true */ `${"__wrangler".replaceAll("_", "")}`).then(
     ({ getPlatformProxy }) =>
       getPlatformProxy({
         environment: process.env.CLOUDFLARE_ENV,
@@ -104,25 +104,25 @@ function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
 const buildDefaultLivePreviewUrl =
   (defaultLocaleCode: string): LivePreviewUrlFn =>
   (args) => {
-    const base = process.env.NEXT_PUBLIC_SERVER_URL ?? 'http://localhost:3000'
-    const localeCode = typeof args.locale === 'string' ? args.locale : args.locale.code
-    const localePrefix = localeCode && localeCode !== defaultLocaleCode ? `/${localeCode}` : ''
+    const base = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"
+    const localeCode = typeof args.locale === "string" ? args.locale : args.locale.code
+    const localePrefix = localeCode && localeCode !== defaultLocaleCode ? `/${localeCode}` : ""
     const toPreview = (urlPath: string) => {
-      const localizedPath = urlPath === '/' ? localePrefix || '/' : `${localePrefix}${urlPath}`
+      const localizedPath = urlPath === "/" ? localePrefix || "/" : `${localePrefix}${urlPath}`
       return `${base}/next/preview?path=${encodeURIComponent(localizedPath)}`
     }
     if (args.globalConfig) {
-      const globalPath = args.globalConfig.slug === 'home-page' ? '/' : `/${args.globalConfig.slug}`
+      const globalPath = args.globalConfig.slug === "home-page" ? "/" : `/${args.globalConfig.slug}`
       return toPreview(globalPath)
     }
     if (args.collectionConfig) {
       const data = args.data
-      if (data && typeof data === 'object' && 'slug' in data && typeof data.slug === 'string') {
+      if (data && typeof data === "object" && "slug" in data && typeof data.slug === "string") {
         return toPreview(`/${args.collectionConfig.slug}/${data.slug}`)
       }
       return toPreview(`/${args.collectionConfig.slug}`)
     }
-    return toPreview('/')
+    return toPreview("/")
   }
 
 export async function buildCoreConfig(props: BuildCoreConfigProps) {
@@ -134,8 +134,8 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
   const enableAiTranslation = props.features.enableAiTranslation
 
   const localizationLocales = props.locales ?? [
-    { code: 'ja', label: '日本語' },
-    { code: 'en', label: 'English' },
+    { code: "ja", label: "日本語" },
+    { code: "en", label: "English" },
   ]
 
   const baseCollections = [
@@ -162,8 +162,8 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
 
   // フロントにルートが存在するコレクション/グローバルのみ Live Preview 対象にする。
   // 案件でコレクションのフロントページを追加したら、ここにも slug を追加する。
-  const previewCollectionSlugs = props.livePreviewCollections ?? ['news']
-  const previewGlobalSlugs = props.livePreviewGlobals ?? ['home-page']
+  const previewCollectionSlugs = props.livePreviewCollections ?? ["news"]
+  const previewGlobalSlugs = props.livePreviewGlobals ?? ["home-page"]
 
   return buildConfig({
     admin: {
@@ -172,15 +172,15 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         baseDir: path.resolve(props.dirname),
       },
       meta: {
-        titleSuffix: ' | Inta CMS',
-        description: 'Inta CMS 管理画面',
+        titleSuffix: " | Inta CMS",
+        description: "Inta CMS 管理画面",
       },
       components: {
-        providers: ['@/core/admin/theme/admin-theme-provider#AdminThemeProvider'],
-        afterNavLinks: ['@/core/admin/nav/open-public-site#OpenPublicSite'],
+        providers: ["@/core/admin/theme/admin-theme-provider#AdminThemeProvider"],
+        afterNavLinks: ["@/core/admin/nav/open-public-site#OpenPublicSite"],
         views: {
           dashboard: {
-            Component: '@/core/admin/dashboard/dashboard-view#DashboardView',
+            Component: "@/core/admin/dashboard/dashboard-view#DashboardView",
           },
         },
       },
@@ -188,12 +188,12 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         collections: previewCollectionSlugs,
         globals: previewGlobalSlugs,
         breakpoints: [
-          { name: 'mobile', width: 375, height: 667, label: 'モバイル' },
-          { name: 'tablet', width: 768, height: 1024, label: 'タブレット' },
-          { name: 'desktop', width: 1440, height: 900, label: 'デスクトップ' },
+          { name: "mobile", width: 375, height: 667, label: "モバイル" },
+          { name: "tablet", width: 768, height: 1024, label: "タブレット" },
+          { name: "desktop", width: 1440, height: 900, label: "デスクトップ" },
         ],
         url:
-          props.livePreviewUrl ?? buildDefaultLivePreviewUrl(localizationLocales[0]?.code ?? 'ja'),
+          props.livePreviewUrl ?? buildDefaultLivePreviewUrl(localizationLocales[0]?.code ?? "ja"),
       },
     },
     collections: allCollections,
@@ -202,7 +202,7 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     editor: lexicalEditor(),
     secret: resolveSecret(),
     typescript: {
-      outputFile: path.resolve(props.dirname, 'payload-types.ts'),
+      outputFile: path.resolve(props.dirname, "payload-types.ts"),
     },
     db: sqliteD1Adapter({ binding: cloudflare.env.D1, push: false }),
     logger: isProduction ? cloudflareLogger : undefined,
@@ -215,13 +215,13 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       seoPlugin({
         // pages は features.enableFreePages が true の案件でのみ登録されるため、
         // SEO 対象コレクションもフラグに合わせて切り替える。
-        collections: props.features.enableFreePages ? ['news', 'pages'] : ['news'],
-        globals: ['home-page'],
-        uploadsCollection: 'media',
+        collections: props.features.enableFreePages ? ["news", "pages"] : ["news"],
+        globals: ["home-page"],
+        uploadsCollection: "media",
         // title/description は言語ごとに翻訳が必要なため localized にする。image は共用のまま。
         fields: (args) =>
           args.defaultFields.map((field) => {
-            if ('name' in field && (field.name === 'title' || field.name === 'description')) {
+            if ("name" in field && (field.name === "title" || field.name === "description")) {
               return { ...field, localized: true }
             }
             return field
@@ -229,21 +229,21 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         generateTitle: (args) => {
           const doc = args.doc
           const title =
-            doc && typeof doc === 'object' && 'title' in doc && typeof doc.title === 'string'
+            doc && typeof doc === "object" && "title" in doc && typeof doc.title === "string"
               ? doc.title
-              : ''
+              : ""
           return `${title} | Inta CMS`
         },
       }),
     ],
     i18n: {
       supportedLanguages: { ja },
-      fallbackLanguage: 'ja',
+      fallbackLanguage: "ja",
     },
     localization: {
       locales: localizationLocales,
       // 先頭の locale がデフォルト言語（= AI 翻訳の翻訳元）。locales prop と矛盾しないよう固定値にしない
-      defaultLocale: localizationLocales[0]?.code ?? 'ja',
+      defaultLocale: localizationLocales[0]?.code ?? "ja",
       fallback: true,
     },
   })

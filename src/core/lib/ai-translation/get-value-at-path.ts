@@ -4,7 +4,7 @@
 export function getValueAtPath(target: unknown, path: ReadonlyArray<string | number>): unknown {
   return path.reduce<unknown>(
     (current, key) =>
-      current && typeof current === 'object' ? Reflect.get(current, key) : undefined,
+      current && typeof current === "object" ? Reflect.get(current, key) : undefined,
     target,
   )
 }

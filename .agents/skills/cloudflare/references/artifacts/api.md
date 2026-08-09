@@ -18,11 +18,11 @@ Artifacts exposes a Worker binding on `env.ARTIFACTS`.
 | `delete(name)`        | Delete a repo                                          |
 
 ```typescript
-const created = await env.ARTIFACTS.create('starter-repo', {
-  description: 'Repository for automation experiments',
-  setDefaultBranch: 'main',
+const created = await env.ARTIFACTS.create("starter-repo", {
+  description: "Repository for automation experiments",
+  setDefaultBranch: "main",
 })
-const repo = await env.ARTIFACTS.get('starter-repo')
+const repo = await env.ARTIFACTS.get("starter-repo")
 const page = await env.ARTIFACTS.list({ limit: 10 })
 ```
 
@@ -42,12 +42,12 @@ Use a repo handle returned by `get()` or `create()`.
 | `fork(name, opts?)`         | Fork one repo into another                   |
 
 ```typescript
-const repo = await env.ARTIFACTS.get('starter-repo')
-if (!repo) throw new Error('Repo not found')
+const repo = await env.ARTIFACTS.get("starter-repo")
+if (!repo) throw new Error("Repo not found")
 
 const info = await repo.info()
-const token = await repo.createToken('read', 3600)
-const forked = await repo.fork('starter-repo-copy', {
+const token = await repo.createToken("read", 3600)
+const forked = await repo.fork("starter-repo-copy", {
   defaultBranchOnly: true,
 })
 ```

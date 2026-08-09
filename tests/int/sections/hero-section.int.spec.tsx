@@ -1,39 +1,39 @@
 /**
  * @vitest-environment jsdom
  */
-import { render } from '@testing-library/react'
-import React from 'react'
-import { describe, expect, it } from 'vite-plus/test'
+import { render } from "@testing-library/react"
+import React from "react"
+import { describe, expect, it } from "vite-plus/test"
 
-import { HeroSection } from '@/core/sections/hero-section'
+import { HeroSection } from "@/core/sections/hero-section"
 
-describe('HeroSection', () => {
-  it('enabled=true のとき見出しを描画する', () => {
+describe("HeroSection", () => {
+  it("enabled=true のとき見出しを描画する", () => {
     const { getByRole } = render(
       <HeroSection
         data={{
           enabled: true,
-          title: 'ようこそ',
-          subtitle: '私たちについて',
+          title: "ようこそ",
+          subtitle: "私たちについて",
           image: null,
-          ctaLabel: '詳細を見る',
-          ctaHref: '/about',
+          ctaLabel: "詳細を見る",
+          ctaHref: "/about",
         }}
       />,
     )
-    expect(getByRole('heading', { level: 1 }).textContent).toBe('ようこそ')
+    expect(getByRole("heading", { level: 1 }).textContent).toBe("ようこそ")
   })
 
-  it('enabled=false のとき何も描画しない', () => {
+  it("enabled=false のとき何も描画しない", () => {
     const { container } = render(
       <HeroSection
         data={{
           enabled: false,
-          title: 'ようこそ',
-          subtitle: '',
+          title: "ようこそ",
+          subtitle: "",
           image: null,
-          ctaLabel: '',
-          ctaHref: '',
+          ctaLabel: "",
+          ctaHref: "",
         }}
       />,
     )

@@ -70,7 +70,7 @@ Update CSP: script-src 'self' /cdn-cgi/challenge-platform/;
   function jsdOnload() {
     window.cloudflare.jsd.executeOnce({
       callback: function (result) {
-        console.log('JSD:', result)
+        console.log("JSD:", result)
       },
     })
   }

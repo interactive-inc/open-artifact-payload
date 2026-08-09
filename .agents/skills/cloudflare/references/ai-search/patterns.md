@@ -17,12 +17,12 @@
 ## Multitenancy (Folder-Based)
 
 ```typescript
-const answer = await env.AI.autorag('saas-docs').aiSearch({
-  query: 'refund policy',
-  model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+const answer = await env.AI.autorag("saas-docs").aiSearch({
+  query: "refund policy",
+  model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   filters: {
-    column: 'folder',
-    operator: 'gte', // "starts with" pattern
+    column: "folder",
+    operator: "gte", // "starts with" pattern
     value: `tenants/${tenantId}/`,
   },
 })
@@ -31,12 +31,12 @@ const answer = await env.AI.autorag('saas-docs').aiSearch({
 ## Streaming
 
 ```typescript
-const stream = await env.AI.autorag('docs').aiSearch({
+const stream = await env.AI.autorag("docs").aiSearch({
   query,
-  model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+  model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
   stream: true,
 })
-return new Response(stream, { headers: { 'Content-Type': 'text/event-stream' } })
+return new Response(stream, { headers: { "Content-Type": "text/event-stream" } })
 ```
 
 ## Score Threshold

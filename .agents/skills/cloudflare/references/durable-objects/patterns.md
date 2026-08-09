@@ -28,7 +28,7 @@ Single DO ~1K req/s max. Shard for higher throughput:
 ```typescript
 export default {
   async fetch(req: Request, env: Env): Promise<Response> {
-    const userId = new URL(req.url).searchParams.get('user')
+    const userId = new URL(req.url).searchParams.get("user")
     const hash = hashCode(userId) % 100 // 100 shards
     const id = env.COUNTER.idFromName(`shard:${hash}`)
     return env.COUNTER.get(id).fetch(req)
