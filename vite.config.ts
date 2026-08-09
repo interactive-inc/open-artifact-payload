@@ -34,5 +34,6 @@ export default defineConfig({
   },
   fmt: {
     semi: false,
+    ignorePatterns: ["src/payload-types.ts"],
   },
 })
