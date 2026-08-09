@@ -2,7 +2,7 @@
 # cross-env を介さず素のシェルで環境変数を渡す。アカウント / 環境は wrangler.jsonc 側で固定済み。
 # 環境を切り替える場合は `make deploy CLOUDFLARE_ENV=staging` のように上書きする。
 
-# bun run と違い make の素のシェルは node_modules/.bin を解決しないため PATH に追加する
+# make の素のシェルは node_modules/.bin を解決しないため PATH に追加する
 export PATH := $(CURDIR)/node_modules/.bin:$(PATH)
 export CLOUDFLARE_ENV ?= production
 
@@ -28,8 +28,8 @@ preview:
 
 # Storybook (portless 経由で https://storybook.payload.artifacts.open.localhost)
 storybook:
-	portless storybook.payload.artifacts.open bun run storybook
+	portless storybook.payload.artifacts.open vp run storybook
 
 # shadcn コンポーネント全追加
 shadcn-add:
-	bunx --bun shadcn@latest add --all --overwrite --yes
+	bunx shadcn add -o -y -a

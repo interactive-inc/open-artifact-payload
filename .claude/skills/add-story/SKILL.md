@@ -97,9 +97,9 @@ Payload セクションのストーリー生成の注意:
 
 ### フェーズ4: 自己検証
 
-- 生成後、`bun run build-storybook` が通ることを確認する
-- `bun run lint` を流し、stories ファイルが ESLint を通ることを確認する
-- Storybook の UI で表示確認が必要な場合はユーザーに `bun run storybook` を案内する（自動では開かない）
+- 生成後、`vp run build-storybook` が通ることを確認する
+- `vp lint` を流し、stories ファイルが Oxlint を通ることを確認する
+- Storybook の UI で表示確認が必要な場合はユーザーに `vp run storybook` を案内する（自動では開かない）
 
 ## ルール
 

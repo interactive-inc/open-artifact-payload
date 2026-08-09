@@ -57,7 +57,7 @@ arguments: 画像ファイルパス
 1つでも不整合があれば該当箇所を修正する。
 
 - `tests/int/sections/<kebab-name>.int.spec.tsx` に enabled=true / enabled=false のスモークテストを追加する
-- `bun run generate:types && bun run lint && bun run test:int` を実行して通ったことを確認する
+- `vp run generate:types && vp lint && vp run test:int` を実行して通ったことを確認する
 
 ## ルール
 

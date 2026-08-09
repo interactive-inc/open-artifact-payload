@@ -3,7 +3,7 @@ import type { Preview } from "@storybook/nextjs-vite"
 import { withThemeByClassName } from "@storybook/addon-themes"
 
 import { TooltipProvider } from "../src/project/shared/ui/tooltip"
-import "../src/app/(frontend)/styles.css"
+import "../src/app/(frontend)/[locale]/styles.css"
 
 const preview: Preview = {
   parameters: {

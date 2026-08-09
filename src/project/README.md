@@ -11,7 +11,7 @@
 - shared/ 複数ページで使う資産
   - sections/ 2 ページ以上で使うセクション (site-header / site-footer など)
   - components/ 汎用 UI コンポーネント (フラット配置)
-  - ui/ shadcn/ui 所管領域 (bunx shadcn add の配置先)
+  - ui/ shadcn/ui 所管領域
   - hooks/ lib/ 汎用フック / util
 - collections/ 案件固有コレクション (tours, staff, cases など)
 - admin/ ダッシュボードタスク定義、feature flag
@@ -28,4 +28,4 @@
 - セクション group フィールドには `enabled` チェックボックスを必ず含める
 - フィールドラベルは日本語、フィールド名は lowerCamelCase
 - hex 直書き禁止、Tailwind のテーマトークンを使う
-- 生成後は `bun run lint` と `bun run generate:types` を流す
+- 生成後は `vp lint` と `vp run generate:types` を流す

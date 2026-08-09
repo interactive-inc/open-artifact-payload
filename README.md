@@ -105,9 +105,10 @@ make preview          # ローカルで Workers ランタイムを使ったプ�
 ```bash
 vp run dev                      # 開発サーバー
 vp run build                    # プロダクションビルド
-vp lint                         # lint + 型チェック
+vp lint                         # lint
 vp fmt                          # フォーマット確認
 vp test                         # Vite+ のテスト
+vp check                        # format + lint + 型チェック
 vp run test                     # 統合テスト + E2E すべて
 vp run intacms --help           # サイト操作 CLI のヘルプ
 vp run payload migrate          # ローカル D1 にマイグレーション
