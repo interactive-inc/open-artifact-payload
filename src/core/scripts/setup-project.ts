@@ -1,13 +1,11 @@
 import { access, copyFile, readFile, writeFile } from "node:fs/promises"
 import path from "node:path"
 
+import { updateCloudflareConfig } from "@/core/scripts/cloudflare-config"
 import { createD1Database } from "@/core/scripts/create-d1-database"
 import { createR2Bucket } from "@/core/scripts/create-r2-bucket"
 import { askSetupQuestions } from "@/core/scripts/setup-project-prompts"
 import { applySsgMode } from "@/core/scripts/setup-ssg-mode"
-import { withDatabaseId } from "@/core/scripts/with-database-id"
-import { withR2BucketName } from "@/core/scripts/with-r2-bucket-name"
-import { withWorkerName } from "@/core/scripts/with-worker-name"
 import { writeEnvFile } from "@/core/scripts/write-env"
 
 const ROOT = process.cwd()
@@ -32,23 +30,31 @@ async function main(): Promise<void> {
 
   if (answers.deployMode === "cloudflare") {
     const source = await readFile(WRANGLER, "utf8")
-    const withName = withWorkerName({ source, name: answers.projectSlug })
-    const withBucket = withR2BucketName({
-      source: withName,
-      bucketName: `${answers.projectSlug}-cms`,
+    let finalSource = updateCloudflareConfig({
+      source,
+      projectSlug: answers.projectSlug,
+      accountId: answers.cloudflareAccountId,
+      productionDatabaseId: answers.databaseId,
     })
-
-    const finalSource = answers.createD1
-      ? withDatabaseId({
-          source: withBucket,
-          databaseId: await createD1Database(answers.projectSlug),
-        })
-      : withBucket
-
+    // リソース作成コマンドが以前の案件の Account ID を参照しないよう、先に安全な設定へ更新する。
     await writeFile(WRANGLER, finalSource, "utf8")
 
+    if (answers.createD1) {
+      const productionDatabaseId = await createD1Database(
+        answers.projectSlug,
+        answers.cloudflareAccountId,
+      )
+      finalSource = updateCloudflareConfig({
+        source: finalSource,
+        projectSlug: answers.projectSlug,
+        accountId: answers.cloudflareAccountId,
+        productionDatabaseId,
+      })
+      await writeFile(WRANGLER, finalSource, "utf8")
+    }
+
     if (answers.createR2) {
-      await createR2Bucket(answers.projectSlug)
+      await createR2Bucket(answers.projectSlug, answers.cloudflareAccountId)
     }
   }
 

@@ -29,13 +29,12 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 ```bash
 vp install
 
-# D1 と R2 を作成し、wrangler.jsonc の database_id / bucket_name を差し替える
-# (vp run setup:project で対話的に自動置換できる)
-wrangler d1 create <project-name>
-wrangler r2 bucket create <project-name>
+# Worker / Account / D1 / R2 を案件固有の値へ更新する
+# D1 と R2 は対話中に新規作成できる
+vp run setup:project
 
-# 環境変数 (PAYLOAD_SECRET は openssl rand -hex 32 で生成)
-cp .env.example .env
+# D1 を後から作成した場合は env.production.d1_databases の ID を更新する
+vp exec wrangler d1 create <project-slug>-cms
 
 # ローカル D1 にマイグレーション + サンプルデータ投入
 vp run payload migrate
@@ -60,7 +59,8 @@ vp run dev
 
 インフラ・デプロイ:
 
-- [ ] `wrangler.jsonc` の `database_id` / `bucket_name` を本番リソースに差し替える
+- [ ] `vp run setup:project` で Worker / Account ID / D1 / R2 を案件固有の値にする
+- [ ] `make deploy-preflight` が成功し、ローカルと本番で Worker / D1 / R2 が分離されていることを確認する
 - [ ] 本番シークレットを登録する（`wrangler secret put PAYLOAD_SECRET --env=production` は必須。Turnstile / Resend を使う場合はそれぞれのキーも）
 - [ ] `.env` の `NEXT_PUBLIC_SERVER_URL` を本番ドメインにする（ビルド時に焼き込まれ、sitemap / OG の URL が参照する）
 - [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だとビルドが `no such table` で落ちる）
@@ -92,8 +92,12 @@ Paid Workers プランが必要です（Worker サイズ制限のため）。
 make deploy-db        # リモート D1 へマイグレーション
 make deploy-app       # ビルド + デプロイ
 make deploy           # 上記2つをまとめて実行
+make deploy-preflight # デプロイ設定のみ検査
 make preview          # ローカルで Workers ランタイムを使ったプレビュー
 ```
+
+`make preview` はトップレベルのローカル専用 D1 / R2 を使用します。`make deploy*` は
+`env.production` を明示し、事前検査で Account ID、Worker名、D1 ID、R2名の未設定・不一致・環境間重複を拒否します。
 
 制限事項:
 

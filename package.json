@@ -10,6 +10,7 @@
   "type": "module",
   "scripts": {
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build --webpack",
+    "cloudflare:preflight": "tsx src/core/scripts/preflight-cloudflare-config.ts",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --webpack",
     "devsafe": "rm -rf .next && rm -rf .open-next && cross-env NODE_OPTIONS=--no-deprecation next dev --webpack",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -29,6 +30,7 @@
     "test:tools": "vp test run packages",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" vp exec playwright test --config=playwright.config.ts",
     "test:ci": "vp run lint && vp run test:int",
+    "test:cloudflare-config": "vp test run tests/int/scripts/cloudflare-config.int.spec.ts && wrangler deploy --dry-run --strict --config tests/fixtures/cloudflare-worker/wrangler.jsonc --env=production",
     "test:int:migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_SECRET=test-secret-do-not-use-in-production payload migrate",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vp test run",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx src/project/scripts/seed.ts",
@@ -58,6 +60,7 @@
     "embla-carousel-react": "^8.6.0",
     "graphql": "^16.14.2",
     "input-otp": "^1.4.2",
+    "jsonc-parser": "^3.3.1",
     "lucide-react": "^1.28.0",
     "next": "16.2.12",
     "next-themes": "^0.4.6",
