@@ -1,5 +1,5 @@
 import React from "react"
-import type { Preview } from "@storybook/nextjs-vite"
+import type { Preview } from "@storybook/react-vite"
 import { withThemeByClassName } from "@storybook/addon-themes"
 
 import { TooltipProvider } from "../src/project/shared/ui/tooltip"

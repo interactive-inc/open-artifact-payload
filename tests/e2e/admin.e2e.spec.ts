@@ -1,13 +1,11 @@
 import { test, expect, Page } from "@playwright/test"
 import { login } from "../helpers/login"
-import { seedTestUser, cleanupTestUser, testUser } from "../helpers/seed-user"
+import { cleanupTestUser, getCurrentUserID, testUser } from "../helpers/seed-user"
 
 test.describe("Admin Panel", () => {
   let page: Page
 
   test.beforeAll(async ({ browser }) => {
-    await seedTestUser()
-
     const context = await browser.newContext()
     page = await context.newPage()
 
@@ -15,7 +13,10 @@ test.describe("Admin Panel", () => {
   })
 
   test.afterAll(async () => {
-    await cleanupTestUser()
+    if (page) {
+      await cleanupTestUser(page)
+      await page.context().close()
+    }
   })
 
   test("ダッシュボードにタスクカードが表示される", async () => {
@@ -35,8 +36,11 @@ test.describe("Admin Panel", () => {
   })
 
   test("can navigate to edit view", async () => {
-    await page.goto("http://localhost:3000/admin/collections/users/create")
-    await expect(page).toHaveURL(/\/admin\/collections\/users\/[a-zA-Z0-9-_]+/)
+    const currentUserID = await getCurrentUserID(page)
+    await page.goto(`http://localhost:3000/admin/collections/users/${currentUserID}`)
+    await expect(page).toHaveURL(
+      new RegExp(`/admin/collections/users/${encodeURIComponent(String(currentUserID))}$`),
+    )
     const editViewArtifact = page.locator('input[name="email"]')
     await expect(editViewArtifact).toBeVisible()
   })

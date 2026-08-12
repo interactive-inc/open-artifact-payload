@@ -34,8 +34,13 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "bun dev",
-    reuseExistingServer: true,
+    // Next devと同時に別のMiniflareを開くとローカルD1が競合するため、
+    // E2Eユーザーはサーバー起動前に準備して接続を閉じる。
+    command: "vp exec tsx tests/helpers/seed-user-cli.ts && bun dev",
+    env: {
+      PAYLOAD_SECRET: process.env.PAYLOAD_SECRET ?? "test-secret-do-not-use-in-production",
+    },
+    reuseExistingServer: false,
     url: "http://localhost:3000",
   },
 })

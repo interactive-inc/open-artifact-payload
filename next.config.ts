@@ -1,5 +1,13 @@
 import type { NextConfig } from "next"
 import { withPayload } from "@payloadcms/next/withPayload"
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare"
+
+// Next devの全VMで1つのCloudflareコンテキストを共有し、D1へ接続する
+// Miniflare/workerdがページの再コンパイルごとに増えないようにする。
+void initOpenNextCloudflareForDev({
+  environment: process.env.CLOUDFLARE_ENV,
+  remoteBindings: false,
+})
 
 const nextConfig: NextConfig = {
   images: {
