@@ -44,6 +44,18 @@
     //   "bucket_name": "<BUCKET_NAME>",
     // },
   ],
+  // 問い合わせフォームの二次防御。namespace_id は同一 Cloudflare アカウント内で
+  // 他の Rate Limiting binding と重複しない正の整数にする。
+  "ratelimits": [
+    {
+      "name": "CONTACT_RATE_LIMITER",
+      "namespace_id": "1001",
+      "simple": {
+        "limit": 5,
+        "period": 60,
+      },
+    },
+  ],
 
   // 本番環境。`CLOUDFLARE_ENV=production` 指定時に使われる。
   // wrangler は環境を指定するとトップレベルの bindings を継承しないため、同じ値を再掲する
@@ -63,6 +75,16 @@
         {
           "binding": "R2",
           "bucket_name": "open-artifact-payload",
+        },
+      ],
+      "ratelimits": [
+        {
+          "name": "CONTACT_RATE_LIMITER",
+          "namespace_id": "1002",
+          "simple": {
+            "limit": 5,
+            "period": 60,
+          },
         },
       ],
     },

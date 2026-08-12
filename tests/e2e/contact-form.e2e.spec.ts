@@ -17,7 +17,8 @@ test.describe("Contact form", () => {
 
     await page.click('button[type="submit"]')
 
-    await expect(page).toHaveURL(/\/contact\/thanks/)
+    // 開発サーバーの初回Server Action/thanksページコンパイルを含めて待つ。
+    await expect(page).toHaveURL(/\/contact\/thanks/, { timeout: 15_000 })
   })
 
   test("必須項目が空だとブラウザバリデーションで送信が止まる", async ({ page }) => {

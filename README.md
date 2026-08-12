@@ -61,14 +61,15 @@ vp run dev
 インフラ・デプロイ:
 
 - [ ] `wrangler.jsonc` の `database_id` / `bucket_name` を本番リソースに差し替える
-- [ ] 本番シークレットを登録する（`wrangler secret put PAYLOAD_SECRET --env=production` は必須。Turnstile / Resend を使う場合はそれぞれのキーも）
+- [ ] 本番シークレットを登録する（`PAYLOAD_SECRET` と、問い合わせフォームを残す場合の `TURNSTILE_SECRET_KEY` は必須。Resend は通知を使う場合のみ）
+- [ ] `wrangler.jsonc` の `CONTACT_RATE_LIMITER` の `namespace_id` がCloudflareアカウント内で一意か確認する
 - [ ] `.env` の `NEXT_PUBLIC_SERVER_URL` を本番ドメインにする（ビルド時に焼き込まれ、sitemap / OG の URL が参照する）
 - [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だとビルドが `no such table` で落ちる）
 - [ ] Workers に独自ドメインを設定する
 
 任意・判断が必要:
 
-- [ ] 問い合わせのスパム対策 (Turnstile) を使うか決める。使うならサイトキーをサイト設定に、シークレットを Secret Store に登録
+- [ ] 問い合わせフォームを残す場合はTurnstileサイトキーをサイト設定に、`TURNSTILE_SECRET_KEY`をSecret Storeに登録する（本番の設定不足はfail-closed）
 - [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` の3つが揃ったときのみ送信される
 - [ ] staging 環境が必要なら `wrangler.jsonc` の `env.staging` に staging 用 D1 / R2 を設定して `make deploy CLOUDFLARE_ENV=staging`
 - [ ] `.docs/tasks.md` の「人間の判断が必要なタスク」を一読して、デフォルトのままでよいか確認する

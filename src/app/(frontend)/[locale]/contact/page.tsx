@@ -3,6 +3,7 @@ import { PhoneIcon, MapPinIcon, HelpCircleIcon } from "lucide-react"
 import { notFound } from "next/navigation"
 
 import { ContactForm } from "@/core/frontend/forms/contact-form"
+import type { ContactInquiryType } from "@/core/frontend/forms/contact-form-constraints"
 import { loadSiteSettings } from "@/core/lib/load-site-settings"
 import { Card, CardContent, CardHeader, CardTitle } from "@/project/shared/ui/card"
 import { Button } from "@/project/shared/ui/button"
@@ -26,7 +27,10 @@ function resolveLocale(locale: string): Locale {
   return locale
 }
 
-const inquiryOptionsByLocale: Record<Locale, Array<{ value: string; label: string }>> = {
+const inquiryOptionsByLocale: Record<
+  Locale,
+  Array<{ value: ContactInquiryType; label: string }>
+> = {
   ja: [
     { value: "service", label: "サービスに関するお問い合わせ" },
     { value: "estimate", label: "お見積もりのご依頼" },

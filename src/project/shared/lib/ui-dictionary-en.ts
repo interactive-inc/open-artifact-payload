@@ -77,6 +77,7 @@ export const uiDictionaryEn: UiDictionary = {
     submit: "Submit",
     submitting: "Submitting...",
     turnstileFailed: "This submission was flagged as spam. Please try again.",
+    rateLimited: "Too many submissions. Please wait about a minute and try again.",
     serverError: "An error occurred while submitting. Please wait and try again.",
   },
   home: {
