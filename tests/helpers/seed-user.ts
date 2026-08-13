@@ -1,49 +1,36 @@
-import { getPayload } from "payload"
-import config from "../../src/payload.config.js"
+import type { Page } from "@playwright/test"
 
 export const testUser = {
   email: "dev@payloadcms.com",
   password: "test",
 }
 
-/**
- * Seeds a test user for e2e admin tests.
- */
-export async function seedTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
+export async function getCurrentUserID(page: Page): Promise<string | number> {
+  const meResponse = await page.request.get("http://localhost:3000/api/users/me")
+  if (!meResponse.ok()) throw new Error(`Failed to read E2E user: ${meResponse.status()}`)
 
-  // Delete existing test user if any
-  await payload.delete({
-    collection: "users",
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
-  })
-
-  // Create fresh test user (admin ロールを付与)
-  await payload.create({
-    collection: "users",
-    data: {
-      ...testUser,
-      roles: ["admin"],
-    },
-  })
+  const meBody: unknown = await meResponse.json()
+  const currentUserID =
+    meBody !== null &&
+    typeof meBody === "object" &&
+    "user" in meBody &&
+    meBody.user !== null &&
+    typeof meBody.user === "object" &&
+    "id" in meBody.user &&
+    (typeof meBody.user.id === "string" || typeof meBody.user.id === "number")
+      ? meBody.user.id
+      : undefined
+  if (currentUserID === undefined) throw new Error("Failed to resolve E2E user id")
+  return currentUserID
 }
 
-/**
- * Cleans up test user after tests
- */
-export async function cleanupTestUser(): Promise<void> {
-  const payload = await getPayload({ config })
-
-  await payload.delete({
-    collection: "users",
-    where: {
-      email: {
-        equals: testUser.email,
-      },
-    },
-  })
+/** E2E専用ユーザーだけを削除し、ほかのローカルユーザーは保持する。 */
+export async function cleanupTestUser(page: Page): Promise<void> {
+  const currentUserID = await getCurrentUserID(page)
+  const deleteResponse = await page.request.delete(
+    `http://localhost:3000/api/users/${currentUserID}`,
+  )
+  if (!deleteResponse.ok()) {
+    throw new Error(`Failed to clean up E2E user ${currentUserID}: ${deleteResponse.status()}`)
+  }
 }

@@ -4,13 +4,14 @@ import { isLocale } from "@/project/shared/lib/is-locale"
 import { defaultLocale } from "@/project/shared/lib/locale-types"
 
 export const config = {
-  // 管理画面 / API / Payload 内部ルート / 静的アセットは locale rewrite の対象外にする。
+  // OpenNext for Cloudflare does not support the Node.js-only Next 16 proxy runtime yet.
+  // Keep the deprecated middleware convention to compile this request boundary for Edge.
   matcher: ["/((?!admin|api|next|_next|favicon.ico|og-default.png|sitemap.xml|robots.txt).*)"],
 }
 
 // x-locale ヘッダーは、Next.js の仕様で params を受け取れない not-found.tsx が
 // locale を復元するために付与する。
-export function proxy(request: NextRequest) {
+export function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   const segment = pathname.split("/")[1] ?? ""
   const requestHeaders = new Headers(request.headers)
