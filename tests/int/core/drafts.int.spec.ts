@@ -33,6 +33,7 @@ describe("drafts", () => {
 
     const onlyPublished = await payload.find({
       collection: "news",
+      draft: false,
       where: {
         and: [{ slug: { equals: slug } }, { _status: { equals: "published" } }],
       },
@@ -43,16 +44,20 @@ describe("drafts", () => {
   })
 
   it("home-page グローバルでドラフトを作成できる", async () => {
+    const title = `下書きトップ-${crypto.randomUUID()}`
     const draft = await payload.updateGlobal({
       slug: "home-page",
       data: {
         hero: {
           enabled: true,
-          title: "下書きトップ",
+          title,
         },
       },
       draft: true,
     })
     expect(draft._status).toBe("draft")
+
+    const published = await payload.findGlobal({ slug: "home-page", draft: false })
+    expect(published.hero.title).not.toBe(title)
   })
 })
