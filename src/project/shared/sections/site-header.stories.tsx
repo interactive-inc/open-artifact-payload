@@ -9,6 +9,7 @@ const meta: Meta<typeof SiteHeader> = {
   component: SiteHeader,
   tags: ["autodocs"],
   args: {
+    locale: "ja",
     settings: exampleSiteSettings,
   },
 }

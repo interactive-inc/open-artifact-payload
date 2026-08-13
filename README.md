@@ -98,7 +98,7 @@ make preview          # ローカルで Workers ランタイムを使ったプ�
 制限事項:
 
 - Sharp が Workers 上で動かないため、画像の crop / focalPoint は本番では無効
-- `vp run build` の SSG プリレンダーはリモート D1 に接続する。先にリモートへ migrate を当てること
+- `vp run build` の SSG プリレンダーはローカル D1 を使い、Cloudflare アカウントや本番 D1 の状態には依存しない。リモート D1 の migrate はデプロイ前に `make deploy-db` で行うこと
 
 ## コマンド一覧
 

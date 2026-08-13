@@ -1,14 +1,12 @@
 "use client"
 
 import Script from "next/script"
-import { useRouter } from "next/navigation"
-import React, { useActionState, useEffect, useState } from "react"
+import React, { useActionState } from "react"
 
 import { submitContactForm } from "@/core/frontend/forms/submit-contact-form"
 import type { ContactSubmitResult } from "@/core/frontend/forms/types"
 import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
 import { defaultLocale, type Locale } from "@/project/shared/lib/locale-types"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
 
 type InquiryOption = { value: string; label: string }
 
@@ -36,23 +34,11 @@ function errorMessages(
 }
 
 export function ContactForm(props: Props) {
-  const [isHydrated, setIsHydrated] = useState(false)
-  const router = useRouter()
   const showCompanyName = props.showCompanyName ?? true
   const dictionary = getUiDictionary(props.locale ?? defaultLocale)
   const [state, formAction, isPending] = useActionState(submitContactForm, null)
   const errors = errorMessages(state, dictionary)
   const inputClass = "w-full border border-border rounded px-3 py-2"
-
-  useEffect(() => {
-    setIsHydrated(true)
-  }, [])
-
-  useEffect(() => {
-    if (state?.status === "ok") {
-      router.push(withLocalePrefix(props.locale ?? defaultLocale, "/contact/thanks"))
-    }
-  }, [props.locale, router, state])
 
   return (
     <>
@@ -113,7 +99,7 @@ export function ContactForm(props: Props) {
         ) : null}
         <button
           type="submit"
-          disabled={!isHydrated || isPending}
+          disabled={isPending}
           className="bg-brand text-white px-6 py-3 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending ? dictionary.contactForm.submitting : dictionary.contactForm.submit}

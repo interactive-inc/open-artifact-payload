@@ -14,8 +14,11 @@ test.describe("Admin Panel", () => {
 
   test.afterAll(async () => {
     if (page) {
-      await cleanupTestUser(page)
-      await page.context().close()
+      try {
+        await cleanupTestUser(page)
+      } finally {
+        await page.context().close()
+      }
     }
   })
 

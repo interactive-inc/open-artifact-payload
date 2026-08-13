@@ -9,6 +9,7 @@ const meta: Meta<typeof SiteFooter> = {
   component: SiteFooter,
   tags: ["autodocs"],
   args: {
+    locale: "ja",
     settings: exampleSiteSettings,
   },
 }
@@ -18,5 +19,5 @@ export default meta
 type Story = StoryObj<typeof SiteFooter>
 
 export const Default: Story = {
-  args: { settings: exampleSiteSettings },
+  args: { locale: "ja", settings: exampleSiteSettings },
 }
