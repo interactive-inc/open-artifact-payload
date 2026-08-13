@@ -43,24 +43,28 @@ vp run setup:project
 
 - 案件 slug (英小文字とハイフン、例: `my-client-2024`)
 - デプロイモード (`cloudflare` または `ssg`)
+- Cloudflare Account ID (Cloudflare モードのみ)
 - Cloudflare D1 をいま作成するか (y/N)
+- 既存の D1 database_id (D1 を作成しない場合。未作成なら空欄)
 - Cloudflare R2 をいま作成するか (y/N)
 - `PAYLOAD_SECRET` を自動生成するか (Y/n)
 
 スクリプト完了後、以下のファイルが更新・生成されます。
 
-- `wrangler.jsonc` — Worker 名、D1 database_id、R2 bucket_name が設定される
+- `wrangler.jsonc` — ローカルと本番を分離した Worker 名、Account ID、D1、R2 が設定される
 - `.env` — `PAYLOAD_SECRET` と `NEXT_PUBLIC_SERVER_URL` が書き込まれる
 - `.docs/project-brief.md` — プロジェクト概要テンプレートがコピーされる (既存の場合は上書きしない)
 
 D1 / R2 を手動で作成する場合は以下のコマンドを使います。
 
 ```bash
-wrangler d1 create <slug>
-wrangler r2 bucket create <slug>
+vp exec wrangler d1 create <slug>-cms
+vp exec wrangler r2 bucket create <slug>-cms
 ```
 
-作成後、`wrangler.jsonc` の `database_id` と `bucket_name` を実際の値に更新してください。
+作成後、`wrangler.jsonc` の `env.production.d1_databases[0].database_id` を実際の値に更新してください。
+R2 のバケット名は `<slug>-cms` です。トップレベルはローカル専用なので `database_id` を追加せず、
+`remote: false` のままにします。
 
 ### プロジェクト概要の記入
 
@@ -359,6 +363,8 @@ Cloudflare Workers Free プランでは Worker の圧縮後サイズ上限が 3 
 make deploy            # DB マイグレーション + アプリデプロイ (CLOUDFLARE_ENV のデフォルトは production)
 make deploy-app        # アプリのみ (マイグレーション済みの場合)
 make deploy-db         # DB マイグレーションのみ
+make deploy-preflight  # Cloudflare のデプロイ設定のみ検査
+make preview           # トップレベルのローカル専用 D1 / R2 でプレビュー
 ```
 
 `make deploy-db` は内部で以下を実行します。
@@ -366,10 +372,15 @@ make deploy-db         # DB マイグレーションのみ
 - `payload migrate` をリモート D1 に対して適用
 - `wrangler d1 execute D1 --command 'PRAGMA optimize'` でクエリプランを最適化
 
-デプロイ前に `wrangler.jsonc` の以下を本番環境の値に更新してください。
+`make deploy*` は最初に preflight を実行し、未設定、雛形値、命名の不一致、環境間でのリソース共有を検出すると停止します。
+`wrangler.jsonc` の以下を対象環境の値に更新してください。
 
-- `d1_databases[0].database_id` — Cloudflare D1 データベース ID
-- `r2_buckets[0].bucket_name` — Cloudflare R2 バケット名
+- `env.production.name` — 本番 Worker 名 (`<slug>`)
+- `env.production.account_id` — 配置先 Cloudflare Account ID
+- `env.production.d1_databases[0]` — `<slug>-cms` の名前、database_id、`remote: true`
+- `env.production.r2_buckets[0]` — `<slug>-cms` の名前、`remote: true`
+
+トップレベルの Worker / D1 / R2 はローカル専用です。`env.production` と同じ名前やIDを設定しないでください。
 
 ### 環境変数
 
