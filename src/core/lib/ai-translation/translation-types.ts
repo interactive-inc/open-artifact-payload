@@ -1,6 +1,6 @@
 export type TranslatableField = {
   path: ReadonlyArray<string | number>
-  kind: 'plain' | 'lexical'
+  kind: "plain" | "lexical"
   texts: ReadonlyArray<string>
 }
 

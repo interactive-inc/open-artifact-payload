@@ -1,6 +1,6 @@
-import type { Access } from 'payload'
+import type { Access } from "payload"
 
-import { isUserAccount } from '@/core/lib/access/is-user-account'
+import { isUserAccount } from "@/core/lib/access/is-user-account"
 
 /**
  * Users auth collectionへログイン済みなら通す共通アクセス制御。

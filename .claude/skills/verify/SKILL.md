@@ -26,5 +26,5 @@ description: この Payload CMS テンプレートの変更を実際に動かし
 
 ## 注意
 
-- `wrangler types`（`bun run generate:types` の前半）は `.env` の内容から env 型を生成するため、シークレットが揃っていない環境で実行すると `cloudflare-env.d.ts` が痩せる。差分が出たら `git checkout -- cloudflare-env.d.ts` で戻す
-- `bun run payload` 系 CLI は `PAYLOAD_SECRET=test-secret-do-not-use-in-production` を付ければ `.env` 無しでも動く
+- `wrangler types`（`vp run generate:types` の前半）は `.env` の内容から env 型を生成するため、シークレットが揃っていない環境で実行すると `cloudflare-env.d.ts` が痩せる。差分を確認し、意図しない変更なら `git restore cloudflare-env.d.ts` で戻す
+- `vp run payload --` 系 CLI は `PAYLOAD_SECRET=test-secret-do-not-use-in-production` を付ければ `.env` 無しでも動く

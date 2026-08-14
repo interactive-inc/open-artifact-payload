@@ -1,10 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from './accordion'
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./accordion"
 
 const meta: Meta = {
-  title: 'UI/Accordion',
-  tags: ['autodocs'],
+  title: "UI/Accordion",
+  tags: ["autodocs"],
 }
 
 export default meta

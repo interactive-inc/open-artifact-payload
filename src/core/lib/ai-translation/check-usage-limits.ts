@@ -1,4 +1,4 @@
-import type { UsageLimits, UsageSnapshot } from '@/core/lib/ai-translation/translation-types'
+import type { UsageLimits, UsageSnapshot } from "@/core/lib/ai-translation/translation-types"
 
 type Props = {
   snapshot: UsageSnapshot

@@ -24,7 +24,7 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const object = await env.MY_BUCKET.get('file.txt')
+    const object = await env.MY_BUCKET.get("file.txt")
     return new Response(object?.body)
   },
 }
@@ -33,10 +33,10 @@ export default {
 ## S3 SDK Setup
 
 ```typescript
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3"
 
 const s3 = new S3Client({
-  region: 'auto',
+  region: "auto",
   endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: env.R2_ACCESS_KEY_ID,
@@ -46,10 +46,10 @@ const s3 = new S3Client({
 
 await s3.send(
   new PutObjectCommand({
-    Bucket: 'my-bucket',
-    Key: 'file.txt',
+    Bucket: "my-bucket",
+    Key: "file.txt",
     Body: data,
-    StorageClass: 'STANDARD', // or 'STANDARD_IA'
+    StorageClass: "STANDARD", // or 'STANDARD_IA'
   }),
 )
 ```
@@ -68,10 +68,10 @@ wrangler r2 bucket create my-bucket --location=enam
 CORS must be configured via S3 SDK or dashboard (not available in Workers API):
 
 ```typescript
-import { S3Client, PutBucketCorsCommand } from '@aws-sdk/client-s3'
+import { S3Client, PutBucketCorsCommand } from "@aws-sdk/client-s3"
 
 const s3 = new S3Client({
-  region: 'auto',
+  region: "auto",
   endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
   credentials: {
     accessKeyId: env.R2_ACCESS_KEY_ID,
@@ -81,14 +81,14 @@ const s3 = new S3Client({
 
 await s3.send(
   new PutBucketCorsCommand({
-    Bucket: 'my-bucket',
+    Bucket: "my-bucket",
     CORSConfiguration: {
       CORSRules: [
         {
-          AllowedOrigins: ['https://example.com'],
-          AllowedMethods: ['GET', 'PUT', 'HEAD'],
-          AllowedHeaders: ['*'],
-          ExposeHeaders: ['ETag'],
+          AllowedOrigins: ["https://example.com"],
+          AllowedMethods: ["GET", "PUT", "HEAD"],
+          AllowedHeaders: ["*"],
+          ExposeHeaders: ["ETag"],
           MaxAgeSeconds: 3600,
         },
       ],
@@ -100,24 +100,24 @@ await s3.send(
 ## Object Lifecycles
 
 ```typescript
-import { PutBucketLifecycleConfigurationCommand } from '@aws-sdk/client-s3'
+import { PutBucketLifecycleConfigurationCommand } from "@aws-sdk/client-s3"
 
 await s3.send(
   new PutBucketLifecycleConfigurationCommand({
-    Bucket: 'my-bucket',
+    Bucket: "my-bucket",
     LifecycleConfiguration: {
       Rules: [
         {
-          ID: 'expire-old-logs',
-          Status: 'Enabled',
-          Prefix: 'logs/',
+          ID: "expire-old-logs",
+          Status: "Enabled",
+          Prefix: "logs/",
           Expiration: { Days: 90 },
         },
         {
-          ID: 'transition-to-ia',
-          Status: 'Enabled',
-          Prefix: 'archives/',
-          Transitions: [{ Days: 30, StorageClass: 'STANDARD_IA' }],
+          ID: "transition-to-ia",
+          Status: "Enabled",
+          Prefix: "archives/",
+          Transitions: [{ Days: 30, StorageClass: "STANDARD_IA" }],
         },
       ],
     },

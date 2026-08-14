@@ -4,7 +4,7 @@
 
 ```typescript
 // 1. Embed query
-const embedding = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: query })
+const embedding = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: query })
 
 // 2. Search vectors
 const results = await env.VECTORIZE.query(embedding.data[0], {
@@ -13,13 +13,13 @@ const results = await env.VECTORIZE.query(embedding.data[0], {
 })
 
 // 3. Build context
-const context = results.matches.map((m) => m.metadata?.text).join('\n\n')
+const context = results.matches.map((m) => m.metadata?.text).join("\n\n")
 
 // 4. Generate with context
-const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+const response = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
   messages: [
-    { role: 'system', content: `Answer based on:\n\n${context}` },
-    { role: 'user', content: query },
+    { role: "system", content: `Answer based on:\n\n${context}` },
+    { role: "user", content: query },
   ],
 })
 ```
@@ -27,7 +27,7 @@ const response = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
 ## Streaming (SSE)
 
 ```typescript
-const stream = await env.AI.run('@cf/meta/llama-3.1-8b-instruct', {
+const stream = await env.AI.run("@cf/meta/llama-3.1-8b-instruct", {
   messages,
   stream: true,
 })
@@ -39,12 +39,12 @@ const writer = writable.getWriter()
   for await (const chunk of stream) {
     await writer.write(new TextEncoder().encode(`data: ${JSON.stringify(chunk)}\n\n`))
   }
-  await writer.write(new TextEncoder().encode('data: [DONE]\n\n'))
+  await writer.write(new TextEncoder().encode("data: [DONE]\n\n"))
   await writer.close()
 })()
 
 return new Response(readable, {
-  headers: { 'Content-Type': 'text/event-stream' },
+  headers: { "Content-Type": "text/event-stream" },
 })
 ```
 
@@ -56,7 +56,7 @@ async function runWithRetry(env, model, input, maxRetries = 3) {
     try {
       return await env.AI.run(model, input)
     } catch (error) {
-      if (error.message?.includes('7505') && attempt < maxRetries - 1) {
+      if (error.message?.includes("7505") && attempt < maxRetries - 1) {
         await new Promise((r) => setTimeout(r, Math.pow(2, attempt) * 1000))
         continue
       }
@@ -70,9 +70,9 @@ async function runWithRetry(env, model, input, maxRetries = 3) {
 
 ```typescript
 try {
-  return await env.AI.run('@cf/meta/llama-3.1-70b-instruct', { messages })
+  return await env.AI.run("@cf/meta/llama-3.1-70b-instruct", { messages })
 } catch {
-  return await env.AI.run('@cf/meta/llama-3.1-8b-instruct', { messages })
+  return await env.AI.run("@cf/meta/llama-3.1-8b-instruct", { messages })
 }
 ```
 
@@ -81,17 +81,17 @@ try {
 ```typescript
 // System prompts
 const PROMPTS = {
-  json: 'Respond with valid JSON only.',
-  concise: 'Keep responses brief.',
-  cot: 'Think step by step before answering.',
+  json: "Respond with valid JSON only.",
+  concise: "Keep responses brief.",
+  cot: "Think step by step before answering.",
 }
 
 // Few-shot
 messages: [
-  { role: 'system', content: 'Extract as JSON' },
-  { role: 'user', content: 'John bought 3 apples for $5' },
-  { role: 'assistant', content: '{"name":"John","item":"apples","qty":3}' },
-  { role: 'user', content: actualInput },
+  { role: "system", content: "Extract as JSON" },
+  { role: "user", content: "John bought 3 apples for $5" },
+  { role: "assistant", content: '{"name":"John","item":"apples","qty":3}' },
+  { role: "user", content: actualInput },
 ]
 ```
 
@@ -99,9 +99,9 @@ messages: [
 
 ```typescript
 const [sentiment, summary, embedding] = await Promise.all([
-  env.AI.run('@cf/mistral/mistral-7b-instruct-v0.1', { messages: sentimentPrompt }),
-  env.AI.run('@cf/meta/llama-3.1-8b-instruct', { messages: summaryPrompt }),
-  env.AI.run('@cf/baai/bge-base-en-v1.5', { text }),
+  env.AI.run("@cf/mistral/mistral-7b-instruct-v0.1", { messages: sentimentPrompt }),
+  env.AI.run("@cf/meta/llama-3.1-8b-instruct", { messages: summaryPrompt }),
+  env.AI.run("@cf/baai/bge-base-en-v1.5", { text }),
 ])
 ```
 
@@ -116,7 +116,7 @@ const [sentiment, summary, embedding] = await Promise.all([
 
 ```typescript
 // Batch embeddings
-const response = await env.AI.run('@cf/baai/bge-base-en-v1.5', {
+const response = await env.AI.run("@cf/baai/bge-base-en-v1.5", {
   text: textsArray, // Process multiple at once
 })
 ```

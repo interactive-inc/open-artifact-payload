@@ -25,14 +25,14 @@ interface TraceItem {
   scriptName: string // Producer Worker name
   eventTimestamp: number // Epoch milliseconds
   outcome:
-    | 'ok'
-    | 'exception'
-    | 'exceededCpu'
-    | 'exceededMemory'
-    | 'canceled'
-    | 'scriptNotFound'
-    | 'responseStreamDisconnected'
-    | 'unknown'
+    | "ok"
+    | "exception"
+    | "exceededCpu"
+    | "exceededMemory"
+    | "canceled"
+    | "scriptNotFound"
+    | "responseStreamDisconnected"
+    | "unknown"
 
   event?: {
     request?: {
@@ -49,7 +49,7 @@ interface TraceItem {
 
   logs: Array<{
     timestamp: number // Epoch milliseconds
-    level: 'debug' | 'info' | 'log' | 'warn' | 'error'
+    level: "debug" | "info" | "log" | "warn" | "error"
     message: unknown[] // Args passed to console function
   }>
 
@@ -142,8 +142,8 @@ export default {
 
     ctx.waitUntil(
       fetch(env.LOG_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       }),
     )
@@ -161,7 +161,7 @@ export default {
 
 ```typescript
 // ✅ Check outcome for script execution status
-if (event.outcome === 'exception') {
+if (event.outcome === "exception") {
   // Script threw uncaught exception
 }
 

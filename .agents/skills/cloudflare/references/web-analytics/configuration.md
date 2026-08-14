@@ -53,7 +53,7 @@ Dashboard → Web Analytics → Add site → Enter hostname → Copy snippet
 
 ```typescript
 // Only load in production
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   // Load beacon
 }
 ```

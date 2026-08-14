@@ -1,23 +1,23 @@
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getPayload } from 'payload'
-import React from 'react'
+import { draftMode } from "next/headers"
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
+import { getPayload } from "payload"
+import React from "react"
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import config from '@/payload.config'
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { PageHeader } from '@/project/shared/sections/page-header'
-import { workCategoryLabels } from '@/project/shared/lib/work-category-labels'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import '../styles.css'
+import config from "@/payload.config"
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { PageHeader } from "@/project/shared/sections/page-header"
+import { workCategoryLabels } from "@/project/shared/lib/work-category-labels"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import "../styles.css"
 
 // サムネイル未設定時の仮画像。slug ごとに固定 ID を割り当て、毎回同じ写真を出す。
 const fallbackImageIds = [1059, 180, 160, 0, 1062, 119, 20, 48]
@@ -38,7 +38,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
 
   return {
     title: dictionary.works.title,
-    alternates: { languages: buildLocaleAlternates('/works') },
+    alternates: { languages: buildLocaleAlternates("/works") },
   }
 }
 
@@ -51,11 +51,11 @@ export default async function WorksListPage(props: Props) {
   const draftState = await draftMode()
   const isDraft = draftState.isEnabled
   const result = await payload.find({
-    collection: 'works',
+    collection: "works",
     limit: 50,
-    sort: '-publishedAt',
+    sort: "-publishedAt",
     draft: isDraft,
-    where: isDraft ? undefined : { _status: { equals: 'published' } },
+    where: isDraft ? undefined : { _status: { equals: "published" } },
     depth: 1,
     locale,
   })
@@ -74,7 +74,7 @@ export default async function WorksListPage(props: Props) {
                 const imageUrl =
                   resolveMediaUrl(item.thumbnail as never) ??
                   `https://picsum.photos/id/${fallbackImageIds[index % fallbackImageIds.length]}/1200/750`
-                const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ''
+                const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ""
 
                 return (
                   <Link

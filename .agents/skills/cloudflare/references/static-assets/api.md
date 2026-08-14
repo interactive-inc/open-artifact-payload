@@ -23,15 +23,15 @@ interface Fetcher {
 await env.ASSETS.fetch(request)
 
 // 2. String path (hostname ignored, only path matters)
-await env.ASSETS.fetch('https://any-host/path/to/asset.png')
+await env.ASSETS.fetch("https://any-host/path/to/asset.png")
 
 // 3. URL object
-await env.ASSETS.fetch(new URL('/index.html', request.url))
+await env.ASSETS.fetch(new URL("/index.html", request.url))
 
 // 4. Constructed Request object
 await env.ASSETS.fetch(
-  new Request(new URL('/logo.png', request.url), {
-    method: 'GET',
+  new Request(new URL("/logo.png", request.url), {
+    method: "GET",
     headers: request.headers,
   }),
 )
@@ -50,9 +50,9 @@ await env.ASSETS.fetch(
 
 ```typescript
 // All resolve to same asset:
-env.ASSETS.fetch('https://example.com/logo.png')
-env.ASSETS.fetch('https://ignored.host/logo.png')
-env.ASSETS.fetch('/logo.png')
+env.ASSETS.fetch("https://example.com/logo.png")
+env.ASSETS.fetch("https://ignored.host/logo.png")
+env.ASSETS.fetch("/logo.png")
 ```
 
 Assets are resolved relative to configured `assets.directory`.
@@ -164,8 +164,8 @@ return new Response(response.body, {
   status: response.status,
   headers: {
     ...Object.fromEntries(response.headers),
-    'Cache-Control': 'public, max-age=31536000',
-    'X-Custom': 'value',
+    "Cache-Control": "public, max-age=31536000",
+    "X-Custom": "value",
   },
 })
 ```
@@ -179,7 +179,7 @@ const response = await env.ASSETS.fetch(request)
 
 if (!response.ok) {
   // Asset not found or error
-  return new Response('Custom error page', { status: 404 })
+  return new Response("Custom error page", { status: 404 })
 }
 
 return response
@@ -191,8 +191,8 @@ return response
 const url = new URL(request.url)
 
 // Serve different assets based on conditions
-if (url.pathname === '/') {
-  return env.ASSETS.fetch('/index.html')
+if (url.pathname === "/") {
+  return env.ASSETS.fetch("/index.html")
 }
 
 return env.ASSETS.fetch(request)

@@ -74,8 +74,8 @@ export default {
     // Process events from producer Worker
     ctx.waitUntil(
       fetch(env.LOG_ENDPOINT, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(events),
       }),
     )

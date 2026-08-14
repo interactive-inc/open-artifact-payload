@@ -40,7 +40,7 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const result = await env.DB.prepare('SELECT * FROM users').all()
+    const result = await env.DB.prepare("SELECT * FROM users").all()
     return Response.json(result.results)
   },
 }
@@ -123,10 +123,10 @@ EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = ?;
 ```typescript
 // drizzle.config.ts
 export default {
-  schema: './src/schema.ts',
-  out: './migrations',
-  dialect: 'sqlite',
-  driver: 'd1-http',
+  schema: "./src/schema.ts",
+  out: "./migrations",
+  dialect: "sqlite",
+  driver: "d1-http",
   dbCredentials: {
     accountId: process.env.CLOUDFLARE_ACCOUNT_ID!,
     databaseId: process.env.D1_DATABASE_ID!,
@@ -135,16 +135,16 @@ export default {
 } satisfies Config
 
 // schema.ts
-import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-export const users = sqliteTable('users', {
-  id: integer('id').primaryKey({ autoIncrement: true }),
-  email: text('email').notNull().unique(),
-  name: text('name').notNull(),
+import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core"
+export const users = sqliteTable("users", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  email: text("email").notNull().unique(),
+  name: text("name").notNull(),
 })
 
 // worker.ts
-import { drizzle } from 'drizzle-orm/d1'
-import { users } from './schema'
+import { drizzle } from "drizzle-orm/d1"
+import { users } from "./schema"
 export default {
   async fetch(request: Request, env: Env) {
     const db = drizzle(env.DB)

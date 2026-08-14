@@ -1,27 +1,27 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
-import { ArrowRightIcon, MailIcon } from 'lucide-react'
+import type { Meta, StoryObj } from "@storybook/react-vite"
+import { ArrowRightIcon, MailIcon } from "lucide-react"
 
-import { Button } from './button'
+import { Button } from "./button"
 
 const meta: Meta<typeof Button> = {
-  title: 'UI/Button',
+  title: "UI/Button",
   component: Button,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'inline-radio',
-      options: ['default', 'secondary', 'outline', 'ghost', 'destructive', 'link'],
+      control: "inline-radio",
+      options: ["default", "secondary", "outline", "ghost", "destructive", "link"],
     },
     size: {
-      control: 'inline-radio',
-      options: ['default', 'sm', 'lg', 'icon'],
+      control: "inline-radio",
+      options: ["default", "sm", "lg", "icon"],
     },
-    disabled: { control: 'boolean' },
+    disabled: { control: "boolean" },
   },
   args: {
-    children: 'ボタン',
-    variant: 'default',
-    size: 'default',
+    children: "ボタン",
+    variant: "default",
+    size: "default",
     disabled: false,
   },
 }
@@ -33,19 +33,19 @@ type Story = StoryObj<typeof Button>
 export const Default: Story = {}
 
 export const Secondary: Story = {
-  args: { variant: 'secondary' },
+  args: { variant: "secondary" },
 }
 
 export const Outline: Story = {
-  args: { variant: 'outline' },
+  args: { variant: "outline" },
 }
 
 export const Ghost: Story = {
-  args: { variant: 'ghost' },
+  args: { variant: "ghost" },
 }
 
 export const Destructive: Story = {
-  args: { variant: 'destructive', children: '削除する' },
+  args: { variant: "destructive", children: "削除する" },
 }
 
 export const WithIcon: Story = {
@@ -61,17 +61,17 @@ export const WithIcon: Story = {
 
 export const IconOnly: Story = {
   args: {
-    variant: 'outline',
-    size: 'icon',
+    variant: "outline",
+    size: "icon",
     children: <MailIcon />,
-    'aria-label': 'メール',
+    "aria-label": "メール",
   },
 }
 
 export const Large: Story = {
-  args: { size: 'lg', children: 'お問い合わせする' },
+  args: { size: "lg", children: "お問い合わせする" },
 }
 
 export const Disabled: Story = {
-  args: { disabled: true, children: '無効化' },
+  args: { disabled: true, children: "無効化" },
 }

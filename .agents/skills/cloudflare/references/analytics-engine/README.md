@@ -65,7 +65,7 @@ Alternative scenarios:
 
 ```typescript
 env.ANALYTICS.writeDataPoint({
-  blobs: ['/api/users', 'GET', '200'],
+  blobs: ["/api/users", "GET", "200"],
   doubles: [145.2, 1], // latency_ms, count
   indexes: [customerId],
 })

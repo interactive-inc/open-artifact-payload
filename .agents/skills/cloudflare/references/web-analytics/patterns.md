@@ -49,11 +49,11 @@ await task2()
 
 ```typescript
 // Load beacon only after consent
-const consent = localStorage.getItem('analytics-consent')
-if (consent === 'accepted') {
-  const script = document.createElement('script')
-  script.src = 'https://static.cloudflareinsights.com/beacon.min.js'
-  script.setAttribute('data-cf-beacon', '{"token": "TOKEN", "spa": true}')
+const consent = localStorage.getItem("analytics-consent")
+if (consent === "accepted") {
+  const script = document.createElement("script")
+  script.src = "https://static.cloudflareinsights.com/beacon.min.js"
+  script.setAttribute("data-cf-beacon", '{"token": "TOKEN", "spa": true}')
   document.body.appendChild(script)
 }
 ```

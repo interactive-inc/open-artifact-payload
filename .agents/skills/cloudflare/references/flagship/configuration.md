@@ -96,8 +96,8 @@ npm i @cloudflare/flagship @openfeature/web-sdk
 Recommended approach inside Workers. No HTTP overhead, auth handled automatically.
 
 ```typescript
-import { OpenFeature } from '@openfeature/server-sdk'
-import { FlagshipServerProvider } from '@cloudflare/flagship'
+import { OpenFeature } from "@openfeature/server-sdk"
+import { FlagshipServerProvider } from "@cloudflare/flagship"
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -113,14 +113,14 @@ export default {
 For non-Worker runtimes. Requires an API token with Flagship read permissions.
 
 ```typescript
-import { OpenFeature } from '@openfeature/server-sdk'
-import { FlagshipServerProvider } from '@cloudflare/flagship'
+import { OpenFeature } from "@openfeature/server-sdk"
+import { FlagshipServerProvider } from "@cloudflare/flagship"
 
 await OpenFeature.setProviderAndWait(
   new FlagshipServerProvider({
-    appId: '<APP_ID>',
-    accountId: '<ACCOUNT_ID>',
-    authToken: '<API_TOKEN>',
+    appId: "<APP_ID>",
+    accountId: "<ACCOUNT_ID>",
+    authToken: "<API_TOKEN>",
   }),
 )
 const client = OpenFeature.getClient()
@@ -131,18 +131,18 @@ const client = OpenFeature.getClient()
 Pre-fetches flags on init, then evaluates synchronously. Only `prefetchFlags` are available.
 
 ```typescript
-import { OpenFeature } from '@openfeature/web-sdk'
-import { FlagshipClientProvider } from '@cloudflare/flagship'
+import { OpenFeature } from "@openfeature/web-sdk"
+import { FlagshipClientProvider } from "@cloudflare/flagship"
 
 await OpenFeature.setProviderAndWait(
   new FlagshipClientProvider({
-    appId: '<APP_ID>',
-    accountId: '<ACCOUNT_ID>',
-    authToken: '<API_TOKEN>',
-    prefetchFlags: ['promo-banner', 'dark-mode', 'max-uploads'],
+    appId: "<APP_ID>",
+    accountId: "<ACCOUNT_ID>",
+    authToken: "<API_TOKEN>",
+    prefetchFlags: ["promo-banner", "dark-mode", "max-uploads"],
   }),
 )
-await OpenFeature.setContext({ targetingKey: 'user-42', plan: 'enterprise' })
+await OpenFeature.setContext({ targetingKey: "user-42", plan: "enterprise" })
 const client = OpenFeature.getClient()
 ```
 

@@ -1,7 +1,7 @@
-import React from 'react'
-import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import React from "react"
+import type { SerializedEditorState } from "@payloadcms/richtext-lexical/lexical"
 
-import { RichText } from '@/core/lib/lexical'
+import { RichText } from "@/core/lib/lexical"
 
 type Props = {
   data: {

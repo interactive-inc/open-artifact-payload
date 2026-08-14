@@ -1,17 +1,17 @@
-import React from 'react'
-import type { Preview } from '@storybook/nextjs-vite'
-import { withThemeByClassName } from '@storybook/addon-themes'
+import React from "react"
+import type { Preview } from "@storybook/react-vite"
+import { withThemeByClassName } from "@storybook/addon-themes"
 
-import { TooltipProvider } from '../src/project/shared/ui/tooltip'
-import '../src/app/(frontend)/styles.css'
+import { TooltipProvider } from "../src/project/shared/ui/tooltip"
+import "../src/app/(frontend)/[locale]/styles.css"
 
 const preview: Preview = {
   parameters: {
     backgrounds: {
-      default: 'light',
+      default: "light",
       values: [
-        { name: 'light', value: '#ffffff' },
-        { name: 'dark', value: '#111111' },
+        { name: "light", value: "#ffffff" },
+        { name: "dark", value: "#111111" },
       ],
     },
     controls: {
@@ -20,12 +20,12 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-    a11y: { test: 'todo' },
+    a11y: { test: "todo" },
   },
   decorators: [
     withThemeByClassName({
-      themes: { light: '', dark: 'dark' },
-      defaultTheme: 'light',
+      themes: { light: "", dark: "dark" },
+      defaultTheme: "light",
     }),
     (Story) => (
       <TooltipProvider>

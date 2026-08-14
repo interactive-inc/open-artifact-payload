@@ -52,9 +52,9 @@ Expert guidance for implementing Cloudflare AI Search (formerly AutoRAG), Cloudf
 ```typescript
 export default {
   async fetch(request, env) {
-    const answer = await env.AI.autorag('my-search-instance').aiSearch({
-      query: 'How do I configure caching?',
-      model: '@cf/meta/llama-3.3-70b-instruct-fp8-fast',
+    const answer = await env.AI.autorag("my-search-instance").aiSearch({
+      query: "How do I configure caching?",
+      model: "@cf/meta/llama-3.3-70b-instruct-fp8-fast",
     })
 
     return Response.json({ answer: answer.response })

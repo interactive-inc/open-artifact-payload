@@ -3,7 +3,7 @@
 ## SDK Setup
 
 ```typescript
-import Cloudflare from 'cloudflare'
+import Cloudflare from "cloudflare"
 
 const client = new Cloudflare({
   apiToken: process.env.CF_API_TOKEN,
@@ -14,32 +14,32 @@ const client = new Cloudflare({
 
 ```typescript
 // List rulesets
-await client.rulesets.list({ zone_id: 'zone_id', phase: 'http_request_firewall_managed' })
+await client.rulesets.list({ zone_id: "zone_id", phase: "http_request_firewall_managed" })
 
 // Get ruleset
-await client.rulesets.get({ zone_id: 'zone_id', ruleset_id: 'ruleset_id' })
+await client.rulesets.get({ zone_id: "zone_id", ruleset_id: "ruleset_id" })
 
 // Create ruleset
 await client.rulesets.create({
-  zone_id: 'zone_id',
-  kind: 'zone',
-  phase: 'http_request_firewall_custom',
-  name: 'Custom WAF Rules',
-  rules: [{ action: 'block', expression: 'cf.waf.score gt 40', enabled: true }],
+  zone_id: "zone_id",
+  kind: "zone",
+  phase: "http_request_firewall_custom",
+  name: "Custom WAF Rules",
+  rules: [{ action: "block", expression: "cf.waf.score gt 40", enabled: true }],
 })
 
 // Update ruleset (include rule id to keep existing, omit id for new rules)
 await client.rulesets.update({
-  zone_id: 'zone_id',
-  ruleset_id: 'ruleset_id',
+  zone_id: "zone_id",
+  ruleset_id: "ruleset_id",
   rules: [
-    { id: 'rule_id', action: 'block', expression: 'cf.waf.score gt 40', enabled: true },
-    { action: 'challenge', expression: 'http.request.uri.path contains "/admin"', enabled: true },
+    { id: "rule_id", action: "block", expression: "cf.waf.score gt 40", enabled: true },
+    { action: "challenge", expression: 'http.request.uri.path contains "/admin"', enabled: true },
   ],
 })
 
 // Delete ruleset
-await client.rulesets.delete({ zone_id: 'zone_id', ruleset_id: 'ruleset_id' })
+await client.rulesets.delete({ zone_id: "zone_id", ruleset_id: "ruleset_id" })
 ```
 
 ## Actions & Phases
@@ -84,8 +84,8 @@ cf.waf.score.sqli // SQL injection score
 cf.waf.score.xss // XSS score
 
 // Headers & Cookies
-http.request.headers['authorization'][0]
-http.request.cookies['session'][0]
+http.request.headers["authorization"][0]
+http.request.cookies["session"][0]
 lower(http.user_agent) // Lowercase user agent
 ```
 
@@ -105,7 +105,7 @@ contains // Substring match
 matches // Regex match (use carefully)
 starts_with // Prefix match
 ends_with in // Suffix match
-// Value in list
+  // Value in list
   // List operations
   not // Logical NOT
 and // Logical AND
@@ -115,9 +115,9 @@ or // Logical OR
 ### Expression Examples
 
 ```typescript
-'cf.waf.score gt 40' // Attack score
+"cf.waf.score gt 40" // Attack score
 'http.request.uri.path eq "/api/login" and http.request.method eq "POST"' // Path + method
-'ip.src in {192.0.2.0/24 203.0.113.0/24}' // IP blocking
+"ip.src in {192.0.2.0/24 203.0.113.0/24}" // IP blocking
 'ip.geoip.country in {"CN" "RU" "KP"}' // Country blocking
 'http.user_agent contains "bot"' // User agent
 'not http.request.headers["authorization"][0]' // Header check

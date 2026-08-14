@@ -1,13 +1,13 @@
-import type { Payload, TypedLocale } from 'payload'
+import type { Payload, TypedLocale } from "payload"
 
-import { isCollectionSlug } from '@/core/lib/ai-translation/is-collection-slug'
-import { isGlobalSlug } from '@/core/lib/ai-translation/is-global-slug'
-import type { User } from '@/payload-types'
+import { isCollectionSlug } from "@/core/lib/ai-translation/is-collection-slug"
+import { isGlobalSlug } from "@/core/lib/ai-translation/is-global-slug"
+import type { User } from "@/payload-types"
 
 type Props = {
   payload: Payload
   user: User
-  targetKind: 'collection' | 'global'
+  targetKind: "collection" | "global"
   targetSlug: string
   targetId: string | null
   targetLocale: TypedLocale
@@ -22,9 +22,9 @@ type Props = {
  */
 export async function updateTranslatedDocument(props: Props): Promise<null | Error> {
   try {
-    if (props.targetKind === 'collection') {
+    if (props.targetKind === "collection") {
       if (!isCollectionSlug(props.payload, props.targetSlug) || props.targetId === null) {
-        return new Error('翻訳対象が見つかりません')
+        return new Error("翻訳対象が見つかりません")
       }
 
       // 動的 slug 経由の Local API は生成型の厳密な data 型に静的には合わせられない。
@@ -44,7 +44,7 @@ export async function updateTranslatedDocument(props: Props): Promise<null | Err
     }
 
     if (!isGlobalSlug(props.payload, props.targetSlug)) {
-      return new Error('翻訳対象が見つかりません')
+      return new Error("翻訳対象が見つかりません")
     }
 
     await props.payload.updateGlobal({

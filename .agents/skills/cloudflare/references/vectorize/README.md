@@ -86,12 +86,12 @@ How many tenants?
 
 ```typescript
 // 1. Generate embedding
-const result = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [query] })
+const result = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [query] })
 
 // 2. Query Vectorize
 const matches = await env.VECTORIZE.query(result.data[0], {
   topK: 5,
-  returnMetadata: 'indexed',
+  returnMetadata: "indexed",
 })
 ```
 
@@ -99,7 +99,7 @@ const matches = await env.VECTORIZE.query(result.data[0], {
 
 ```typescript
 // 1. Generate query embedding
-const embedding = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [query] })
+const embedding = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [query] })
 
 // 2. Search Vectorize
 const matches = await env.VECTORIZE.query(embedding.data[0], { topK: 5 })
@@ -110,8 +110,8 @@ const docs = await Promise.all(
 )
 
 // 4. Generate LLM response with context
-const answer = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-  prompt: `Context: ${docs.join('\n\n')}\n\nQuestion: ${query}\n\nAnswer:`,
+const answer = await env.AI.run("@cf/meta/llama-3-8b-instruct", {
+  prompt: `Context: ${docs.join("\n\n")}\n\nQuestion: ${query}\n\nAnswer:`,
 })
 ```
 

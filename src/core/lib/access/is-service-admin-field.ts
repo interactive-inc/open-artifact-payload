@@ -1,6 +1,6 @@
-import type { FieldAccess } from 'payload'
+import type { FieldAccess } from "payload"
 
-import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { hasServiceAdminRole } from "@/core/lib/access/has-service-admin-role"
 
 /**
  * Field 用の serviceAdmin 限定 access。Collection 用とは型シグネチャが別。

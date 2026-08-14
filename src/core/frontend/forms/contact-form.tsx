@@ -1,12 +1,13 @@
-'use client'
+"use client"
 
-import Script from 'next/script'
-import React, { useActionState } from 'react'
+import Script from "next/script"
+import React, { useActionState } from "react"
 
-import { submitContactForm } from '@/core/frontend/forms/submit-contact-form'
-import type { ContactSubmitResult } from '@/core/frontend/forms/types'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { defaultLocale, type Locale } from '@/project/shared/lib/locale-types'
+import { submitContactForm } from "@/core/frontend/forms/submit-contact-form"
+import type { ContactSubmitResult } from "@/core/frontend/forms/types"
+import { CONTACT_FIELD_LIMITS } from "@/core/frontend/forms/contact-form-constraints"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { defaultLocale, type Locale } from "@/project/shared/lib/locale-types"
 
 type InquiryOption = { value: string; label: string }
 
@@ -27,9 +28,10 @@ function errorMessages(
   dictionary: ReturnType<typeof getUiDictionary>,
 ): string[] {
   if (!state) return []
-  if (state.status === 'validationFailed') return state.errors
-  if (state.status === 'turnstileFailed') return [dictionary.contactForm.turnstileFailed]
-  if (state.status === 'serverError') return [dictionary.contactForm.serverError]
+  if (state.status === "validationFailed") return state.errors
+  if (state.status === "turnstileFailed") return [dictionary.contactForm.turnstileFailed]
+  if (state.status === "rateLimited") return [dictionary.contactForm.rateLimited]
+  if (state.status === "serverError") return [dictionary.contactForm.serverError]
   return []
 }
 
@@ -38,7 +40,7 @@ export function ContactForm(props: Props) {
   const dictionary = getUiDictionary(props.locale ?? defaultLocale)
   const [state, formAction, isPending] = useActionState(submitContactForm, null)
   const errors = errorMessages(state, dictionary)
-  const inputClass = 'w-full border border-border rounded px-3 py-2'
+  const inputClass = "w-full border border-border rounded px-3 py-2"
 
   return (
     <>
@@ -61,21 +63,36 @@ export function ContactForm(props: Props) {
         ) : null}
         <label className="block">
           <span className="block text-sm mb-1">{dictionary.contactForm.name}</span>
-          <input name="name" required className={inputClass} />
+          <input
+            name="name"
+            required
+            maxLength={CONTACT_FIELD_LIMITS.name}
+            className={inputClass}
+          />
         </label>
         {showCompanyName ? (
           <label className="block">
             <span className="block text-sm mb-1">{dictionary.contactForm.companyNameOptional}</span>
-            <input name="companyName" className={inputClass} />
+            <input
+              name="companyName"
+              maxLength={CONTACT_FIELD_LIMITS.companyName}
+              className={inputClass}
+            />
           </label>
         ) : null}
         <label className="block">
           <span className="block text-sm mb-1">{dictionary.contactForm.email}</span>
-          <input type="email" name="email" required className={inputClass} />
+          <input
+            type="email"
+            name="email"
+            required
+            maxLength={CONTACT_FIELD_LIMITS.email}
+            className={inputClass}
+          />
         </label>
         <label className="block">
           <span className="block text-sm mb-1">{dictionary.contactForm.phoneOptional}</span>
-          <input name="phone" className={inputClass} />
+          <input name="phone" maxLength={CONTACT_FIELD_LIMITS.phone} className={inputClass} />
         </label>
         {props.inquiryOptions && props.inquiryOptions.length > 0 ? (
           <label className="block">
@@ -92,7 +109,13 @@ export function ContactForm(props: Props) {
         ) : null}
         <label className="block">
           <span className="block text-sm mb-1">{dictionary.contactForm.message}</span>
-          <textarea name="message" rows={6} required className={inputClass} />
+          <textarea
+            name="message"
+            rows={6}
+            required
+            maxLength={CONTACT_FIELD_LIMITS.message}
+            className={inputClass}
+          />
         </label>
         {props.turnstileSiteKey ? (
           <div className="cf-turnstile" data-sitekey={props.turnstileSiteKey} />

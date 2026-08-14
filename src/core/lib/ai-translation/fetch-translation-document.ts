@@ -1,13 +1,13 @@
-import type { Payload, TypedLocale } from 'payload'
+import type { Payload, TypedLocale } from "payload"
 
-import { isCollectionSlug } from '@/core/lib/ai-translation/is-collection-slug'
-import { isGlobalSlug } from '@/core/lib/ai-translation/is-global-slug'
-import type { User } from '@/payload-types'
+import { isCollectionSlug } from "@/core/lib/ai-translation/is-collection-slug"
+import { isGlobalSlug } from "@/core/lib/ai-translation/is-global-slug"
+import type { User } from "@/payload-types"
 
 type Props = {
   payload: Payload
   user: User
-  targetKind: 'collection' | 'global'
+  targetKind: "collection" | "global"
   targetSlug: string
   targetId: string | null
   locale: TypedLocale
@@ -20,9 +20,9 @@ type Props = {
  */
 export async function fetchTranslationDocument(props: Props): Promise<object | Error> {
   try {
-    if (props.targetKind === 'collection') {
+    if (props.targetKind === "collection") {
       if (!isCollectionSlug(props.payload, props.targetSlug) || props.targetId === null) {
-        return new Error('翻訳対象が見つかりません')
+        return new Error("翻訳対象が見つかりません")
       }
 
       return await props.payload.findByID({
@@ -38,7 +38,7 @@ export async function fetchTranslationDocument(props: Props): Promise<object | E
     }
 
     if (!isGlobalSlug(props.payload, props.targetSlug)) {
-      return new Error('翻訳対象が見つかりません')
+      return new Error("翻訳対象が見つかりません")
     }
 
     return await props.payload.findGlobal({

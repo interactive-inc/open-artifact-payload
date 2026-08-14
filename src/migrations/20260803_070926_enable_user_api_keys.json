@@ -37,16 +37,12 @@
       "indexes": {
         "users_roles_order_idx": {
           "name": "users_roles_order_idx",
-          "columns": [
-            "order"
-          ],
+          "columns": ["order"],
           "isUnique": false
         },
         "users_roles_parent_idx": {
           "name": "users_roles_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         }
       },
@@ -55,12 +51,8 @@
           "name": "users_roles_parent_fk",
           "tableFrom": "users_roles",
           "tableTo": "users",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -111,16 +103,12 @@
       "indexes": {
         "users_sessions_order_idx": {
           "name": "users_sessions_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "users_sessions_parent_id_idx": {
           "name": "users_sessions_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -129,12 +117,8 @@
           "name": "users_sessions_parent_id_fk",
           "tableFrom": "users_sessions",
           "tableTo": "users",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -244,23 +228,17 @@
       "indexes": {
         "users_updated_at_idx": {
           "name": "users_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "users_created_at_idx": {
           "name": "users_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "users_email_idx": {
           "name": "users_email_idx",
-          "columns": [
-            "email"
-          ],
+          "columns": ["email"],
           "isUnique": true
         }
       },
@@ -355,23 +333,17 @@
       "indexes": {
         "media_updated_at_idx": {
           "name": "media_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "media_created_at_idx": {
           "name": "media_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "media_filename_idx": {
           "name": "media_filename_idx",
-          "columns": [
-            "filename"
-          ],
+          "columns": ["filename"],
           "isUnique": true
         }
       },
@@ -447,37 +419,27 @@
       "indexes": {
         "news_slug_idx": {
           "name": "news_slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         },
         "news_thumbnail_idx": {
           "name": "news_thumbnail_idx",
-          "columns": [
-            "thumbnail_id"
-          ],
+          "columns": ["thumbnail_id"],
           "isUnique": false
         },
         "news_updated_at_idx": {
           "name": "news_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "news_created_at_idx": {
           "name": "news_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "news__status_idx": {
           "name": "news__status_idx",
-          "columns": [
-            "_status"
-          ],
+          "columns": ["_status"],
           "isUnique": false
         }
       },
@@ -486,12 +448,8 @@
           "name": "news_thumbnail_id_media_id_fk",
           "tableFrom": "news",
           "tableTo": "media",
-          "columnsFrom": [
-            "thumbnail_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["thumbnail_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -563,18 +521,12 @@
       "indexes": {
         "news_meta_meta_image_idx": {
           "name": "news_meta_meta_image_idx",
-          "columns": [
-            "meta_image_id",
-            "_locale"
-          ],
+          "columns": ["meta_image_id", "_locale"],
           "isUnique": false
         },
         "news_locales_locale_parent_id_unique": {
           "name": "news_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -583,12 +535,8 @@
           "name": "news_locales_meta_image_id_media_id_fk",
           "tableFrom": "news_locales",
           "tableTo": "media",
-          "columnsFrom": [
-            "meta_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["meta_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -596,12 +544,8 @@
           "name": "news_locales_parent_id_fk",
           "tableFrom": "news_locales",
           "tableTo": "news",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -726,86 +670,62 @@
       "indexes": {
         "_news_v_parent_idx": {
           "name": "_news_v_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "_news_v_version_version_slug_idx": {
           "name": "_news_v_version_version_slug_idx",
-          "columns": [
-            "version_slug"
-          ],
+          "columns": ["version_slug"],
           "isUnique": false
         },
         "_news_v_version_version_thumbnail_idx": {
           "name": "_news_v_version_version_thumbnail_idx",
-          "columns": [
-            "version_thumbnail_id"
-          ],
+          "columns": ["version_thumbnail_id"],
           "isUnique": false
         },
         "_news_v_version_version_updated_at_idx": {
           "name": "_news_v_version_version_updated_at_idx",
-          "columns": [
-            "version_updated_at"
-          ],
+          "columns": ["version_updated_at"],
           "isUnique": false
         },
         "_news_v_version_version_created_at_idx": {
           "name": "_news_v_version_version_created_at_idx",
-          "columns": [
-            "version_created_at"
-          ],
+          "columns": ["version_created_at"],
           "isUnique": false
         },
         "_news_v_version_version__status_idx": {
           "name": "_news_v_version_version__status_idx",
-          "columns": [
-            "version__status"
-          ],
+          "columns": ["version__status"],
           "isUnique": false
         },
         "_news_v_created_at_idx": {
           "name": "_news_v_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "_news_v_updated_at_idx": {
           "name": "_news_v_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "_news_v_snapshot_idx": {
           "name": "_news_v_snapshot_idx",
-          "columns": [
-            "snapshot"
-          ],
+          "columns": ["snapshot"],
           "isUnique": false
         },
         "_news_v_published_locale_idx": {
           "name": "_news_v_published_locale_idx",
-          "columns": [
-            "published_locale"
-          ],
+          "columns": ["published_locale"],
           "isUnique": false
         },
         "_news_v_latest_idx": {
           "name": "_news_v_latest_idx",
-          "columns": [
-            "latest"
-          ],
+          "columns": ["latest"],
           "isUnique": false
         },
         "_news_v_autosave_idx": {
           "name": "_news_v_autosave_idx",
-          "columns": [
-            "autosave"
-          ],
+          "columns": ["autosave"],
           "isUnique": false
         }
       },
@@ -814,12 +734,8 @@
           "name": "_news_v_parent_id_news_id_fk",
           "tableFrom": "_news_v",
           "tableTo": "news",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -827,12 +743,8 @@
           "name": "_news_v_version_thumbnail_id_media_id_fk",
           "tableFrom": "_news_v",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_thumbnail_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_thumbnail_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -904,18 +816,12 @@
       "indexes": {
         "_news_v_version_meta_version_meta_image_idx": {
           "name": "_news_v_version_meta_version_meta_image_idx",
-          "columns": [
-            "version_meta_image_id",
-            "_locale"
-          ],
+          "columns": ["version_meta_image_id", "_locale"],
           "isUnique": false
         },
         "_news_v_locales_locale_parent_id_unique": {
           "name": "_news_v_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -924,12 +830,8 @@
           "name": "_news_v_locales_version_meta_image_id_media_id_fk",
           "tableFrom": "_news_v_locales",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_meta_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_meta_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -937,12 +839,8 @@
           "name": "_news_v_locales_parent_id_fk",
           "tableFrom": "_news_v_locales",
           "tableTo": "_news_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -997,16 +895,12 @@
       "indexes": {
         "faq_updated_at_idx": {
           "name": "faq_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "faq_created_at_idx": {
           "name": "faq_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -1057,10 +951,7 @@
       "indexes": {
         "faq_locales_locale_parent_id_unique": {
           "name": "faq_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -1069,12 +960,8 @@
           "name": "faq_locales_parent_id_fk",
           "tableFrom": "faq_locales",
           "tableTo": "faq",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1163,16 +1050,12 @@
       "indexes": {
         "contact_submissions_updated_at_idx": {
           "name": "contact_submissions_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "contact_submissions_created_at_idx": {
           "name": "contact_submissions_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -1248,37 +1131,27 @@
       "indexes": {
         "works_slug_idx": {
           "name": "works_slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": true
         },
         "works_thumbnail_idx": {
           "name": "works_thumbnail_idx",
-          "columns": [
-            "thumbnail_id"
-          ],
+          "columns": ["thumbnail_id"],
           "isUnique": false
         },
         "works_updated_at_idx": {
           "name": "works_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "works_created_at_idx": {
           "name": "works_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "works__status_idx": {
           "name": "works__status_idx",
-          "columns": [
-            "_status"
-          ],
+          "columns": ["_status"],
           "isUnique": false
         }
       },
@@ -1287,12 +1160,8 @@
           "name": "works_thumbnail_id_media_id_fk",
           "tableFrom": "works",
           "tableTo": "media",
-          "columnsFrom": [
-            "thumbnail_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["thumbnail_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1371,18 +1240,12 @@
       "indexes": {
         "works_meta_meta_image_idx": {
           "name": "works_meta_meta_image_idx",
-          "columns": [
-            "meta_image_id",
-            "_locale"
-          ],
+          "columns": ["meta_image_id", "_locale"],
           "isUnique": false
         },
         "works_locales_locale_parent_id_unique": {
           "name": "works_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -1391,12 +1254,8 @@
           "name": "works_locales_meta_image_id_media_id_fk",
           "tableFrom": "works_locales",
           "tableTo": "media",
-          "columnsFrom": [
-            "meta_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["meta_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1404,12 +1263,8 @@
           "name": "works_locales_parent_id_fk",
           "tableFrom": "works_locales",
           "tableTo": "works",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1534,86 +1389,62 @@
       "indexes": {
         "_works_v_parent_idx": {
           "name": "_works_v_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "_works_v_version_version_slug_idx": {
           "name": "_works_v_version_version_slug_idx",
-          "columns": [
-            "version_slug"
-          ],
+          "columns": ["version_slug"],
           "isUnique": false
         },
         "_works_v_version_version_thumbnail_idx": {
           "name": "_works_v_version_version_thumbnail_idx",
-          "columns": [
-            "version_thumbnail_id"
-          ],
+          "columns": ["version_thumbnail_id"],
           "isUnique": false
         },
         "_works_v_version_version_updated_at_idx": {
           "name": "_works_v_version_version_updated_at_idx",
-          "columns": [
-            "version_updated_at"
-          ],
+          "columns": ["version_updated_at"],
           "isUnique": false
         },
         "_works_v_version_version_created_at_idx": {
           "name": "_works_v_version_version_created_at_idx",
-          "columns": [
-            "version_created_at"
-          ],
+          "columns": ["version_created_at"],
           "isUnique": false
         },
         "_works_v_version_version__status_idx": {
           "name": "_works_v_version_version__status_idx",
-          "columns": [
-            "version__status"
-          ],
+          "columns": ["version__status"],
           "isUnique": false
         },
         "_works_v_created_at_idx": {
           "name": "_works_v_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "_works_v_updated_at_idx": {
           "name": "_works_v_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "_works_v_snapshot_idx": {
           "name": "_works_v_snapshot_idx",
-          "columns": [
-            "snapshot"
-          ],
+          "columns": ["snapshot"],
           "isUnique": false
         },
         "_works_v_published_locale_idx": {
           "name": "_works_v_published_locale_idx",
-          "columns": [
-            "published_locale"
-          ],
+          "columns": ["published_locale"],
           "isUnique": false
         },
         "_works_v_latest_idx": {
           "name": "_works_v_latest_idx",
-          "columns": [
-            "latest"
-          ],
+          "columns": ["latest"],
           "isUnique": false
         },
         "_works_v_autosave_idx": {
           "name": "_works_v_autosave_idx",
-          "columns": [
-            "autosave"
-          ],
+          "columns": ["autosave"],
           "isUnique": false
         }
       },
@@ -1622,12 +1453,8 @@
           "name": "_works_v_parent_id_works_id_fk",
           "tableFrom": "_works_v",
           "tableTo": "works",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1635,12 +1462,8 @@
           "name": "_works_v_version_thumbnail_id_media_id_fk",
           "tableFrom": "_works_v",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_thumbnail_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_thumbnail_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1719,18 +1542,12 @@
       "indexes": {
         "_works_v_version_meta_version_meta_image_idx": {
           "name": "_works_v_version_meta_version_meta_image_idx",
-          "columns": [
-            "version_meta_image_id",
-            "_locale"
-          ],
+          "columns": ["version_meta_image_id", "_locale"],
           "isUnique": false
         },
         "_works_v_locales_locale_parent_id_unique": {
           "name": "_works_v_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -1739,12 +1556,8 @@
           "name": "_works_v_locales_version_meta_image_id_media_id_fk",
           "tableFrom": "_works_v_locales",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_meta_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_meta_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -1752,12 +1565,8 @@
           "name": "_works_v_locales_parent_id_fk",
           "tableFrom": "_works_v_locales",
           "tableTo": "_works_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -1908,23 +1717,17 @@
       "indexes": {
         "ai_translation_logs_executed_by_idx": {
           "name": "ai_translation_logs_executed_by_idx",
-          "columns": [
-            "executed_by_id"
-          ],
+          "columns": ["executed_by_id"],
           "isUnique": false
         },
         "ai_translation_logs_updated_at_idx": {
           "name": "ai_translation_logs_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "ai_translation_logs_created_at_idx": {
           "name": "ai_translation_logs_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -1933,12 +1736,8 @@
           "name": "ai_translation_logs_executed_by_id_users_id_fk",
           "tableFrom": "ai_translation_logs",
           "tableTo": "users",
-          "columnsFrom": [
-            "executed_by_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["executed_by_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -1975,9 +1774,7 @@
       "indexes": {
         "payload_kv_key_idx": {
           "name": "payload_kv_key_idx",
-          "columns": [
-            "key"
-          ],
+          "columns": ["key"],
           "isUnique": true
         }
       },
@@ -2023,23 +1820,17 @@
       "indexes": {
         "payload_locked_documents_global_slug_idx": {
           "name": "payload_locked_documents_global_slug_idx",
-          "columns": [
-            "global_slug"
-          ],
+          "columns": ["global_slug"],
           "isUnique": false
         },
         "payload_locked_documents_updated_at_idx": {
           "name": "payload_locked_documents_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "payload_locked_documents_created_at_idx": {
           "name": "payload_locked_documents_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -2132,72 +1923,52 @@
       "indexes": {
         "payload_locked_documents_rels_order_idx": {
           "name": "payload_locked_documents_rels_order_idx",
-          "columns": [
-            "order"
-          ],
+          "columns": ["order"],
           "isUnique": false
         },
         "payload_locked_documents_rels_parent_idx": {
           "name": "payload_locked_documents_rels_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_path_idx": {
           "name": "payload_locked_documents_rels_path_idx",
-          "columns": [
-            "path"
-          ],
+          "columns": ["path"],
           "isUnique": false
         },
         "payload_locked_documents_rels_users_id_idx": {
           "name": "payload_locked_documents_rels_users_id_idx",
-          "columns": [
-            "users_id"
-          ],
+          "columns": ["users_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_media_id_idx": {
           "name": "payload_locked_documents_rels_media_id_idx",
-          "columns": [
-            "media_id"
-          ],
+          "columns": ["media_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_news_id_idx": {
           "name": "payload_locked_documents_rels_news_id_idx",
-          "columns": [
-            "news_id"
-          ],
+          "columns": ["news_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_faq_id_idx": {
           "name": "payload_locked_documents_rels_faq_id_idx",
-          "columns": [
-            "faq_id"
-          ],
+          "columns": ["faq_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_contact_submissions_id_idx": {
           "name": "payload_locked_documents_rels_contact_submissions_id_idx",
-          "columns": [
-            "contact_submissions_id"
-          ],
+          "columns": ["contact_submissions_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_works_id_idx": {
           "name": "payload_locked_documents_rels_works_id_idx",
-          "columns": [
-            "works_id"
-          ],
+          "columns": ["works_id"],
           "isUnique": false
         },
         "payload_locked_documents_rels_ai_translation_logs_id_idx": {
           "name": "payload_locked_documents_rels_ai_translation_logs_id_idx",
-          "columns": [
-            "ai_translation_logs_id"
-          ],
+          "columns": ["ai_translation_logs_id"],
           "isUnique": false
         }
       },
@@ -2206,12 +1977,8 @@
           "name": "payload_locked_documents_rels_parent_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "payload_locked_documents",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2219,12 +1986,8 @@
           "name": "payload_locked_documents_rels_users_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "users",
-          "columnsFrom": [
-            "users_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["users_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2232,12 +1995,8 @@
           "name": "payload_locked_documents_rels_media_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "media",
-          "columnsFrom": [
-            "media_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["media_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2245,12 +2004,8 @@
           "name": "payload_locked_documents_rels_news_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "news",
-          "columnsFrom": [
-            "news_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["news_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2258,12 +2013,8 @@
           "name": "payload_locked_documents_rels_faq_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "faq",
-          "columnsFrom": [
-            "faq_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["faq_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2271,12 +2022,8 @@
           "name": "payload_locked_documents_rels_contact_submissions_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "contact_submissions",
-          "columnsFrom": [
-            "contact_submissions_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["contact_submissions_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2284,12 +2031,8 @@
           "name": "payload_locked_documents_rels_works_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "works",
-          "columnsFrom": [
-            "works_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["works_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2297,12 +2040,8 @@
           "name": "payload_locked_documents_rels_ai_translation_logs_fk",
           "tableFrom": "payload_locked_documents_rels",
           "tableTo": "ai_translation_logs",
-          "columnsFrom": [
-            "ai_translation_logs_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["ai_translation_logs_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2355,23 +2094,17 @@
       "indexes": {
         "payload_preferences_key_idx": {
           "name": "payload_preferences_key_idx",
-          "columns": [
-            "key"
-          ],
+          "columns": ["key"],
           "isUnique": false
         },
         "payload_preferences_updated_at_idx": {
           "name": "payload_preferences_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "payload_preferences_created_at_idx": {
           "name": "payload_preferences_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -2422,30 +2155,22 @@
       "indexes": {
         "payload_preferences_rels_order_idx": {
           "name": "payload_preferences_rels_order_idx",
-          "columns": [
-            "order"
-          ],
+          "columns": ["order"],
           "isUnique": false
         },
         "payload_preferences_rels_parent_idx": {
           "name": "payload_preferences_rels_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "payload_preferences_rels_path_idx": {
           "name": "payload_preferences_rels_path_idx",
-          "columns": [
-            "path"
-          ],
+          "columns": ["path"],
           "isUnique": false
         },
         "payload_preferences_rels_users_id_idx": {
           "name": "payload_preferences_rels_users_id_idx",
-          "columns": [
-            "users_id"
-          ],
+          "columns": ["users_id"],
           "isUnique": false
         }
       },
@@ -2454,12 +2179,8 @@
           "name": "payload_preferences_rels_parent_fk",
           "tableFrom": "payload_preferences_rels",
           "tableTo": "payload_preferences",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -2467,12 +2188,8 @@
           "name": "payload_preferences_rels_users_fk",
           "tableFrom": "payload_preferences_rels",
           "tableTo": "users",
-          "columnsFrom": [
-            "users_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["users_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2525,16 +2242,12 @@
       "indexes": {
         "payload_migrations_updated_at_idx": {
           "name": "payload_migrations_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "payload_migrations_created_at_idx": {
           "name": "payload_migrations_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         }
       },
@@ -2578,16 +2291,12 @@
       "indexes": {
         "site_settings_header_nav_order_idx": {
           "name": "site_settings_header_nav_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "site_settings_header_nav_parent_id_idx": {
           "name": "site_settings_header_nav_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -2596,12 +2305,8 @@
           "name": "site_settings_header_nav_parent_id_fk",
           "tableFrom": "site_settings_header_nav",
           "tableTo": "site_settings",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2645,10 +2350,7 @@
       "indexes": {
         "site_settings_header_nav_locales_locale_parent_id_unique": {
           "name": "site_settings_header_nav_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -2657,12 +2359,8 @@
           "name": "site_settings_header_nav_locales_parent_id_fk",
           "tableFrom": "site_settings_header_nav_locales",
           "tableTo": "site_settings_header_nav",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2706,16 +2404,12 @@
       "indexes": {
         "site_settings_footer_nav_order_idx": {
           "name": "site_settings_footer_nav_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "site_settings_footer_nav_parent_id_idx": {
           "name": "site_settings_footer_nav_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -2724,12 +2418,8 @@
           "name": "site_settings_footer_nav_parent_id_fk",
           "tableFrom": "site_settings_footer_nav",
           "tableTo": "site_settings",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2773,10 +2463,7 @@
       "indexes": {
         "site_settings_footer_nav_locales_locale_parent_id_unique": {
           "name": "site_settings_footer_nav_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -2785,12 +2472,8 @@
           "name": "site_settings_footer_nav_locales_parent_id_fk",
           "tableFrom": "site_settings_footer_nav_locales",
           "tableTo": "site_settings_footer_nav",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2834,16 +2517,12 @@
       "indexes": {
         "site_settings_policy_links_order_idx": {
           "name": "site_settings_policy_links_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "site_settings_policy_links_parent_id_idx": {
           "name": "site_settings_policy_links_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -2852,12 +2531,8 @@
           "name": "site_settings_policy_links_parent_id_fk",
           "tableFrom": "site_settings_policy_links",
           "tableTo": "site_settings",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -2901,10 +2576,7 @@
       "indexes": {
         "site_settings_policy_links_locales_locale_parent_id_unique": {
           "name": "site_settings_policy_links_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -2913,12 +2585,8 @@
           "name": "site_settings_policy_links_locales_parent_id_fk",
           "tableFrom": "site_settings_policy_links_locales",
           "tableTo": "site_settings_policy_links",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3025,9 +2693,7 @@
       "indexes": {
         "site_settings_logo_idx": {
           "name": "site_settings_logo_idx",
-          "columns": [
-            "logo_id"
-          ],
+          "columns": ["logo_id"],
           "isUnique": false
         }
       },
@@ -3036,12 +2702,8 @@
           "name": "site_settings_logo_id_media_id_fk",
           "tableFrom": "site_settings",
           "tableTo": "media",
-          "columnsFrom": [
-            "logo_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["logo_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -3099,10 +2761,7 @@
       "indexes": {
         "site_settings_locales_locale_parent_id_unique": {
           "name": "site_settings_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -3111,12 +2770,8 @@
           "name": "site_settings_locales_parent_id_fk",
           "tableFrom": "site_settings_locales",
           "tableTo": "site_settings",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3160,16 +2815,12 @@
       "indexes": {
         "home_page_services_items_order_idx": {
           "name": "home_page_services_items_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "home_page_services_items_parent_id_idx": {
           "name": "home_page_services_items_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -3178,12 +2829,8 @@
           "name": "home_page_services_items_parent_id_fk",
           "tableFrom": "home_page_services_items",
           "tableTo": "home_page",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3234,10 +2881,7 @@
       "indexes": {
         "home_page_services_items_locales_locale_parent_id_unique": {
           "name": "home_page_services_items_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -3246,12 +2890,8 @@
           "name": "home_page_services_items_locales_parent_id_fk",
           "tableFrom": "home_page_services_items_locales",
           "tableTo": "home_page_services_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3371,23 +3011,17 @@
       "indexes": {
         "home_page_hero_hero_image_idx": {
           "name": "home_page_hero_hero_image_idx",
-          "columns": [
-            "hero_image_id"
-          ],
+          "columns": ["hero_image_id"],
           "isUnique": false
         },
         "home_page_about_preview_about_preview_image_idx": {
           "name": "home_page_about_preview_about_preview_image_idx",
-          "columns": [
-            "about_preview_image_id"
-          ],
+          "columns": ["about_preview_image_id"],
           "isUnique": false
         },
         "home_page__status_idx": {
           "name": "home_page__status_idx",
-          "columns": [
-            "_status"
-          ],
+          "columns": ["_status"],
           "isUnique": false
         }
       },
@@ -3396,12 +3030,8 @@
           "name": "home_page_hero_image_id_media_id_fk",
           "tableFrom": "home_page",
           "tableTo": "media",
-          "columnsFrom": [
-            "hero_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["hero_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3409,12 +3039,8 @@
           "name": "home_page_about_preview_image_id_media_id_fk",
           "tableFrom": "home_page",
           "tableTo": "media",
-          "columnsFrom": [
-            "about_preview_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["about_preview_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -3556,18 +3182,12 @@
       "indexes": {
         "home_page_meta_meta_image_idx": {
           "name": "home_page_meta_meta_image_idx",
-          "columns": [
-            "meta_image_id",
-            "_locale"
-          ],
+          "columns": ["meta_image_id", "_locale"],
           "isUnique": false
         },
         "home_page_locales_locale_parent_id_unique": {
           "name": "home_page_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -3576,12 +3196,8 @@
           "name": "home_page_locales_meta_image_id_media_id_fk",
           "tableFrom": "home_page_locales",
           "tableTo": "media",
-          "columnsFrom": [
-            "meta_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["meta_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -3589,12 +3205,8 @@
           "name": "home_page_locales_parent_id_fk",
           "tableFrom": "home_page_locales",
           "tableTo": "home_page",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3645,30 +3257,22 @@
       "indexes": {
         "home_page_rels_order_idx": {
           "name": "home_page_rels_order_idx",
-          "columns": [
-            "order"
-          ],
+          "columns": ["order"],
           "isUnique": false
         },
         "home_page_rels_parent_idx": {
           "name": "home_page_rels_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "home_page_rels_path_idx": {
           "name": "home_page_rels_path_idx",
-          "columns": [
-            "path"
-          ],
+          "columns": ["path"],
           "isUnique": false
         },
         "home_page_rels_news_id_idx": {
           "name": "home_page_rels_news_id_idx",
-          "columns": [
-            "news_id"
-          ],
+          "columns": ["news_id"],
           "isUnique": false
         }
       },
@@ -3677,12 +3281,8 @@
           "name": "home_page_rels_parent_fk",
           "tableFrom": "home_page_rels",
           "tableTo": "home_page",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -3690,12 +3290,8 @@
           "name": "home_page_rels_news_fk",
           "tableFrom": "home_page_rels",
           "tableTo": "news",
-          "columnsFrom": [
-            "news_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["news_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3746,16 +3342,12 @@
       "indexes": {
         "_home_page_v_version_services_items_order_idx": {
           "name": "_home_page_v_version_services_items_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_home_page_v_version_services_items_parent_id_idx": {
           "name": "_home_page_v_version_services_items_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -3764,12 +3356,8 @@
           "name": "_home_page_v_version_services_items_parent_id_fk",
           "tableFrom": "_home_page_v_version_services_items",
           "tableTo": "_home_page_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3820,10 +3408,7 @@
       "indexes": {
         "_home_page_v_version_services_items_locales_locale_parent_id": {
           "name": "_home_page_v_version_services_items_locales_locale_parent_id",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -3832,12 +3417,8 @@
           "name": "_home_page_v_version_services_items_locales_parent_id_fk",
           "tableFrom": "_home_page_v_version_services_items_locales",
           "tableTo": "_home_page_v_version_services_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -3994,58 +3575,42 @@
       "indexes": {
         "_home_page_v_version_hero_version_hero_image_idx": {
           "name": "_home_page_v_version_hero_version_hero_image_idx",
-          "columns": [
-            "version_hero_image_id"
-          ],
+          "columns": ["version_hero_image_id"],
           "isUnique": false
         },
         "_home_page_v_version_about_preview_version_about_preview_idx": {
           "name": "_home_page_v_version_about_preview_version_about_preview_idx",
-          "columns": [
-            "version_about_preview_image_id"
-          ],
+          "columns": ["version_about_preview_image_id"],
           "isUnique": false
         },
         "_home_page_v_version_version__status_idx": {
           "name": "_home_page_v_version_version__status_idx",
-          "columns": [
-            "version__status"
-          ],
+          "columns": ["version__status"],
           "isUnique": false
         },
         "_home_page_v_created_at_idx": {
           "name": "_home_page_v_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "_home_page_v_updated_at_idx": {
           "name": "_home_page_v_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "_home_page_v_snapshot_idx": {
           "name": "_home_page_v_snapshot_idx",
-          "columns": [
-            "snapshot"
-          ],
+          "columns": ["snapshot"],
           "isUnique": false
         },
         "_home_page_v_published_locale_idx": {
           "name": "_home_page_v_published_locale_idx",
-          "columns": [
-            "published_locale"
-          ],
+          "columns": ["published_locale"],
           "isUnique": false
         },
         "_home_page_v_latest_idx": {
           "name": "_home_page_v_latest_idx",
-          "columns": [
-            "latest"
-          ],
+          "columns": ["latest"],
           "isUnique": false
         }
       },
@@ -4054,12 +3619,8 @@
           "name": "_home_page_v_version_hero_image_id_media_id_fk",
           "tableFrom": "_home_page_v",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_hero_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_hero_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -4067,12 +3628,8 @@
           "name": "_home_page_v_version_about_preview_image_id_media_id_fk",
           "tableFrom": "_home_page_v",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_about_preview_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_about_preview_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         }
@@ -4214,18 +3771,12 @@
       "indexes": {
         "_home_page_v_version_meta_version_meta_image_idx": {
           "name": "_home_page_v_version_meta_version_meta_image_idx",
-          "columns": [
-            "version_meta_image_id",
-            "_locale"
-          ],
+          "columns": ["version_meta_image_id", "_locale"],
           "isUnique": false
         },
         "_home_page_v_locales_locale_parent_id_unique": {
           "name": "_home_page_v_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -4234,12 +3785,8 @@
           "name": "_home_page_v_locales_version_meta_image_id_media_id_fk",
           "tableFrom": "_home_page_v_locales",
           "tableTo": "media",
-          "columnsFrom": [
-            "version_meta_image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["version_meta_image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -4247,12 +3794,8 @@
           "name": "_home_page_v_locales_parent_id_fk",
           "tableFrom": "_home_page_v_locales",
           "tableTo": "_home_page_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4303,30 +3846,22 @@
       "indexes": {
         "_home_page_v_rels_order_idx": {
           "name": "_home_page_v_rels_order_idx",
-          "columns": [
-            "order"
-          ],
+          "columns": ["order"],
           "isUnique": false
         },
         "_home_page_v_rels_parent_idx": {
           "name": "_home_page_v_rels_parent_idx",
-          "columns": [
-            "parent_id"
-          ],
+          "columns": ["parent_id"],
           "isUnique": false
         },
         "_home_page_v_rels_path_idx": {
           "name": "_home_page_v_rels_path_idx",
-          "columns": [
-            "path"
-          ],
+          "columns": ["path"],
           "isUnique": false
         },
         "_home_page_v_rels_news_id_idx": {
           "name": "_home_page_v_rels_news_id_idx",
-          "columns": [
-            "news_id"
-          ],
+          "columns": ["news_id"],
           "isUnique": false
         }
       },
@@ -4335,12 +3870,8 @@
           "name": "_home_page_v_rels_parent_fk",
           "tableFrom": "_home_page_v_rels",
           "tableTo": "_home_page_v",
-          "columnsFrom": [
-            "parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         },
@@ -4348,12 +3879,8 @@
           "name": "_home_page_v_rels_news_fk",
           "tableFrom": "_home_page_v_rels",
           "tableTo": "news",
-          "columnsFrom": [
-            "news_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["news_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4390,16 +3917,12 @@
       "indexes": {
         "about_mission_values_order_idx": {
           "name": "about_mission_values_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "about_mission_values_parent_id_idx": {
           "name": "about_mission_values_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -4408,12 +3931,8 @@
           "name": "about_mission_values_parent_id_fk",
           "tableFrom": "about_mission_values",
           "tableTo": "about",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4464,10 +3983,7 @@
       "indexes": {
         "about_mission_values_locales_locale_parent_id_unique": {
           "name": "about_mission_values_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -4476,12 +3992,8 @@
           "name": "about_mission_values_locales_parent_id_fk",
           "tableFrom": "about_mission_values_locales",
           "tableTo": "about_mission_values",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4518,16 +4030,12 @@
       "indexes": {
         "about_company_profile_rows_order_idx": {
           "name": "about_company_profile_rows_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "about_company_profile_rows_parent_id_idx": {
           "name": "about_company_profile_rows_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -4536,12 +4044,8 @@
           "name": "about_company_profile_rows_parent_id_fk",
           "tableFrom": "about_company_profile_rows",
           "tableTo": "about",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4592,10 +4096,7 @@
       "indexes": {
         "about_company_profile_rows_locales_locale_parent_id_unique": {
           "name": "about_company_profile_rows_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -4604,12 +4105,8 @@
           "name": "about_company_profile_rows_locales_parent_id_fk",
           "tableFrom": "about_company_profile_rows_locales",
           "tableTo": "about_company_profile_rows",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4653,23 +4150,17 @@
       "indexes": {
         "about_members_items_order_idx": {
           "name": "about_members_items_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "about_members_items_parent_id_idx": {
           "name": "about_members_items_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         },
         "about_members_items_image_idx": {
           "name": "about_members_items_image_idx",
-          "columns": [
-            "image_id"
-          ],
+          "columns": ["image_id"],
           "isUnique": false
         }
       },
@@ -4678,12 +4169,8 @@
           "name": "about_members_items_image_id_media_id_fk",
           "tableFrom": "about_members_items",
           "tableTo": "media",
-          "columnsFrom": [
-            "image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -4691,12 +4178,8 @@
           "name": "about_members_items_parent_id_fk",
           "tableFrom": "about_members_items",
           "tableTo": "about",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4754,10 +4237,7 @@
       "indexes": {
         "about_members_items_locales_locale_parent_id_unique": {
           "name": "about_members_items_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -4766,12 +4246,8 @@
           "name": "about_members_items_locales_parent_id_fk",
           "tableFrom": "about_members_items_locales",
           "tableTo": "about_members_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4848,9 +4324,7 @@
       "indexes": {
         "about__status_idx": {
           "name": "about__status_idx",
-          "columns": [
-            "_status"
-          ],
+          "columns": ["_status"],
           "isUnique": false
         }
       },
@@ -4929,10 +4403,7 @@
       "indexes": {
         "about_locales_locale_parent_id_unique": {
           "name": "about_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -4941,12 +4412,8 @@
           "name": "about_locales_parent_id_fk",
           "tableFrom": "about_locales",
           "tableTo": "about",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -4990,16 +4457,12 @@
       "indexes": {
         "_about_v_version_mission_values_order_idx": {
           "name": "_about_v_version_mission_values_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_about_v_version_mission_values_parent_id_idx": {
           "name": "_about_v_version_mission_values_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -5008,12 +4471,8 @@
           "name": "_about_v_version_mission_values_parent_id_fk",
           "tableFrom": "_about_v_version_mission_values",
           "tableTo": "_about_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5064,10 +4523,7 @@
       "indexes": {
         "_about_v_version_mission_values_locales_locale_parent_id_uni": {
           "name": "_about_v_version_mission_values_locales_locale_parent_id_uni",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -5076,12 +4532,8 @@
           "name": "_about_v_version_mission_values_locales_parent_id_fk",
           "tableFrom": "_about_v_version_mission_values_locales",
           "tableTo": "_about_v_version_mission_values",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5125,16 +4577,12 @@
       "indexes": {
         "_about_v_version_company_profile_rows_order_idx": {
           "name": "_about_v_version_company_profile_rows_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_about_v_version_company_profile_rows_parent_id_idx": {
           "name": "_about_v_version_company_profile_rows_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -5143,12 +4591,8 @@
           "name": "_about_v_version_company_profile_rows_parent_id_fk",
           "tableFrom": "_about_v_version_company_profile_rows",
           "tableTo": "_about_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5199,10 +4643,7 @@
       "indexes": {
         "_about_v_version_company_profile_rows_locales_locale_parent_": {
           "name": "_about_v_version_company_profile_rows_locales_locale_parent_",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -5211,12 +4652,8 @@
           "name": "_about_v_version_company_profile_rows_locales_parent_id_fk",
           "tableFrom": "_about_v_version_company_profile_rows_locales",
           "tableTo": "_about_v_version_company_profile_rows",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5267,23 +4704,17 @@
       "indexes": {
         "_about_v_version_members_items_order_idx": {
           "name": "_about_v_version_members_items_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_about_v_version_members_items_parent_id_idx": {
           "name": "_about_v_version_members_items_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         },
         "_about_v_version_members_items_image_idx": {
           "name": "_about_v_version_members_items_image_idx",
-          "columns": [
-            "image_id"
-          ],
+          "columns": ["image_id"],
           "isUnique": false
         }
       },
@@ -5292,12 +4723,8 @@
           "name": "_about_v_version_members_items_image_id_media_id_fk",
           "tableFrom": "_about_v_version_members_items",
           "tableTo": "media",
-          "columnsFrom": [
-            "image_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["image_id"],
+          "columnsTo": ["id"],
           "onDelete": "set null",
           "onUpdate": "no action"
         },
@@ -5305,12 +4732,8 @@
           "name": "_about_v_version_members_items_parent_id_fk",
           "tableFrom": "_about_v_version_members_items",
           "tableTo": "_about_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5368,10 +4791,7 @@
       "indexes": {
         "_about_v_version_members_items_locales_locale_parent_id_uniq": {
           "name": "_about_v_version_members_items_locales_locale_parent_id_uniq",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -5380,12 +4800,8 @@
           "name": "_about_v_version_members_items_locales_parent_id_fk",
           "tableFrom": "_about_v_version_members_items_locales",
           "tableTo": "_about_v_version_members_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5499,44 +4915,32 @@
       "indexes": {
         "_about_v_version_version__status_idx": {
           "name": "_about_v_version_version__status_idx",
-          "columns": [
-            "version__status"
-          ],
+          "columns": ["version__status"],
           "isUnique": false
         },
         "_about_v_created_at_idx": {
           "name": "_about_v_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "_about_v_updated_at_idx": {
           "name": "_about_v_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "_about_v_snapshot_idx": {
           "name": "_about_v_snapshot_idx",
-          "columns": [
-            "snapshot"
-          ],
+          "columns": ["snapshot"],
           "isUnique": false
         },
         "_about_v_published_locale_idx": {
           "name": "_about_v_published_locale_idx",
-          "columns": [
-            "published_locale"
-          ],
+          "columns": ["published_locale"],
           "isUnique": false
         },
         "_about_v_latest_idx": {
           "name": "_about_v_latest_idx",
-          "columns": [
-            "latest"
-          ],
+          "columns": ["latest"],
           "isUnique": false
         }
       },
@@ -5615,10 +5019,7 @@
       "indexes": {
         "_about_v_locales_locale_parent_id_unique": {
           "name": "_about_v_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -5627,12 +5028,8 @@
           "name": "_about_v_locales_parent_id_fk",
           "tableFrom": "_about_v_locales",
           "tableTo": "_about_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5669,16 +5066,12 @@
       "indexes": {
         "service_services_items_features_order_idx": {
           "name": "service_services_items_features_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "service_services_items_features_parent_id_idx": {
           "name": "service_services_items_features_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -5687,12 +5080,8 @@
           "name": "service_services_items_features_parent_id_fk",
           "tableFrom": "service_services_items_features",
           "tableTo": "service_services_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5736,10 +5125,7 @@
       "indexes": {
         "service_services_items_features_locales_locale_parent_id_uni": {
           "name": "service_services_items_features_locales_locale_parent_id_uni",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -5748,12 +5134,8 @@
           "name": "service_services_items_features_locales_parent_id_fk",
           "tableFrom": "service_services_items_features_locales",
           "tableTo": "service_services_items_features",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5797,16 +5179,12 @@
       "indexes": {
         "service_services_items_order_idx": {
           "name": "service_services_items_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "service_services_items_parent_id_idx": {
           "name": "service_services_items_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -5815,12 +5193,8 @@
           "name": "service_services_items_parent_id_fk",
           "tableFrom": "service_services_items",
           "tableTo": "service",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5871,10 +5245,7 @@
       "indexes": {
         "service_services_items_locales_locale_parent_id_unique": {
           "name": "service_services_items_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -5883,12 +5254,8 @@
           "name": "service_services_items_locales_parent_id_fk",
           "tableFrom": "service_services_items_locales",
           "tableTo": "service_services_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5925,16 +5292,12 @@
       "indexes": {
         "service_process_steps_order_idx": {
           "name": "service_process_steps_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "service_process_steps_parent_id_idx": {
           "name": "service_process_steps_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -5943,12 +5306,8 @@
           "name": "service_process_steps_parent_id_fk",
           "tableFrom": "service_process_steps",
           "tableTo": "service",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -5999,10 +5358,7 @@
       "indexes": {
         "service_process_steps_locales_locale_parent_id_unique": {
           "name": "service_process_steps_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -6011,12 +5367,8 @@
           "name": "service_process_steps_locales_parent_id_fk",
           "tableFrom": "service_process_steps_locales",
           "tableTo": "service_process_steps",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6100,9 +5452,7 @@
       "indexes": {
         "service__status_idx": {
           "name": "service__status_idx",
-          "columns": [
-            "_status"
-          ],
+          "columns": ["_status"],
           "isUnique": false
         }
       },
@@ -6188,10 +5538,7 @@
       "indexes": {
         "service_locales_locale_parent_id_unique": {
           "name": "service_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -6200,12 +5547,8 @@
           "name": "service_locales_parent_id_fk",
           "tableFrom": "service_locales",
           "tableTo": "service",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6249,16 +5592,12 @@
       "indexes": {
         "_service_v_version_services_items_features_order_idx": {
           "name": "_service_v_version_services_items_features_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_service_v_version_services_items_features_parent_id_idx": {
           "name": "_service_v_version_services_items_features_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -6267,12 +5606,8 @@
           "name": "_service_v_version_services_items_features_parent_id_fk",
           "tableFrom": "_service_v_version_services_items_features",
           "tableTo": "_service_v_version_services_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6316,10 +5651,7 @@
       "indexes": {
         "_service_v_version_services_items_features_locales_locale_pa": {
           "name": "_service_v_version_services_items_features_locales_locale_pa",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -6328,12 +5660,8 @@
           "name": "_service_v_version_services_items_features_locales_parent_fk",
           "tableFrom": "_service_v_version_services_items_features_locales",
           "tableTo": "_service_v_version_services_items_features",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6384,16 +5712,12 @@
       "indexes": {
         "_service_v_version_services_items_order_idx": {
           "name": "_service_v_version_services_items_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_service_v_version_services_items_parent_id_idx": {
           "name": "_service_v_version_services_items_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -6402,12 +5726,8 @@
           "name": "_service_v_version_services_items_parent_id_fk",
           "tableFrom": "_service_v_version_services_items",
           "tableTo": "_service_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6458,10 +5778,7 @@
       "indexes": {
         "_service_v_version_services_items_locales_locale_parent_id_u": {
           "name": "_service_v_version_services_items_locales_locale_parent_id_u",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -6470,12 +5787,8 @@
           "name": "_service_v_version_services_items_locales_parent_id_fk",
           "tableFrom": "_service_v_version_services_items_locales",
           "tableTo": "_service_v_version_services_items",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6519,16 +5832,12 @@
       "indexes": {
         "_service_v_version_process_steps_order_idx": {
           "name": "_service_v_version_process_steps_order_idx",
-          "columns": [
-            "_order"
-          ],
+          "columns": ["_order"],
           "isUnique": false
         },
         "_service_v_version_process_steps_parent_id_idx": {
           "name": "_service_v_version_process_steps_parent_id_idx",
-          "columns": [
-            "_parent_id"
-          ],
+          "columns": ["_parent_id"],
           "isUnique": false
         }
       },
@@ -6537,12 +5846,8 @@
           "name": "_service_v_version_process_steps_parent_id_fk",
           "tableFrom": "_service_v_version_process_steps",
           "tableTo": "_service_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6593,10 +5898,7 @@
       "indexes": {
         "_service_v_version_process_steps_locales_locale_parent_id_un": {
           "name": "_service_v_version_process_steps_locales_locale_parent_id_un",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -6605,12 +5907,8 @@
           "name": "_service_v_version_process_steps_locales_parent_id_fk",
           "tableFrom": "_service_v_version_process_steps_locales",
           "tableTo": "_service_v_version_process_steps",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -6731,44 +6029,32 @@
       "indexes": {
         "_service_v_version_version__status_idx": {
           "name": "_service_v_version_version__status_idx",
-          "columns": [
-            "version__status"
-          ],
+          "columns": ["version__status"],
           "isUnique": false
         },
         "_service_v_created_at_idx": {
           "name": "_service_v_created_at_idx",
-          "columns": [
-            "created_at"
-          ],
+          "columns": ["created_at"],
           "isUnique": false
         },
         "_service_v_updated_at_idx": {
           "name": "_service_v_updated_at_idx",
-          "columns": [
-            "updated_at"
-          ],
+          "columns": ["updated_at"],
           "isUnique": false
         },
         "_service_v_snapshot_idx": {
           "name": "_service_v_snapshot_idx",
-          "columns": [
-            "snapshot"
-          ],
+          "columns": ["snapshot"],
           "isUnique": false
         },
         "_service_v_published_locale_idx": {
           "name": "_service_v_published_locale_idx",
-          "columns": [
-            "published_locale"
-          ],
+          "columns": ["published_locale"],
           "isUnique": false
         },
         "_service_v_latest_idx": {
           "name": "_service_v_latest_idx",
-          "columns": [
-            "latest"
-          ],
+          "columns": ["latest"],
           "isUnique": false
         }
       },
@@ -6854,10 +6140,7 @@
       "indexes": {
         "_service_v_locales_locale_parent_id_unique": {
           "name": "_service_v_locales_locale_parent_id_unique",
-          "columns": [
-            "_locale",
-            "_parent_id"
-          ],
+          "columns": ["_locale", "_parent_id"],
           "isUnique": true
         }
       },
@@ -6866,12 +6149,8 @@
           "name": "_service_v_locales_parent_id_fk",
           "tableFrom": "_service_v_locales",
           "tableTo": "_service_v",
-          "columnsFrom": [
-            "_parent_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["_parent_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }

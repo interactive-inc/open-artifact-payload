@@ -1,14 +1,14 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-import { exampleNewsItems } from '@/core/test-support/example-news-items'
+import { exampleNewsItems } from "@/core/test-support/example-news-items"
 
-import { RecentUpdates } from './recent-updates'
-import './dashboard-view.css'
+import { RecentUpdates } from "./recent-updates"
+import "./dashboard-view.css"
 
 const meta: Meta<typeof RecentUpdates> = {
-  title: 'Core/Admin/RecentUpdates',
+  title: "Core/Admin/RecentUpdates",
   component: RecentUpdates,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   args: {
     items: exampleNewsItems,
   },

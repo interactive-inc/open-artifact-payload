@@ -1,20 +1,20 @@
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
-import Image from 'next/image'
-import React from 'react'
+import { draftMode } from "next/headers"
+import { notFound } from "next/navigation"
+import { getPayload } from "payload"
+import Image from "next/image"
+import React from "react"
 
-import config from '@/payload.config'
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
-import { Badge } from '@/project/shared/ui/badge'
-import { PageHeader } from '@/project/shared/sections/page-header'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { Metadata } from 'next'
+import config from "@/payload.config"
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { Card, CardContent, CardHeader, CardTitle } from "@/project/shared/ui/card"
+import { Badge } from "@/project/shared/ui/badge"
+import { PageHeader } from "@/project/shared/sections/page-header"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Metadata } from "next"
 
-import '../styles.css'
+import "../styles.css"
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -29,8 +29,8 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const locale = resolveLocale(params.locale)
   return {
-    title: locale === 'ja' ? '会社情報' : 'Company',
-    alternates: { languages: buildLocaleAlternates('/about') },
+    title: locale === "ja" ? "会社情報" : "Company",
+    alternates: { languages: buildLocaleAlternates("/about") },
   }
 }
 
@@ -41,12 +41,12 @@ export default async function AboutPage(props: Props) {
   const payload = await getPayload({ config: payloadConfig })
   const draftState = await draftMode()
   const isDraft = draftState.isEnabled
-  const about = await payload.findGlobal({ slug: 'about', depth: 1, draft: isDraft, locale })
+  const about = await payload.findGlobal({ slug: "about", depth: 1, draft: isDraft, locale })
 
   return (
     <>
       {about.hero?.enabled ? (
-        <PageHeader title={about.hero.title ?? ''} description={about.hero.subtitle} />
+        <PageHeader title={about.hero.title ?? ""} description={about.hero.subtitle} />
       ) : null}
 
       {about.mission?.enabled ? (

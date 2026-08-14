@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react"
 
 type Stat = {
   value: string
@@ -8,10 +8,10 @@ type Stat = {
 // 実績数字の帯。背景のグラデーションの上に大きな数値を並べて信頼感を出す。
 // 数値はサンプル。本番では CMS 化するか実数に差し替える。
 const stats: ReadonlyArray<Stat> = [
-  { value: '120+', label: '手がけたプロジェクト' },
-  { value: '15年', label: '創業からの実績' },
-  { value: '98%', label: 'クライアント継続率' },
-  { value: '40名', label: '専門スタッフ' },
+  { value: "120+", label: "手がけたプロジェクト" },
+  { value: "15年", label: "創業からの実績" },
+  { value: "98%", label: "クライアント継続率" },
+  { value: "40名", label: "専門スタッフ" },
 ]
 
 export function StatsBand() {

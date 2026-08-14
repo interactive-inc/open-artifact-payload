@@ -20,7 +20,7 @@ export default {
     console.log(`From: ${message.from}, Subject: ${email.subject}`)
 
     // Forward or reject
-    await message.forward('verified@destination.com')
+    await message.forward("verified@destination.com")
   },
 } satisfies ExportedHandler<Env>
 ```

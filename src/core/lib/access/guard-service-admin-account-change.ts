@@ -1,6 +1,6 @@
-import { APIError, type CollectionBeforeChangeHook } from 'payload'
+import { APIError, type CollectionBeforeChangeHook } from "payload"
 
-import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { hasServiceAdminRole } from "@/core/lib/access/has-service-admin-role"
 
 /**
  * serviceAdmin アカウントの保護。serviceAdmin 以外のユーザーは
@@ -16,14 +16,14 @@ export const guardServiceAdminAccountChange: CollectionBeforeChangeHook = (args)
 
   const originalRoles = Array.isArray(args.originalDoc?.roles) ? args.originalDoc.roles : []
 
-  if (originalRoles.includes('serviceAdmin')) {
-    throw new APIError('サービス管理者アカウントを変更できるのはサービス管理者のみです', 403)
+  if (originalRoles.includes("serviceAdmin")) {
+    throw new APIError("サービス管理者アカウントを変更できるのはサービス管理者のみです", 403)
   }
 
   const requestedRoles = Array.isArray(args.data?.roles) ? args.data.roles : null
 
-  if (requestedRoles && requestedRoles.includes('serviceAdmin')) {
-    throw new APIError('サービス管理者ロールの変更はサービス管理者のみ行えます', 403)
+  if (requestedRoles && requestedRoles.includes("serviceAdmin")) {
+    throw new APIError("サービス管理者ロールの変更はサービス管理者のみ行えます", 403)
   }
 
   return args.data

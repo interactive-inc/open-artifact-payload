@@ -55,8 +55,8 @@ Schedule Workers execution using cron expressions. Runs on Cloudflare's global n
 ```typescript
 export default {
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext): Promise<void> {
-    console.log('Cron:', controller.cron)
-    console.log('Time:', new Date(controller.scheduledTime))
+    console.log("Cron:", controller.cron)
+    console.log("Time:", new Date(controller.scheduledTime))
 
     ctx.waitUntil(asyncTask(env)) // Non-blocking
   },

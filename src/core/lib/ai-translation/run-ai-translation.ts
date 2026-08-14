@@ -1,25 +1,25 @@
-import type { Payload } from 'payload'
+import type { Payload } from "payload"
 
-import { applyTranslatedFields } from '@/core/lib/ai-translation/apply-translated-fields'
-import { canUpdateTranslationTarget } from '@/core/lib/ai-translation/can-update-translation-target'
-import { checkUsageLimits } from '@/core/lib/ai-translation/check-usage-limits'
-import { createAiTranslationLog } from '@/core/lib/ai-translation/create-ai-translation-log'
-import { estimateTranslationCost } from '@/core/lib/ai-translation/estimate-translation-cost'
-import { extractTranslatableFields } from '@/core/lib/ai-translation/extract-translatable-fields'
-import { fetchTranslationDocument } from '@/core/lib/ai-translation/fetch-translation-document'
-import { filterUntranslatedFields } from '@/core/lib/ai-translation/filter-untranslated-fields'
-import { finalizeAiTranslationLog } from '@/core/lib/ai-translation/finalize-ai-translation-log'
-import { guardTranslations } from '@/core/lib/ai-translation/guard-translations'
-import { isTranslateFailure } from '@/core/lib/ai-translation/is-translate-failure'
-import { isTypedLocale } from '@/core/lib/ai-translation/is-typed-locale'
-import { loadTranslationSettings } from '@/core/lib/ai-translation/load-translation-settings'
-import { loadUsageSnapshot } from '@/core/lib/ai-translation/load-usage-snapshot'
-import type { AiTranslateRequest } from '@/core/lib/ai-translation/parse-ai-translate-request'
-import { resolveTranslateFn } from '@/core/lib/ai-translation/resolve-translate-fn'
-import { resolveTranslationTarget } from '@/core/lib/ai-translation/resolve-translation-target'
-import type { TranslateFn } from '@/core/lib/ai-translation/translation-types'
-import { updateTranslatedDocument } from '@/core/lib/ai-translation/update-translated-document'
-import type { User } from '@/payload-types'
+import { applyTranslatedFields } from "@/core/lib/ai-translation/apply-translated-fields"
+import { canUpdateTranslationTarget } from "@/core/lib/ai-translation/can-update-translation-target"
+import { checkUsageLimits } from "@/core/lib/ai-translation/check-usage-limits"
+import { createAiTranslationLog } from "@/core/lib/ai-translation/create-ai-translation-log"
+import { estimateTranslationCost } from "@/core/lib/ai-translation/estimate-translation-cost"
+import { extractTranslatableFields } from "@/core/lib/ai-translation/extract-translatable-fields"
+import { fetchTranslationDocument } from "@/core/lib/ai-translation/fetch-translation-document"
+import { filterUntranslatedFields } from "@/core/lib/ai-translation/filter-untranslated-fields"
+import { finalizeAiTranslationLog } from "@/core/lib/ai-translation/finalize-ai-translation-log"
+import { guardTranslations } from "@/core/lib/ai-translation/guard-translations"
+import { isTranslateFailure } from "@/core/lib/ai-translation/is-translate-failure"
+import { isTypedLocale } from "@/core/lib/ai-translation/is-typed-locale"
+import { loadTranslationSettings } from "@/core/lib/ai-translation/load-translation-settings"
+import { loadUsageSnapshot } from "@/core/lib/ai-translation/load-usage-snapshot"
+import type { AiTranslateRequest } from "@/core/lib/ai-translation/parse-ai-translate-request"
+import { resolveTranslateFn } from "@/core/lib/ai-translation/resolve-translate-fn"
+import { resolveTranslationTarget } from "@/core/lib/ai-translation/resolve-translation-target"
+import type { TranslateFn } from "@/core/lib/ai-translation/translation-types"
+import { updateTranslatedDocument } from "@/core/lib/ai-translation/update-translated-document"
+import type { User } from "@/payload-types"
 
 type Props = {
   payload: Payload
@@ -31,7 +31,7 @@ type Props = {
 }
 
 export type AiTranslationSummary = {
-  status: 'succeeded' | 'skipped'
+  status: "succeeded" | "skipped"
   translatedFieldCount: number
   skippedFieldCount: number
   characterCount: number
@@ -58,25 +58,25 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
 
   const localization = props.payload.config.localization
 
-  if (!localization) return new Error('多言語設定が無効のため翻訳できません')
+  if (!localization) return new Error("多言語設定が無効のため翻訳できません")
 
   const sourceLocaleCode = localization.defaultLocale
   const targetLocaleCode = request.targetLocale
 
   if (!isTypedLocale(props.payload, sourceLocaleCode)) {
-    return new Error('翻訳元言語の設定が不正です')
+    return new Error("翻訳元言語の設定が不正です")
   }
 
   if (!isTypedLocale(props.payload, targetLocaleCode) || targetLocaleCode === sourceLocaleCode) {
-    return new Error('翻訳先言語が不正です')
+    return new Error("翻訳先言語が不正です")
   }
 
   const sourceLocaleConfig = localization.locales.find((entry) => entry.code === sourceLocaleCode)
   const targetLocaleConfig = localization.locales.find((entry) => entry.code === targetLocaleCode)
   const sourceLocaleLabel =
-    typeof sourceLocaleConfig?.label === 'string' ? sourceLocaleConfig.label : sourceLocaleCode
+    typeof sourceLocaleConfig?.label === "string" ? sourceLocaleConfig.label : sourceLocaleCode
   const targetLocaleLabel =
-    typeof targetLocaleConfig?.label === 'string' ? targetLocaleConfig.label : targetLocaleCode
+    typeof targetLocaleConfig?.label === "string" ? targetLocaleConfig.label : targetLocaleCode
 
   const target = resolveTranslationTarget({
     payload: props.payload,
@@ -104,11 +104,11 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
 
   if (extractedFields.length === 0) {
     return {
-      status: 'skipped',
+      status: "skipped",
       translatedFieldCount: 0,
       skippedFieldCount: 0,
       characterCount: 0,
-      message: '翻訳対象のフィールドがありません',
+      message: "翻訳対象のフィールドがありません",
     }
   }
 
@@ -130,24 +130,24 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
 
   if (pendingFields.length === 0) {
     return {
-      status: 'skipped',
+      status: "skipped",
       translatedFieldCount: 0,
       skippedFieldCount,
       characterCount: 0,
       message:
-        '未入力の翻訳フィールドがありません。既存の翻訳を上書きする場合は「再翻訳（上書き）」を実行してください',
+        "未入力の翻訳フィールドがありません。既存の翻訳を上書きする場合は「再翻訳（上書き）」を実行してください",
     }
   }
 
   const sourceUnits = pendingFields.flatMap((field) => field.texts)
   const characterCount = sourceUnits.reduce((sum, unit) => sum + unit.length, 0)
 
-  const titleValue = Reflect.get(sourceDoc, 'title')
+  const titleValue = Reflect.get(sourceDoc, "title")
   const logBase = {
     targetKind: request.targetKind,
     targetSlug: request.targetSlug,
     targetId: request.targetId,
-    targetTitle: typeof titleValue === 'string' ? titleValue : request.targetSlug,
+    targetTitle: typeof titleValue === "string" ? titleValue : request.targetSlug,
     executedBy: props.user.id,
     sourceLocale: sourceLocaleCode,
     targetLocale: targetLocaleCode,
@@ -166,13 +166,13 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   if (!canUpdate) {
-    const reason = 'このドキュメントを更新する権限がないため翻訳できません'
+    const reason = "このドキュメントを更新する権限がないため翻訳できません"
 
     await createAiTranslationLog({
       payload: props.payload,
       entry: {
         ...logBase,
-        status: 'rejected',
+        status: "rejected",
         inputTokens: 0,
         outputTokens: 0,
         estimatedCostUsd: 0,
@@ -211,7 +211,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
       payload: props.payload,
       entry: {
         ...logBase,
-        status: 'rejected',
+        status: "rejected",
         inputTokens: 0,
         outputTokens: 0,
         estimatedCostUsd: 0,
@@ -223,16 +223,16 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   }
 
   // translateFn を DI している場合（テスト等）は実プロバイダを呼ばないため API キー不要
-  const apiKey = process.env[settings.model.apiKeyEnvName] ?? ''
+  const apiKey = process.env[settings.model.apiKeyEnvName] ?? ""
 
-  if (!props.translateFn && apiKey === '') {
+  if (!props.translateFn && apiKey === "") {
     const reason = `${settings.model.apiKeyEnvName} が設定されていません（.env / wrangler secret で設定してください）`
 
     await createAiTranslationLog({
       payload: props.payload,
       entry: {
         ...logBase,
-        status: 'rejected',
+        status: "rejected",
         inputTokens: 0,
         outputTokens: 0,
         estimatedCostUsd: 0,
@@ -249,7 +249,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     payload: props.payload,
     entry: {
       ...logBase,
-      status: 'pending',
+      status: "pending",
       inputTokens: 0,
       outputTokens: 0,
       estimatedCostUsd: projectedCostUsd,
@@ -258,7 +258,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   const finalize = async (outcome: {
-    status: 'succeeded' | 'failed'
+    status: "succeeded" | "failed"
     inputTokens: number
     outputTokens: number
     estimatedCostUsd: number
@@ -295,7 +295,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
 
   if (outcome instanceof Error) {
     await finalize({
-      status: 'failed',
+      status: "failed",
       inputTokens: 0,
       outputTokens: 0,
       estimatedCostUsd: 0,
@@ -318,7 +318,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
 
   // API は応答した（課金済み）が内容が不正だったケース。実費を確定してから中止する
   if (isTranslateFailure(outcome)) {
-    await finalize({ ...usageEntry, status: 'failed', errorMessage: outcome.failureMessage })
+    await finalize({ ...usageEntry, status: "failed", errorMessage: outcome.failureMessage })
 
     return new Error(`翻訳に失敗しました: ${outcome.failureMessage}`)
   }
@@ -326,7 +326,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   const guarded = guardTranslations({ sourceUnits, translations: outcome.translations })
 
   if (guarded instanceof Error) {
-    await finalize({ ...usageEntry, status: 'failed', errorMessage: guarded.message })
+    await finalize({ ...usageEntry, status: "failed", errorMessage: guarded.message })
 
     return guarded
   }
@@ -341,14 +341,14 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     targetId: request.targetId,
     locale: targetLocaleCode,
   })
-  const targetUpdatedAt = Reflect.get(targetDoc, 'updatedAt')
+  const targetUpdatedAt = Reflect.get(targetDoc, "updatedAt")
   const latestUpdatedAt =
-    latestTargetDoc instanceof Error ? null : Reflect.get(latestTargetDoc, 'updatedAt')
+    latestTargetDoc instanceof Error ? null : Reflect.get(latestTargetDoc, "updatedAt")
 
   if (latestTargetDoc instanceof Error || targetUpdatedAt !== latestUpdatedAt) {
-    const reason = '翻訳中にドキュメントが更新されたため保存を中止しました。再実行してください'
+    const reason = "翻訳中にドキュメントが更新されたため保存を中止しました。再実行してください"
 
-    await finalize({ ...usageEntry, status: 'failed', errorMessage: reason })
+    await finalize({ ...usageEntry, status: "failed", errorMessage: reason })
 
     return new Error(reason)
   }
@@ -361,7 +361,7 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   if (updateData instanceof Error) {
-    await finalize({ ...usageEntry, status: 'failed', errorMessage: updateData.message })
+    await finalize({ ...usageEntry, status: "failed", errorMessage: updateData.message })
 
     return updateData
   }
@@ -378,15 +378,15 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
   })
 
   if (saved instanceof Error) {
-    await finalize({ ...usageEntry, status: 'failed', errorMessage: saved.message })
+    await finalize({ ...usageEntry, status: "failed", errorMessage: saved.message })
 
     return saved
   }
 
-  await finalize({ ...usageEntry, status: 'succeeded', errorMessage: null })
+  await finalize({ ...usageEntry, status: "succeeded", errorMessage: null })
 
   return {
-    status: 'succeeded',
+    status: "succeeded",
     translatedFieldCount: pendingFields.length,
     skippedFieldCount,
     characterCount,

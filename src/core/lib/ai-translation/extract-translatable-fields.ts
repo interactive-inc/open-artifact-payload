@@ -1,8 +1,8 @@
-import type { Field } from 'payload'
+import type { Field } from "payload"
 
-import { collectLexicalTexts } from '@/core/lib/ai-translation/collect-lexical-texts'
-import { isAiTranslateDisabled } from '@/core/lib/ai-translation/is-ai-translate-disabled'
-import type { TranslatableField } from '@/core/lib/ai-translation/translation-types'
+import { collectLexicalTexts } from "@/core/lib/ai-translation/collect-lexical-texts"
+import { isAiTranslateDisabled } from "@/core/lib/ai-translation/is-ai-translate-disabled"
+import type { TranslatableField } from "@/core/lib/ai-translation/translation-types"
 
 type Props = {
   fields: ReadonlyArray<Field>
@@ -23,22 +23,22 @@ export function extractTranslatableFields(props: Props): TranslatableField[] {
   const collected: TranslatableField[] = []
   const source = props.sourceData
 
-  if (!source || typeof source !== 'object') return collected
+  if (!source || typeof source !== "object") return collected
 
   for (const field of props.fields) {
     if (isAiTranslateDisabled(field)) continue
 
-    if (field.type === 'row' || field.type === 'collapsible') {
+    if (field.type === "row" || field.type === "collapsible") {
       collected.push(
         ...extractTranslatableFields({ fields: field.fields, sourceData: source, basePath }),
       )
       continue
     }
 
-    if (field.type === 'tabs') {
+    if (field.type === "tabs") {
       for (const tab of field.tabs) {
         if (isAiTranslateDisabled(tab)) continue
-        if ('name' in tab && typeof tab.name === 'string') {
+        if ("name" in tab && typeof tab.name === "string") {
           collected.push(
             ...extractTranslatableFields({
               fields: tab.fields,
@@ -55,9 +55,9 @@ export function extractTranslatableFields(props: Props): TranslatableField[] {
       continue
     }
 
-    if (field.type === 'group') {
+    if (field.type === "group") {
       if (field.localized === true) continue
-      if (!('name' in field) || typeof field.name !== 'string') {
+      if (!("name" in field) || typeof field.name !== "string") {
         collected.push(
           ...extractTranslatableFields({ fields: field.fields, sourceData: source, basePath }),
         )
@@ -73,7 +73,7 @@ export function extractTranslatableFields(props: Props): TranslatableField[] {
       continue
     }
 
-    if (field.type === 'array') {
+    if (field.type === "array") {
       if (field.localized === true) continue
       const rows = Reflect.get(source, field.name)
       if (!Array.isArray(rows)) continue
@@ -89,14 +89,14 @@ export function extractTranslatableFields(props: Props): TranslatableField[] {
       continue
     }
 
-    if (field.type === 'blocks') {
+    if (field.type === "blocks") {
       if (field.localized === true) continue
       const rows = Reflect.get(source, field.name)
       if (!Array.isArray(rows)) continue
       for (const rowIndex of rows.keys()) {
         const row: unknown = rows[rowIndex]
-        if (!row || typeof row !== 'object') continue
-        const blockType = 'blockType' in row ? row.blockType : null
+        if (!row || typeof row !== "object") continue
+        const blockType = "blockType" in row ? row.blockType : null
         const block = (field.blocks ?? []).find((candidate) => candidate.slug === blockType)
         if (!block) continue
         collected.push(
@@ -110,19 +110,19 @@ export function extractTranslatableFields(props: Props): TranslatableField[] {
       continue
     }
 
-    if (field.type === 'text' || field.type === 'textarea') {
+    if (field.type === "text" || field.type === "textarea") {
       if (field.localized !== true) continue
       const value = Reflect.get(source, field.name)
-      if (typeof value !== 'string' || value.trim() === '') continue
-      collected.push({ path: [...basePath, field.name], kind: 'plain', texts: [value] })
+      if (typeof value !== "string" || value.trim() === "") continue
+      collected.push({ path: [...basePath, field.name], kind: "plain", texts: [value] })
       continue
     }
 
-    if (field.type === 'richText') {
+    if (field.type === "richText") {
       if (field.localized !== true) continue
       const texts = collectLexicalTexts(Reflect.get(source, field.name))
-      if (texts.every((text) => text.trim() === '')) continue
-      collected.push({ path: [...basePath, field.name], kind: 'lexical', texts })
+      if (texts.every((text) => text.trim() === "")) continue
+      collected.push({ path: [...basePath, field.name], kind: "lexical", texts })
     }
   }
 

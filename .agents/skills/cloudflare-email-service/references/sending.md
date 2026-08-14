@@ -29,11 +29,11 @@ Run `npx wrangler types` to auto-generate the `Env` interface with your `EMAIL` 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const response = await env.EMAIL.send({
-      to: 'user@example.com',
-      from: { email: 'welcome@yourdomain.com', name: 'My App' },
-      subject: 'Welcome!',
-      html: '<h1>Welcome!</h1><p>Thanks for signing up.</p>',
-      text: 'Welcome! Thanks for signing up.',
+      to: "user@example.com",
+      from: { email: "welcome@yourdomain.com", name: "My App" },
+      subject: "Welcome!",
+      html: "<h1>Welcome!</h1><p>Thanks for signing up.</p>",
+      text: "Welcome! Thanks for signing up.",
     })
     return new Response(`Sent: ${response.messageId}`)
   },
@@ -44,14 +44,14 @@ Multiple recipients (max 50 combined to + cc + bcc):
 
 ```typescript
 const response = await env.EMAIL.send({
-  to: ['user1@example.com', 'user2@example.com'],
-  cc: ['manager@company.com'],
-  bcc: ['archive@company.com'],
-  from: { email: 'orders@yourdomain.com', name: 'Orders' },
-  replyTo: 'support@yourdomain.com',
-  subject: 'Order Confirmation #12345',
-  html: '<h1>Your order is confirmed</h1>',
-  text: 'Your order is confirmed',
+  to: ["user1@example.com", "user2@example.com"],
+  cc: ["manager@company.com"],
+  bcc: ["archive@company.com"],
+  from: { email: "orders@yourdomain.com", name: "Orders" },
+  replyTo: "support@yourdomain.com",
+  subject: "Order Confirmation #12345",
+  html: "<h1>Your order is confirmed</h1>",
+  text: "Your order is confirmed",
 })
 ```
 
@@ -65,17 +65,17 @@ const response = await env.EMAIL.send({
 ```typescript
 // Text file attachment — pass raw string content
 const response = await env.EMAIL.send({
-  to: 'customer@example.com',
-  from: 'invoices@yourdomain.com',
-  subject: 'Your Report',
-  html: '<h1>Report attached</h1>',
-  text: 'Report attached.',
+  to: "customer@example.com",
+  from: "invoices@yourdomain.com",
+  subject: "Your Report",
+  html: "<h1>Report attached</h1>",
+  text: "Report attached.",
   attachments: [
     {
-      content: 'Name,Amount\nWidget A,100\nWidget B,250', // Raw text, NOT base64
-      filename: 'report.csv',
-      type: 'text/csv',
-      disposition: 'attachment',
+      content: "Name,Amount\nWidget A,100\nWidget B,250", // Raw text, NOT base64
+      filename: "report.csv",
+      type: "text/csv",
+      disposition: "attachment",
     },
   ],
 })
@@ -83,17 +83,17 @@ const response = await env.EMAIL.send({
 // Binary file attachment — use ArrayBuffer
 const pdfBytes = await fetchPdfFromSomewhere() // Returns ArrayBuffer
 const response = await env.EMAIL.send({
-  to: 'customer@example.com',
-  from: 'invoices@yourdomain.com',
-  subject: 'Your Invoice',
-  html: '<h1>Invoice attached</h1>',
-  text: 'Invoice attached.',
+  to: "customer@example.com",
+  from: "invoices@yourdomain.com",
+  subject: "Your Invoice",
+  html: "<h1>Invoice attached</h1>",
+  text: "Invoice attached.",
   attachments: [
     {
       content: pdfBytes,
-      filename: 'invoice-12345.pdf',
-      type: 'application/pdf',
-      disposition: 'attachment',
+      filename: "invoice-12345.pdf",
+      type: "application/pdf",
+      disposition: "attachment",
     },
   ],
 })
@@ -101,17 +101,17 @@ const response = await env.EMAIL.send({
 // Inline image — reference in HTML with cid:<contentId>
 const imageBytes = await fetchImageFromSomewhere() // Returns ArrayBuffer
 const response = await env.EMAIL.send({
-  to: 'user@example.com',
-  from: 'marketing@yourdomain.com',
-  subject: 'New Product',
+  to: "user@example.com",
+  from: "marketing@yourdomain.com",
+  subject: "New Product",
   html: '<img src="cid:product-hero" alt="Product" />',
   attachments: [
     {
       content: imageBytes,
-      filename: 'product.png',
-      type: 'image/png',
-      disposition: 'inline',
-      contentId: 'product-hero',
+      filename: "product.png",
+      type: "image/png",
+      disposition: "inline",
+      contentId: "product-hero",
     },
   ],
 })
@@ -125,15 +125,15 @@ Only whitelisted headers allowed. See the [headers reference](https://developers
 
 ```typescript
 const response = await env.EMAIL.send({
-  to: 'user@example.com',
-  from: 'notifications@yourdomain.com',
-  subject: 'Your weekly digest',
-  html: '<h1>Weekly Digest</h1>',
+  to: "user@example.com",
+  from: "notifications@yourdomain.com",
+  subject: "Your weekly digest",
+  html: "<h1>Weekly Digest</h1>",
   headers: {
-    'In-Reply-To': '<original-message-id@yourdomain.com>',
-    'List-Unsubscribe': '<https://yourdomain.com/unsubscribe?id=abc123>',
-    'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
-    'X-Campaign-ID': 'weekly-digest-2026-03',
+    "In-Reply-To": "<original-message-id@yourdomain.com>",
+    "List-Unsubscribe": "<https://yourdomain.com/unsubscribe?id=abc123>",
+    "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+    "X-Campaign-ID": "weekly-digest-2026-03",
   },
 })
 ```
@@ -143,17 +143,17 @@ const response = await env.EMAIL.send({
 The `EmailMessage` API remains supported. Uses raw MIME via `mimetext`:
 
 ```typescript
-import { EmailMessage } from 'cloudflare:email'
-import { createMimeMessage } from 'mimetext'
+import { EmailMessage } from "cloudflare:email"
+import { createMimeMessage } from "mimetext"
 
 const msg = createMimeMessage()
-msg.setSender({ name: 'Sender', addr: 'sender@yourdomain.com' })
-msg.setRecipient('recipient@example.com')
-msg.setSubject('Hello')
-msg.addMessage({ contentType: 'text/html', data: '<h1>Hello</h1>' })
+msg.setSender({ name: "Sender", addr: "sender@yourdomain.com" })
+msg.setRecipient("recipient@example.com")
+msg.setSubject("Hello")
+msg.addMessage({ contentType: "text/html", data: "<h1>Hello</h1>" })
 
 await env.EMAIL.send(
-  new EmailMessage('sender@yourdomain.com', 'recipient@example.com', msg.asRaw()),
+  new EmailMessage("sender@yourdomain.com", "recipient@example.com", msg.asRaw()),
 )
 ```
 
@@ -175,15 +175,15 @@ Agents can receive and reply to emails natively via the Agents SDK.
 ```
 
 ```typescript
-import { Agent } from 'agents'
-import { type AgentEmail } from 'agents/email'
-import PostalMime from 'postal-mime'
+import { Agent } from "agents"
+import { type AgentEmail } from "agents/email"
+import PostalMime from "postal-mime"
 
 export class EmailAgent extends Agent<Env, State> {
   async onEmail(email: AgentEmail) {
     const parsed = await PostalMime.parse(await email.getRaw())
     await this.replyToEmail(email, {
-      fromName: 'My Agent',
+      fromName: "My Agent",
       subject: `Re: ${parsed.subject}`,
       body: "Thanks for your email! I'll look into this.",
     })
@@ -194,13 +194,13 @@ export class EmailAgent extends Agent<Env, State> {
 Route emails to agents with resolvers:
 
 ```typescript
-import { routeAgentEmail } from 'agents'
-import { createAddressBasedEmailResolver } from 'agents/email'
+import { routeAgentEmail } from "agents"
+import { createAddressBasedEmailResolver } from "agents/email"
 
 export default {
   async email(message, env) {
     await routeAgentEmail(message, env, {
-      resolver: createAddressBasedEmailResolver('EmailAgent'),
+      resolver: createAddressBasedEmailResolver("EmailAgent"),
     })
   },
 }
@@ -212,9 +212,7 @@ Resolver types: `createAddressBasedEmailResolver` (recipient → instance name),
 
 ```typescript
 try {
-  const response = await env.EMAIL.send({
-    /* ... */
-  })
+  const response = await env.EMAIL.send({/* ... */})
 } catch (error) {
   // error.code is one of the E_* error codes
   console.error(`Failed: ${error.code} - ${error.message}`)

@@ -1,9 +1,9 @@
-import { describe, expect, it } from 'vite-plus/test'
+import { describe, expect, it } from "vite-plus/test"
 
-import { resolveEffectiveUsageLimits } from '@/core/lib/ai-translation/resolve-effective-usage-limits'
+import { resolveEffectiveUsageLimits } from "@/core/lib/ai-translation/resolve-effective-usage-limits"
 
-describe('resolveEffectiveUsageLimits', () => {
-  it('DB の設定値と env 天井の小さい方を採用する', () => {
+describe("resolveEffectiveUsageLimits", () => {
+  it("DB の設定値と env 天井の小さい方を採用する", () => {
     const limits = resolveEffectiveUsageLimits({
       limitsGroup: {
         monthlyRunLimit: 1000,
@@ -13,8 +13,8 @@ describe('resolveEffectiveUsageLimits', () => {
         cooldownSeconds: 30,
       },
       env: {
-        AI_TRANSLATION_MAX_MONTHLY_RUNS: '100',
-        AI_TRANSLATION_MAX_MONTHLY_COST_USD: '10',
+        AI_TRANSLATION_MAX_MONTHLY_RUNS: "100",
+        AI_TRANSLATION_MAX_MONTHLY_COST_USD: "10",
       },
     })
 
@@ -27,7 +27,7 @@ describe('resolveEffectiveUsageLimits', () => {
     expect(limits.cooldownSeconds).toBe(30)
   })
 
-  it('DB 未保存でもデフォルト値で補完する', () => {
+  it("DB 未保存でもデフォルト値で補完する", () => {
     const limits = resolveEffectiveUsageLimits({ limitsGroup: null, env: {} })
 
     expect(limits).toEqual({
@@ -39,10 +39,10 @@ describe('resolveEffectiveUsageLimits', () => {
     })
   })
 
-  it('デフォルト値にも env 天井が効く', () => {
+  it("デフォルト値にも env 天井が効く", () => {
     const limits = resolveEffectiveUsageLimits({
       limitsGroup: null,
-      env: { AI_TRANSLATION_MAX_MONTHLY_RUNS: '10' },
+      env: { AI_TRANSLATION_MAX_MONTHLY_RUNS: "10" },
     })
 
     expect(limits.monthlyRunLimit).toBe(10)

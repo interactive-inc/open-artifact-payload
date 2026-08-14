@@ -1,6 +1,6 @@
 ---
 name: section-from-image
-description: 'スクリーンショット画像から案件固有セクションコンポーネントを生成する。画像からのセクション生成、Figma が無い案件でのコンポーネント生成時に使用。/section-from-image で呼び出す。'
+description: "スクリーンショット画像から案件固有セクションコンポーネントを生成する。画像からのセクション生成、Figma が無い案件でのコンポーネント生成時に使用。/section-from-image で呼び出す。"
 user_invocable: true
 arguments: 画像ファイルパス
 ---
@@ -57,7 +57,7 @@ arguments: 画像ファイルパス
 1つでも不整合があれば該当箇所を修正する。
 
 - `tests/int/sections/<kebab-name>.int.spec.tsx` に enabled=true / enabled=false のスモークテストを追加する
-- `bun run generate:types && bun run lint && bun run test:int` を実行して通ったことを確認する
+- `vp run generate:types && vp lint && vp run test:int` を実行して通ったことを確認する
 
 ## ルール
 

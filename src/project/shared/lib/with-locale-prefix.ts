@@ -1,4 +1,4 @@
-import { defaultLocale, type Locale } from '@/project/shared/lib/locale-types'
+import { defaultLocale, type Locale } from "@/project/shared/lib/locale-types"
 
 /**
  * defaultLocale (ja) 以外の場合のみ basePath に /en のようなプレフィックスを付与する。
@@ -7,6 +7,6 @@ import { defaultLocale, type Locale } from '@/project/shared/lib/locale-types'
  */
 export function withLocalePrefix(locale: Locale, basePath: string): string {
   if (locale === defaultLocale) return basePath
-  if (!basePath.startsWith('/')) return basePath
-  return basePath === '/' ? `/${locale}` : `/${locale}${basePath}`
+  if (!basePath.startsWith("/")) return basePath
+  return basePath === "/" ? `/${locale}` : `/${locale}${basePath}`
 }

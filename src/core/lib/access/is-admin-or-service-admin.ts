@@ -1,7 +1,7 @@
-import type { Access } from 'payload'
+import type { Access } from "payload"
 
-import { hasAdminRole } from '@/core/lib/access/has-admin-role'
-import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { hasAdminRole } from "@/core/lib/access/has-admin-role"
+import { hasServiceAdminRole } from "@/core/lib/access/has-service-admin-role"
 
 /**
  * admin（クライアント側管理者）または serviceAdmin（サービス提供側）を通す access。

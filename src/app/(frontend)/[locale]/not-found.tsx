@@ -1,21 +1,21 @@
-import Link from 'next/link'
-import React from 'react'
-import { headers } from 'next/headers'
-import { ArrowRightIcon } from 'lucide-react'
+import Link from "next/link"
+import React from "react"
+import { headers } from "next/headers"
+import { ArrowRightIcon } from "lucide-react"
 
-import { Button } from '@/project/shared/ui/button'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { defaultLocale } from '@/project/shared/lib/locale-types'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import './styles.css'
+import { Button } from "@/project/shared/ui/button"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { defaultLocale } from "@/project/shared/lib/locale-types"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import "./styles.css"
 
 // 存在しない URL に来たときの 404。サイト共通レイアウト（ヘッダー / フッター）の中に表示される。
 // not-found.tsx は Next.js の仕様で params を受け取れないため、
 // middleware が付与する x-locale リクエストヘッダーから locale を復元する。
 export default async function NotFound() {
   const headerList = await headers()
-  const localeHeader = headerList.get('x-locale') ?? ''
+  const localeHeader = headerList.get("x-locale") ?? ""
   const locale = isLocale(localeHeader) ? localeHeader : defaultLocale
   const dictionary = getUiDictionary(locale)
 
@@ -32,7 +32,7 @@ export default async function NotFound() {
       </p>
       <Button
         nativeButton={false}
-        render={<Link href={withLocalePrefix(locale, '/')} />}
+        render={<Link href={withLocalePrefix(locale, "/")} />}
         className="mt-10"
       >
         {dictionary.notFound.backToHome}

@@ -1,15 +1,15 @@
 export type DashboardTaskIcon =
-  | 'megaphone'
-  | 'home'
-  | 'image'
-  | 'map'
-  | 'users'
-  | 'fileText'
-  | 'mail'
-  | 'settings'
-  | 'helpCircle'
+  | "megaphone"
+  | "home"
+  | "image"
+  | "map"
+  | "users"
+  | "fileText"
+  | "mail"
+  | "settings"
+  | "helpCircle"
 
-export type DashboardTaskPriority = 'primary' | 'secondary'
+export type DashboardTaskPriority = "primary" | "secondary"
 
 export type DashboardTask = {
   id: string

@@ -7,7 +7,7 @@ Common workflows, full-stack flows, and best practices.
 `npm install @cloudflare/stream-react`
 
 ```tsx
-import { Stream } from '@cloudflare/stream-react'
+import { Stream } from "@cloudflare/stream-react"
 
 export function VideoPlayer({ videoId, token }: { videoId: string; token?: string }) {
   return <Stream controls src={token ? `${videoId}?token=${token}` : videoId} responsive />
@@ -19,7 +19,7 @@ export function VideoPlayer({ videoId, token }: { videoId: string; token?: strin
 **Backend API (Workers/Pages)**
 
 ```typescript
-import Cloudflare from 'cloudflare'
+import Cloudflare from "cloudflare"
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
@@ -39,7 +39,7 @@ export default {
 **Frontend component**
 
 ```tsx
-import { useState } from 'react'
+import { useState } from "react"
 
 export function VideoUploader() {
   const [uploading, setUploading] = useState(false)
@@ -47,8 +47,8 @@ export function VideoUploader() {
 
   async function handleUpload(file: File) {
     setUploading(true)
-    const { uploadURL, uid } = await fetch('/api/upload-url', {
-      method: 'POST',
+    const { uploadURL, uid } = await fetch("/api/upload-url", {
+      method: "POST",
       body: JSON.stringify({ videoName: file.name }),
     }).then((r) => r.json())
 
@@ -58,9 +58,9 @@ export function VideoUploader() {
       setUploading(false)
       window.location.href = `/videos/${uid}`
     }
-    xhr.open('POST', uploadURL)
+    xhr.open("POST", uploadURL)
     const formData = new FormData()
-    formData.append('file', file)
+    formData.append("file", file)
     xhr.send(formData)
   }
 
@@ -83,7 +83,7 @@ export function VideoUploader() {
 For large files (>500MB). `npm install tus-js-client`
 
 ```typescript
-import * as tus from 'tus-js-client'
+import * as tus from "tus-js-client"
 
 async function uploadWithTUS(file: File, uploadURL: string, onProgress?: (pct: number) => void) {
   return new Promise<string>((resolve, reject) => {
@@ -94,7 +94,7 @@ async function uploadWithTUS(file: File, uploadURL: string, onProgress?: (pct: n
       metadata: { filename: file.name, filetype: file.type },
       onError: reject,
       onProgress: (up, total) => onProgress?.((up / total) * 100),
-      onSuccess: () => resolve(upload.url?.split('/').pop() || ''),
+      onSuccess: () => resolve(upload.url?.split("/").pop() || ""),
     })
     upload.start()
   })
@@ -107,10 +107,10 @@ async function uploadWithTUS(file: File, uploadURL: string, onProgress?: (pct: n
 async function waitForVideoReady(client: Cloudflare, accountId: string, videoId: string) {
   for (let i = 0; i < 60; i++) {
     const video = await client.stream.videos.get(videoId, { account_id: accountId })
-    if (video.readyToStream || video.status.state === 'error') return video
+    if (video.readyToStream || video.status.state === "error") return video
     await new Promise((resolve) => setTimeout(resolve, 5000))
   }
-  throw new Error('Video processing timeout')
+  throw new Error("Video processing timeout")
 }
 ```
 
@@ -119,35 +119,35 @@ async function waitForVideoReady(client: Cloudflare, accountId: string, videoId:
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const signature = request.headers.get('Webhook-Signature')
+    const signature = request.headers.get("Webhook-Signature")
     const body = await request.text()
     if (!signature || !(await verifyWebhook(signature, body, env.WEBHOOK_SECRET))) {
-      return new Response('Unauthorized', { status: 401 })
+      return new Response("Unauthorized", { status: 401 })
     }
     const payload = JSON.parse(body)
     if (payload.readyToStream) console.log(`Video ${payload.uid} ready`)
-    return new Response('OK')
+    return new Response("OK")
   },
 }
 
 async function verifyWebhook(sig: string, body: string, secret: string): Promise<boolean> {
-  const parts = Object.fromEntries(sig.split(',').map((p) => p.split('=')))
-  const timestamp = parseInt(parts.time || '0', 10)
+  const parts = Object.fromEntries(sig.split(",").map((p) => p.split("=")))
+  const timestamp = parseInt(parts.time || "0", 10)
   if (Math.abs(Date.now() / 1000 - timestamp) > 300) return false
 
   const key = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     new TextEncoder().encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
+    { name: "HMAC", hash: "SHA-256" },
     false,
-    ['sign'],
+    ["sign"],
   )
   const computed = await crypto.subtle.sign(
-    'HMAC',
+    "HMAC",
     key,
     new TextEncoder().encode(`${timestamp}.${body}`),
   )
-  const hex = Array.from(new Uint8Array(computed), (b) => b.toString(16).padStart(2, '0')).join('')
+  const hex = Array.from(new Uint8Array(computed), (b) => b.toString(16).padStart(2, "0")).join("")
   return hex === parts.sig1
 }
 ```
@@ -159,27 +159,27 @@ For >1k tokens/day. Prerequisites: Create signing key (see configuration.md).
 ```typescript
 async function selfSignToken(keyId: string, jwkBase64: string, videoId: string, expiresIn = 3600) {
   const key = await crypto.subtle.importKey(
-    'jwk',
+    "jwk",
     JSON.parse(atob(jwkBase64)),
-    { name: 'RSASSA-PKCS1-v1_5', hash: 'SHA-256' },
+    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
     false,
-    ['sign'],
+    ["sign"],
   )
   const now = Math.floor(Date.now() / 1000)
-  const header = btoa(JSON.stringify({ alg: 'RS256', kid: keyId }))
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
+  const header = btoa(JSON.stringify({ alg: "RS256", kid: keyId }))
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
   const payload = btoa(JSON.stringify({ sub: videoId, kid: keyId, exp: now + expiresIn, nbf: now }))
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
   const message = `${header}.${payload}`
-  const sig = await crypto.subtle.sign('RSASSA-PKCS1-v1_5', key, new TextEncoder().encode(message))
+  const sig = await crypto.subtle.sign("RSASSA-PKCS1-v1_5", key, new TextEncoder().encode(message))
   const b64Sig = btoa(String.fromCharCode(...new Uint8Array(sig)))
-    .replace(/=/g, '')
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
+    .replace(/=/g, "")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
   return `${message}.${b64Sig}`
 }
 
@@ -189,7 +189,7 @@ const payloadWithRules = {
   kid: keyId,
   exp: now + 3600,
   nbf: now,
-  accessRules: [{ type: 'ip.geoip.country', action: 'allow', country: ['US'] }],
+  accessRules: [{ type: "ip.geoip.country", action: "allow", country: ["US"] }],
 }
 ```
 

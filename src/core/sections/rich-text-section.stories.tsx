@@ -1,17 +1,17 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-import { exampleRichText } from '@/core/test-support/example-rich-text'
+import { exampleRichText } from "@/core/test-support/example-rich-text"
 
-import { RichTextSection } from './rich-text-section'
+import { RichTextSection } from "./rich-text-section"
 
 const meta: Meta<typeof RichTextSection> = {
-  title: 'Core/Sections/RichTextSection',
+  title: "Core/Sections/RichTextSection",
   component: RichTextSection,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   args: {
     data: {
       enabled: true,
-      heading: 'セクション見出し',
+      heading: "セクション見出し",
       body: exampleRichText,
     },
   },
@@ -25,7 +25,7 @@ export const WithHeading: Story = {
   args: {
     data: {
       enabled: true,
-      heading: 'セクション見出し',
+      heading: "セクション見出し",
       body: exampleRichText,
     },
   },

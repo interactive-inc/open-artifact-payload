@@ -392,11 +392,11 @@ These are tools, not defaults. Use them when the design read calls for them. **N
 ### 5.A Sticky-Stack - Canonical Skeleton
 
 ```tsx
-'use client'
-import { useRef, useEffect } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useReducedMotion } from 'motion/react'
+"use client"
+import { useRef, useEffect } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useReducedMotion } from "motion/react"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -407,25 +407,25 @@ export function StickyStack({ cards }: { cards: React.ReactNode[] }) {
   useEffect(() => {
     if (reduce || !ref.current) return
     const ctx = gsap.context(() => {
-      const cardEls = gsap.utils.toArray<HTMLElement>('.stack-card')
+      const cardEls = gsap.utils.toArray<HTMLElement>(".stack-card")
       cardEls.forEach((card, i) => {
         if (i === cardEls.length - 1) return
         ScrollTrigger.create({
           trigger: card,
-          start: 'top top', // pin at viewport top
+          start: "top top", // pin at viewport top
           endTrigger: cardEls[cardEls.length - 1],
-          end: 'top top',
+          end: "top top",
           pin: true,
           pinSpacing: false,
         })
         gsap.to(card, {
           scale: 0.92,
           opacity: 0.55,
-          ease: 'none',
+          ease: "none",
           scrollTrigger: {
             trigger: cardEls[i + 1],
-            start: 'top bottom',
-            end: 'top top',
+            start: "top bottom",
+            end: "top top",
             scrub: true,
           },
         })
@@ -454,11 +454,11 @@ Critical points: `start: "top top"`, `pin: true`, every card except the last is 
 ### 5.B Horizontal-Pan - Canonical Skeleton
 
 ```tsx
-'use client'
-import { useRef, useEffect } from 'react'
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useReducedMotion } from 'motion/react'
+"use client"
+import { useRef, useEffect } from "react"
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+import { useReducedMotion } from "motion/react"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -473,10 +473,10 @@ export function HorizontalPan({ children }: { children: React.ReactNode }) {
       const distance = track.current!.scrollWidth - window.innerWidth
       gsap.to(track.current, {
         x: -distance,
-        ease: 'none',
+        ease: "none",
         scrollTrigger: {
           trigger: wrap.current,
-          start: 'top top', // pin starts when section top hits viewport top
+          start: "top top", // pin starts when section top hits viewport top
           end: () => `+=${distance}`, // scroll distance = track width minus viewport
           pin: true,
           scrub: 1,
@@ -504,8 +504,8 @@ Critical points: `start: "top top"`, `pin: true`, `end: "+=${distance}"` (scroll
 For simple "items appear as they enter viewport" (no pinning), prefer Motion's `whileInView` over GSAP - lighter, no ScrollTrigger needed:
 
 ```tsx
-'use client'
-import { motion, useReducedMotion } from 'motion/react'
+"use client"
+import { motion, useReducedMotion } from "motion/react"
 
 export function RevealStagger({ items }: { items: string[] }) {
   const reduce = useReducedMotion()
@@ -946,9 +946,9 @@ dial_compatibility:
   variance: [6, 10]
   motion: [3, 10]
   density: [2, 5]
-when_to_use: 'Landing pages with one strong asset and one strong message. Default hero for SaaS, agency, premium consumer.'
-not_for: 'Editorial / manifesto launches where the message IS the design.'
-stack: ['react', 'next', 'tailwind', 'motion']
+when_to_use: "Landing pages with one strong asset and one strong message. Default hero for SaaS, agency, premium consumer."
+not_for: "Editorial / manifesto launches where the message IS the design."
+stack: ["react", "next", "tailwind", "motion"]
 ---
 ```
 
@@ -1256,7 +1256,7 @@ But that is **web glassmorphism / frosted-glass approximation**, not official Ap
 }
 
 .liquid-glass-web-approx::before {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -1268,7 +1268,7 @@ But that is **web glassmorphism / frosted-glass approximation**, not official Ap
 }
 
 .liquid-glass-web-approx::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 1px;
   border-radius: inherit;

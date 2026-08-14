@@ -1,11 +1,11 @@
-import type { Payload, PayloadRequest } from 'payload'
+import type { Payload, PayloadRequest } from "payload"
 
-import type { User } from '@/payload-types'
+import type { User } from "@/payload-types"
 
 type Props = {
   payload: Payload
   user: User
-  targetKind: 'collection' | 'global'
+  targetKind: "collection" | "global"
   targetSlug: string
 }
 
@@ -16,7 +16,7 @@ type Props = {
  */
 export async function canUpdateTranslationTarget(props: Props): Promise<boolean> {
   const entityConfig =
-    props.targetKind === 'collection'
+    props.targetKind === "collection"
       ? props.payload.config.collections.find((candidate) => candidate.slug === props.targetSlug)
       : props.payload.config.globals.find((candidate) => candidate.slug === props.targetSlug)
 

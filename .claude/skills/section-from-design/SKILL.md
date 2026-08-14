@@ -1,6 +1,6 @@
 ---
 name: section-from-design
-description: 'Figma URL から案件固有セクションコンポーネントを生成する。Figmaデザインからのセクション生成、コンポーネント生成時に使用。/section-from-design で呼び出す。'
+description: "Figma URL から案件固有セクションコンポーネントを生成する。Figmaデザインからのセクション生成、コンポーネント生成時に使用。/section-from-design で呼び出す。"
 user_invocable: true
 arguments: Figma URL (figma.com/design/...)
 ---
@@ -58,7 +58,7 @@ arguments: Figma URL (figma.com/design/...)
 1つでも不整合があれば該当箇所を修正する。
 
 - `tests/int/sections/<kebab-name>.int.spec.tsx` に enabled=true / enabled=false のスモークテストを追加する
-- `bun run generate:types && bun run lint && bun run test:int` を実行して通ったことを確認する
+- `vp run generate:types && vp lint && vp run test:int` を実行して通ったことを確認する
 
 ## ルール
 

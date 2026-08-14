@@ -1,6 +1,6 @@
 ---
 name: add-collection
-description: '既存案件に新しいコレクションを追加する。コレクション追加、新規コレクション作成時に使用。/add-collection で呼び出す。'
+description: "既存案件に新しいコレクションを追加する。コレクション追加、新規コレクション作成時に使用。/add-collection で呼び出す。"
 user_invocable: true
 ---
 
@@ -38,9 +38,9 @@ user_invocable: true
 
 ### フェーズ3: マイグレーションと検証
 
-- `bun run payload migrate:create project_<slug>` を実行する
-- `bun run payload migrate` でローカル D1 に反映する
-- `bun run generate:types && bun run lint && bun run test:int` を流す
+- `vp run payload -- migrate:create project_<slug>` を実行する
+- `vp run payload -- migrate` でローカル D1 に反映する
+- `vp run generate:types && vp lint && vp run test:int` を流す
 - 結果をユーザーに報告してコミットを提案する
 
 ## ルール

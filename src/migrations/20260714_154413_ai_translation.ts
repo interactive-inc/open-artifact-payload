@@ -1,4 +1,4 @@
-import { MigrateUpArgs, MigrateDownArgs, sql } from '@payloadcms/db-d1-sqlite'
+import { MigrateUpArgs, MigrateDownArgs, sql } from "@payloadcms/db-d1-sqlite"
 
 export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   await db.run(sql`CREATE TABLE \`ai_translation_logs\` (
@@ -24,9 +24,15 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   	FOREIGN KEY (\`executed_by_id\`) REFERENCES \`users\`(\`id\`) ON UPDATE no action ON DELETE set null
   );
   `)
-  await db.run(sql`CREATE INDEX \`ai_translation_logs_executed_by_idx\` ON \`ai_translation_logs\` (\`executed_by_id\`);`)
-  await db.run(sql`CREATE INDEX \`ai_translation_logs_updated_at_idx\` ON \`ai_translation_logs\` (\`updated_at\`);`)
-  await db.run(sql`CREATE INDEX \`ai_translation_logs_created_at_idx\` ON \`ai_translation_logs\` (\`created_at\`);`)
+  await db.run(
+    sql`CREATE INDEX \`ai_translation_logs_executed_by_idx\` ON \`ai_translation_logs\` (\`executed_by_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`ai_translation_logs_updated_at_idx\` ON \`ai_translation_logs\` (\`updated_at\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`ai_translation_logs_created_at_idx\` ON \`ai_translation_logs\` (\`created_at\`);`,
+  )
   await db.run(sql`CREATE TABLE \`ai_translation_settings\` (
   	\`id\` integer PRIMARY KEY NOT NULL,
   	\`enabled\` integer DEFAULT false,
@@ -41,19 +47,35 @@ export async function up({ db, payload, req }: MigrateUpArgs): Promise<void> {
   );
   `)
   await db.run(sql`DROP INDEX \`news_locales_meta_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`news_meta_meta_image_idx\` ON \`news_locales\` (\`meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`news_meta_meta_image_idx\` ON \`news_locales\` (\`meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`_news_v_locales_version_meta_version_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`_news_v_version_meta_version_meta_image_idx\` ON \`_news_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_news_v_version_meta_version_meta_image_idx\` ON \`_news_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`works_locales_meta_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`works_meta_meta_image_idx\` ON \`works_locales\` (\`meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`works_meta_meta_image_idx\` ON \`works_locales\` (\`meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`_works_v_locales_version_meta_version_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`_works_v_version_meta_version_meta_image_idx\` ON \`_works_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_works_v_version_meta_version_meta_image_idx\` ON \`_works_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`home_page_locales_meta_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`home_page_meta_meta_image_idx\` ON \`home_page_locales\` (\`meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_meta_meta_image_idx\` ON \`home_page_locales\` (\`meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`_home_page_v_locales_version_meta_version_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_version_meta_version_meta_image_idx\` ON \`_home_page_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`)
-  await db.run(sql`ALTER TABLE \`payload_locked_documents_rels\` ADD \`ai_translation_logs_id\` integer REFERENCES ai_translation_logs(id);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_ai_translation_logs_id_idx\` ON \`payload_locked_documents_rels\` (\`ai_translation_logs_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_version_meta_version_meta_image_idx\` ON \`_home_page_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`,
+  )
+  await db.run(
+    sql`ALTER TABLE \`payload_locked_documents_rels\` ADD \`ai_translation_logs_id\` integer REFERENCES ai_translation_logs(id);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_ai_translation_logs_id_idx\` ON \`payload_locked_documents_rels\` (\`ai_translation_logs_id\`);`,
+  )
 }
 
 export async function down({ db, payload, req }: MigrateDownArgs): Promise<void> {
@@ -80,29 +102,63 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   	FOREIGN KEY (\`works_id\`) REFERENCES \`works\`(\`id\`) ON UPDATE no action ON DELETE cascade
   );
   `)
-  await db.run(sql`INSERT INTO \`__new_payload_locked_documents_rels\`("id", "order", "parent_id", "path", "users_id", "media_id", "news_id", "faq_id", "contact_submissions_id", "works_id") SELECT "id", "order", "parent_id", "path", "users_id", "media_id", "news_id", "faq_id", "contact_submissions_id", "works_id" FROM \`payload_locked_documents_rels\`;`)
+  await db.run(
+    sql`INSERT INTO \`__new_payload_locked_documents_rels\`("id", "order", "parent_id", "path", "users_id", "media_id", "news_id", "faq_id", "contact_submissions_id", "works_id") SELECT "id", "order", "parent_id", "path", "users_id", "media_id", "news_id", "faq_id", "contact_submissions_id", "works_id" FROM \`payload_locked_documents_rels\`;`,
+  )
   await db.run(sql`DROP TABLE \`payload_locked_documents_rels\`;`)
-  await db.run(sql`ALTER TABLE \`__new_payload_locked_documents_rels\` RENAME TO \`payload_locked_documents_rels\`;`)
+  await db.run(
+    sql`ALTER TABLE \`__new_payload_locked_documents_rels\` RENAME TO \`payload_locked_documents_rels\`;`,
+  )
   await db.run(sql`PRAGMA foreign_keys=ON;`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_order_idx\` ON \`payload_locked_documents_rels\` (\`order\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_parent_idx\` ON \`payload_locked_documents_rels\` (\`parent_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_path_idx\` ON \`payload_locked_documents_rels\` (\`path\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_users_id_idx\` ON \`payload_locked_documents_rels\` (\`users_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_media_id_idx\` ON \`payload_locked_documents_rels\` (\`media_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_news_id_idx\` ON \`payload_locked_documents_rels\` (\`news_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_faq_id_idx\` ON \`payload_locked_documents_rels\` (\`faq_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_contact_submissions_id_idx\` ON \`payload_locked_documents_rels\` (\`contact_submissions_id\`);`)
-  await db.run(sql`CREATE INDEX \`payload_locked_documents_rels_works_id_idx\` ON \`payload_locked_documents_rels\` (\`works_id\`);`)
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_order_idx\` ON \`payload_locked_documents_rels\` (\`order\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_parent_idx\` ON \`payload_locked_documents_rels\` (\`parent_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_path_idx\` ON \`payload_locked_documents_rels\` (\`path\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_users_id_idx\` ON \`payload_locked_documents_rels\` (\`users_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_media_id_idx\` ON \`payload_locked_documents_rels\` (\`media_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_news_id_idx\` ON \`payload_locked_documents_rels\` (\`news_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_faq_id_idx\` ON \`payload_locked_documents_rels\` (\`faq_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_contact_submissions_id_idx\` ON \`payload_locked_documents_rels\` (\`contact_submissions_id\`);`,
+  )
+  await db.run(
+    sql`CREATE INDEX \`payload_locked_documents_rels_works_id_idx\` ON \`payload_locked_documents_rels\` (\`works_id\`);`,
+  )
   await db.run(sql`DROP INDEX \`news_meta_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`news_locales_meta_meta_image_idx\` ON \`news_locales\` (\`meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`news_locales_meta_meta_image_idx\` ON \`news_locales\` (\`meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`_news_v_version_meta_version_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`_news_v_locales_version_meta_version_meta_image_idx\` ON \`_news_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_news_v_locales_version_meta_version_meta_image_idx\` ON \`_news_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`works_meta_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`works_locales_meta_meta_image_idx\` ON \`works_locales\` (\`meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`works_locales_meta_meta_image_idx\` ON \`works_locales\` (\`meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`_works_v_version_meta_version_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`_works_v_locales_version_meta_version_meta_image_idx\` ON \`_works_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_works_v_locales_version_meta_version_meta_image_idx\` ON \`_works_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`home_page_meta_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`home_page_locales_meta_meta_image_idx\` ON \`home_page_locales\` (\`meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`home_page_locales_meta_meta_image_idx\` ON \`home_page_locales\` (\`meta_image_id\`,\`_locale\`);`,
+  )
   await db.run(sql`DROP INDEX \`_home_page_v_version_meta_version_meta_image_idx\`;`)
-  await db.run(sql`CREATE INDEX \`_home_page_v_locales_version_meta_version_meta_image_idx\` ON \`_home_page_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`)
+  await db.run(
+    sql`CREATE INDEX \`_home_page_v_locales_version_meta_version_meta_image_idx\` ON \`_home_page_v_locales\` (\`version_meta_image_id\`,\`_locale\`);`,
+  )
 }

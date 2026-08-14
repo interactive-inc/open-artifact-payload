@@ -1,6 +1,6 @@
 ---
 name: add-story
-description: '既存コンポーネントに Storybook のストーリーを追加する、または新規コンポーネントとストーリーをセットで生成する。コンポーネントの動作確認/カタログ化、UIレビュー用ストーリー作成時に使用。/add-story で呼び出す。'
+description: "既存コンポーネントに Storybook のストーリーを追加する、または新規コンポーネントとストーリーをセットで生成する。コンポーネントの動作確認/カタログ化、UIレビュー用ストーリー作成時に使用。/add-story で呼び出す。"
 user_invocable: true
 arguments: コンポーネントのパス（省略可。省略時は対話で決定）
 ---
@@ -47,14 +47,14 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 テンプレ:
 
 ```tsx
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/nextjs-vite"
 
-import { ComponentName } from './component-name'
+import { ComponentName } from "./component-name"
 
 const meta: Meta<typeof ComponentName> = {
-  title: 'Shared/ComponentName',
+  title: "Shared/ComponentName",
   component: ComponentName,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     // Props に合わせた controls
   },
@@ -70,9 +70,7 @@ type Story = StoryObj<typeof ComponentName>
 export const Default: Story = {}
 
 export const Variant: Story = {
-  args: {
-    /* 差分 */
-  },
+  args: {/* 差分 */},
 }
 ```
 
@@ -99,9 +97,9 @@ Payload セクションのストーリー生成の注意:
 
 ### フェーズ4: 自己検証
 
-- 生成後、`bun run build-storybook` が通ることを確認する
-- `bun run lint` を流し、stories ファイルが ESLint を通ることを確認する
-- Storybook の UI で表示確認が必要な場合はユーザーに `bun run storybook` を案内する（自動では開かない）
+- 生成後、`vp run build-storybook` が通ることを確認する
+- `vp lint` を流し、stories ファイルが Oxlint を通ることを確認する
+- Storybook の UI で表示確認が必要な場合はユーザーに `vp run storybook` を案内する（自動では開かない）
 
 ## ルール
 

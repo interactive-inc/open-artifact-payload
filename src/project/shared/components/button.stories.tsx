@@ -1,26 +1,26 @@
-import type { Meta, StoryObj } from '@storybook/nextjs-vite'
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
-import { Button } from './button'
+import { Button } from "./button"
 
 const meta: Meta<typeof Button> = {
-  title: 'Shared/Button',
+  title: "Shared/Button",
   component: Button,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     variant: {
-      control: 'inline-radio',
-      options: ['primary', 'secondary', 'ghost'],
+      control: "inline-radio",
+      options: ["primary", "secondary", "ghost"],
     },
     size: {
-      control: 'inline-radio',
-      options: ['sm', 'md', 'lg'],
+      control: "inline-radio",
+      options: ["sm", "md", "lg"],
     },
-    disabled: { control: 'boolean' },
+    disabled: { control: "boolean" },
   },
   args: {
-    children: 'ボタン',
-    variant: 'primary',
-    size: 'md',
+    children: "ボタン",
+    variant: "primary",
+    size: "md",
     disabled: false,
   },
 }
@@ -32,17 +32,17 @@ type Story = StoryObj<typeof Button>
 export const Primary: Story = {}
 
 export const Secondary: Story = {
-  args: { variant: 'secondary' },
+  args: { variant: "secondary" },
 }
 
 export const Ghost: Story = {
-  args: { variant: 'ghost' },
+  args: { variant: "ghost" },
 }
 
 export const Large: Story = {
-  args: { size: 'lg', children: '大きめのボタン' },
+  args: { size: "lg", children: "大きめのボタン" },
 }
 
 export const Disabled: Story = {
-  args: { disabled: true, children: '無効化' },
+  args: { disabled: true, children: "無効化" },
 }

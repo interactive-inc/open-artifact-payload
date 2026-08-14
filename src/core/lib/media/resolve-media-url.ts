@@ -1,4 +1,4 @@
-import type { MediaOrId } from '@/core/lib/media/types'
+import type { MediaOrId } from "@/core/lib/media/types"
 
 /**
  * upload フィールドの値から画像 URL を解決する。
@@ -6,6 +6,6 @@ import type { MediaOrId } from '@/core/lib/media/types'
  */
 export function resolveMediaUrl(value: MediaOrId): string | undefined {
   if (!value) return undefined
-  if (typeof value === 'number' || typeof value === 'string') return undefined
+  if (typeof value === "number" || typeof value === "string") return undefined
   return value.url ?? undefined
 }

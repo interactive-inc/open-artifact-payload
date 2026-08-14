@@ -1,22 +1,22 @@
-import Link from 'next/link'
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import { getPayload } from 'payload'
-import React from 'react'
+import Link from "next/link"
+import { draftMode } from "next/headers"
+import { notFound } from "next/navigation"
+import { getPayload } from "payload"
+import React from "react"
 
-import config from '@/payload.config'
-import { formatNewsDate } from '@/core/lib/format-news-date'
-import { Badge } from '@/project/shared/ui/badge'
-import { Separator } from '@/project/shared/ui/separator'
-import { PageHeader } from '@/project/shared/sections/page-header'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { Metadata } from 'next'
+import config from "@/payload.config"
+import { formatNewsDate } from "@/core/lib/format-news-date"
+import { Badge } from "@/project/shared/ui/badge"
+import { Separator } from "@/project/shared/ui/separator"
+import { PageHeader } from "@/project/shared/sections/page-header"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Metadata } from "next"
 
-import '../styles.css'
+import "../styles.css"
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -33,7 +33,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const dictionary = getUiDictionary(locale)
   return {
     title: dictionary.news.title,
-    alternates: { languages: buildLocaleAlternates('/news') },
+    alternates: { languages: buildLocaleAlternates("/news") },
   }
 }
 
@@ -49,11 +49,11 @@ export default async function NewsListPage(props: Props) {
   // 公開フロントでは where: { _status: 'published' } を明示する。
   // ライブプレビュー(isDraft=true)時はその制約を外し、下書きを含めて見せる。
   const result = await payload.find({
-    collection: 'news',
+    collection: "news",
     limit: 20,
-    sort: '-publishedAt',
+    sort: "-publishedAt",
     draft: isDraft,
-    where: isDraft ? undefined : { _status: { equals: 'published' } },
+    where: isDraft ? undefined : { _status: { equals: "published" } },
     locale,
   })
 

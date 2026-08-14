@@ -1,8 +1,8 @@
-import type { Endpoint } from 'payload'
+import type { Endpoint } from "payload"
 
-import { isUserAccount } from '@/core/lib/access/is-user-account'
-import { parseAiTranslateRequest } from '@/core/lib/ai-translation/parse-ai-translate-request'
-import { runAiTranslation } from '@/core/lib/ai-translation/run-ai-translation'
+import { isUserAccount } from "@/core/lib/access/is-user-account"
+import { parseAiTranslateRequest } from "@/core/lib/ai-translation/parse-ai-translate-request"
+import { runAiTranslation } from "@/core/lib/ai-translation/run-ai-translation"
 
 /**
  * POST /api/ai-translate
@@ -10,11 +10,11 @@ import { runAiTranslation } from '@/core/lib/ai-translation/run-ai-translation'
  * 取得するため、任意の文章を AI へ送る手段にはならない（チャット用途への流用防止）。
  */
 export const aiTranslateEndpoint: Endpoint = {
-  path: '/ai-translate',
-  method: 'post',
+  path: "/ai-translate",
+  method: "post",
   handler: async (req) => {
     if (!isUserAccount(req.user)) {
-      return Response.json({ message: 'ログインが必要です' }, { status: 401 })
+      return Response.json({ message: "ログインが必要です" }, { status: 401 })
     }
 
     // 不正な JSON ボディで 500 にならないよう、パース失敗も 400 に寄せる

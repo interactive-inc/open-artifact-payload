@@ -1,10 +1,10 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import React from 'react'
+import Image from "next/image"
+import Link from "next/link"
+import React from "react"
 
-import type { MediaOrId } from '@/core/lib/media/types'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
+import type { MediaOrId } from "@/core/lib/media/types"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
 
 type HeroData = {
   enabled?: boolean | null
@@ -22,7 +22,7 @@ type Props = {
 export function HeroSection(props: Props) {
   if (!props.data.enabled) return null
   const imageUrl = resolveMediaUrl(props.data.image)
-  const imageAlt = resolveMediaAlt(props.data.image) ?? ''
+  const imageAlt = resolveMediaAlt(props.data.image) ?? ""
 
   return (
     <section className="relative py-section bg-brand text-white">

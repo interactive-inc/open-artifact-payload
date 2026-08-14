@@ -105,11 +105,11 @@ cd ../target-worker && npx wrangler deploy
 
 ```typescript
 // ❌ Wrong - KV returns string | null
-const value: string = await env.MY_KV.get('key')
+const value: string = await env.MY_KV.get("key")
 
 // ✅ Handle null
-const value = await env.MY_KV.get('key')
-if (!value) return new Response('Not found', { status: 404 })
+const value = await env.MY_KV.get("key")
+if (!value) return new Response("Not found", { status: 404 })
 ```
 
 ## Environment Gotchas
@@ -138,11 +138,11 @@ if (!value) return new Response('Not found', { status: 404 })
 
 ```typescript
 // ❌ Slow
-const user = await env.DB.prepare('...').first()
-const config = await env.MY_KV.get('config')
+const user = await env.DB.prepare("...").first()
+const config = await env.MY_KV.get("config")
 
 // ✅ Parallel
-const [user, config] = await Promise.all([env.DB.prepare('...').first(), env.MY_KV.get('config')])
+const [user, config] = await Promise.all([env.DB.prepare("...").first(), env.MY_KV.get("config")])
 ```
 
 ## Security Gotchas

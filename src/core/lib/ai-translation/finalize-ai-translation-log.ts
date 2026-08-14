@@ -1,9 +1,9 @@
-import type { Payload } from 'payload'
+import type { Payload } from "payload"
 
 type Props = {
   payload: Payload
   logId: number
-  status: 'succeeded' | 'failed' | 'rejected'
+  status: "succeeded" | "failed" | "rejected"
   inputTokens: number
   outputTokens: number
   estimatedCostUsd: number
@@ -18,7 +18,7 @@ type Props = {
 export async function finalizeAiTranslationLog(props: Props): Promise<void> {
   try {
     await props.payload.update({
-      collection: 'ai-translation-logs',
+      collection: "ai-translation-logs",
       id: props.logId,
       data: {
         status: props.status,

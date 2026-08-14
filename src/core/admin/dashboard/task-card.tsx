@@ -1,5 +1,5 @@
-import Link from 'next/link'
-import React from 'react'
+import Link from "next/link"
+import React from "react"
 import {
   FileText,
   HelpCircle,
@@ -11,13 +11,13 @@ import {
   Settings,
   Users,
   type LucideIcon,
-} from 'lucide-react'
+} from "lucide-react"
 
-import type { DashboardTask, DashboardTaskIcon } from './types'
+import type { DashboardTask, DashboardTaskIcon } from "./types"
 
 type Props = {
   task: DashboardTask
-  size: 'large' | 'small'
+  size: "large" | "small"
 }
 
 const iconMap: Record<DashboardTaskIcon, LucideIcon> = {
@@ -35,14 +35,14 @@ const iconMap: Record<DashboardTaskIcon, LucideIcon> = {
 export function TaskCard(props: Props) {
   const Icon = iconMap[props.task.icon]
   const className =
-    props.size === 'large'
-      ? 'ictms-dashboard__task ictms-dashboard__task--large'
-      : 'ictms-dashboard__task ictms-dashboard__task--small'
+    props.size === "large"
+      ? "ictms-dashboard__task ictms-dashboard__task--large"
+      : "ictms-dashboard__task ictms-dashboard__task--small"
 
   return (
     <Link className={className} href={props.task.href}>
       <span className="ictms-dashboard__task-icon">
-        <Icon aria-hidden="true" size={props.size === 'large' ? 32 : 20} />
+        <Icon aria-hidden="true" size={props.size === "large" ? 32 : 20} />
       </span>
       <span className="ictms-dashboard__task-label">{props.task.label}</span>
       {props.task.description ? (

@@ -1,4 +1,4 @@
-import type { Locale } from '@/project/shared/lib/locale-types'
+import type { Locale } from "@/project/shared/lib/locale-types"
 
 type FormattedDate = {
   // <time dateTime> 用の YYYY-MM-DD
@@ -9,25 +9,25 @@ type FormattedDate = {
 
 // 日本の案件向けテンプレートとして JST 基準で日付を組み立てる。
 // Cloudflare Workers は実行時タイムゾーンが UTC のため明示が必要。
-const TIME_ZONE = 'Asia/Tokyo'
-const isoFormatter = new Intl.DateTimeFormat('en-CA', {
+const TIME_ZONE = "Asia/Tokyo"
+const isoFormatter = new Intl.DateTimeFormat("en-CA", {
   timeZone: TIME_ZONE,
-  year: 'numeric',
-  month: '2-digit',
-  day: '2-digit',
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
 })
 const labelFormatters: Record<Locale, Intl.DateTimeFormat> = {
-  ja: new Intl.DateTimeFormat('ja-JP', {
+  ja: new Intl.DateTimeFormat("ja-JP", {
     timeZone: TIME_ZONE,
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   }),
-  en: new Intl.DateTimeFormat('en-US', {
+  en: new Intl.DateTimeFormat("en-US", {
     timeZone: TIME_ZONE,
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   }),
 }
 

@@ -1,14 +1,14 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import React from 'react'
-import { ArrowRightIcon } from 'lucide-react'
+import Link from "next/link"
+import Image from "next/image"
+import React from "react"
+import { ArrowRightIcon } from "lucide-react"
 
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { Button } from '@/project/shared/ui/button'
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { Button } from "@/project/shared/ui/button"
 
 // CMS に画像が無いときの仮表示。固定 ID なので毎回同じ写真が出る。本番では CMS の画像が優先される。
-const fallbackImageUrl = 'https://picsum.photos/id/180/1200/900'
+const fallbackImageUrl = "https://picsum.photos/id/180/1200/900"
 
 type Props = {
   data: {
@@ -24,7 +24,7 @@ type Props = {
 export function AboutPreviewSection(props: Props) {
   if (!props.data.enabled) return null
   const imageUrl = resolveMediaUrl(props.data.image as never) ?? fallbackImageUrl
-  const imageAlt = resolveMediaAlt(props.data.image as never) ?? ''
+  const imageAlt = resolveMediaAlt(props.data.image as never) ?? ""
 
   return (
     <section className="py-24 md:py-32">

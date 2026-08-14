@@ -1,29 +1,29 @@
-import { cache } from 'react'
-import { draftMode } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import Image from 'next/image'
-import { getPayload } from 'payload'
-import React from 'react'
-import { ArrowLeftIcon } from 'lucide-react'
+import { cache } from "react"
+import { draftMode } from "next/headers"
+import { notFound } from "next/navigation"
+import Link from "next/link"
+import Image from "next/image"
+import { getPayload } from "payload"
+import React from "react"
+import { ArrowLeftIcon } from "lucide-react"
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import config from '@/payload.config'
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { RichText } from '@/core/lib/lexical'
-import { buildPageMetadata } from '@/project/shared/lib/build-page-metadata'
-import { Button } from '@/project/shared/ui/button'
-import { workCategoryLabels } from '@/project/shared/lib/work-category-labels'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import '../../styles.css'
+import config from "@/payload.config"
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { RichText } from "@/core/lib/lexical"
+import { buildPageMetadata } from "@/project/shared/lib/build-page-metadata"
+import { Button } from "@/project/shared/ui/button"
+import { workCategoryLabels } from "@/project/shared/lib/work-category-labels"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import "../../styles.css"
 
 // 制作実績の画像が無いときの仮表示。固定 ID で毎回同じ写真が出る。
-const fallbackImageUrl = 'https://picsum.photos/id/1059/1600/900'
+const fallbackImageUrl = "https://picsum.photos/id/1059/1600/900"
 
 type Props = {
   params: Promise<{ locale: string; slug: string }>
@@ -39,9 +39,9 @@ const loadWorkBySlug = cache(async (slug: string, locale: Locale, isDraft: boole
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const conditions: Record<string, { equals: string }>[] = [{ slug: { equals: slug } }]
-  if (!isDraft) conditions.push({ _status: { equals: 'published' } })
+  if (!isDraft) conditions.push({ _status: { equals: "published" } })
   const result = await payload.find({
-    collection: 'works',
+    collection: "works",
     where: { and: conditions },
     limit: 1,
     depth: 1,
@@ -81,9 +81,9 @@ export default async function WorkDetailPage(props: Props) {
   }
 
   const imageUrl = resolveMediaUrl(item.thumbnail as never) ?? fallbackImageUrl
-  const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ''
+  const imageAlt = resolveMediaAlt(item.thumbnail as never) ?? ""
   const publishedDate = new Date(item.publishedAt)
-  const dateLocale = locale === 'en' ? 'en-US' : 'ja-JP'
+  const dateLocale = locale === "en" ? "en-US" : "ja-JP"
 
   return (
     <article>
@@ -119,8 +119,8 @@ export default async function WorkDetailPage(props: Props) {
                 <dt className="text-muted-foreground">{dictionary.works.publishedAt}</dt>
                 <dd className="mt-1 font-medium tabular-nums">
                   {publishedDate.toLocaleDateString(dateLocale, {
-                    year: 'numeric',
-                    month: 'long',
+                    year: "numeric",
+                    month: "long",
                   })}
                 </dd>
               </div>
@@ -136,7 +136,7 @@ export default async function WorkDetailPage(props: Props) {
         <div className="mt-16 border-t border-border pt-8">
           <Button
             nativeButton={false}
-            render={<Link href={withLocalePrefix(locale, '/works')} />}
+            render={<Link href={withLocalePrefix(locale, "/works")} />}
             variant="ghost"
           >
             <ArrowLeftIcon data-icon="inline-start" />

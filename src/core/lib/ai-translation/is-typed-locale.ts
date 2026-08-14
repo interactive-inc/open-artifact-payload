@@ -1,4 +1,4 @@
-import type { Payload, TypedLocale } from 'payload'
+import type { Payload, TypedLocale } from "payload"
 
 /**
  * リクエストで渡された文字列が localization 設定に存在する locale かどうかの型ガード。

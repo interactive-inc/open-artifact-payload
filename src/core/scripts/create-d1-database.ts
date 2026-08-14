@@ -1,16 +1,20 @@
-import { execFile } from 'node:child_process'
-import { promisify } from 'node:util'
+import { execFile } from "node:child_process"
+import { promisify } from "node:util"
 
-import { assertSlug } from '@/core/scripts/slug'
+import { assertCloudflareAccountId } from "@/core/scripts/cloudflare-config"
+import { assertSlug } from "@/core/scripts/slug"
 
 const execFileAsync = promisify(execFile)
 
-export async function createD1Database(slug: string): Promise<string> {
+export async function createD1Database(slug: string, accountId: string): Promise<string> {
   assertSlug(slug)
-  const result = await execFileAsync('bunx', ['wrangler', 'd1', 'create', `${slug}-cms`])
+  assertCloudflareAccountId(accountId)
+  const result = await execFileAsync("vp", ["exec", "wrangler", "d1", "create", `${slug}-cms`], {
+    env: { ...process.env, CLOUDFLARE_ACCOUNT_ID: accountId },
+  })
   const databaseId = result.stdout.match(/"database_id":\s*"([^"]+)"/)?.[1]
   if (!databaseId) {
-    throw new Error('wrangler d1 create の出力から database_id を抽出できませんでした')
+    throw new Error("wrangler d1 create の出力から database_id を抽出できませんでした")
   }
   return databaseId
 }

@@ -1,6 +1,6 @@
-import type { ServerProps } from 'payload'
+import type { ServerProps } from "payload"
 
-import { UsageSummaryPanel } from '@/core/admin/ai-translation/usage-summary-panel'
+import { UsageSummaryPanel } from "@/core/admin/ai-translation/usage-summary-panel"
 
 /**
  * AI翻訳ログ一覧の上部に表示する利用状況パネル。クライアントの admin も見る画面のため

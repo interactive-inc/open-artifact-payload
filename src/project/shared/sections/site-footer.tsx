@@ -1,15 +1,15 @@
-import Link from 'next/link'
-import Image from 'next/image'
-import React from 'react'
+import Link from "next/link"
+import Image from "next/image"
+import React from "react"
 
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { Separator } from '@/project/shared/ui/separator'
-import { Button } from '@/project/shared/ui/button'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { SiteSetting } from '@/payload-types'
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { Separator } from "@/project/shared/ui/separator"
+import { Button } from "@/project/shared/ui/button"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { SiteSetting } from "@/payload-types"
 
 type Props = {
   settings: SiteSetting
@@ -27,7 +27,7 @@ export function SiteFooter(props: Props) {
       <div className="container-site py-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div>
-            <Link href={withLocalePrefix(props.locale, '/')} className="inline-block mb-4">
+            <Link href={withLocalePrefix(props.locale, "/")} className="inline-block mb-4">
               {logoUrl ? (
                 <Image
                   src={logoUrl}
@@ -135,7 +135,7 @@ export function SiteFooter(props: Props) {
             <div className="mt-6">
               <Button
                 nativeButton={false}
-                render={<Link href={withLocalePrefix(props.locale, '/contact')} />}
+                render={<Link href={withLocalePrefix(props.locale, "/contact")} />}
                 variant="outline"
                 size="sm"
                 className="border-background/30 text-background hover:bg-background/10 hover:text-background"

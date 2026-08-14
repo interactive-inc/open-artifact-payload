@@ -1,8 +1,8 @@
-import { CreateCollectionDocument } from '../application/create-collection-document'
-import { DeleteCollectionDocument } from '../application/delete-collection-document'
-import { FindCollectionDocument } from '../application/find-collection-document'
-import { FindGlobal } from '../application/find-global'
-import { ListCollectionDocuments } from '../application/list-collection-documents'
+import { CreateCollectionDocument } from "../application/create-collection-document"
+import { DeleteCollectionDocument } from "../application/delete-collection-document"
+import { FindCollectionDocument } from "../application/find-collection-document"
+import { FindGlobal } from "../application/find-global"
+import { ListCollectionDocuments } from "../application/list-collection-documents"
 import type {
   CreateCollectionDocumentInput,
   DeleteCollectionDocumentInput,
@@ -11,13 +11,13 @@ import type {
   ListCollectionDocumentsInput,
   UpdateCollectionDocumentInput,
   UpdateGlobalInput,
-} from '../application/site-management-inputs'
-import { UpdateCollectionDocument } from '../application/update-collection-document'
-import { UpdateGlobal } from '../application/update-global'
-import type { JsonValue } from '../domain/json-value'
-import type { FetchPort } from '../infrastructure/fetch-port'
-import { PayloadRestClient } from '../infrastructure/payload-rest-client'
-import { loadSiteManagementConfig } from './load-site-management-config'
+} from "../application/site-management-inputs"
+import { UpdateCollectionDocument } from "../application/update-collection-document"
+import { UpdateGlobal } from "../application/update-global"
+import type { JsonValue } from "../domain/json-value"
+import type { FetchPort } from "../infrastructure/fetch-port"
+import { PayloadRestClient } from "../infrastructure/payload-rest-client"
+import { loadSiteManagementConfig } from "./load-site-management-config"
 
 type BuildProps = {
   env: unknown

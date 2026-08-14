@@ -43,24 +43,28 @@ vp run setup:project
 
 - 案件 slug (英小文字とハイフン、例: `my-client-2024`)
 - デプロイモード (`cloudflare` または `ssg`)
+- Cloudflare Account ID (Cloudflare モードのみ)
 - Cloudflare D1 をいま作成するか (y/N)
+- 既存の D1 database_id (D1 を作成しない場合。未作成なら空欄)
 - Cloudflare R2 をいま作成するか (y/N)
 - `PAYLOAD_SECRET` を自動生成するか (Y/n)
 
 スクリプト完了後、以下のファイルが更新・生成されます。
 
-- `wrangler.jsonc` — Worker 名、D1 database_id、R2 bucket_name が設定される
+- `wrangler.jsonc` — ローカルと本番を分離した Worker 名、Account ID、D1、R2 が設定される
 - `.env` — `PAYLOAD_SECRET` と `NEXT_PUBLIC_SERVER_URL` が書き込まれる
 - `.docs/project-brief.md` — プロジェクト概要テンプレートがコピーされる (既存の場合は上書きしない)
 
 D1 / R2 を手動で作成する場合は以下のコマンドを使います。
 
 ```bash
-wrangler d1 create <slug>
-wrangler r2 bucket create <slug>
+vp exec wrangler d1 create <slug>-cms
+vp exec wrangler r2 bucket create <slug>-cms
 ```
 
-作成後、`wrangler.jsonc` の `database_id` と `bucket_name` を実際の値に更新してください。
+作成後、`wrangler.jsonc` の `env.production.d1_databases[0].database_id` を実際の値に更新してください。
+R2 のバケット名は `<slug>-cms` です。トップレベルはローカル専用なので `database_id` を追加せず、
+`remote: false` のままにします。
 
 ### プロジェクト概要の記入
 
@@ -175,8 +179,8 @@ export default buildCoreConfig({
   dirname,
   features: projectFeatures,
   projectGlobals: [homeGlobal],
-  livePreviewCollections: ['news', 'tours'], // 追加した slug を列挙
-  livePreviewGlobals: ['home-page'],
+  livePreviewCollections: ["news", "tours"], // 追加した slug を列挙
+  livePreviewGlobals: ["home-page"],
 })
 ```
 
@@ -193,7 +197,7 @@ export default buildCoreConfig({
   dirname,
   features: projectFeatures,
   projectGlobals: [homeGlobal, accessGlobal], // 追加したグローバルを列挙
-  livePreviewGlobals: ['home-page', 'access-page'], // ライブプレビュー対象にする場合
+  livePreviewGlobals: ["home-page", "access-page"], // ライブプレビュー対象にする場合
 })
 ```
 
@@ -320,16 +324,16 @@ export const projectFeatures: ProjectFeatures = {
 export const projectTailwindTheme = {
   colors: {
     brand: {
-      DEFAULT: '#1a5f7a',
-      light: '#3a7a94',
-      dark: '#0f4558',
+      DEFAULT: "#1a5f7a",
+      light: "#3a7a94",
+      dark: "#0f4558",
     },
     accent: {
-      DEFAULT: '#ff6b35',
+      DEFAULT: "#ff6b35",
     },
   },
   fontFamily: {
-    sans: ['"Noto Sans JP"', 'Hiragino Sans', 'sans-serif'],
+    sans: ['"Noto Sans JP"', "Hiragino Sans", "sans-serif"],
   },
 }
 ```
@@ -359,6 +363,8 @@ Cloudflare Workers Free プランでは Worker の圧縮後サイズ上限が 3 
 make deploy            # DB マイグレーション + アプリデプロイ (CLOUDFLARE_ENV のデフォルトは production)
 make deploy-app        # アプリのみ (マイグレーション済みの場合)
 make deploy-db         # DB マイグレーションのみ
+make deploy-preflight  # Cloudflare のデプロイ設定のみ検査
+make preview           # トップレベルのローカル専用 D1 / R2 でプレビュー
 ```
 
 `make deploy-db` は内部で以下を実行します。
@@ -366,10 +372,16 @@ make deploy-db         # DB マイグレーションのみ
 - `payload migrate` をリモート D1 に対して適用
 - `wrangler d1 execute D1 --command 'PRAGMA optimize'` でクエリプランを最適化
 
-デプロイ前に `wrangler.jsonc` の以下を本番環境の値に更新してください。
+`make deploy*` は最初に preflight を実行し、未設定、雛形値、命名の不一致、環境間でのリソース共有を検出すると停止します。
+`wrangler.jsonc` の以下を対象環境の値に更新してください。
 
-- `d1_databases[0].database_id` — Cloudflare D1 データベース ID
-- `r2_buckets[0].bucket_name` — Cloudflare R2 バケット名
+- `env.production.name` — 本番 Worker 名 (`<slug>`)
+- `env.production.account_id` — 配置先 Cloudflare Account ID
+- `env.production.d1_databases[0]` — `<slug>-cms` の名前、database_id、`remote: true`
+- `env.production.r2_buckets[0]` — `<slug>-cms` の名前、`remote: true`
+- `ratelimits[].namespace_id` — 同じCloudflareアカウント内の他bindingと重複しない正の整数。トップレベルと`env.production`も別IDにする
+
+トップレベルの Worker / D1 / R2 はローカル専用です。`env.production` と同じ名前やIDを設定しないでください。
 
 ### 環境変数
 
@@ -377,7 +389,7 @@ make deploy-db         # DB マイグレーションのみ
 
 - `PAYLOAD_SECRET` — 必須。`openssl rand -hex 32` で生成した 32 バイトのランダム文字列
 - `NEXT_PUBLIC_SERVER_URL` — ライブプレビューの URL 解決に使用。デプロイ先の URL を設定
-- `TURNSTILE_SECRET_KEY` — 問い合わせフォームの Cloudflare Turnstile 検証用 (サーバー側のみ。サイトキーは管理画面のサイト設定で入力する)
+- `TURNSTILE_SECRET_KEY` — 問い合わせフォームのCloudflare Turnstile検証用。フォームを残す本番環境では必須 (サーバー側のみ。サイトキーは管理画面のサイト設定で入力する)
 - `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メール (任意。3 つすべて設定で通知有効)
 - `SUPPORT_EMAIL` — ダッシュボードのヘルプリンク用 (任意)
 - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` — AI 翻訳で使用するプロバイダーの API キー (任意)
@@ -389,6 +401,10 @@ make deploy-db         # DB マイグレーションのみ
 ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
 
 Turnstile の公開サイトキー (フロントエンド用) は環境変数ではなく、管理画面の「サイト設定」グローバルの `turnstileSiteKey` で設定します。サイトキーが設定されると問い合わせフォームが Turnstile ウィジェットを読み込みます。
+
+公開フォームは匿名のPayload REST/GraphQL createを使用せず、Server Actionだけを入口にします。Server Actionは入力上限・問い合わせ種別・Cloudflare Rate Limiting・Turnstileを確認してからLocal APIで保存します。既定のレートは正規化したメールアドレスとサイト識別子のSHA-256ごとに5回/60秒で、生のメールアドレスやIPアドレスをカウンターキーやログへ渡しません。CloudflareのRate Limitingは拠点ごとの近似的な制御なので、Turnstileと組み合わせた二次防御です。設定は[Cloudflare Rate Limiting API](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/)を参照してください。
+
+問い合わせ種別を案件用に変更するときは、`contact-form-constraints.ts`の`CONTACT_INQUIRY_TYPES`と、問い合わせページの表示ラベルを同時に更新してください。サーバーは定義外の値を保存しません。
 
 ### SSG モード (骨格)
 
@@ -532,11 +548,12 @@ SQLite の二重引用符フォールバック問題に注意してください�
 
 ### 問い合わせフォームが動かない
 
-`TURNSTILE_SECRET_KEY` が未設定のときはローカル開発モードとして Turnstile 検証がスキップされます。フォームが送信できない場合は以下を確認してください。
+`TURNSTILE_SECRET_KEY` が未設定のとき、検証をスキップするのはローカル開発だけです。本番では設定エラーとして保存せず、画面には再試行可能なエラーを表示します。フォームが送信できない場合は以下を確認してください。
 
 - 本番環境で `TURNSTILE_SECRET_KEY` (env) が設定されているか
 - 管理画面のサイト設定 (site-settings) で Turnstile サイトキーが入力されているか
 - Turnstile のサイトキーがドメインに紐づいているか (Cloudflare ダッシュボードで確認)
+- `wrangler.jsonc` の使用環境に `CONTACT_RATE_LIMITER` bindingがあり、`namespace_id`がアカウント内で一意か
 
 ### vp run build が失敗する
 

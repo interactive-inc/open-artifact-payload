@@ -1,6 +1,6 @@
-import { buildTranslationPrompt } from '@/core/lib/ai-translation/build-translation-prompt'
-import { parseTranslationResponse } from '@/core/lib/ai-translation/parse-translation-response'
-import type { TranslateFn } from '@/core/lib/ai-translation/translation-types'
+import { buildTranslationPrompt } from "@/core/lib/ai-translation/build-translation-prompt"
+import { parseTranslationResponse } from "@/core/lib/ai-translation/parse-translation-response"
+import type { TranslateFn } from "@/core/lib/ai-translation/translation-types"
 
 /**
  * Anthropic Messages API で翻訳する。SDK は追加せず fetch 直（Workers 互換・依存最小）。
@@ -10,15 +10,15 @@ import type { TranslateFn } from '@/core/lib/ai-translation/translation-types'
  */
 export const translateWithAnthropic: TranslateFn = async (request) => {
   const apiUrl =
-    process.env.AI_TRANSLATION_ANTHROPIC_API_URL ?? 'https://api.anthropic.com/v1/messages'
+    process.env.AI_TRANSLATION_ANTHROPIC_API_URL ?? "https://api.anthropic.com/v1/messages"
 
   try {
     const response = await fetch(apiUrl, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'content-type': 'application/json',
-        'x-api-key': request.apiKey,
-        'anthropic-version': '2023-06-01',
+        "content-type": "application/json",
+        "x-api-key": request.apiKey,
+        "anthropic-version": "2023-06-01",
       },
       signal: AbortSignal.timeout(90000),
       body: JSON.stringify({
@@ -29,7 +29,7 @@ export const translateWithAnthropic: TranslateFn = async (request) => {
           sourceLocaleLabel: request.sourceLocaleLabel,
           targetLocaleLabel: request.targetLocaleLabel,
         }),
-        messages: [{ role: 'user', content: JSON.stringify({ units: request.units }) }],
+        messages: [{ role: "user", content: JSON.stringify({ units: request.units }) }],
       }),
     })
 
@@ -41,36 +41,36 @@ export const translateWithAnthropic: TranslateFn = async (request) => {
 
     const responseBody: unknown = await response.json()
 
-    if (!responseBody || typeof responseBody !== 'object') {
-      return new Error('Anthropic API の応答形式が不正です')
+    if (!responseBody || typeof responseBody !== "object") {
+      return new Error("Anthropic API の応答形式が不正です")
     }
 
     const usage =
-      'usage' in responseBody && responseBody.usage && typeof responseBody.usage === 'object'
+      "usage" in responseBody && responseBody.usage && typeof responseBody.usage === "object"
         ? responseBody.usage
         : null
     const inputTokens =
-      usage && 'input_tokens' in usage && typeof usage.input_tokens === 'number'
+      usage && "input_tokens" in usage && typeof usage.input_tokens === "number"
         ? usage.input_tokens
         : 0
     const outputTokens =
-      usage && 'output_tokens' in usage && typeof usage.output_tokens === 'number'
+      usage && "output_tokens" in usage && typeof usage.output_tokens === "number"
         ? usage.output_tokens
         : 0
 
-    const content = 'content' in responseBody ? responseBody.content : null
+    const content = "content" in responseBody ? responseBody.content : null
     const firstBlock: unknown = Array.isArray(content) ? content[0] : null
     const rawText =
       firstBlock &&
-      typeof firstBlock === 'object' &&
-      'text' in firstBlock &&
-      typeof firstBlock.text === 'string'
+      typeof firstBlock === "object" &&
+      "text" in firstBlock &&
+      typeof firstBlock.text === "string"
         ? firstBlock.text
         : null
 
     if (rawText === null) {
       return {
-        failureMessage: 'Anthropic API の応答にテキストがありません',
+        failureMessage: "Anthropic API の応答にテキストがありません",
         inputTokens,
         outputTokens,
       }

@@ -1,6 +1,6 @@
-import { revalidatePath } from 'next/cache'
+import { revalidatePath } from "next/cache"
 
-import type { RevalidateTarget } from '@/core/lib/revalidate/types'
+import type { RevalidateTarget } from "@/core/lib/revalidate/types"
 
 type Props = {
   targets: RevalidateTarget[]
@@ -13,8 +13,8 @@ type Props = {
  */
 export function safeRevalidate(props: Props): void {
   for (const target of props.targets) {
-    const path = typeof target === 'string' ? target : target.path
-    const type = typeof target === 'string' ? undefined : target.type
+    const path = typeof target === "string" ? target : target.path
+    const type = typeof target === "string" ? undefined : target.type
     try {
       revalidatePath(path, type)
     } catch (error) {

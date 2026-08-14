@@ -3,9 +3,9 @@
 ## getSandbox Options
 
 ```typescript
-const sandbox = getSandbox(env.Sandbox, 'sandbox-id', {
+const sandbox = getSandbox(env.Sandbox, "sandbox-id", {
   normalizeId: true, // lowercase ID (required for preview URLs)
-  sleepAfter: '10m', // sleep after inactivity: '5m', '1h', '2d' (default: '10m')
+  sleepAfter: "10m", // sleep after inactivity: '5m', '1h', '2d' (default: '10m')
   keepAlive: false, // false = auto-timeout, true = never sleep
 
   containerTimeouts: {
@@ -92,7 +92,7 @@ wrangler secret put KEY         # Set secret
 
 ```typescript
 const token = env.GITHUB_TOKEN // From wrangler secret
-await sandbox.exec('git clone ...', {
+await sandbox.exec("git clone ...", {
   env: { GIT_TOKEN: token },
 })
 ```
@@ -119,7 +119,7 @@ await sandbox.exec('git clone ...', {
 ```typescript
 export default {
   async scheduled(event: ScheduledEvent, env: Env) {
-    const sandbox = getSandbox(env.Sandbox, 'main')
+    const sandbox = getSandbox(env.Sandbox, "main")
     await sandbox.exec('echo "keepalive"') // Wake sandbox
   },
 }

@@ -4,7 +4,7 @@
 
 ```typescript
 // Generate embedding + query
-const result = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [query] })
+const result = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [query] })
 const matches = await env.VECTORIZE.query(result.data[0], { topK: 5 }) // Pass data[0]!
 ```
 
@@ -17,7 +17,7 @@ const matches = await env.VECTORIZE.query(result.data[0], { topK: 5 }) // Pass d
 ## OpenAI Integration
 
 ```typescript
-const response = await openai.embeddings.create({ model: 'text-embedding-ada-002', input: query })
+const response = await openai.embeddings.create({ model: "text-embedding-ada-002", input: query })
 const matches = await env.VECTORIZE.query(response.data[0].embedding, { topK: 5 })
 ```
 
@@ -25,10 +25,10 @@ const matches = await env.VECTORIZE.query(response.data[0].embedding, { topK: 5 
 
 ```typescript
 // 1. Embed query
-const emb = await env.AI.run('@cf/baai/bge-base-en-v1.5', { text: [query] })
+const emb = await env.AI.run("@cf/baai/bge-base-en-v1.5", { text: [query] })
 
 // 2. Search vectors
-const matches = await env.VECTORIZE.query(emb.data[0], { topK: 5, returnMetadata: 'indexed' })
+const matches = await env.VECTORIZE.query(emb.data[0], { topK: 5, returnMetadata: "indexed" })
 
 // 3. Fetch full docs from R2/D1/KV
 const docs = await Promise.all(
@@ -36,8 +36,8 @@ const docs = await Promise.all(
 )
 
 // 4. Generate with context
-const answer = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
-  prompt: `Context:\n${docs.filter(Boolean).join('\n\n')}\n\nQuestion: ${query}\n\nAnswer:`,
+const answer = await env.AI.run("@cf/meta/llama-3-8b-instruct", {
+  prompt: `Context:\n${docs.filter(Boolean).join("\n\n")}\n\nQuestion: ${query}\n\nAnswer:`,
 })
 ```
 
@@ -46,7 +46,7 @@ const answer = await env.AI.run('@cf/meta/llama-3-8b-instruct', {
 ### Namespaces (< 50K tenants, fastest)
 
 ```typescript
-await env.VECTORIZE.upsert([{ id: '1', values: emb, namespace: `tenant-${id}` }])
+await env.VECTORIZE.upsert([{ id: "1", values: emb, namespace: `tenant-${id}` }])
 await env.VECTORIZE.query(vec, { namespace: `tenant-${id}`, topK: 10 })
 ```
 
@@ -57,7 +57,7 @@ wrangler vectorize create-metadata-index my-index --property-name=tenantId --typ
 ```
 
 ```typescript
-await env.VECTORIZE.upsert([{ id: '1', values: emb, metadata: { tenantId: id } }])
+await env.VECTORIZE.upsert([{ id: "1", values: emb, metadata: { tenantId: id } }])
 await env.VECTORIZE.query(vec, { filter: { tenantId: id }, topK: 10 })
 ```
 
@@ -67,7 +67,7 @@ await env.VECTORIZE.query(vec, { filter: { tenantId: id }, topK: 10 })
 const matches = await env.VECTORIZE.query(vec, {
   topK: 20,
   filter: {
-    category: { $in: ['tech', 'science'] },
+    category: { $in: ["tech", "science"] },
     published: { $gte: lastMonthTimestamp },
   },
 })

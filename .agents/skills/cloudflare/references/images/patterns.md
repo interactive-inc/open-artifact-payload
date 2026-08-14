@@ -36,7 +36,7 @@ async fetch(request: Request, env: Env): Promise<Response> {
 const response = await fetch(
   `https://api.cloudflare.com/client/v4/accounts/${env.ACCOUNT_ID}/images/v2/direct_upload`,
   {
-    method: 'POST',
+    method: "POST",
     headers: { Authorization: `Bearer ${env.API_TOKEN}` },
     body: JSON.stringify({ requireSignedURLs: false, metadata: { userId } }),
   },
@@ -44,8 +44,8 @@ const response = await fetch(
 
 // Frontend: Upload to returned uploadURL
 const formData = new FormData()
-formData.append('file', file)
-await fetch(result.uploadURL, { method: 'POST', body: formData })
+formData.append("file", file)
+await fetch(result.uploadURL, { method: "POST", body: formData })
 // Use: https://imagedelivery.net/{hash}/${result.id}/public
 ```
 
@@ -66,14 +66,14 @@ async fetch(request: Request, env: Env): Promise<Response> {
 ## Watermarking
 
 ```typescript
-const watermark = await env.ASSETS.fetch(new URL('/watermark.png', request.url))
+const watermark = await env.ASSETS.fetch(new URL("/watermark.png", request.url))
 const result = await env.IMAGES.input(await image.arrayBuffer())
   .draw(env.IMAGES.input(watermark.body).transform({ width: 100 }), {
     bottom: 20,
     right: 20,
     opacity: 0.7,
   })
-  .transform({ format: 'avif' })
+  .transform({ format: "avif" })
   .output()
 return result.response()
 ```
@@ -81,10 +81,10 @@ return result.response()
 ## Device-Based Transforms
 
 ```typescript
-const ua = request.headers.get('User-Agent') || ''
+const ua = request.headers.get("User-Agent") || ""
 const isMobile = /Mobile|Android|iPhone/i.test(ua)
 return env.IMAGES.input(buffer)
-  .transform({ width: isMobile ? 400 : 1200, quality: isMobile ? 75 : 85, format: 'avif' })
+  .transform({ width: isMobile ? 400 : 1200, quality: isMobile ? 75 : 85, format: "avif" })
   .output()
   .response()
 ```
@@ -109,7 +109,7 @@ async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response
 ```typescript
 const results = await Promise.all(
   images.map((buffer) =>
-    env.IMAGES.input(buffer).transform({ width: 800, fit: 'cover', format: 'avif' }).output(),
+    env.IMAGES.input(buffer).transform({ width: 800, fit: "cover", format: "avif" }).output(),
   ),
 )
 ```
@@ -120,7 +120,7 @@ const results = await Promise.all(
 try {
   return (await env.IMAGES.input(buffer).transform({ width: 800 }).output()).response()
 } catch (error) {
-  console.error('Transform failed:', error)
-  return new Response('Image processing failed', { status: 500 })
+  console.error("Transform failed:", error)
+  return new Response("Image processing failed", { status: 500 })
 }
 ```

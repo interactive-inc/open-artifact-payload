@@ -100,7 +100,7 @@ Key config requirements:
 ### Container Class Properties
 
 ```typescript
-import { Container } from '@cloudflare/containers'
+import { Container } from "@cloudflare/containers"
 
 export class MyContainer extends Container {
   // Port Configuration
@@ -108,23 +108,23 @@ export class MyContainer extends Container {
   requiredPorts = [8080, 9090] // Ports to wait for in startAndWaitForPorts()
 
   // Lifecycle
-  sleepAfter = '30m' // Inactivity timeout (5m, 30m, 2h, etc.)
+  sleepAfter = "30m" // Inactivity timeout (5m, 30m, 2h, etc.)
 
   // Network
   enableInternet = true // Allow outbound internet access
 
   // Health Check
-  pingEndpoint = '/health' // Health check endpoint path
+  pingEndpoint = "/health" // Health check endpoint path
 
   // Environment
   envVars = {
     // Environment variables passed to container
-    NODE_ENV: 'production',
-    LOG_LEVEL: 'info',
+    NODE_ENV: "production",
+    LOG_LEVEL: "info",
   }
 
   // Startup
-  entrypoint = ['/bin/start.sh'] // Override image entrypoint (optional)
+  entrypoint = ["/bin/start.sh"] // Override image entrypoint (optional)
 }
 ```
 

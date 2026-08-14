@@ -1,6 +1,6 @@
-import { z } from 'zod'
+import { z } from "zod"
 
-import { normalizeSiteManagementEndpoint } from './normalize-site-management-endpoint'
+import { normalizeSiteManagementEndpoint } from "./normalize-site-management-endpoint"
 
 const siteManagementConfigSchema = z.object({
   OPEN_ARTIFACT_ENDPOINT: z.string().min(1),
@@ -9,17 +9,17 @@ const siteManagementConfigSchema = z.object({
   OPEN_ARTIFACT_AUTH_COLLECTION: z
     .string()
     .regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
-    .default('users'),
+    .default("users"),
 })
 
 export type SiteAuthentication =
   | {
-      kind: 'api-key'
+      kind: "api-key"
       apiKey: string
       authCollection: string
     }
   | {
-      kind: 'jwt'
+      kind: "jwt"
       token: string
     }
 
@@ -36,7 +36,7 @@ export function loadSiteManagementConfig(input: unknown): SiteManagementConfig |
       parsed.data.OPEN_ARTIFACT_TOKEN === undefined)
   ) {
     return new Error(
-      'Set OPEN_ARTIFACT_ENDPOINT and either OPEN_ARTIFACT_API_KEY or OPEN_ARTIFACT_TOKEN before using the site tools',
+      "Set OPEN_ARTIFACT_ENDPOINT and either OPEN_ARTIFACT_API_KEY or OPEN_ARTIFACT_TOKEN before using the site tools",
     )
   }
 
@@ -46,15 +46,15 @@ export function loadSiteManagementConfig(input: unknown): SiteManagementConfig |
   let authentication: SiteAuthentication
   if (parsed.data.OPEN_ARTIFACT_API_KEY !== undefined) {
     authentication = {
-      kind: 'api-key',
+      kind: "api-key",
       apiKey: parsed.data.OPEN_ARTIFACT_API_KEY,
       authCollection: parsed.data.OPEN_ARTIFACT_AUTH_COLLECTION,
     }
   } else if (parsed.data.OPEN_ARTIFACT_TOKEN !== undefined) {
-    authentication = { kind: 'jwt', token: parsed.data.OPEN_ARTIFACT_TOKEN }
+    authentication = { kind: "jwt", token: parsed.data.OPEN_ARTIFACT_TOKEN }
   } else {
     return new Error(
-      'Set OPEN_ARTIFACT_ENDPOINT and either OPEN_ARTIFACT_API_KEY or OPEN_ARTIFACT_TOKEN before using the site tools',
+      "Set OPEN_ARTIFACT_ENDPOINT and either OPEN_ARTIFACT_API_KEY or OPEN_ARTIFACT_TOKEN before using the site tools",
     )
   }
 

@@ -1,28 +1,28 @@
-import { getPayload, type Payload } from 'payload'
-import { beforeAll, describe, expect, it } from 'vite-plus/test'
+import { getPayload, type Payload } from "payload"
+import { beforeAll, describe, expect, it } from "vite-plus/test"
 
-import config from '@/payload.config'
-import { loadUsageSnapshot } from '@/core/lib/ai-translation/load-usage-snapshot'
+import config from "@/payload.config"
+import { loadUsageSnapshot } from "@/core/lib/ai-translation/load-usage-snapshot"
 
 let payload: Payload
 
 const createLog = async (props: {
-  status: 'succeeded' | 'failed' | 'rejected'
+  status: "succeeded" | "failed" | "rejected"
   characterCount: number
   estimatedCostUsd: number
   executedBy: number
   targetLocale?: string
 }) => {
   await payload.create({
-    collection: 'ai-translation-logs',
+    collection: "ai-translation-logs",
     data: {
-      targetKind: 'collection',
-      targetSlug: 'news',
-      targetTitle: 'usage-snapshot-test',
+      targetKind: "collection",
+      targetSlug: "news",
+      targetTitle: "usage-snapshot-test",
       executedBy: props.executedBy,
-      sourceLocale: 'ja',
-      targetLocale: props.targetLocale ?? 'en',
-      model: 'anthropic/claude-haiku-4-5',
+      sourceLocale: "ja",
+      targetLocale: props.targetLocale ?? "en",
+      model: "anthropic/claude-haiku-4-5",
       status: props.status,
       characterCount: props.characterCount,
       estimatedCostUsd: props.estimatedCostUsd,
@@ -30,19 +30,19 @@ const createLog = async (props: {
   })
 }
 
-describe('loadUsageSnapshot', () => {
+describe("loadUsageSnapshot", () => {
   beforeAll(async () => {
     const payloadConfig = await config
     payload = await getPayload({ config: payloadConfig })
   })
 
-  it('API を呼んだ run（succeeded と failed）を集計し、rejected は含めない', async () => {
+  it("API を呼んだ run（succeeded と failed）を集計し、rejected は含めない", async () => {
     const user = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `usage-snapshot-${Date.now()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['editor'],
+        password: "test-password-1234",
+        roles: ["editor"],
       },
     })
 
@@ -58,25 +58,25 @@ describe('loadUsageSnapshot', () => {
     })
 
     await createLog({
-      status: 'succeeded',
+      status: "succeeded",
       characterCount: 100,
       estimatedCostUsd: 0.01,
       executedBy: user.id,
     })
     await createLog({
-      status: 'succeeded',
+      status: "succeeded",
       characterCount: 50,
       estimatedCostUsd: 0.02,
       executedBy: user.id,
     })
     await createLog({
-      status: 'failed',
+      status: "failed",
       characterCount: 30,
       estimatedCostUsd: 0.005,
       executedBy: user.id,
     })
     await createLog({
-      status: 'rejected',
+      status: "rejected",
       characterCount: 999,
       estimatedCostUsd: 0,
       executedBy: user.id,
@@ -97,33 +97,33 @@ describe('loadUsageSnapshot', () => {
     expect(after.monthlyCostUsd - before.monthlyCostUsd).toBeCloseTo(0.035, 5)
   })
 
-  it('クールダウンは対象（slug/locale）を指定するとその対象の実行だけを見る', async () => {
+  it("クールダウンは対象（slug/locale）を指定するとその対象の実行だけを見る", async () => {
     const user = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `usage-target-${Date.now()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['editor'],
+        password: "test-password-1234",
+        roles: ["editor"],
       },
     })
 
     const now = new Date()
 
     await createLog({
-      status: 'succeeded',
+      status: "succeeded",
       characterCount: 1,
       estimatedCostUsd: 0,
       executedBy: user.id,
-      targetLocale: 'en',
+      targetLocale: "en",
     })
 
     const sameLocale = await loadUsageSnapshot({
       payload,
       userId: user.id,
-      targetKind: 'collection',
-      targetSlug: 'news',
+      targetKind: "collection",
+      targetSlug: "news",
       targetId: null,
-      targetLocale: 'en',
+      targetLocale: "en",
       now,
     })
 
@@ -132,30 +132,30 @@ describe('loadUsageSnapshot', () => {
     const otherLocale = await loadUsageSnapshot({
       payload,
       userId: user.id,
-      targetKind: 'collection',
-      targetSlug: 'news',
+      targetKind: "collection",
+      targetSlug: "news",
       targetId: null,
-      targetLocale: 'zh',
+      targetLocale: "zh",
       now,
     })
 
     expect(otherLocale.lastRunAt).toBeNull()
   })
 
-  it('lastRunAt は succeeded / failed のみ対象（rejected では更新されない）', async () => {
+  it("lastRunAt は succeeded / failed のみ対象（rejected では更新されない）", async () => {
     const user = await payload.create({
-      collection: 'users',
+      collection: "users",
       data: {
         email: `usage-lastrun-${Date.now()}@example.com`,
-        password: 'test-password-1234',
-        roles: ['editor'],
+        password: "test-password-1234",
+        roles: ["editor"],
       },
     })
 
     const now = new Date()
 
     await createLog({
-      status: 'rejected',
+      status: "rejected",
       characterCount: 1,
       estimatedCostUsd: 0,
       executedBy: user.id,
@@ -174,7 +174,7 @@ describe('loadUsageSnapshot', () => {
     expect(afterRejected.lastRunAt).toBeNull()
 
     await createLog({
-      status: 'failed',
+      status: "failed",
       characterCount: 1,
       estimatedCostUsd: 0,
       executedBy: user.id,
@@ -193,7 +193,7 @@ describe('loadUsageSnapshot', () => {
     expect(afterFailed.lastRunAt).not.toBeNull()
   })
 
-  it('userId が null なら lastRunAt を調べない（集計のみ）', async () => {
+  it("userId が null なら lastRunAt を調べない（集計のみ）", async () => {
     const snapshot = await loadUsageSnapshot({
       payload,
       userId: null,

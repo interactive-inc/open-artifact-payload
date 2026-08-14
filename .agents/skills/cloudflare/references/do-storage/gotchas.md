@@ -36,9 +36,9 @@ Multiple writes to same key = atomic (last write wins):
 
 ```typescript
 // SAFE: All three writes coalesce atomically
-this.ctx.storage.put('key', 1)
-this.ctx.storage.put('key', 2)
-this.ctx.storage.put('key', 3) // Final value: 3
+this.ctx.storage.put("key", 1)
+this.ctx.storage.put("key", 2)
+this.ctx.storage.put("key", 3) // Final value: 3
 ```
 
 ### Breaking Gates (DANGER)
@@ -74,7 +74,7 @@ Opt out of input gate for reads that don't need protection:
 
 ```typescript
 // Allow concurrent reads (no consistency guarantee)
-const val = await this.ctx.storage.get('metrics', { allowConcurrency: true })
+const val = await this.ctx.storage.get("metrics", { allowConcurrency: true })
 ```
 
 ## Common Errors
@@ -107,12 +107,12 @@ const val = await this.ctx.storage.get('metrics', { allowConcurrency: true })
 
 ```typescript
 // BAD: Snowflake/Twitter IDs will corrupt
-this.sql.exec('CREATE TABLE events(id INTEGER PRIMARY KEY)')
-this.sql.exec('INSERT INTO events VALUES (?)', 1234567890123456789n) // Corrupts!
+this.sql.exec("CREATE TABLE events(id INTEGER PRIMARY KEY)")
+this.sql.exec("INSERT INTO events VALUES (?)", 1234567890123456789n) // Corrupts!
 
 // GOOD: Store as TEXT
-this.sql.exec('CREATE TABLE events(id TEXT PRIMARY KEY)')
-this.sql.exec('INSERT INTO events VALUES (?)', '1234567890123456789')
+this.sql.exec("CREATE TABLE events(id TEXT PRIMARY KEY)")
+this.sql.exec("INSERT INTO events VALUES (?)", "1234567890123456789")
 ```
 
 ### "Alarm Not Deleted with deleteAll()"

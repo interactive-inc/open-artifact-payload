@@ -48,10 +48,10 @@ interface FlagshipEvaluationDetails<T> {
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const enabled = await env.FLAGS.getBooleanValue('new-feature', false, {
-      userId: 'user-42',
+    const enabled = await env.FLAGS.getBooleanValue("new-feature", false, {
+      userId: "user-42",
     })
-    return new Response(enabled ? 'Feature on' : 'Feature off')
+    return new Response(enabled ? "Feature on" : "Feature off")
   },
 }
 ```
@@ -69,32 +69,32 @@ For Workers, Node.js, and server-side JavaScript.
 **With binding (recommended inside Workers):**
 
 ```typescript
-import { OpenFeature } from '@openfeature/server-sdk'
-import { FlagshipServerProvider } from '@cloudflare/flagship'
+import { OpenFeature } from "@openfeature/server-sdk"
+import { FlagshipServerProvider } from "@cloudflare/flagship"
 
 await OpenFeature.setProviderAndWait(new FlagshipServerProvider({ binding: env.FLAGS }))
 const client = OpenFeature.getClient()
-const enabled = await client.getBooleanValue('new-checkout', false, {
-  targetingKey: 'user-42',
+const enabled = await client.getBooleanValue("new-checkout", false, {
+  targetingKey: "user-42",
 })
 ```
 
 **With app ID (Node.js / non-Worker runtimes):**
 
 ```typescript
-import { OpenFeature } from '@openfeature/server-sdk'
-import { FlagshipServerProvider } from '@cloudflare/flagship'
+import { OpenFeature } from "@openfeature/server-sdk"
+import { FlagshipServerProvider } from "@cloudflare/flagship"
 
 await OpenFeature.setProviderAndWait(
   new FlagshipServerProvider({
-    appId: '<APP_ID>',
-    accountId: '<ACCOUNT_ID>',
-    authToken: '<API_TOKEN>',
+    appId: "<APP_ID>",
+    accountId: "<ACCOUNT_ID>",
+    authToken: "<API_TOKEN>",
   }),
 )
 const client = OpenFeature.getClient()
-const enabled = await client.getBooleanValue('new-checkout', false, {
-  targetingKey: 'user-42',
+const enabled = await client.getBooleanValue("new-checkout", false, {
+  targetingKey: "user-42",
 })
 ```
 
@@ -103,22 +103,22 @@ const enabled = await client.getBooleanValue('new-checkout', false, {
 For browser applications. Pre-fetches flags on init, evaluates synchronously.
 
 ```typescript
-import { OpenFeature } from '@openfeature/web-sdk'
-import { FlagshipClientProvider } from '@cloudflare/flagship'
+import { OpenFeature } from "@openfeature/web-sdk"
+import { FlagshipClientProvider } from "@cloudflare/flagship"
 
 await OpenFeature.setProviderAndWait(
   new FlagshipClientProvider({
-    appId: '<APP_ID>',
-    accountId: '<ACCOUNT_ID>',
-    authToken: '<API_TOKEN>',
-    prefetchFlags: ['promo-banner', 'dark-mode'],
+    appId: "<APP_ID>",
+    accountId: "<ACCOUNT_ID>",
+    authToken: "<API_TOKEN>",
+    prefetchFlags: ["promo-banner", "dark-mode"],
   }),
 )
-await OpenFeature.setContext({ targetingKey: 'user-42', plan: 'enterprise' })
+await OpenFeature.setContext({ targetingKey: "user-42", plan: "enterprise" })
 const client = OpenFeature.getClient()
 
 // Synchronous — no await needed
-const showBanner = client.getBooleanValue('promo-banner', false)
+const showBanner = client.getBooleanValue("promo-banner", false)
 ```
 
 **Important:** Only flags listed in `prefetchFlags` are available. Unlisted flags return `FLAG_NOT_FOUND`.
@@ -126,7 +126,7 @@ const showBanner = client.getBooleanValue('promo-banner', false)
 ### SDK Hooks
 
 ```typescript
-import { LoggingHook, TelemetryHook } from '@cloudflare/flagship'
+import { LoggingHook, TelemetryHook } from "@cloudflare/flagship"
 OpenFeature.addHooks(new LoggingHook(), new TelemetryHook())
 ```
 
@@ -259,9 +259,7 @@ Requires an API token with `flagship:evaluate` permission. Context attributes pa
 ```json
 {
   "priority": 1,
-  "conditions": [
-    /* Condition[] */
-  ],
+  "conditions": [/* Condition[] */],
   "serve_variation": "on",
   "rollout": { "percentage": 50, "attribute": "targetingKey" }
 }

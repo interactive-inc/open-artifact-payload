@@ -3,7 +3,7 @@
  * で収集する。構造・リンク・画像などは対象にしない。applyLexicalTexts と走査順を揃えること。
  */
 export function collectLexicalTexts(value: unknown): string[] {
-  if (!value || typeof value !== 'object') return []
+  if (!value || typeof value !== "object") return []
 
   const texts: string[] = []
 
@@ -13,11 +13,11 @@ export function collectLexicalTexts(value: unknown): string[] {
     return texts
   }
 
-  if ('text' in value && typeof value.text === 'string') texts.push(value.text)
+  if ("text" in value && typeof value.text === "string") texts.push(value.text)
 
-  if ('children' in value) texts.push(...collectLexicalTexts(value.children))
+  if ("children" in value) texts.push(...collectLexicalTexts(value.children))
 
-  if ('root' in value) texts.push(...collectLexicalTexts(value.root))
+  if ("root" in value) texts.push(...collectLexicalTexts(value.root))
 
   return texts
 }

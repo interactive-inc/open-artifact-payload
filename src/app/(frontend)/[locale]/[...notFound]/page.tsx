@@ -1,4 +1,4 @@
-import { notFound } from 'next/navigation'
+import { notFound } from "next/navigation"
 
 // [locale] 配下のどのルートにも一致しない URL を [locale]/not-found.tsx の境界に流すための捕捉ルート。
 // これがないと未マッチ URL は Next デフォルトの英語 404 になる。

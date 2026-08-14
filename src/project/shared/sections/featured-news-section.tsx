@@ -1,15 +1,15 @@
-import Link from 'next/link'
-import React from 'react'
-import { ArrowRightIcon } from 'lucide-react'
+import Link from "next/link"
+import React from "react"
+import { ArrowRightIcon } from "lucide-react"
 
-import { Badge } from '@/project/shared/ui/badge'
-import { Button } from '@/project/shared/ui/button'
-import type { News } from '@/payload-types'
+import { Badge } from "@/project/shared/ui/badge"
+import { Button } from "@/project/shared/ui/button"
+import type { News } from "@/payload-types"
 
 const categoryLabel: Record<string, string> = {
-  info: 'お知らせ',
-  press: 'プレスリリース',
-  event: 'イベント',
+  info: "お知らせ",
+  press: "プレスリリース",
+  event: "イベント",
 }
 
 type Props = {
@@ -24,7 +24,7 @@ type Props = {
 export function FeaturedNewsSection(props: Props) {
   if (!props.data.enabled) return null
   const items = (props.data.items ?? []).filter(
-    (item): item is News => typeof item === 'object' && item !== null,
+    (item): item is News => typeof item === "object" && item !== null,
   )
 
   if (items.length === 0) return null
@@ -34,7 +34,7 @@ export function FeaturedNewsSection(props: Props) {
       <div className="container-site">
         <div className="flex items-end justify-between mb-12">
           <h2 className="text-3xl md:text-4xl font-heading font-semibold tracking-tight">
-            {props.data.heading ?? '最新のお知らせ'}
+            {props.data.heading ?? "最新のお知らせ"}
           </h2>
           <Button nativeButton={false} render={<Link href="/news" />} variant="ghost" size="sm">
             一覧を見る
@@ -61,7 +61,7 @@ export function FeaturedNewsSection(props: Props) {
                     dateTime={publishedDate.toISOString().slice(0, 10)}
                     className="text-xs text-muted-foreground tabular-nums"
                   >
-                    {publishedDate.toLocaleDateString('ja-JP')}
+                    {publishedDate.toLocaleDateString("ja-JP")}
                   </time>
                 </div>
                 <p className="font-medium leading-snug group-hover:text-primary transition-colors">

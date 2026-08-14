@@ -1,7 +1,7 @@
 import {
   translationModels,
   type TranslationModel,
-} from '@/core/lib/ai-translation/translation-models'
+} from "@/core/lib/ai-translation/translation-models"
 
 /**
  * 管理画面で選択されたモデル値をレジストリと照合する。

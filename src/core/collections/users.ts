@@ -1,23 +1,23 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload"
 
-import { guardServiceAdminAccountChange } from '@/core/lib/access/guard-service-admin-account-change'
-import { guardServiceAdminAccountDelete } from '@/core/lib/access/guard-service-admin-account-delete'
-import { deleteUserDocumentLocks } from '@/core/lib/access/delete-user-document-locks'
-import { isAdmin } from '@/core/lib/access/is-admin'
-import { isAdminField } from '@/core/lib/access/is-admin-field'
-import { isUserAccount } from '@/core/lib/access/is-user-account'
-import { readUsers } from '@/core/lib/access/read-users'
+import { deleteUserDocumentLocks } from "@/core/lib/access/delete-user-document-locks"
+import { guardServiceAdminAccountChange } from "@/core/lib/access/guard-service-admin-account-change"
+import { guardServiceAdminAccountDelete } from "@/core/lib/access/guard-service-admin-account-delete"
+import { isAdmin } from "@/core/lib/access/is-admin"
+import { isAdminField } from "@/core/lib/access/is-admin-field"
+import { isUserAccount } from "@/core/lib/access/is-user-account"
+import { readUsers } from "@/core/lib/access/read-users"
 
 export const users: CollectionConfig = {
-  slug: 'users',
+  slug: "users",
   labels: {
-    singular: 'ユーザー',
-    plural: 'ユーザー一覧',
+    singular: "ユーザー",
+    plural: "ユーザー一覧",
   },
   admin: {
-    useAsTitle: 'email',
-    defaultColumns: ['email', 'roles', 'updatedAt'],
-    group: 'システム',
+    useAsTitle: "email",
+    defaultColumns: ["email", "roles", "updatedAt"],
+    group: "システム",
   },
   auth: {
     useAPIKey: true,
@@ -39,16 +39,16 @@ export const users: CollectionConfig = {
   },
   fields: [
     {
-      name: 'roles',
-      label: 'ロール',
-      type: 'select',
+      name: "roles",
+      label: "ロール",
+      type: "select",
       hasMany: true,
       required: true,
-      defaultValue: ['editor'],
+      defaultValue: ["editor"],
       options: [
-        { label: '管理者', value: 'admin' },
-        { label: '編集者', value: 'editor' },
-        { label: 'サービス管理者（実装会社）', value: 'serviceAdmin' },
+        { label: "管理者", value: "admin" },
+        { label: "編集者", value: "editor" },
+        { label: "サービス管理者（実装会社）", value: "serviceAdmin" },
       ],
       access: {
         // roles は admin のみ編集可（自分自身を admin に昇格させる事故を防ぐ）
@@ -56,7 +56,7 @@ export const users: CollectionConfig = {
       },
       admin: {
         description:
-          '管理者: 全権限。編集者: コンテンツ編集のみ可能（ユーザー追加・削除や設定変更は不可）。サービス管理者: AI翻訳設定などサービス提供側の設定を扱う実装会社用ロール（付け外しはサービス管理者のみ可能）。',
+          "管理者: 全権限。編集者: コンテンツ編集のみ可能（ユーザー追加・削除や設定変更は不可）。サービス管理者: AI翻訳設定などサービス提供側の設定を扱う実装会社用ロール（付け外しはサービス管理者のみ可能）。",
       },
     },
   ],

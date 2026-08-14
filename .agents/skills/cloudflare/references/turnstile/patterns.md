@@ -50,8 +50,8 @@ form.addEventListener('submit', async (e) => {
 ### React
 
 ```tsx
-import { useState } from 'react'
-import Turnstile from '@marsidev/react-turnstile'
+import { useState } from "react"
+import Turnstile from "@marsidev/react-turnstile"
 
 export default function Form() {
   const [token, setToken] = useState<string | null>(null)
@@ -61,9 +61,9 @@ export default function Form() {
       onSubmit={async (e) => {
         e.preventDefault()
         if (!token) return
-        await fetch('/api/submit', {
-          method: 'POST',
-          body: JSON.stringify({ 'cf-turnstile-response': token }),
+        await fetch("/api/submit", {
+          method: "POST",
+          body: JSON.stringify({ "cf-turnstile-response": token }),
         })
       }}
     >
@@ -95,22 +95,22 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    if (request.method !== 'POST') {
-      return new Response('Method not allowed', { status: 405 })
+    if (request.method !== "POST") {
+      return new Response("Method not allowed", { status: 405 })
     }
 
     const formData = await request.formData()
-    const token = formData.get('cf-turnstile-response')
+    const token = formData.get("cf-turnstile-response")
 
     if (!token) {
-      return new Response('Missing token', { status: 400 })
+      return new Response("Missing token", { status: 400 })
     }
 
     // Validate token
-    const ip = request.headers.get('CF-Connecting-IP')
-    const result = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const ip = request.headers.get("CF-Connecting-IP")
+    const result = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         secret: env.TURNSTILE_SECRET,
         response: token,
@@ -121,11 +121,11 @@ export default {
     const validation = await result.json()
 
     if (!validation.success) {
-      return new Response('CAPTCHA validation failed', { status: 403 })
+      return new Response("CAPTCHA validation failed", { status: 403 })
     }
 
     // Process form...
-    return new Response('Success')
+    return new Response("Success")
   },
 }
 ```
@@ -135,7 +135,7 @@ export default {
 ```typescript
 // functions/submit.ts - same pattern as Workers, use ctx.env and ctx.request
 export const onRequestPost: PagesFunction<{ TURNSTILE_SECRET: string }> = async (ctx) => {
-  const token = (await ctx.request.formData()).get('cf-turnstile-response')
+  const token = (await ctx.request.formData()).get("cf-turnstile-response")
   // Validate with ctx.env.TURNSTILE_SECRET (same as Workers pattern above)
 }
 ```
@@ -155,12 +155,12 @@ export const onRequestPost: PagesFunction<{ TURNSTILE_SECRET: string }> = async 
   let cachedToken = null
 
   window.onload = () => {
-    window.turnstile.render('#turnstile-precheck', {
-      sitekey: 'YOUR_SITE_KEY',
-      size: 'invisible',
+    window.turnstile.render("#turnstile-precheck", {
+      sitekey: "YOUR_SITE_KEY",
+      size: "invisible",
       callback: (token) => {
         cachedToken = token
-        document.getElementById('protected-form').style.display = 'block'
+        document.getElementById("protected-form").style.display = "block"
       },
     })
   }
@@ -170,11 +170,11 @@ export const onRequestPost: PagesFunction<{ TURNSTILE_SECRET: string }> = async 
 ### Token Refresh on Expiry
 
 ```javascript
-let widgetId = window.turnstile.render('#container', {
-  sitekey: 'YOUR_SITE_KEY',
-  'refresh-expired': 'manual',
-  'expired-callback': () => {
-    console.log('Token expired, refreshing...')
+let widgetId = window.turnstile.render("#container", {
+  sitekey: "YOUR_SITE_KEY",
+  "refresh-expired": "manual",
+  "expired-callback": () => {
+    console.log("Token expired, refreshing...")
     window.turnstile.reset(widgetId)
   },
 })
@@ -186,10 +186,10 @@ let widgetId = window.turnstile.render('#container', {
 
 ```javascript
 const SITE_KEY =
-  process.env.NODE_ENV === 'production' ? 'YOUR_PRODUCTION_SITE_KEY' : '1x00000000000000000000AA' // Always passes
+  process.env.NODE_ENV === "production" ? "YOUR_PRODUCTION_SITE_KEY" : "1x00000000000000000000AA" // Always passes
 
 const SECRET_KEY =
-  process.env.NODE_ENV === 'production'
+  process.env.NODE_ENV === "production"
     ? process.env.TURNSTILE_SECRET
-    : '1x0000000000000000000000000000000AA'
+    : "1x0000000000000000000000000000000AA"
 ```

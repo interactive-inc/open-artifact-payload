@@ -1,6 +1,6 @@
-import type { Access } from 'payload'
+import type { Access } from "payload"
 
-import { hasServiceAdminRole } from '@/core/lib/access/has-service-admin-role'
+import { hasServiceAdminRole } from "@/core/lib/access/has-service-admin-role"
 
 /**
  * Collection / Global 用の serviceAdmin 限定 access。

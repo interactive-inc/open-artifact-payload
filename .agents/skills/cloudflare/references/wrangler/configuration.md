@@ -132,7 +132,7 @@ export default {
     if (asset.status !== 404) return asset
 
     // Custom logic for non-assets
-    return new Response('API response')
+    return new Response("API response")
   },
 }
 ```

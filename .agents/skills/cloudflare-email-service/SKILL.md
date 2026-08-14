@@ -53,11 +53,11 @@ Add the binding to `wrangler.jsonc`, then call `env.EMAIL.send()`. The `from` do
 
 ```typescript
 const response = await env.EMAIL.send({
-  to: 'user@example.com',
-  from: { email: 'welcome@yourdomain.com', name: 'My App' },
-  subject: 'Welcome!',
-  html: '<h1>Welcome!</h1>',
-  text: 'Welcome!',
+  to: "user@example.com",
+  from: { email: "welcome@yourdomain.com", name: "My App" },
+  subject: "Welcome!",
+  html: "<h1>Welcome!</h1>",
+  text: "Welcome!",
 })
 ```
 

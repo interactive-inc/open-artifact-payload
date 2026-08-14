@@ -35,20 +35,20 @@ Wrangler doesn't have built-in Images commands, use REST API:
 
 ```typescript
 // scripts/upload-image.ts
-import fs from 'fs'
-import FormData from 'form-data'
+import fs from "fs"
+import FormData from "form-data"
 
 async function uploadImage(filePath: string) {
   const accountId = process.env.CLOUDFLARE_ACCOUNT_ID!
   const apiToken = process.env.CLOUDFLARE_API_TOKEN!
 
   const formData = new FormData()
-  formData.append('file', fs.createReadStream(filePath))
+  formData.append("file", fs.createReadStream(filePath))
 
   const response = await fetch(
     `https://api.cloudflare.com/client/v4/accounts/${accountId}/images/v1`,
     {
-      method: 'POST',
+      method: "POST",
       headers: {
         Authorization: `Bearer ${apiToken}`,
       },
@@ -57,10 +57,10 @@ async function uploadImage(filePath: string) {
   )
 
   const result = await response.json()
-  console.log('Uploaded:', result)
+  console.log("Uploaded:", result)
 }
 
-uploadImage('./photo.jpg')
+uploadImage("./photo.jpg")
 ```
 
 ### Environment Variables
@@ -183,18 +183,18 @@ curl -X POST \
 Generate signed URL:
 
 ```typescript
-import { createHmac } from 'crypto'
+import { createHmac } from "crypto"
 
 function signUrl(imageId: string, variant: string, expiry: number, key: string): string {
   const path = `/${imageId}/${variant}`
   const toSign = `${path}${expiry}`
-  const signature = createHmac('sha256', key).update(toSign).digest('hex')
+  const signature = createHmac("sha256", key).update(toSign).digest("hex")
 
   return `https://imagedelivery.net/{hash}${path}?exp=${expiry}&sig=${signature}`
 }
 
 // Sign URL valid for 1 hour
-const signedUrl = signUrl('image-id', 'public', Date.now() + 3600, env.SIGNING_KEY)
+const signedUrl = signUrl("image-id", "public", Date.now() + 3600, env.SIGNING_KEY)
 ```
 
 ## Local Development

@@ -12,7 +12,7 @@ Export an `email()` function from your Worker. No special wrangler binding neede
 export default {
   async email(message, env, ctx): Promise<void> {
     console.log(`Email from ${message.from} to ${message.to}`)
-    await message.forward('team@company.com')
+    await message.forward("team@company.com")
   },
 } satisfies ExportedHandler<Env>
 ```
@@ -36,13 +36,13 @@ The `message` parameter is a `ForwardableEmailMessage`. Run `npx wrangler types`
 ### Forward
 
 ```typescript
-await message.forward('team@company.com')
+await message.forward("team@company.com")
 
 // With custom headers
 await message.forward(
-  'team@company.com',
+  "team@company.com",
   new Headers({
-    'X-Original-Recipient': message.to,
+    "X-Original-Recipient": message.to,
   }),
 )
 ```
@@ -52,7 +52,7 @@ Destination must be verified first (Dashboard or `wrangler email routing address
 ### Reject
 
 ```typescript
-message.setReject('Your message was blocked')
+message.setReject("Your message was blocked")
 ```
 
 ### Reply
@@ -124,7 +124,7 @@ The `email()` handler stores the email and returns immediately. Replies happen l
 ### Receive and Store
 
 ```typescript
-import PostalMime from 'postal-mime'
+import PostalMime from "postal-mime"
 
 export class MailboxDO extends DurableObject {
   async storeEmail(
@@ -159,10 +159,10 @@ export default {
     await stub.storeEmail(
       message.from,
       message.to,
-      parsed.subject || '(no subject)',
-      parsed.text || parsed.html || '',
-      message.headers.get('message-id') || '',
-      message.headers.get('in-reply-to') || null,
+      parsed.subject || "(no subject)",
+      parsed.text || parsed.html || "",
+      message.headers.get("message-id") || "",
+      message.headers.get("in-reply-to") || null,
     )
 
     // Optionally trigger an AI agent to draft a reply (non-blocking)
@@ -181,8 +181,8 @@ async function replyToStoredEmail(env: Env, original: StoredEmail, replyBody: st
   // Build threading headers (In-Reply-To + References per RFC 2822)
   const headers: Record<string, string> = {}
   if (original.messageId) {
-    headers['In-Reply-To'] = original.messageId
-    headers['References'] = original.messageId
+    headers["In-Reply-To"] = original.messageId
+    headers["References"] = original.messageId
   }
 
   await env.EMAIL.send({

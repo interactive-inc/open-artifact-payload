@@ -28,7 +28,7 @@
 ```js
 new Miniflare({
   modules: true,
-  modulesRules: [{ type: 'ESModule', include: ['**/*.js'] }],
+  modulesRules: [{ type: "ESModule", include: ["**/*.js"] }],
 })
 ```
 
@@ -67,7 +67,7 @@ new Miniflare({ cf: true }) // Or cf: "./cf.json"
 
 ```js
 export class Counter {} // Must match
-new Miniflare({ durableObjects: { COUNTER: 'Counter' } })
+new Miniflare({ durableObjects: { COUNTER: "Counter" } })
 ```
 
 ## Debugging
@@ -75,7 +75,7 @@ new Miniflare({ durableObjects: { COUNTER: 'Counter' } })
 **Enable verbose logging:**
 
 ```js
-import { Log, LogLevel } from 'miniflare'
+import { Log, LogLevel } from "miniflare"
 new Miniflare({ log: new Log(LogLevel.DEBUG) })
 ```
 
@@ -96,7 +96,7 @@ console.log(Object.keys(env))
 **Verify storage:**
 
 ```js
-const ns = await mf.getKVNamespace('TEST')
+const ns = await mf.getKVNamespace("TEST")
 const { keys } = await ns.list()
 ```
 
@@ -145,12 +145,12 @@ const url = await mf.ready // Promise<URL>
 
 ```js
 // Old (deprecated)
-import { unstable_dev } from 'wrangler'
-const worker = await unstable_dev('src/index.ts')
+import { unstable_dev } from "wrangler"
+const worker = await unstable_dev("src/index.ts")
 
 // New
-import { Miniflare } from 'miniflare'
-const mf = new Miniflare({ scriptPath: 'src/index.ts' })
+import { Miniflare } from "miniflare"
+const mf = new Miniflare({ scriptPath: "src/index.ts" })
 ```
 
 ### From Wrangler Dev
@@ -160,9 +160,9 @@ Miniflare doesn't auto-read `wrangler.toml`:
 ```js
 // Translate manually:
 new Miniflare({
-  scriptPath: 'dist/worker.js',
-  compatibilityDate: '2026-01-01',
-  kvNamespaces: ['KV'],
+  scriptPath: "dist/worker.js",
+  compatibilityDate: "2026-01-01",
+  kvNamespaces: ["KV"],
   bindings: { API_KEY: process.env.API_KEY },
 })
 ```

@@ -1,7 +1,7 @@
-import { chmod, mkdir, readFile, rename, writeFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import { chmod, mkdir, readFile, rename, writeFile } from "node:fs/promises"
+import { join } from "node:path"
 
-import { z } from 'zod'
+import { z } from "zod"
 
 const endpointSchema = z.string().url().nullable()
 
@@ -41,8 +41,8 @@ export class CliConfigurationStore {
   private readonly accountsPath: string
 
   constructor(private readonly configDirectory: string) {
-    this.preferencesPath = join(configDirectory, 'preferences.json')
-    this.accountsPath = join(configDirectory, 'accounts.json')
+    this.preferencesPath = join(configDirectory, "preferences.json")
+    this.accountsPath = join(configDirectory, "accounts.json")
   }
 
   async loadPreferences(): Promise<CliPreferences | Error> {
@@ -57,7 +57,7 @@ export class CliConfigurationStore {
 
   async savePreferences(preferences: CliPreferences): Promise<null | Error> {
     const parsed = preferencesSchema.safeParse(preferences)
-    if (!parsed.success) return new Error('Refusing to save invalid intacms preferences')
+    if (!parsed.success) return new Error("Refusing to save invalid intacms preferences")
     return await this.writeJson(this.preferencesPath, parsed.data)
   }
 
@@ -69,7 +69,7 @@ export class CliConfigurationStore {
 
   async saveAccount(endpoint: string, account: CliAccount): Promise<null | Error> {
     const parsedAccount = accountSchema.safeParse(account)
-    if (!parsedAccount.success) return new Error('Refusing to save an invalid intacms account')
+    if (!parsedAccount.success) return new Error("Refusing to save an invalid intacms account")
     const accounts = await this.loadAccounts()
     if (accounts instanceof Error) return accounts
     return await this.writeJson(this.accountsPath, {
@@ -102,7 +102,7 @@ export class CliConfigurationStore {
   private async readJson(path: string): Promise<unknown> {
     let text: string
     try {
-      text = await readFile(path, 'utf8')
+      text = await readFile(path, "utf8")
       await chmod(this.configDirectory, 0o700)
       await chmod(path, 0o600)
     } catch (cause) {
@@ -123,7 +123,7 @@ export class CliConfigurationStore {
       await mkdir(this.configDirectory, { recursive: true, mode: 0o700 })
       await chmod(this.configDirectory, 0o700)
       await writeFile(temporaryPath, `${JSON.stringify(value, null, 2)}\n`, {
-        encoding: 'utf8',
+        encoding: "utf8",
         mode: 0o600,
       })
       await chmod(temporaryPath, 0o600)
@@ -140,7 +140,7 @@ export function defaultPreferences(): CliPreferences {
     version: 1,
     prodLock: true,
     endpoints: {
-      local: 'http://localhost:3000',
+      local: "http://localhost:3000",
       staging: null,
       stagingBlue: null,
       prod: null,
@@ -149,5 +149,5 @@ export function defaultPreferences(): CliPreferences {
 }
 
 function isMissingFileError(cause: unknown): boolean {
-  return cause instanceof Error && 'code' in cause && cause.code === 'ENOENT'
+  return cause instanceof Error && "code" in cause && cause.code === "ENOENT"
 }

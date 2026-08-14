@@ -16,7 +16,7 @@ interface Env {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const apiKey = await env.API_KEY.get()
-    return fetch('https://api.example.com', {
+    return fetch("https://api.example.com", {
       headers: { Authorization: `Bearer ${apiKey}` },
     })
   },
@@ -30,12 +30,12 @@ export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     try {
       const apiKey = await env.API_KEY.get()
-      return fetch('https://api.example.com', {
+      return fetch("https://api.example.com", {
         headers: { Authorization: `Bearer ${apiKey}` },
       })
     } catch (error) {
-      console.error('Secret access failed:', error)
-      return new Response('Configuration error', { status: 500 })
+      console.error("Secret access failed:", error)
+      return new Response("Configuration error", { status: 500 })
     }
   },
 }
@@ -156,7 +156,7 @@ Error:
 Official types available via `@cloudflare/workers-types`:
 
 ```typescript
-import type { SecretsStoreSecret } from '@cloudflare/workers-types'
+import type { SecretsStoreSecret } from "@cloudflare/workers-types"
 
 interface Env {
   STRIPE_API_KEY: SecretsStoreSecret

@@ -30,13 +30,13 @@ Build stateful, globally distributed AI agents with persistent memory, real-time
 **AI Chat Agent:**
 
 ```typescript
-import { AIChatAgent } from '@cloudflare/ai-chat'
-import { openai } from '@ai-sdk/openai'
+import { AIChatAgent } from "@cloudflare/ai-chat"
+import { openai } from "@ai-sdk/openai"
 
 export class ChatAgent extends AIChatAgent<Env> {
   async onChatMessage(onFinish) {
     return this.streamText({
-      model: openai('gpt-4'),
+      model: openai("gpt-4"),
       messages: this.messages,
       onFinish,
     })
@@ -47,7 +47,7 @@ export class ChatAgent extends AIChatAgent<Env> {
 **Base Agent:**
 
 ```typescript
-import { Agent } from 'agents'
+import { Agent } from "agents"
 
 export class MyAgent extends Agent<Env> {
   onStart() {

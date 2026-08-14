@@ -1,6 +1,6 @@
 ---
 name: project-bootstrap
-description: '.docs/project-brief.md を読み込んで案件の骨格ファイルを一気に生成する。案件セットアップ、プロジェクト初期化、骨格生成、ボイラープレート生成などのリクエスト時に使用。/project-bootstrap で呼び出す。'
+description: ".docs/project-brief.md を読み込んで案件の骨格ファイルを一気に生成する。案件セットアップ、プロジェクト初期化、骨格生成、ボイラープレート生成などのリクエスト時に使用。/project-bootstrap で呼び出す。"
 user_invocable: true
 ---
 
@@ -147,7 +147,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 ### 自動検証
 
 ```bash
-bun run generate:types && bun run lint && bun run test:int
+vp run generate:types && vp lint && vp run test:int
 ```
 
 全て通ったことを確認してからコミットを提案する。

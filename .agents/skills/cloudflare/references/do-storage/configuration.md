@@ -60,7 +60,7 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const id = env.MY_DO.idFromName('singleton')
+    const id = env.MY_DO.idFromName("singleton")
     const stub = env.MY_DO.get(id)
 
     // Modern RPC: call methods directly (recommended)
@@ -87,12 +87,12 @@ export default {
 
 ```typescript
 // Jurisdiction (GDPR/FedRAMP)
-const euNamespace = env.MY_DO.jurisdiction('eu')
+const euNamespace = env.MY_DO.jurisdiction("eu")
 const id = euNamespace.newUniqueId()
 const stub = euNamespace.get(id)
 
 // Location hint (best effort)
-const stub = env.MY_DO.get(id, { locationHint: 'enam' })
+const stub = env.MY_DO.get(id, { locationHint: "enam" })
 // Hints: wnam, enam, sam, weur, eeur, apac, oc, afr, me
 ```
 
@@ -107,7 +107,7 @@ export class Counter extends DurableObject {
 
     // Block concurrent requests during init
     ctx.blockConcurrencyWhile(async () => {
-      this.value = (await ctx.storage.get('value')) || 0
+      this.value = (await ctx.storage.get("value")) || 0
     })
   }
 }

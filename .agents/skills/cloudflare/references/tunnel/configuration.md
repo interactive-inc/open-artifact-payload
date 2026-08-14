@@ -43,7 +43,7 @@ ingress:
     service: https://localhost:8001
 
   # Wildcard hostname
-  - hostname: '*.example.com'
+  - hostname: "*.example.com"
     service: https://localhost:8002
 
   # Path only (all hostnames)
@@ -91,7 +91,7 @@ originRequest:
 ```yaml
 originRequest:
   noTLSVerify: true # Disable cert verification
-  originServerName: 'app.internal' # Override SNI
+  originServerName: "app.internal" # Override SNI
   caPool: /path/to/ca.pem # Custom CA
 ```
 
@@ -100,7 +100,7 @@ originRequest:
 ```yaml
 originRequest:
   disableChunkedEncoding: true
-  httpHostHeader: 'app.internal'
+  httpHostHeader: "app.internal"
   http2Origin: true
 ```
 

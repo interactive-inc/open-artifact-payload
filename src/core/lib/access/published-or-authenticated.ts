@@ -1,6 +1,6 @@
-import type { Access } from 'payload'
+import type { Access } from "payload"
 
-import { isUserAccount } from '@/core/lib/access/is-user-account'
+import { isUserAccount } from "@/core/lib/access/is-user-account"
 
 /**
  * drafts: true の versioned collection で使う公開フロント向けの read access。
@@ -13,6 +13,6 @@ import { isUserAccount } from '@/core/lib/access/is-user-account'
 export const publishedOrAuthenticated: Access = (args) => {
   if (isUserAccount(args.req.user)) return true
   return {
-    _status: { equals: 'published' },
+    _status: { equals: "published" },
   }
 }

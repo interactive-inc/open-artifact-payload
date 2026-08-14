@@ -62,8 +62,8 @@ export default {
     if (critical.length === 0) return
 
     ctx.waitUntil(
-      fetch('https://logging.example.com/ingest', {
-        method: 'POST',
+      fetch("https://logging.example.com/ingest", {
+        method: "POST",
         headers: { Authorization: `Bearer ${env.API_KEY}` },
         body: JSON.stringify(
           critical.map((e) => ({
@@ -86,17 +86,17 @@ export default {
     const otelSpans = events.map((e) => ({
       traceId: generateId(32),
       spanId: generateId(16),
-      name: e.scriptName || 'worker.request',
+      name: e.scriptName || "worker.request",
       attributes: [
-        { key: 'worker.outcome', value: { stringValue: e.event.outcome } },
-        { key: 'worker.cpu_time_us', value: { intValue: String(e.event.cpuTime) } },
+        { key: "worker.outcome", value: { stringValue: e.event.outcome } },
+        { key: "worker.cpu_time_us", value: { intValue: String(e.event.cpuTime) } },
       ],
     }))
 
     ctx.waitUntil(
-      fetch('https://api.honeycomb.io/v1/traces', {
-        method: 'POST',
-        headers: { 'X-Honeycomb-Team': env.HONEYCOMB_KEY },
+      fetch("https://api.honeycomb.io/v1/traces", {
+        method: "POST",
+        headers: { "X-Honeycomb-Team": env.HONEYCOMB_KEY },
         body: JSON.stringify({ resourceSpans: [{ scopeSpans: [{ spans: otelSpans }] }] }),
       }),
     )

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
-import { runCli } from './run-cli'
-import { readHiddenSecret } from './read-hidden-secret'
+import { runCli } from "./run-cli"
+import { readHiddenSecret } from "./read-hidden-secret"
 
 const exitCode = await runCli({
   argv: process.argv.slice(2),

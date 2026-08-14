@@ -1,6 +1,6 @@
-import { join } from 'node:path'
+import { join } from "node:path"
 
-import { z } from 'zod'
+import { z } from "zod"
 
 const optionalValue = z.string().min(1).optional()
 
@@ -23,12 +23,12 @@ export type CliProcessEnvironment = z.infer<typeof cliProcessEnvironmentSchema>
 
 export function parseCliProcessEnvironment(input: unknown): CliProcessEnvironment | Error {
   const parsed = cliProcessEnvironmentSchema.safeParse(input)
-  return parsed.success ? parsed.data : new Error('Unable to read the CLI process environment')
+  return parsed.success ? parsed.data : new Error("Unable to read the CLI process environment")
 }
 
 export function resolveCliConfigDirectory(environment: CliProcessEnvironment): string | Error {
   if (environment.INTACMS_CONFIG_DIR) return environment.INTACMS_CONFIG_DIR
-  if (environment.XDG_CONFIG_HOME) return join(environment.XDG_CONFIG_HOME, 'intacms')
-  if (environment.HOME) return join(environment.HOME, '.config', 'intacms')
-  return new Error('Set HOME, XDG_CONFIG_HOME, or INTACMS_CONFIG_DIR to store intacms settings')
+  if (environment.XDG_CONFIG_HOME) return join(environment.XDG_CONFIG_HOME, "intacms")
+  if (environment.HOME) return join(environment.HOME, ".config", "intacms")
+  return new Error("Set HOME, XDG_CONFIG_HOME, or INTACMS_CONFIG_DIR to store intacms settings")
 }

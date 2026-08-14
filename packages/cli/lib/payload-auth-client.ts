@@ -1,7 +1,7 @@
-import { jsonValueSchema, type FetchPort, type JsonValue } from '@open-artifact/site-management'
-import { z } from 'zod'
+import { jsonValueSchema, type FetchPort, type JsonValue } from "@open-artifact/site-management"
+import { z } from "zod"
 
-import type { CliAccount } from './cli-configuration-store'
+import type { CliAccount } from "./cli-configuration-store"
 
 const requestTimeoutMilliseconds = 30_000
 
@@ -35,8 +35,8 @@ export class PayloadAuthClient {
     const response = await this.request(
       new URL(`api/${props.authCollection}/login`, `${props.endpoint}/`),
       {
-        method: 'POST',
-        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        method: "POST",
+        headers: { Accept: "application/json", "Content-Type": "application/json" },
         body: JSON.stringify({ email: props.email, password: props.password }),
       },
     )
@@ -45,7 +45,7 @@ export class PayloadAuthClient {
     if (raw instanceof Error) return raw
     if (!response.ok) return new Error(toPayloadErrorMessage(response.status, raw))
     const parsed = loginResponseSchema.safeParse(raw)
-    if (!parsed.success) return new Error('Payload login response did not include a token')
+    if (!parsed.success) return new Error("Payload login response did not include a token")
 
     return {
       email: parsed.data.user.email ?? props.email,
@@ -62,8 +62,8 @@ export class PayloadAuthClient {
     const response = await this.request(
       new URL(`api/${props.authCollection}/me`, `${props.endpoint}/`),
       {
-        method: 'GET',
-        headers: { Accept: 'application/json', Authorization: props.authorization },
+        method: "GET",
+        headers: { Accept: "application/json", Authorization: props.authorization },
       },
     )
     if (response instanceof Error) return response
@@ -71,7 +71,7 @@ export class PayloadAuthClient {
     if (raw instanceof Error) return raw
     if (!response.ok) return new Error(toPayloadErrorMessage(response.status, raw))
     const parsed = jsonValueSchema.safeParse(raw)
-    return parsed.success ? parsed.data : new Error('Payload returned an invalid user response')
+    return parsed.success ? parsed.data : new Error("Payload returned an invalid user response")
   }
 
   async logout(props: {
@@ -82,8 +82,8 @@ export class PayloadAuthClient {
     const response = await this.request(
       new URL(`api/${props.authCollection}/logout`, `${props.endpoint}/`),
       {
-        method: 'POST',
-        headers: { Accept: 'application/json', Authorization: props.authorization },
+        method: "POST",
+        headers: { Accept: "application/json", Authorization: props.authorization },
       },
     )
     if (response instanceof Error) return response
@@ -102,7 +102,7 @@ export class PayloadAuthClient {
     } catch (cause) {
       return cause instanceof Error
         ? new Error(`Payload authentication request failed: ${cause.message}`)
-        : new Error('Payload authentication request failed')
+        : new Error("Payload authentication request failed")
     }
   }
 }

@@ -1,5 +1,5 @@
-import { locales } from '@/project/shared/lib/locale-types'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
+import { locales } from "@/project/shared/lib/locale-types"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
 
 /**
  * ページの basePath (locale プレフィックスなしの絶対パス) から

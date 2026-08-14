@@ -1,9 +1,9 @@
-import Link from 'next/link'
-import React from 'react'
-import { ArrowRightIcon } from 'lucide-react'
+import Link from "next/link"
+import React from "react"
+import { ArrowRightIcon } from "lucide-react"
 
-import { Button } from '@/project/shared/ui/button'
-import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
+import { Button } from "@/project/shared/ui/button"
+import { GenerativeCanvas } from "@/project/shared/components/generative-canvas"
 
 type HeroData = {
   enabled?: boolean | null

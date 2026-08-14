@@ -15,7 +15,7 @@ Authorization: Bearer ${CF_API_TOKEN}
 Install: `npm install cloudflare`
 
 ```typescript
-import Cloudflare from 'cloudflare'
+import Cloudflare from "cloudflare"
 
 const cf = new Cloudflare({
   apiToken: process.env.CF_API_TOKEN,
@@ -43,8 +43,8 @@ curl -X POST "https://api.cloudflare.com/client/v4/accounts/{account_id}/tunnels
 ```typescript
 const tunnel = await cf.zeroTrust.tunnels.create({
   account_id: accountId,
-  name: 'my-tunnel',
-  tunnel_secret: Buffer.from(crypto.randomBytes(32)).toString('base64'),
+  name: "my-tunnel",
+  tunnel_secret: Buffer.from(crypto.randomBytes(32)).toString("base64"),
 })
 
 console.log(`Tunnel ID: ${tunnel.id}`)
@@ -116,8 +116,8 @@ const config = await cf.zeroTrust.tunnels.configurations.update(tunnelId, {
   account_id: accountId,
   config: {
     ingress: [
-      { hostname: 'app.example.com', service: 'http://localhost:8000' },
-      { service: 'http_status:404' },
+      { hostname: "app.example.com", service: "http://localhost:8000" },
+      { service: "http_status:404" },
     ],
   },
 })

@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react"
 
-import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
+import { GenerativeCanvas } from "@/project/shared/components/generative-canvas"
 
 type ServiceItem = {
   icon?: string | null
@@ -17,10 +17,10 @@ type Props = {
   }
 }
 
-type Variant = 'truchet' | 'apollonian' | 'penrose' | 'wang'
+type Variant = "truchet" | "apollonian" | "penrose" | "wang"
 
 // タイルごとに別のジェネラティブアルゴリズムを背景に敷く。
-const variants: ReadonlyArray<Variant> = ['truchet', 'apollonian', 'penrose', 'wang']
+const variants: ReadonlyArray<Variant> = ["truchet", "apollonian", "penrose", "wang"]
 
 // Bento グリッドのサービス紹介。大小のタイルにモノクロの幾何学 Canvas を重ねてダイナミックに見せる。
 export function ServicesSection(props: Props) {
@@ -53,7 +53,7 @@ export function ServicesSection(props: Props) {
               <article
                 key={index}
                 className={`group relative isolate flex flex-col justify-end overflow-hidden ring-1 ring-foreground/10 p-7 ${
-                  isFeatured ? 'md:col-span-2 md:row-span-2' : ''
+                  isFeatured ? "md:col-span-2 md:row-span-2" : ""
                 }`}
               >
                 <GenerativeCanvas
@@ -65,12 +65,12 @@ export function ServicesSection(props: Props) {
                   className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-background/85 to-background/40"
                 />
                 <span className="font-heading text-sm text-muted-foreground tabular-nums">
-                  {String(index + 1).padStart(2, '0')}
+                  {String(index + 1).padStart(2, "0")}
                 </span>
                 {item.title ? (
                   <h3
                     className={`mt-2 font-heading font-semibold tracking-tight ${
-                      isFeatured ? 'text-2xl md:text-3xl' : 'text-xl'
+                      isFeatured ? "text-2xl md:text-3xl" : "text-xl"
                     }`}
                   >
                     {item.title}

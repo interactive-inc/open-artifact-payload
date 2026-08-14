@@ -1,21 +1,22 @@
-import React from 'react'
-import { PhoneIcon, MapPinIcon, HelpCircleIcon } from 'lucide-react'
-import { notFound } from 'next/navigation'
+import React from "react"
+import { PhoneIcon, MapPinIcon, HelpCircleIcon } from "lucide-react"
+import { notFound } from "next/navigation"
 
-import { ContactForm } from '@/core/frontend/forms/contact-form'
-import { loadSiteSettings } from '@/core/lib/load-site-settings'
-import { Card, CardContent, CardHeader, CardTitle } from '@/project/shared/ui/card'
-import { Button } from '@/project/shared/ui/button'
-import Link from 'next/link'
-import { PageHeader } from '@/project/shared/sections/page-header'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { Metadata } from 'next'
+import { ContactForm } from "@/core/frontend/forms/contact-form"
+import type { ContactInquiryType } from "@/core/frontend/forms/contact-form-constraints"
+import { loadSiteSettings } from "@/core/lib/load-site-settings"
+import { Card, CardContent, CardHeader, CardTitle } from "@/project/shared/ui/card"
+import { Button } from "@/project/shared/ui/button"
+import Link from "next/link"
+import { PageHeader } from "@/project/shared/sections/page-header"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Metadata } from "next"
 
-import '../styles.css'
+import "../styles.css"
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -26,22 +27,25 @@ function resolveLocale(locale: string): Locale {
   return locale
 }
 
-const inquiryOptionsByLocale: Record<Locale, Array<{ value: string; label: string }>> = {
+const inquiryOptionsByLocale: Record<
+  Locale,
+  Array<{ value: ContactInquiryType; label: string }>
+> = {
   ja: [
-    { value: 'service', label: 'サービスに関するお問い合わせ' },
-    { value: 'estimate', label: 'お見積もりのご依頼' },
-    { value: 'consultation', label: '技術相談・ご相談' },
-    { value: 'recruitment', label: '採用に関するお問い合わせ' },
-    { value: 'media', label: '取材・メディアのお問い合わせ' },
-    { value: 'other', label: 'その他' },
+    { value: "service", label: "サービスに関するお問い合わせ" },
+    { value: "estimate", label: "お見積もりのご依頼" },
+    { value: "consultation", label: "技術相談・ご相談" },
+    { value: "recruitment", label: "採用に関するお問い合わせ" },
+    { value: "media", label: "取材・メディアのお問い合わせ" },
+    { value: "other", label: "その他" },
   ],
   en: [
-    { value: 'service', label: 'Service inquiries' },
-    { value: 'estimate', label: 'Request a quote' },
-    { value: 'consultation', label: 'Technical consultation' },
-    { value: 'recruitment', label: 'Recruitment inquiries' },
-    { value: 'media', label: 'Press and media inquiries' },
-    { value: 'other', label: 'Other' },
+    { value: "service", label: "Service inquiries" },
+    { value: "estimate", label: "Request a quote" },
+    { value: "consultation", label: "Technical consultation" },
+    { value: "recruitment", label: "Recruitment inquiries" },
+    { value: "media", label: "Press and media inquiries" },
+    { value: "other", label: "Other" },
   ],
 }
 
@@ -51,7 +55,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const dictionary = getUiDictionary(locale)
   return {
     title: dictionary.contact.title,
-    alternates: { languages: buildLocaleAlternates('/contact') },
+    alternates: { languages: buildLocaleAlternates("/contact") },
   }
 }
 
@@ -88,7 +92,7 @@ export default async function ContactPage(props: Props) {
                   </CardHeader>
                   <CardContent>
                     <a
-                      href={`tel:${settings.companyInfo.tel.replace(/-/g, '')}`}
+                      href={`tel:${settings.companyInfo.tel.replace(/-/g, "")}`}
                       className="text-xl font-bold hover:underline"
                     >
                       {settings.companyInfo.tel}
@@ -129,7 +133,7 @@ export default async function ContactPage(props: Props) {
                   </p>
                   <Button
                     nativeButton={false}
-                    render={<Link href={withLocalePrefix(locale, '/faq')} />}
+                    render={<Link href={withLocalePrefix(locale, "/faq")} />}
                     variant="outline"
                     size="sm"
                   >

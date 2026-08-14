@@ -1,19 +1,19 @@
-'use client'
+"use client"
 
-import Link from 'next/link'
-import Image from 'next/image'
-import React, { useState } from 'react'
-import { MenuIcon, XIcon } from 'lucide-react'
+import Link from "next/link"
+import Image from "next/image"
+import React, { useState } from "react"
+import { MenuIcon, XIcon } from "lucide-react"
 
-import { resolveMediaUrl } from '@/core/lib/media/resolve-media-url'
-import { resolveMediaAlt } from '@/core/lib/media/resolve-media-alt'
-import { Button } from '@/project/shared/ui/button'
-import { Separator } from '@/project/shared/ui/separator'
-import { LocaleSwitcher } from '@/project/shared/components/locale-switcher'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import type { SiteSetting } from '@/payload-types'
+import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
+import { resolveMediaAlt } from "@/core/lib/media/resolve-media-alt"
+import { Button } from "@/project/shared/ui/button"
+import { Separator } from "@/project/shared/ui/separator"
+import { LocaleSwitcher } from "@/project/shared/components/locale-switcher"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import type { SiteSetting } from "@/payload-types"
 
 type Props = {
   settings: SiteSetting
@@ -30,7 +30,7 @@ export function SiteHeader(props: Props) {
     <header className="fixed inset-x-0 top-0 z-50 bg-white/70 backdrop-blur-xl">
       <div className="container-site">
         <div className="flex items-center justify-between h-16">
-          <Link href={withLocalePrefix(props.locale, '/')} className="flex items-center gap-3">
+          <Link href={withLocalePrefix(props.locale, "/")} className="flex items-center gap-3">
             {logoUrl ? (
               <Image
                 src={logoUrl}
@@ -59,7 +59,7 @@ export function SiteHeader(props: Props) {
             <LocaleSwitcher locale={props.locale} />
             <Button
               nativeButton={false}
-              render={<Link href={withLocalePrefix(props.locale, '/contact')} />}
+              render={<Link href={withLocalePrefix(props.locale, "/contact")} />}
               size="sm"
               className="ml-2"
             >
@@ -96,7 +96,7 @@ export function SiteHeader(props: Props) {
             nativeButton={false}
             render={
               <Link
-                href={withLocalePrefix(props.locale, '/contact')}
+                href={withLocalePrefix(props.locale, "/contact")}
                 onClick={() => setIsMenuOpen(false)}
               />
             }

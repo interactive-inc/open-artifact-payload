@@ -1,9 +1,9 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig } from "payload"
 
-import { hasAiTranslatableField } from '@/core/lib/ai-translation/has-ai-translatable-field'
+import { hasAiTranslatableField } from "@/core/lib/ai-translation/has-ai-translatable-field"
 
 const aiTranslateControlsPath =
-  '@/core/admin/ai-translation/ai-translate-controls#AiTranslateControls'
+  "@/core/admin/ai-translation/ai-translate-controls#AiTranslateControls"
 
 /**
  * localized なテキストを持つコレクションの編集画面へ AI翻訳ボタンを一括注入する。

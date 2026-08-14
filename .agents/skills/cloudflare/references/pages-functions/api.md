@@ -22,12 +22,12 @@ interface EventContext<Env = any> {
 ```typescript
 // Generic (fallback for any method)
 export async function onRequest(ctx: EventContext): Promise<Response> {
-  return new Response('Any method')
+  return new Response("Any method")
 }
 
 // Method-specific (takes precedence over generic)
 export async function onRequestGet(ctx: EventContext): Promise<Response> {
-  return Response.json({ message: 'GET' })
+  return Response.json({ message: "GET" })
 }
 
 export async function onRequestPost(ctx: EventContext): Promise<Response> {
@@ -62,9 +62,9 @@ interface Env {
   KV: KVNamespace
 }
 export const onRequest: PagesFunction<Env> = async (ctx) => {
-  await ctx.env.KV.put('key', 'value', { expirationTtl: 3600 })
-  const val = await ctx.env.KV.get('key', { type: 'json' })
-  const keys = await ctx.env.KV.list({ prefix: 'user:' })
+  await ctx.env.KV.put("key", "value", { expirationTtl: 3600 })
+  const val = await ctx.env.KV.get("key", { type: "json" })
+  const keys = await ctx.env.KV.list({ prefix: "user:" })
   return Response.json({ val })
 }
 ```
@@ -76,7 +76,7 @@ interface Env {
   DB: D1Database
 }
 export const onRequest: PagesFunction<Env> = async (ctx) => {
-  const user = await ctx.env.DB.prepare('SELECT * FROM users WHERE id = ?').bind(123).first()
+  const user = await ctx.env.DB.prepare("SELECT * FROM users WHERE id = ?").bind(123).first()
   return Response.json(user)
 }
 ```
@@ -88,9 +88,9 @@ interface Env {
   BUCKET: R2Bucket
 }
 export const onRequest: PagesFunction<Env> = async (ctx) => {
-  const obj = await ctx.env.BUCKET.get('file.txt')
-  if (!obj) return new Response('Not found', { status: 404 })
-  await ctx.env.BUCKET.put('file.txt', ctx.request.body)
+  const obj = await ctx.env.BUCKET.get("file.txt")
+  if (!obj) return new Response("Not found", { status: 404 })
+  await ctx.env.BUCKET.put("file.txt", ctx.request.body)
   return new Response(obj.body)
 }
 ```
@@ -102,7 +102,7 @@ interface Env {
   COUNTER: DurableObjectNamespace
 }
 export const onRequest: PagesFunction<Env> = async (ctx) => {
-  const stub = ctx.env.COUNTER.get(ctx.env.COUNTER.idFromName('global'))
+  const stub = ctx.env.COUNTER.get(ctx.env.COUNTER.idFromName("global"))
   return stub.fetch(ctx.request)
 }
 ```
@@ -114,7 +114,7 @@ interface Env {
   AI: Ai
 }
 export const onRequest: PagesFunction<Env> = async (ctx) => {
-  const resp = await ctx.env.AI.run('@cf/meta/llama-3.1-8b-instruct', { prompt: 'Hello' })
+  const resp = await ctx.env.AI.run("@cf/meta/llama-3.1-8b-instruct", { prompt: "Hello" })
   return Response.json(resp)
 }
 ```
@@ -148,8 +148,8 @@ interface Env {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url)
-    if (url.pathname.startsWith('/api/')) {
-      return Response.json({ data: await env.KV.get('key') })
+    if (url.pathname.startsWith("/api/")) {
+      return Response.json({ data: await env.KV.get("key") })
     }
     return env.ASSETS.fetch(request) // Fallback to static
   },

@@ -27,7 +27,7 @@ npm install @cloudflare/realtimekit @cloudflare/realtimekit-ui
 ### React UI Kit
 
 ```tsx
-import { RtkMeeting } from '@cloudflare/realtimekit-react-ui'
+import { RtkMeeting } from "@cloudflare/realtimekit-react-ui"
 ;<RtkMeeting authToken="<token>" onLeave={() => {}} />
 ```
 
@@ -38,7 +38,7 @@ import { RtkMeeting } from '@cloudflare/realtimekit-react-ui'
   template: `<rtk-meeting [authToken]="authToken" (rtkLeave)="onLeave($event)"></rtk-meeting>`,
 })
 export class AppComponent {
-  authToken = '<token>'
+  authToken = "<token>"
   onLeave() {}
 }
 ```
@@ -52,17 +52,17 @@ export class AppComponent {
 ></script>
 <rtk-meeting id="meeting"></rtk-meeting>
 <script>
-  document.getElementById('meeting').authToken = '<token>'
+  document.getElementById("meeting").authToken = "<token>"
 </script>
 ```
 
 ### Core SDK Configuration
 
 ```typescript
-import RealtimeKitClient from '@cloudflare/realtimekit'
+import RealtimeKitClient from "@cloudflare/realtimekit"
 
 const meeting = new RealtimeKitClient({
-  authToken: '<token>',
+  authToken: "<token>",
   video: true,
   audio: true,
   autoSwitchAudioDevice: true,
@@ -215,8 +215,8 @@ const t = useLanguage(customLanguage);
 Default locales available: `en`, `es`, `fr`, `de`, `pt`, `ja`, `zh`
 
 ```typescript
-import { setLocale } from '@cloudflare/realtimekit-ui'
-setLocale('es') // Switch to Spanish
+import { setLocale } from "@cloudflare/realtimekit-ui"
+setLocale("es") // Switch to Spanish
 ```
 
 ## See Also

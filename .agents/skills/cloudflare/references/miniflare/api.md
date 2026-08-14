@@ -36,18 +36,18 @@ class Miniflare {
 **Fetch (no HTTP server):**
 
 ```js
-const res = await mf.dispatchFetch('http://localhost:8787/path', {
-  method: 'POST',
-  headers: { Authorization: 'Bearer token' },
-  body: JSON.stringify({ data: 'value' }),
+const res = await mf.dispatchFetch("http://localhost:8787/path", {
+  method: "POST",
+  headers: { Authorization: "Bearer token" },
+  body: JSON.stringify({ data: "value" }),
 })
 ```
 
 **Custom Host routing:**
 
 ```js
-const res = await mf.dispatchFetch('http://localhost:8787/', {
-  headers: { Host: 'api.example.com' },
+const res = await mf.dispatchFetch("http://localhost:8787/", {
+  headers: { Host: "api.example.com" },
 })
 ```
 
@@ -55,7 +55,7 @@ const res = await mf.dispatchFetch('http://localhost:8787/', {
 
 ```js
 const worker = await mf.getWorker()
-const result = await worker.scheduled({ cron: '30 * * * *' })
+const result = await worker.scheduled({ cron: "30 * * * *" })
 // result: { outcome: "ok", noRetry: false }
 ```
 
@@ -63,8 +63,8 @@ const result = await worker.scheduled({ cron: '30 * * * *' })
 
 ```js
 const worker = await mf.getWorker()
-const result = await worker.queue('queue-name', [
-  { id: 'msg1', timestamp: new Date(), body: 'data', attempts: 1 },
+const result = await worker.queue("queue-name", [
+  { id: "msg1", timestamp: new Date(), body: "data", attempts: 1 },
 ])
 // result: { outcome: "ok", retryAll: false, ackAll: false, ... }
 ```
@@ -100,38 +100,38 @@ console.log(cf?.country) // "US"
 **KV:**
 
 ```js
-const ns = await mf.getKVNamespace('TEST_NAMESPACE')
-await ns.put('key', 'value')
-const value = await ns.get('key')
+const ns = await mf.getKVNamespace("TEST_NAMESPACE")
+await ns.put("key", "value")
+const value = await ns.get("key")
 ```
 
 **R2:**
 
 ```js
-const bucket = await mf.getR2Bucket('BUCKET')
-await bucket.put('file.txt', 'content')
-const object = await bucket.get('file.txt')
+const bucket = await mf.getR2Bucket("BUCKET")
+await bucket.put("file.txt", "content")
+const object = await bucket.get("file.txt")
 ```
 
 **Durable Objects:**
 
 ```js
-const ns = await mf.getDurableObjectNamespace('COUNTER')
-const id = ns.idFromName('test')
+const ns = await mf.getDurableObjectNamespace("COUNTER")
+const id = ns.idFromName("test")
 const stub = ns.get(id)
-const res = await stub.fetch('http://localhost/')
+const res = await stub.fetch("http://localhost/")
 
 // Access storage directly:
 const storage = await mf.getDurableObjectStorage(id)
-await storage.put('key', 'value')
+await storage.put("key", "value")
 ```
 
 **D1:**
 
 ```js
-const db = await mf.getD1Database('DB')
+const db = await mf.getD1Database("DB")
 await db.exec(`CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)`)
-await db.prepare('INSERT INTO users (name) VALUES (?)').bind('Alice').run()
+await db.prepare("INSERT INTO users (name) VALUES (?)").bind("Alice").run()
 ```
 
 **Cache:**
@@ -139,14 +139,14 @@ await db.prepare('INSERT INTO users (name) VALUES (?)').bind('Alice').run()
 ```js
 const caches = await mf.getCaches()
 const defaultCache = caches.default
-await defaultCache.put('http://example.com', new Response('cached'))
+await defaultCache.put("http://example.com", new Response("cached"))
 ```
 
 **Queue producer:**
 
 ```js
-const producer = await mf.getQueueProducer('QUEUE')
-await producer.send({ body: 'message data' })
+const producer = await mf.getQueueProducer("QUEUE")
+await producer.send({ body: "message data" })
 ```
 
 ## Lifecycle
@@ -155,21 +155,21 @@ await producer.send({ body: 'message data' })
 
 ```js
 await mf.setOptions({
-  scriptPath: 'worker.js',
-  bindings: { VERSION: '2.0' },
+  scriptPath: "worker.js",
+  bindings: { VERSION: "2.0" },
 })
 ```
 
 **Watch (manual):**
 
 ```js
-import { watch } from 'fs'
+import { watch } from "fs"
 
-const config = { scriptPath: 'worker.js' }
+const config = { scriptPath: "worker.js" }
 const mf = new Miniflare(config)
 
-watch('worker.js', async () => {
-  console.log('Reloading...')
+watch("worker.js", async () => {
+  console.log("Reloading...")
   await mf.setOptions(config)
 })
 ```
@@ -193,12 +193,12 @@ console.log(`DevTools: ${url}`)
 **Wait for server ready:**
 
 ```js
-const mf = new Miniflare({ scriptPath: 'worker.js' })
+const mf = new Miniflare({ scriptPath: "worker.js" })
 const url = await mf.ready // Promise<URL>
 console.log(`Server running at ${url}`) // http://127.0.0.1:8787
 
 // Note: dispatchFetch() waits automatically, no need to await ready
-const res = await mf.dispatchFetch('http://localhost/') // Works immediately
+const res = await mf.dispatchFetch("http://localhost/") // Works immediately
 ```
 
 See [configuration.md](./configuration.md) for all constructor options.

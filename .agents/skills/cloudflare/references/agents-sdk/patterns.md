@@ -5,31 +5,31 @@
 **Server (AIChatAgent):**
 
 ```ts
-import { AIChatAgent } from '@cloudflare/ai-chat'
-import { openai } from '@ai-sdk/openai'
-import { tool } from 'ai'
-import { z } from 'zod'
+import { AIChatAgent } from "@cloudflare/ai-chat"
+import { openai } from "@ai-sdk/openai"
+import { tool } from "ai"
+import { z } from "zod"
 
 export class ChatAgent extends AIChatAgent<Env> {
   async onChatMessage(onFinish) {
     return this.streamText({
-      model: openai('gpt-4'),
+      model: openai("gpt-4"),
       messages: this.messages, // Auto-managed
       tools: {
         getWeather: tool({
-          description: 'Get current weather',
+          description: "Get current weather",
           parameters: z.object({ city: z.string() }),
           execute: async ({ city }) => `Weather in ${city}: Sunny, 72°F`,
         }),
         searchDocs: tool({
-          description: 'Search documentation',
+          description: "Search documentation",
           parameters: z.object({ query: z.string() }),
           execute: async ({ query }) =>
             JSON.stringify(
               this.sql<{
                 title
                 content
-              }>`SELECT title, content FROM docs WHERE content LIKE ${'%' + query + '%'}`,
+              }>`SELECT title, content FROM docs WHERE content LIKE ${"%" + query + "%"}`,
             ),
         }),
       },
@@ -42,11 +42,11 @@ export class ChatAgent extends AIChatAgent<Env> {
 **Client (React):**
 
 ```tsx
-import { useAgent } from 'agents/react'
-import { useAgentChat } from '@cloudflare/ai-chat/react'
+import { useAgent } from "agents/react"
+import { useAgentChat } from "@cloudflare/ai-chat/react"
 
 function ChatUI() {
-  const agent = useAgent({ agent: 'ChatAgent' })
+  const agent = useAgent({ agent: "ChatAgent" })
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useAgentChat({ agent })
 
   return (
@@ -74,13 +74,13 @@ Server defines tool, client executes:
 export class ChatAgent extends AIChatAgent<Env> {
   async onChatMessage(onFinish) {
     return this.streamText({
-      model: openai('gpt-4'),
+      model: openai("gpt-4"),
       messages: this.messages,
       tools: {
         confirmAction: tool({
-          description: 'Ask user to confirm',
+          description: "Ask user to confirm",
           parameters: z.object({ action: z.string() }),
-          execute: 'client', // Client-side execution
+          execute: "client", // Client-side execution
         }),
       },
       onFinish,
@@ -92,7 +92,7 @@ export class ChatAgent extends AIChatAgent<Env> {
 const { messages } = useAgentChat({
   agent,
   onToolCall: async (toolCall) => {
-    if (toolCall.toolName === 'confirmAction') {
+    if (toolCall.toolName === "confirmAction") {
       return { confirmed: window.confirm(`Confirm: ${toolCall.args.action}?`) }
     }
   },
@@ -104,19 +104,19 @@ const { messages } = useAgentChat({
 ```ts
 export class TaskAgent extends Agent<Env> {
   onStart() {
-    this.schedule('*/5 * * * *', 'processQueue', {}) // Every 5 min
-    this.schedule('0 0 * * *', 'dailyCleanup', {}) // Daily
+    this.schedule("*/5 * * * *", "processQueue", {}) // Every 5 min
+    this.schedule("0 0 * * *", "dailyCleanup", {}) // Daily
   }
 
   async onRequest(req: Request) {
-    await this.queue('processVideo', { videoId: (await req.json()).videoId })
+    await this.queue("processVideo", { videoId: (await req.json()).videoId })
     return Response.json({ queued: true })
   }
 
   async processQueue() {
     const tasks = await this.dequeue(10)
     for (const task of tasks) {
-      if (task.name === 'processVideo') await this.processVideo(task.data.videoId)
+      if (task.name === "processVideo") await this.processVideo(task.data.videoId)
     }
   }
 
@@ -134,8 +134,8 @@ Custom protocols (non-AI):
 export class ChatAgent extends Agent<Env> {
   async onConnect(conn: Connection, ctx: ConnectionContext) {
     conn.accept()
-    conn.setState({ userId: ctx.request.headers.get('X-User-ID') || 'anon' })
-    conn.send(JSON.stringify({ type: 'history', messages: this.state.messages }))
+    conn.setState({ userId: ctx.request.headers.get("X-User-ID") || "anon" })
+    conn.send(JSON.stringify({ type: "history", messages: this.state.messages }))
   }
 
   async onMessage(conn: Connection, msg: WSMessage) {
@@ -158,17 +158,17 @@ export class EmailAgent extends Agent<Env> {
     const [text, from, subject] = [
       await email.text(),
       email.from,
-      email.headers.get('subject') || '',
+      email.headers.get("subject") || "",
     ]
     this.sql`INSERT INTO emails (from_addr, subject, body) VALUES (${from}, ${subject}, ${text})`
 
     const { text: summary } = await generateText({
-      model: openai('gpt-4o-mini'),
+      model: openai("gpt-4o-mini"),
       prompt: `Summarize: ${subject}\n\n${text}`,
     })
 
-    this.connections.forEach((c) => c.send(JSON.stringify({ type: 'new_email', from, summary })))
-    if (summary.includes('urgent')) await this.schedule(0, 'sendAutoReply', { to: from })
+    this.connections.forEach((c) => c.send(JSON.stringify({ type: "new_email", from, summary })))
+    if (summary.includes("urgent")) await this.schedule(0, "sendAutoReply", { to: from })
   }
 }
 ```
@@ -181,20 +181,20 @@ export class GameAgent extends Agent<Env> {
 
   async onConnect(conn: Connection, ctx: ConnectionContext) {
     conn.accept()
-    const playerId = ctx.request.headers.get('X-Player-ID') || crypto.randomUUID()
+    const playerId = ctx.request.headers.get("X-Player-ID") || crypto.randomUUID()
     conn.setState({ playerId })
 
     const newPlayer = { id: playerId, score: 0 }
     this.setState({ ...this.state, players: [...this.state.players, newPlayer] })
     this.connections.forEach((c) =>
-      c.send(JSON.stringify({ type: 'player_joined', player: newPlayer })),
+      c.send(JSON.stringify({ type: "player_joined", player: newPlayer })),
     )
   }
 
   async onMessage(conn: Connection, msg: WSMessage) {
     const m = JSON.parse(msg as string)
 
-    if (m.type === 'move') {
+    if (m.type === "move") {
       this.setState({
         ...this.state,
         players: this.state.players.map((p) =>
@@ -202,13 +202,13 @@ export class GameAgent extends Agent<Env> {
         ),
       })
       this.connections.forEach((c) =>
-        c.send(JSON.stringify({ type: 'player_moved', playerId: conn.state.playerId })),
+        c.send(JSON.stringify({ type: "player_moved", playerId: conn.state.playerId })),
       )
     }
 
-    if (m.type === 'start' && this.state.players.length >= 2) {
+    if (m.type === "start" && this.state.players.length >= 2) {
       this.setState({ ...this.state, gameStarted: true })
-      this.connections.forEach((c) => c.send(JSON.stringify({ type: 'game_started' })))
+      this.connections.forEach((c) => c.send(JSON.stringify({ type: "game_started" })))
     }
   }
 }

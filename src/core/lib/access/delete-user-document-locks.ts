@@ -1,4 +1,4 @@
-import type { CollectionBeforeDeleteHook } from 'payload'
+import type { CollectionBeforeDeleteHook } from "payload"
 
 /**
  * ユーザー削除前に、そのユーザーが所有する編集ロックを削除する。
@@ -9,10 +9,10 @@ import type { CollectionBeforeDeleteHook } from 'payload'
  */
 export const deleteUserDocumentLocks: CollectionBeforeDeleteHook = async ({ id, req }) => {
   await req.payload.db.deleteMany({
-    collection: 'payload-locked-documents',
+    collection: "payload-locked-documents",
     req,
     where: {
-      and: [{ 'user.value': { equals: id } }, { 'user.relationTo': { equals: 'users' } }],
+      and: [{ "user.value": { equals: id } }, { "user.relationTo": { equals: "users" } }],
     },
   })
 }

@@ -81,8 +81,8 @@ ingress:
 
 ```typescript
 const socket = connect(
-  { hostname: 'db.internal.example.com', port: 5432 }, // Tunnel hostname
-  { secureTransport: 'on' },
+  { hostname: "db.internal.example.com", port: 5432 }, // Tunnel hostname
+  { secureTransport: "on" },
 )
 ```
 
@@ -114,9 +114,9 @@ Test with `wrangler dev`. Note: Local mode may not access private networks. Use 
 
 ```typescript
 const config =
-  process.env.NODE_ENV === 'dev'
-    ? { hostname: 'localhost', port: 5432 } // Mock
-    : { hostname: 'db.internal.example.com', port: 5432 } // Production
+  process.env.NODE_ENV === "dev"
+    ? { hostname: "localhost", port: 5432 } // Mock
+    : { hostname: "db.internal.example.com", port: 5432 } // Production
 ```
 
 ## Connection String Patterns

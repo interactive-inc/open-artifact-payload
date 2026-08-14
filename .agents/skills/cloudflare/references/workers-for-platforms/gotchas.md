@@ -12,8 +12,8 @@ try {
   const userWorker = env.DISPATCHER.get(workerName)
   return userWorker.fetch(request)
 } catch (e) {
-  if (e.message.startsWith('Worker not found')) {
-    return new Response('Worker not found', { status: 404 })
+  if (e.message.startsWith("Worker not found")) {
+    return new Response("Worker not found", { status: 404 })
   }
   throw e // Re-throw unexpected errors
 }

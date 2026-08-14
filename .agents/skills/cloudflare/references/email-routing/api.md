@@ -46,14 +46,14 @@ Standard Web API Headers interface:
 
 ```typescript
 // Access headers
-const subject = message.headers.get('subject')
-const from = message.headers.get('from')
-const messageId = message.headers.get('message-id')
+const subject = message.headers.get("subject")
+const from = message.headers.get("from")
+const messageId = message.headers.get("message-id")
 
 // Check spam score
-const spamScore = parseFloat(message.headers.get('x-cf-spamh-score') || '0')
+const spamScore = parseFloat(message.headers.get("x-cf-spamh-score") || "0")
 if (spamScore > 5) {
-  message.setReject('Spam detected')
+  message.setReject("Spam detected")
 }
 ```
 
@@ -71,8 +71,8 @@ message.from // "bounce@sender.com" (actual sender)
 message.to // "you@yourdomain.com" (your address)
 
 // Header addresses (display, user-facing)
-message.headers.get('from') // "Alice <alice@sender.com>"
-message.headers.get('to') // "Bob <you@yourdomain.com>"
+message.headers.get("from") // "Alice <alice@sender.com>"
+message.headers.get("to") // "Bob <you@yourdomain.com>"
 ```
 
 **Use envelope addresses for:**
@@ -132,15 +132,15 @@ interface Env {
 export default {
   async fetch(request, env, ctx): Promise<Response> {
     await env.EMAIL.send({
-      from: { name: 'Acme Corp', email: 'noreply@yourdomain.com' },
-      to: [{ name: 'Alice', email: 'alice@example.com' }, 'bob@example.com'],
-      subject: 'Your order #12345 has shipped',
-      text: 'Track your package at: https://track.example.com/12345',
+      from: { name: "Acme Corp", email: "noreply@yourdomain.com" },
+      to: [{ name: "Alice", email: "alice@example.com" }, "bob@example.com"],
+      subject: "Your order #12345 has shipped",
+      text: "Track your package at: https://track.example.com/12345",
       html: "<p>Track your package at: <a href='https://track.example.com/12345'>View tracking</a></p>",
-      reply_to: { name: 'Support', email: 'support@yourdomain.com' },
+      reply_to: { name: "Support", email: "support@yourdomain.com" },
     })
 
-    return new Response('Email sent')
+    return new Response("Email sent")
   },
 } satisfies ExportedHandler<Env>
 ```

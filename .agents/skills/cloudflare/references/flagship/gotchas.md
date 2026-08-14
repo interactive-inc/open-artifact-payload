@@ -14,12 +14,12 @@
 
 ```typescript
 // ❌ BAD — no context, rules can't match
-const val = await env.FLAGS.getBooleanValue('my-flag', false)
+const val = await env.FLAGS.getBooleanValue("my-flag", false)
 
 // ✅ GOOD — pass context attributes that rules reference
-const val = await env.FLAGS.getBooleanValue('my-flag', false, {
-  userId: 'user-42',
-  plan: 'enterprise',
+const val = await env.FLAGS.getBooleanValue("my-flag", false, {
+  userId: "user-42",
+  plan: "enterprise",
 })
 ```
 
@@ -31,10 +31,10 @@ const val = await env.FLAGS.getBooleanValue('my-flag', false, {
 
 ```typescript
 // ❌ BAD — flag "checkout-flow" has string variations
-const val = await env.FLAGS.getBooleanValue('checkout-flow', false)
+const val = await env.FLAGS.getBooleanValue("checkout-flow", false)
 
 // ✅ GOOD
-const val = await env.FLAGS.getStringValue('checkout-flow', 'original')
+const val = await env.FLAGS.getStringValue("checkout-flow", "original")
 ```
 
 ### 409 Conflict on Flag Creation
@@ -51,10 +51,10 @@ const val = await env.FLAGS.getStringValue('checkout-flow', 'original')
 
 ```typescript
 // ❌ BAD — no targetingKey, rollout is random per request
-const val = await env.FLAGS.getBooleanValue('gradual-rollout', false)
+const val = await env.FLAGS.getBooleanValue("gradual-rollout", false)
 
 // ✅ GOOD — stable userId for consistent bucketing
-const val = await env.FLAGS.getBooleanValue('gradual-rollout', false, {
+const val = await env.FLAGS.getBooleanValue("gradual-rollout", false, {
   userId: sessionUserId,
 })
 ```
@@ -116,12 +116,12 @@ Flag evaluation via the binding is fast but not free. Avoid evaluating the same 
 ```typescript
 // ❌ BAD
 for (const item of items) {
-  const enabled = await env.FLAGS.getBooleanValue('my-flag', false, ctx)
+  const enabled = await env.FLAGS.getBooleanValue("my-flag", false, ctx)
   // ...
 }
 
 // ✅ GOOD
-const enabled = await env.FLAGS.getBooleanValue('my-flag', false, ctx)
+const enabled = await env.FLAGS.getBooleanValue("my-flag", false, ctx)
 for (const item of items) {
   // use `enabled`
 }
@@ -134,9 +134,9 @@ The binding avoids HTTP overhead entirely. Only use the SDK inside Workers when 
 ```typescript
 // ❌ Unnecessary HTTP overhead inside a Worker
 const provider = new FlagshipServerProvider({
-  appId: '...',
-  accountId: '...',
-  authToken: '...',
+  appId: "...",
+  accountId: "...",
+  authToken: "...",
 })
 
 // ✅ Use the binding directly, or pass it to the SDK

@@ -43,12 +43,12 @@ interface Env {
 
 export default {
   async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
-    const event = { user_id: '123', event_type: 'purchase', amount: 29.99 }
+    const event = { user_id: "123", event_type: "purchase", amount: 29.99 }
 
     // Fire-and-forget pattern
     ctx.waitUntil(env.STREAM.send([event]))
 
-    return new Response('OK')
+    return new Response("OK")
   },
 } satisfies ExportedHandler<Env>
 ```

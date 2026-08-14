@@ -14,13 +14,13 @@
 interface DDoSOverride {
   description: string
   rules: Array<{
-    action: 'execute'
+    action: "execute"
     expression: string // Custom expression (Enterprise Advanced) or "true" for all
     action_parameters: {
       id: string // Managed ruleset ID (discover via api.md)
       overrides: {
-        sensitivity_level?: 'default' | 'medium' | 'low' | 'eoff'
-        action?: 'block' | 'managed_challenge' | 'challenge' | 'log' // log = Enterprise Advanced only
+        sensitivity_level?: "default" | "medium" | "low" | "eoff"
+        action?: "block" | "managed_challenge" | "challenge" | "log" // log = Enterprise Advanced only
         categories?: Array<{
           category: string // e.g., "http-flood", "udp-flood"
           sensitivity_level?: string

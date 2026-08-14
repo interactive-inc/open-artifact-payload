@@ -13,12 +13,12 @@ curl -X PUT \
 ### TypeScript SDK
 
 ```typescript
-import Cloudflare from 'cloudflare'
+import Cloudflare from "cloudflare"
 
 const client = new Cloudflare({ apiToken: process.env.API_TOKEN })
 
 const scriptFile = new File([scriptContent], `${scriptName}.mjs`, {
-  type: 'application/javascript+module',
+  type: "application/javascript+module",
 })
 
 await client.workersForPlatforms.dispatch.namespaces.scripts.update(namespace, scriptName, {
@@ -31,7 +31,7 @@ await client.workersForPlatforms.dispatch.namespaces.scripts.update(namespace, s
 ## TypeScript Types
 
 ```typescript
-import type { DispatchNamespace } from '@cloudflare/workers-types'
+import type { DispatchNamespace } from "@cloudflare/workers-types"
 
 interface DispatchNamespace {
   get(
@@ -53,11 +53,11 @@ interface DynamicDispatchLimits {
 
 // Usage
 const userWorker = env.DISPATCHER.get(
-  'customer-123',
+  "customer-123",
   {},
   {
     limits: { cpuMs: 50, subRequests: 20 },
-    outbound: { customerId: '123', url: request.url },
+    outbound: { customerId: "123", url: request.url },
   },
 )
 ```
@@ -144,7 +144,7 @@ curl -X PUT ".../scripts/$SCRIPT_NAME" \
 ```typescript
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const userWorkerName = new URL(request.url).hostname.split('.')[0]
+    const userWorkerName = new URL(request.url).hostname.split(".")[0]
     const userWorker = env.DISPATCHER.get(userWorkerName)
     return await userWorker.fetch(request)
   },
@@ -154,7 +154,7 @@ export default {
 ### Path Routing
 
 ```typescript
-const pathParts = new URL(request.url).pathname.split('/').filter(Boolean)
+const pathParts = new URL(request.url).pathname.split("/").filter(Boolean)
 const userWorker = env.DISPATCHER.get(pathParts[0])
 return await userWorker.fetch(request)
 ```
@@ -191,14 +191,14 @@ export default {
     const url = new URL(request.url)
 
     // Block domains
-    if (['malicious.com'].some((d) => url.hostname.includes(d))) {
-      return new Response('Blocked', { status: 403 })
+    if (["malicious.com"].some((d) => url.hostname.includes(d))) {
+      return new Response("Blocked", { status: 403 })
     }
 
     // Inject auth
-    if (url.hostname === 'api.example.com') {
+    if (url.hostname === "api.example.com") {
       const headers = new Headers(request.headers)
-      headers.set('Authorization', `Bearer ${generateJWT(customerName)}`)
+      headers.set("Authorization", `Bearer ${generateJWT(customerName)}`)
       return fetch(new Request(request, { headers }))
     }
 

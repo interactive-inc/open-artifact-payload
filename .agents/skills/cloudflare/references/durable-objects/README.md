@@ -98,7 +98,7 @@ See [DO Storage](../do-storage/README.md) for deep dive.
 ## Quick Start
 
 ```typescript
-import { DurableObject } from 'cloudflare:workers'
+import { DurableObject } from "cloudflare:workers"
 
 export class Counter extends DurableObject<Env> {
   async increment(): Promise<number> {
@@ -116,7 +116,7 @@ export class Counter extends DurableObject<Env> {
 // Worker access
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    const id = env.COUNTER.idFromName('global')
+    const id = env.COUNTER.idFromName("global")
     const stub = env.COUNTER.get(id)
     const count = await stub.increment()
     return new Response(`Count: ${count}`)

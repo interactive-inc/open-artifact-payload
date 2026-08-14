@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react"
 
-import { GenerativeCanvas } from '@/project/shared/components/generative-canvas'
+import { GenerativeCanvas } from "@/project/shared/components/generative-canvas"
 
 type Props = {
   title: string

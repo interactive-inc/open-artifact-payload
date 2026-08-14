@@ -1,7 +1,7 @@
-import type { GlobalAfterChangeHook } from 'payload'
+import type { GlobalAfterChangeHook } from "payload"
 
-import type { GlobalPathResolver } from '@/core/lib/revalidate/types'
-import { safeRevalidate } from '@/core/lib/revalidate/safe-revalidate'
+import type { GlobalPathResolver } from "@/core/lib/revalidate/types"
+import { safeRevalidate } from "@/core/lib/revalidate/safe-revalidate"
 
 /**
  * Global 保存後に resolver が返したパスを revalidate する汎用 hook。

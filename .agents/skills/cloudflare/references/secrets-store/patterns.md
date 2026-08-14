@@ -16,11 +16,11 @@ async function fetchWithAuth(url: string, key: string) {
 
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
-    let resp = await fetchWithAuth('https://api.example.com', await env.PRIMARY_KEY.get())
+    let resp = await fetchWithAuth("https://api.example.com", await env.PRIMARY_KEY.get())
 
     // Fallback during rotation
     if (!resp.ok && env.FALLBACK_KEY) {
-      resp = await fetchWithAuth('https://api.example.com', await env.FALLBACK_KEY.get())
+      resp = await fetchWithAuth("https://api.example.com", await env.FALLBACK_KEY.get())
     }
 
     return resp
@@ -41,15 +41,15 @@ interface Env {
 async function encryptValue(value: string, key: string): Promise<string> {
   const enc = new TextEncoder()
   const keyMaterial = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     enc.encode(key),
-    { name: 'AES-GCM' },
+    { name: "AES-GCM" },
     false,
-    ['encrypt'],
+    ["encrypt"],
   )
   const iv = crypto.getRandomValues(new Uint8Array(12))
   const encrypted = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
+    { name: "AES-GCM", iv },
     keyMaterial,
     enc.encode(value),
   )
@@ -63,8 +63,8 @@ async function encryptValue(value: string, key: string): Promise<string> {
 export default {
   async fetch(request: Request, env: Env): Promise<Response> {
     const key = await env.ENCRYPTION_KEY.get()
-    const encrypted = await encryptValue('sensitive-data', key)
-    await env.CACHE.put('user:123:data', encrypted)
+    const encrypted = await encryptValue("sensitive-data", key)
+    await env.CACHE.put("user:123:data", encrypted)
     return Response.json({ ok: true })
   },
 }
@@ -80,13 +80,13 @@ interface Env {
 async function signRequest(data: string, secret: string): Promise<string> {
   const enc = new TextEncoder()
   const key = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     enc.encode(secret),
-    { name: 'HMAC', hash: 'SHA-256' },
+    { name: "HMAC", hash: "SHA-256" },
     false,
-    ['sign'],
+    ["sign"],
   )
-  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(data))
+  const sig = await crypto.subtle.sign("HMAC", key, enc.encode(data))
   return btoa(String.fromCharCode(...new Uint8Array(sig)))
 }
 
@@ -108,16 +108,16 @@ export default {
     const startTime = Date.now()
     try {
       const apiKey = await env.API_KEY.get()
-      const resp = await fetch('https://api.example.com', {
+      const resp = await fetch("https://api.example.com", {
         headers: { Authorization: `Bearer ${apiKey}` },
       })
 
       ctx.waitUntil(
-        fetch('https://log.example.com/log', {
-          method: 'POST',
+        fetch("https://log.example.com/log", {
+          method: "POST",
           body: JSON.stringify({
-            event: 'secret_used',
-            secret_name: 'API_KEY',
+            event: "secret_used",
+            secret_name: "API_KEY",
             timestamp: new Date().toISOString(),
             duration_ms: Date.now() - startTime,
             success: resp.ok,
@@ -127,16 +127,16 @@ export default {
       return resp
     } catch (error) {
       ctx.waitUntil(
-        fetch('https://log.example.com/log', {
-          method: 'POST',
+        fetch("https://log.example.com/log", {
+          method: "POST",
           body: JSON.stringify({
-            event: 'secret_access_failed',
-            secret_name: 'API_KEY',
-            error: error instanceof Error ? error.message : 'Unknown',
+            event: "secret_access_failed",
+            secret_name: "API_KEY",
+            error: error instanceof Error ? error.message : "Unknown",
           }),
         }),
       )
-      return new Response('Error', { status: 500 })
+      return new Response("Error", { status: 500 })
     }
   },
 }
@@ -191,7 +191,7 @@ export default {
       return Response.json({ connected: true })
     } catch (error) {
       if (error instanceof SyntaxError) {
-        return new Response('Invalid config JSON', { status: 500 })
+        return new Response("Invalid config JSON", { status: 500 })
       }
       throw error
     }

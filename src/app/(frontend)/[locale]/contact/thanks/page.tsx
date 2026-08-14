@@ -1,11 +1,11 @@
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import React from 'react'
-import { CheckCircleIcon } from 'lucide-react'
+import Link from "next/link"
+import { notFound } from "next/navigation"
+import React from "react"
+import { CheckCircleIcon } from "lucide-react"
 
-import type { Metadata } from 'next'
+import type { Metadata } from "next"
 
-import { Button } from '@/project/shared/ui/button'
+import { Button } from "@/project/shared/ui/button"
 import {
   Card,
   CardContent,
@@ -13,13 +13,13 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/project/shared/ui/card'
-import { isLocale } from '@/project/shared/lib/is-locale'
-import { withLocalePrefix } from '@/project/shared/lib/with-locale-prefix'
-import { getUiDictionary } from '@/project/shared/lib/get-ui-dictionary'
-import { buildLocaleAlternates } from '@/project/shared/lib/build-locale-alternates'
-import type { Locale } from '@/project/shared/lib/locale-types'
-import '../../styles.css'
+} from "@/project/shared/ui/card"
+import { isLocale } from "@/project/shared/lib/is-locale"
+import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
+import type { Locale } from "@/project/shared/lib/locale-types"
+import "../../styles.css"
 
 type Props = {
   params: Promise<{ locale: string }>
@@ -36,7 +36,7 @@ export async function generateMetadata(props: Props): Promise<Metadata> {
   const dictionary = getUiDictionary(locale)
   return {
     title: dictionary.contact.thanksTitle,
-    alternates: { languages: buildLocaleAlternates('/contact/thanks') },
+    alternates: { languages: buildLocaleAlternates("/contact/thanks") },
   }
 }
 
@@ -65,7 +65,7 @@ export default async function ThanksPage(props: Props) {
         <CardFooter className="justify-center">
           <Button
             nativeButton={false}
-            render={<Link href={withLocalePrefix(locale, '/')} />}
+            render={<Link href={withLocalePrefix(locale, "/")} />}
             variant="outline"
           >
             {dictionary.contact.backToHome}

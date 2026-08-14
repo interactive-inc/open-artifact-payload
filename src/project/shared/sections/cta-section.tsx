@@ -1,8 +1,8 @@
-import Link from 'next/link'
-import React from 'react'
-import { ArrowRightIcon } from 'lucide-react'
+import Link from "next/link"
+import React from "react"
+import { ArrowRightIcon } from "lucide-react"
 
-import { Button } from '@/project/shared/ui/button'
+import { Button } from "@/project/shared/ui/button"
 
 type Props = {
   data: {
