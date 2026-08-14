@@ -5,6 +5,16 @@ export const testUser = {
   password: "test",
 }
 
+export const previewUser = {
+  email: "preview-e2e@payloadcms.com",
+  password: "test-password-1234",
+}
+
+export const previewMcpApiKeys = {
+  active: "preview-e2e-active-00000000-0000-4000-8000-000000000001",
+  expired: "preview-e2e-expired-00000000-0000-4000-8000-000000000002",
+}
+
 export async function getCurrentUserID(page: Page): Promise<string | number> {
   const meResponse = await page.request.get("http://localhost:3000/api/users/me")
   if (!meResponse.ok()) throw new Error(`Failed to read E2E user: ${meResponse.status()}`)

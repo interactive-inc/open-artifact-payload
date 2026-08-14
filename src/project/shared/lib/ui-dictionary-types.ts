@@ -66,6 +66,7 @@ export type UiDictionary = {
     submit: string
     submitting: string
     turnstileFailed: string
+    rateLimited: string
     serverError: string
   }
   home: {

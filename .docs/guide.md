@@ -379,6 +379,7 @@ make preview           # トップレベルのローカル専用 D1 / R2 でプ�
 - `env.production.account_id` — 配置先 Cloudflare Account ID
 - `env.production.d1_databases[0]` — `<slug>-cms` の名前、database_id、`remote: true`
 - `env.production.r2_buckets[0]` — `<slug>-cms` の名前、`remote: true`
+- `ratelimits[].namespace_id` — 同じCloudflareアカウント内の他bindingと重複しない正の整数。トップレベルと`env.production`も別IDにする
 
 トップレベルの Worker / D1 / R2 はローカル専用です。`env.production` と同じ名前やIDを設定しないでください。
 
@@ -388,7 +389,7 @@ make preview           # トップレベルのローカル専用 D1 / R2 でプ�
 
 - `PAYLOAD_SECRET` — 必須。`openssl rand -hex 32` で生成した 32 バイトのランダム文字列
 - `NEXT_PUBLIC_SERVER_URL` — ライブプレビューの URL 解決に使用。デプロイ先の URL を設定
-- `TURNSTILE_SECRET_KEY` — 問い合わせフォームの Cloudflare Turnstile 検証用 (サーバー側のみ。サイトキーは管理画面のサイト設定で入力する)
+- `TURNSTILE_SECRET_KEY` — 問い合わせフォームのCloudflare Turnstile検証用。フォームを残す本番環境では必須 (サーバー側のみ。サイトキーは管理画面のサイト設定で入力する)
 - `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メール (任意。3 つすべて設定で通知有効)
 - `SUPPORT_EMAIL` — ダッシュボードのヘルプリンク用 (任意)
 - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` — AI 翻訳で使用するプロバイダーの API キー (任意)
@@ -400,6 +401,10 @@ make preview           # トップレベルのローカル専用 D1 / R2 でプ�
 ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
 
 Turnstile の公開サイトキー (フロントエンド用) は環境変数ではなく、管理画面の「サイト設定」グローバルの `turnstileSiteKey` で設定します。サイトキーが設定されると問い合わせフォームが Turnstile ウィジェットを読み込みます。
+
+公開フォームは匿名のPayload REST/GraphQL createを使用せず、Server Actionだけを入口にします。Server Actionは入力上限・問い合わせ種別・Cloudflare Rate Limiting・Turnstileを確認してからLocal APIで保存します。既定のレートは正規化したメールアドレスとサイト識別子のSHA-256ごとに5回/60秒で、生のメールアドレスやIPアドレスをカウンターキーやログへ渡しません。CloudflareのRate Limitingは拠点ごとの近似的な制御なので、Turnstileと組み合わせた二次防御です。設定は[Cloudflare Rate Limiting API](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/)を参照してください。
+
+問い合わせ種別を案件用に変更するときは、`contact-form-constraints.ts`の`CONTACT_INQUIRY_TYPES`と、問い合わせページの表示ラベルを同時に更新してください。サーバーは定義外の値を保存しません。
 
 ### SSG モード (骨格)
 
@@ -543,11 +548,12 @@ SQLite の二重引用符フォールバック問題に注意してください�
 
 ### 問い合わせフォームが動かない
 
-`TURNSTILE_SECRET_KEY` が未設定のときはローカル開発モードとして Turnstile 検証がスキップされます。フォームが送信できない場合は以下を確認してください。
+`TURNSTILE_SECRET_KEY` が未設定のとき、検証をスキップするのはローカル開発だけです。本番では設定エラーとして保存せず、画面には再試行可能なエラーを表示します。フォームが送信できない場合は以下を確認してください。
 
 - 本番環境で `TURNSTILE_SECRET_KEY` (env) が設定されているか
 - 管理画面のサイト設定 (site-settings) で Turnstile サイトキーが入力されているか
 - Turnstile のサイトキーがドメインに紐づいているか (Cloudflare ダッシュボードで確認)
+- `wrangler.jsonc` の使用環境に `CONTACT_RATE_LIMITER` bindingがあり、`namespace_id`がアカウント内で一意か
 
 ### vp run build が失敗する
 

@@ -77,6 +77,7 @@ export const uiDictionaryJa: UiDictionary = {
     submit: "送信する",
     submitting: "送信中...",
     turnstileFailed: "スパム判定されました。もう一度お試しください",
+    rateLimited: "送信回数が上限に達しました。1分ほど待ってからもう一度お試しください",
     serverError: "送信中にエラーが発生しました。しばらく待ってからもう一度お試しください",
   },
   home: {
