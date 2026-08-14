@@ -37,7 +37,7 @@ export function SiteFooter(props: Props) {
                   className="h-8 w-auto object-contain brightness-0 invert"
                 />
               ) : (
-                <span className="text-lg font-bold tracking-tight">SAMPLE inc.</span>
+                <span className="text-lg font-bold tracking-tight">{props.settings.siteName}</span>
               )}
             </Link>
             {props.settings.companyInfo?.address ? (
@@ -48,6 +48,11 @@ export function SiteFooter(props: Props) {
             {props.settings.companyInfo?.tel ? (
               <p className="text-sm text-background/60 mt-1">
                 TEL: {props.settings.companyInfo.tel}
+              </p>
+            ) : null}
+            {props.settings.companyInfo?.fax ? (
+              <p className="text-sm text-background/60 mt-1">
+                FAX: {props.settings.companyInfo.fax}
               </p>
             ) : null}
           </div>
@@ -100,6 +105,32 @@ export function SiteFooter(props: Props) {
                   </svg>
                 </a>
               ) : null}
+              {props.settings.social?.instagram ? (
+                <a
+                  href={props.settings.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-background/60 hover:text-background transition-colors"
+                  aria-label="Instagram"
+                >
+                  <svg viewBox="0 0 24 24" className="size-5 fill-current" aria-hidden="true">
+                    <path d="M7.75 2h8.5A5.76 5.76 0 0 1 22 7.75v8.5A5.76 5.76 0 0 1 16.25 22h-8.5A5.76 5.76 0 0 1 2 16.25v-8.5A5.76 5.76 0 0 1 7.75 2Zm0 2A3.75 3.75 0 0 0 4 7.75v8.5A3.75 3.75 0 0 0 7.75 20h8.5A3.75 3.75 0 0 0 20 16.25v-8.5A3.75 3.75 0 0 0 16.25 4h-8.5Zm8.75 1.5a1 1 0 1 1 0 2 1 1 0 0 1 0-2ZM12 7a5 5 0 1 1 0 10 5 5 0 0 1 0-10Zm0 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z" />
+                  </svg>
+                </a>
+              ) : null}
+              {props.settings.social?.youtube ? (
+                <a
+                  href={props.settings.social.youtube}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-background/60 hover:text-background transition-colors"
+                  aria-label="YouTube"
+                >
+                  <svg viewBox="0 0 24 24" className="size-5 fill-current" aria-hidden="true">
+                    <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8ZM9.6 15.6V8.4L15.8 12l-6.2 3.6Z" />
+                  </svg>
+                </a>
+              ) : null}
             </div>
             <div className="mt-6">
               <Button
@@ -120,7 +151,7 @@ export function SiteFooter(props: Props) {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-sm text-background/50">
             {props.settings.footerText ??
-              `© ${currentYear} SAMPLE inc. ${dictionary.footer.defaultCopyright}`}
+              `© ${currentYear} ${props.settings.siteName} ${dictionary.footer.defaultCopyright}`}
           </p>
           {(props.settings.policyLinks ?? []).length > 0 ? (
             <nav className="flex flex-wrap gap-4">

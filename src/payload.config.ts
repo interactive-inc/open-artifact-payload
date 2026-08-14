@@ -20,6 +20,7 @@ export default buildCoreConfig({
   mcp: projectMcpConfig,
   projectCollections: [works],
   projectGlobals: [homeGlobal, aboutGlobal, serviceGlobal],
+  livePreviewCollections: ["news", "works"],
   livePreviewGlobals: ["home-page", "about", "service"],
   livePreviewUrl: (args) => {
     const base = process.env.NEXT_PUBLIC_SERVER_URL ?? "http://localhost:3000"

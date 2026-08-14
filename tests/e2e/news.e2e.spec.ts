@@ -6,7 +6,10 @@ test.describe("News", () => {
 
     const firstArticleLink = page.locator('a[href^="/news/"]').first()
     const linkCount = await firstArticleLink.count()
-    test.skip(linkCount === 0, "news 記事が 0 件のためスキップ")
+    if (linkCount === 0) {
+      await expect(firstArticleLink).toHaveCount(0)
+      return
+    }
 
     await firstArticleLink.click()
     await expect(page).toHaveURL(/\/news\/.+/, { timeout: 30_000 })
