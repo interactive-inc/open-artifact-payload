@@ -15,7 +15,7 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 - リンター & フォーマッター: vite-plus (`vp lint` / `vp check`)。設定は `vite.config.ts` に最小限のみ
 - 統合テスト: vite-plus test (vitest 互換) + @testing-library/react (`tests/int/`)。コンポーネントテストはファイル先頭の `@vitest-environment jsdom` で DOM を有効化
 - E2E テスト: Playwright / Chromium (`tests/e2e/`)。ローカル D1 が並列に弱いため workers は 1 固定
-- UI カタログ: Storybook 10 (`@storybook/nextjs-vite`) / `.storybook/`
+- UI カタログ: Storybook 10 (`@storybook/react-vite`) / `.storybook/`
 
 ## ディレクトリ構成の要点
 
@@ -121,8 +121,8 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 
 ## 設計上の非自明ポイント
 
-- `src/payload.config.ts` の Cloudflare コンテキストは `isCLI`/非 production なら `getPlatformProxy` を、本番は `getCloudflareContext` を使い分ける。CLI から `getCloudflareContext` を呼ぶと壊れるので注意。
-- wrangler.jsonc の D1 binding に `remote: true` が付いているため、`vp run build` の SSG プリレンダーは OpenNext 経由で本番のリモート D1 に接続する（`getPlatformProxy` の `remoteBindings` デフォルトが true）。ローカルで build を検証するとリモート DB を読み書きしうるので注意。リモート D1 のマイグレーションが遅れていると `no such table` で build が失敗する。先に `make deploy-db` でリモートに migrate を当てること。dev / `payload` CLI は `remoteBindings: false` でローカル D1 (`.wrangler/state/v3`) を使うため影響しない。
+- `src/core/payload/config-base.ts` の Cloudflare コンテキストは、OpenNext が注入済みなら `getCloudflareContext`、それ以外は `getPlatformProxy` を使う。Next dev は `next.config.ts` でローカル binding を注入する。CLI は production のときだけ `remoteBindings: true`、dev・テスト・ビルド時の fallback はローカル binding を使う。
+- wrangler.jsonc の D1 binding に `remote: true` があっても、`vp run build` の SSG プリレンダーはリモート D1 に接続しない。ビルドは Cloudflare アカウントや本番 DB の状態に依存せず、ローカル D1 (`.wrangler/state/v3`) を使う。デプロイ済み Worker は実行環境から渡された D1 / R2 binding を使い、production CLI で明示的に操作する場合のみリモート binding を使う。
 - 案件固有の Global は `src/project/pages/<page>/global.ts` に置き、`src/payload.config.ts` の `projectGlobals` に import 追加する。export 名は `<name>Global`（例 `homeGlobal`）。
 - 案件固有のコレクションは `src/project/collections/*.ts` に置き、`projectCollections` に追加する。
 - `src/payload-types.ts` は `vp run generate:types` で再生成する。手で書き換えない。

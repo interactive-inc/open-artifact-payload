@@ -48,6 +48,7 @@ const isCLI = process.argv.some((value) =>
   realpath(value)?.endsWith(path.join("payload", "bin.js")),
 )
 const isProduction = process.env.NODE_ENV === "production"
+const hasOpenNextCloudflareContext = Reflect.has(globalThis, Symbol.for("__cloudflare-context__"))
 
 // 本番で PAYLOAD_SECRET が未設定のまま空文字で起動すると認証トークンの署名が無防備になる。
 // 空文字へ暗黙フォールバックせず、本番では明示的に起動を失敗させる。
@@ -90,12 +91,12 @@ const cloudflareLogger = {
   silent: () => {},
 } as unknown as Config["logger"]
 
-function getCloudflareContextFromWrangler(): Promise<CloudflareContext> {
+function getCloudflareContextFromWrangler(remoteBindings = false): Promise<CloudflareContext> {
   return import(/* webpackIgnore: true */ `${"__wrangler".replaceAll("_", "")}`).then(
     ({ getPlatformProxy }) =>
       getPlatformProxy({
         environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings: isProduction,
+        remoteBindings,
       } satisfies GetPlatformProxyOptions),
   )
 }
@@ -126,10 +127,15 @@ const buildDefaultLivePreviewUrl =
   }
 
 export async function buildCoreConfig(props: BuildCoreConfigProps) {
-  const cloudflare =
-    isCLI || !isProduction
-      ? await getCloudflareContextFromWrangler()
-      : await getCloudflareContext({ async: true })
+  // Next/WorkerではOpenNextが共有するコンテキストを使う。Vitestや単独スクリプトは
+  // Nextの初期化を通らないため、Wranglerからローカルbindingを直接取得する。
+  // SSG workerにも本番bindingを要求するとビルドがCloudflareアカウントへ依存するため、
+  // OpenNextが実際にコンテキストを注入した場合だけ共有bindingを利用する。
+  const cloudflare = isCLI
+    ? await getCloudflareContextFromWrangler(isProduction)
+    : hasOpenNextCloudflareContext
+      ? await getCloudflareContext({ async: true })
+      : await getCloudflareContextFromWrangler()
 
   const enableAiTranslation = props.features.enableAiTranslation
 

@@ -2,6 +2,7 @@ import { draftMode } from "next/headers"
 import { redirect } from "next/navigation"
 import { getPayload } from "payload"
 
+import { isUserAccountSession } from "@/core/lib/access/is-user-account"
 import config from "@/payload.config"
 
 // オープンリダイレクト防止: 自サイト内の相対パスのみ許可する。
@@ -24,7 +25,7 @@ export async function GET(request: Request) {
   const payload = await getPayload({ config: payloadConfig })
   const auth = await payload.auth({ headers: request.headers })
 
-  if (!auth.user) {
+  if (!isUserAccountSession(auth.user)) {
     return new Response("Unauthorized", { status: 401 })
   }
 

@@ -1,0 +1,42 @@
+{
+  "$schema": "../../../node_modules/wrangler/config-schema.json",
+  "main": "worker.ts",
+  "name": "cloudflare-config-fixture-local",
+  "account_id": "0123456789abcdef0123456789abcdef",
+  "compatibility_date": "2025-08-15",
+  "d1_databases": [
+    {
+      "binding": "D1",
+      "database_name": "cloudflare-config-fixture-local-cms",
+      "remote": false,
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "cloudflare-config-fixture-local-cms",
+      "remote": false,
+    },
+  ],
+  "env": {
+    "production": {
+      "name": "cloudflare-config-fixture",
+      "account_id": "0123456789abcdef0123456789abcdef",
+      "d1_databases": [
+        {
+          "binding": "D1",
+          "database_id": "12345678-1234-4234-8234-123456789abc",
+          "database_name": "cloudflare-config-fixture-cms",
+          "remote": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "cloudflare-config-fixture-cms",
+          "remote": true,
+        },
+      ],
+    },
+  },
+}

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { exampleSiteSettings } from "@/core/test-support/example-site-settings"
 
@@ -9,6 +9,7 @@ const meta: Meta<typeof SiteHeader> = {
   component: SiteHeader,
   tags: ["autodocs"],
   args: {
+    locale: "ja",
     settings: exampleSiteSettings,
   },
 }

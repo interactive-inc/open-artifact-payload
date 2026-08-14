@@ -1,9 +1,8 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "main": ".open-next/worker.js",
-  "name": "open-artifact-payload",
-  // 製品開発本部アカウント。複数アカウントに所属する環境で非対話デプロイを成立させるため明示
-  "account_id": "9acefc4e7cfd25ff42cf1213f469f775",
+  // トップレベルはローカル専用。`vp run setup:project` が案件 slug に更新する
+  "name": "open-artifact-payload-local",
   "compatibility_date": "2025-08-15",
   "compatibility_flags": [
     // Enable Node.js API
@@ -20,23 +19,23 @@
   "d1_databases": [
     {
       "binding": "D1",
-      // `bun run setup:project` で自動置換される。手動セットアップの場合は `wrangler d1 create <name>` で生成された ID を貼る
-      "database_id": "eabbe0ed-1d16-48de-b5cf-728e23a91a42",
-      "database_name": "open-artifact-payload",
-      "remote": true,
+      // ローカルD1は database_id を持たせず、誤デプロイ時に本番D1へ接続できないようにする
+      "database_name": "open-artifact-payload-local-cms",
+      "remote": false,
     },
   ],
   "services": [
     // The service should match the "name" of your worker
     // {
     //   "binding": "WORKER_SELF_REFERENCE",
-    //   "service": "open-artifact-payload"
+    //   "service": "<WORKER_NAME>"
     // },
   ],
   "r2_buckets": [
     {
       "binding": "R2",
-      "bucket_name": "open-artifact-payload",
+      "bucket_name": "open-artifact-payload-local-cms",
+      "remote": false,
     },
     // Create a R2 binding with the binding name "NEXT_INC_CACHE_R2_BUCKET"
     // {
@@ -57,8 +56,8 @@
     },
   ],
 
-  // 本番環境。`CLOUDFLARE_ENV=production` 指定時に使われる。
-  // wrangler は環境を指定するとトップレベルの bindings を継承しないため、同じ値を再掲する
+  // 本番環境。セットアップ完了まで account_id は未設定、database_id はプレースホルダーにして誤デプロイを防ぐ。
+  // wrangler は環境を指定するとトップレベルの bindings を継承しないため、本番値を明示する。
   "env": {
     "production": {
       "name": "open-artifact-payload",
@@ -66,15 +65,17 @@
       "d1_databases": [
         {
           "binding": "D1",
-          "database_id": "eabbe0ed-1d16-48de-b5cf-728e23a91a42",
-          "database_name": "open-artifact-payload",
+          // `vp run setup:project` で作成または手動作成後に設定する
+          "database_id": "<D1_DATABASE_ID>",
+          "database_name": "open-artifact-payload-cms",
           "remote": true,
         },
       ],
       "r2_buckets": [
         {
           "binding": "R2",
-          "bucket_name": "open-artifact-payload",
+          "bucket_name": "open-artifact-payload-cms",
+          "remote": true,
         },
       ],
       "ratelimits": [

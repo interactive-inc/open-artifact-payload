@@ -11,6 +11,13 @@ import "dotenv/config"
  */
 export default defineConfig({
   testDir: "./tests/e2e",
+  // Next/Payloadのcold compileをbeforeAllやnavigationの30秒枠に含めても
+  // 各テストが途中で打ち切られないようにする。
+  timeout: 120_000,
+  expect: {
+    timeout: 30_000,
+  },
+  globalTeardown: "./tests/e2e/global-teardown.ts",
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
@@ -34,8 +41,14 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: "bun dev",
-    reuseExistingServer: true,
+    // Next devと同時に別のMiniflareを開くとローカルD1が競合するため、
+    // E2Eユーザーはサーバー起動前に準備して接続を閉じる。
+    command: "vp exec tsx tests/helpers/seed-user-cli.ts && bun dev",
+    env: {
+      PAYLOAD_SECRET: process.env.PAYLOAD_SECRET ?? "test-secret-do-not-use-in-production",
+    },
+    reuseExistingServer: false,
+    timeout: 120_000,
     url: "http://localhost:3000",
   },
 })
