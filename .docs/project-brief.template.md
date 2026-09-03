@@ -3,7 +3,7 @@
 - クライアント:
 - 業種:
 - 目的:
-- 納品先: (cloudflare / ssg)
+- 納品先: (Cloudflare Workers の Worker 名 / ドメイン)
 
 # サイトマップ
 

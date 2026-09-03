@@ -24,7 +24,7 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 
 ## セットアップ
 
-前提: bun 1.3+ / wrangler CLI / Cloudflare アカウント
+前提: Node.js 22.18+ または 24.11+ / bun 1.3+ / wrangler CLI / Cloudflare アカウント
 
 ```bash
 vp install
@@ -64,7 +64,7 @@ vp run dev
 - [ ] 本番シークレットを登録する（`PAYLOAD_SECRET` と、問い合わせフォームを残す場合の `TURNSTILE_SECRET_KEY` は必須。Resend は通知を使う場合のみ）
 - [ ] `wrangler.jsonc` の `CONTACT_RATE_LIMITER` の `namespace_id` がCloudflareアカウント内で一意か確認する
 - [ ] `.env` の `NEXT_PUBLIC_SERVER_URL` を本番ドメインにする（ビルド時に焼き込まれ、sitemap / OG の URL が参照する）
-- [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だとビルドが `no such table` で落ちる）
+- [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だと、新しいスキーマを前提にしたアプリが本番で `no such table` になる。ビルド自体はローカル D1 を使うためリモートの状態に依存しない）
 - [ ] Workers に独自ドメインを設定する
 
 任意・判断が必要:
