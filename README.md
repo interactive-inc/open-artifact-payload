@@ -70,7 +70,7 @@ vp run dev
 任意・判断が必要:
 
 - [ ] 問い合わせフォームを残す場合はTurnstileサイトキーをサイト設定に、`TURNSTILE_SECRET_KEY`をSecret Storeに登録する（本番の設定不足はfail-closed）
-- [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` の3つが揃ったときのみ送信される
+- [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` と `CONTACT_NOTIFICATION_EMAIL` が揃ったときに送信される（送信元は `EMAIL_FROM`、無ければ `CONTACT_NOTIFICATION_FROM`）
 - [ ] staging 環境が必要なら `wrangler.jsonc` の `env.staging` に staging 用 D1 / R2 を設定して `make deploy CLOUDFLARE_ENV=staging`
 - [ ] `.docs/tasks.md` の「人間の判断が必要なタスク」を一読して、デフォルトのままでよいか確認する
 
