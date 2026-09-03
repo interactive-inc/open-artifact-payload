@@ -1,5 +1,6 @@
 import { test, expect, Page } from "@playwright/test"
 import { login } from "../helpers/login"
+import { e2eFixtures } from "../helpers/e2e-fixtures"
 import { getCurrentUserID, testUser } from "../helpers/seed-user"
 
 async function gotoAdminPage(page: Page, url: string): Promise<void> {
@@ -17,6 +18,23 @@ async function gotoAdminPage(page: Page, url: string): Promise<void> {
   }
 
   await page.waitForURL((currentURL) => currentURL.pathname === expectedPath, { timeout: 60_000 })
+}
+
+function readDocumentID(body: unknown): number | string | undefined {
+  if (body === null || typeof body !== "object" || !("doc" in body)) return undefined
+
+  const doc = body.doc
+  if (doc === null || typeof doc !== "object" || !("id" in doc)) return undefined
+  if (typeof doc.id === "string" || typeof doc.id === "number") return doc.id
+
+  return undefined
+}
+
+function readDocumentCount(body: unknown): number | undefined {
+  if (body === null || typeof body !== "object" || !("docs" in body)) return undefined
+  if (!Array.isArray(body.docs)) return undefined
+
+  return body.docs.length
 }
 
 async function gotoCollectionCreate(page: Page, slug: string): Promise<void> {
@@ -81,8 +99,11 @@ test.describe("Admin Panel", () => {
   })
 
   test("can navigate to list view", async () => {
-    await gotoAdminPage(page, "http://localhost:3000/admin/collections/users")
-    await expect(page).toHaveURL("http://localhost:3000/admin/collections/users")
+    const listURL = "http://localhost:3000/admin/collections/users"
+
+    await gotoAdminPage(page, listURL)
+    // 一覧ビューは表示設定 (depth / limit) をクエリに追記するため pathname だけで判定する
+    await expect(page).toHaveURL((currentURL) => currentURL.pathname === new URL(listURL).pathname)
     const listViewArtifact = page.locator("h1", { hasText: "ユーザー一覧" }).first()
     await expect(listViewArtifact).toBeVisible()
   })
@@ -164,43 +185,30 @@ test.describe("Admin Panel", () => {
     }
   })
 
+  // DB は実行ごとに作り直すため、書き換えた値を UI 操作で戻さない。
+  // テストの独立性は fixture を起点にした一意な marker で保つ。
   test("サイト名の保存内容が公開ヘッダーとフッターへ反映される", async () => {
     const settingsURL = "http://localhost:3000/admin/globals/site-settings"
     const siteNameInput = page.locator('input[name="siteName"]')
+    const marker = `${e2eFixtures.siteName} [QA-${Date.now()}]`
 
     await gotoAdminPage(page, settingsURL)
     await expect(page).toHaveURL(settingsURL)
     await expect(siteNameInput).toBeVisible({ timeout: 60_000 })
-    const originalSiteName = await siteNameInput.inputValue()
-    const restoreSiteName = originalSiteName || "Open Artifact Payload"
-    const marker = `${restoreSiteName} [QA-${Date.now()}]`
+    await expect(siteNameInput).toHaveValue(e2eFixtures.siteName)
 
-    try {
-      await siteNameInput.fill(marker)
-      const saveResponsePromise = page.waitForResponse(
-        (response) =>
-          new URL(response.url()).pathname === "/api/globals/site-settings" &&
-          response.request().method() !== "GET",
-      )
-      await page.getByRole("button", { name: "保存", exact: true }).click()
-      const saveResponse = await saveResponsePromise
-      expect(saveResponse.ok()).toBe(true)
+    await siteNameInput.fill(marker)
+    const saveResponsePromise = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/globals/site-settings" &&
+        response.request().method() !== "GET",
+    )
+    await page.getByRole("button", { name: "保存", exact: true }).click()
+    const saveResponse = await saveResponsePromise
+    expect(saveResponse.ok()).toBe(true)
 
-      await page.goto("http://localhost:3000/")
-      await expect(page.getByText(marker, { exact: true })).toHaveCount(2)
-    } finally {
-      await gotoAdminPage(page, settingsURL)
-      await expect(siteNameInput).toBeVisible({ timeout: 60_000 })
-      await siteNameInput.fill(restoreSiteName)
-      const restoreResponsePromise = page.waitForResponse(
-        (response) =>
-          new URL(response.url()).pathname === "/api/globals/site-settings" &&
-          response.request().method() !== "GET",
-      )
-      await page.getByRole("button", { name: "保存", exact: true }).click()
-      const restoreResponse = await restoreResponsePromise
-      expect(restoreResponse.ok()).toBe(true)
-    }
+    await page.goto("http://localhost:3000/")
+    await expect(page.getByText(marker, { exact: true })).toHaveCount(2)
   })
 
   test("トップページの下書きがライブプレビューへ反映される", async () => {
@@ -209,7 +217,7 @@ test.describe("Admin Panel", () => {
 
     await gotoAdminPage(page, homeURL)
     await expect(heroTitleInput).toBeVisible({ timeout: 60_000 })
-    const originalTitle = await heroTitleInput.inputValue()
+    await expect(heroTitleInput).toHaveValue(e2eFixtures.homeHeroTitle)
     const marker = `ライブプレビュー QA ${Date.now()}`
     const previewFrame = page.locator("iframe").first()
 
@@ -217,39 +225,25 @@ test.describe("Admin Panel", () => {
     await expect(previewFrame).toBeVisible({ timeout: 20_000 })
     await expect(previewFrame).toHaveAttribute("src", /\/next\/preview\?path=%2F/)
 
-    try {
-      await heroTitleInput.fill(marker)
-      const saveResponsePromise = page.waitForResponse(
-        (response) =>
-          new URL(response.url()).pathname === "/api/globals/home-page" &&
-          response.request().method() !== "GET",
-      )
-      await page.getByRole("button", { name: "ドラフトを保存", exact: true }).click()
-      const saveResponse = await saveResponsePromise
-      expect(saveResponse.ok()).toBe(true)
+    await heroTitleInput.fill(marker)
+    const saveResponsePromise = page.waitForResponse(
+      (response) =>
+        new URL(response.url()).pathname === "/api/globals/home-page" &&
+        response.request().method() !== "GET",
+    )
+    await page.getByRole("button", { name: "ドラフトを保存", exact: true }).click()
+    const saveResponse = await saveResponsePromise
+    expect(saveResponse.ok()).toBe(true)
 
-      await expect(
-        previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
-      ).toBeVisible({ timeout: 20_000 })
-    } finally {
-      await gotoAdminPage(page, homeURL)
-      await expect(heroTitleInput).toBeVisible({ timeout: 20_000 })
-      await heroTitleInput.fill(originalTitle)
-      const restoreResponsePromise = page.waitForResponse(
-        (response) =>
-          new URL(response.url()).pathname === "/api/globals/home-page" &&
-          response.request().method() !== "GET",
-      )
-      await page.getByRole("button", { name: "ドラフトを保存", exact: true }).click()
-      const restoreResponse = await restoreResponsePromise
-      expect(restoreResponse.ok()).toBe(true)
-    }
+    await expect(
+      previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
+    ).toBeVisible({ timeout: 20_000 })
   })
 
   test("会社概要とサービスの下書きが各ライブプレビューへ反映される", async () => {
     const cases = [
-      { slug: "about", previewPath: "%2Fabout" },
-      { slug: "service", previewPath: "%2Fservice" },
+      { slug: "about", previewPath: "%2Fabout", fixtureTitle: e2eFixtures.aboutHeroTitle },
+      { slug: "service", previewPath: "%2Fservice", fixtureTitle: e2eFixtures.serviceHeroTitle },
     ] as const
 
     for (const testCase of cases) {
@@ -258,7 +252,7 @@ test.describe("Admin Panel", () => {
 
       await gotoAdminPage(page, editURL)
       await expect(titleInput).toBeVisible({ timeout: 20_000 })
-      const originalTitle = await titleInput.inputValue()
+      await expect(titleInput).toHaveValue(testCase.fixtureTitle)
       const marker = `${testCase.slug} ライブプレビュー QA ${Date.now()}`
       const previewFrame = page.locator("iframe").first()
 
@@ -269,33 +263,19 @@ test.describe("Admin Panel", () => {
         new RegExp(`/next/preview\\?path=${testCase.previewPath}`),
       )
 
-      try {
-        await titleInput.fill(marker)
-        const saveResponsePromise = page.waitForResponse(
-          (response) =>
-            new URL(response.url()).pathname === `/api/globals/${testCase.slug}` &&
-            response.request().method() !== "GET",
-        )
-        await page.getByRole("button", { name: "ドラフトを保存", exact: true }).click()
-        const saveResponse = await saveResponsePromise
-        expect(saveResponse.ok()).toBe(true)
+      await titleInput.fill(marker)
+      const saveResponsePromise = page.waitForResponse(
+        (response) =>
+          new URL(response.url()).pathname === `/api/globals/${testCase.slug}` &&
+          response.request().method() !== "GET",
+      )
+      await page.getByRole("button", { name: "ドラフトを保存", exact: true }).click()
+      const saveResponse = await saveResponsePromise
+      expect(saveResponse.ok()).toBe(true)
 
-        await expect(
-          previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
-        ).toBeVisible({ timeout: 20_000 })
-      } finally {
-        await gotoAdminPage(page, editURL)
-        await expect(titleInput).toBeVisible({ timeout: 20_000 })
-        await titleInput.fill(originalTitle)
-        const restoreResponsePromise = page.waitForResponse(
-          (response) =>
-            new URL(response.url()).pathname === `/api/globals/${testCase.slug}` &&
-            response.request().method() !== "GET",
-        )
-        await page.getByRole("button", { name: "ドラフトを保存", exact: true }).click()
-        const restoreResponse = await restoreResponsePromise
-        expect(restoreResponse.ok()).toBe(true)
-      }
+      await expect(
+        previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
+      ).toBeVisible({ timeout: 20_000 })
     }
   })
 
@@ -311,80 +291,71 @@ test.describe("Admin Panel", () => {
       const documentSlug = `qa-${testCase.slug}-${unique}`
       let documentID: number | string | undefined
 
-      try {
-        await gotoCollectionCreate(page, testCase.slug)
-        const titleInput = page.locator('input[name="title"]')
-        const slugInput = page.locator('input[name="slug"]')
-        const publishedAtInput = page.locator("main").getByRole("textbox").nth(2)
-        await expect(titleInput).toBeVisible({ timeout: 60_000 })
-        await expect(publishedAtInput).toBeVisible({ timeout: 60_000 })
+      await gotoCollectionCreate(page, testCase.slug)
+      const titleInput = page.locator('input[name="title"]')
+      const slugInput = page.locator('input[name="slug"]')
+      const publishedAtInput = page.locator("main").getByRole("textbox").nth(2)
+      await expect(titleInput).toBeVisible({ timeout: 60_000 })
+      await expect(publishedAtInput).toBeVisible({ timeout: 60_000 })
 
-        const currentPath = new URL(page.url()).pathname
-        const autoSavedID = currentPath.match(
-          new RegExp(`/admin/collections/${testCase.slug}/([^/]+)$`),
-        )?.[1]
-        if (autoSavedID && autoSavedID !== "create") documentID = autoSavedID
+      const currentPath = new URL(page.url()).pathname
+      const autoSavedID = currentPath.match(
+        new RegExp(`/admin/collections/${testCase.slug}/([^/]+)$`),
+      )?.[1]
+      if (autoSavedID && autoSavedID !== "create") documentID = autoSavedID
 
-        const saveResponsePromise = page.waitForResponse((response) => {
-          const responsePath = new URL(response.url()).pathname
-          const method = response.request().method()
-          return (
-            (responsePath === `/api/${testCase.slug}` ||
-              responsePath.startsWith(`/api/${testCase.slug}/`)) &&
-            (method === "POST" || method === "PATCH")
-          )
-        })
-        await titleInput.fill(marker)
-        await slugInput.fill(documentSlug)
-        await publishedAtInput.fill(testCase.publishedAt)
-        await publishedAtInput.press("Escape")
-        const saveResponse = await saveResponsePromise
-        expect(saveResponse.ok()).toBe(true)
-        const savedDocument = (await saveResponse.json()) as { doc?: { id?: number | string } }
-        documentID = savedDocument.doc?.id ?? documentID
-        expect(documentID).toBeDefined()
-
-        const previewFrame = page.locator("iframe").first()
-        await page.getByRole("button", { name: "プレビュー", exact: true }).click()
-        await expect(previewFrame).toBeVisible({ timeout: 20_000 })
-        await expect(previewFrame).toHaveAttribute(
-          "src",
-          new RegExp(`/next/preview\\?path=%2F${testCase.slug}%2F${documentSlug}`),
+      const saveResponsePromise = page.waitForResponse((response) => {
+        const responsePath = new URL(response.url()).pathname
+        const method = response.request().method()
+        return (
+          (responsePath === `/api/${testCase.slug}` ||
+            responsePath.startsWith(`/api/${testCase.slug}/`)) &&
+          (method === "POST" || method === "PATCH")
         )
+      })
+      await titleInput.fill(marker)
+      await slugInput.fill(documentSlug)
+      await publishedAtInput.fill(testCase.publishedAt)
+      await publishedAtInput.press("Escape")
+      const saveResponse = await saveResponsePromise
+      expect(saveResponse.ok()).toBe(true)
+      const savedDocument: unknown = await saveResponse.json()
+      documentID = readDocumentID(savedDocument) ?? documentID
+      expect(documentID).toBeDefined()
 
-        await expect(
-          previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
-        ).toBeVisible({ timeout: 20_000 })
+      const previewFrame = page.locator("iframe").first()
+      await page.getByRole("button", { name: "プレビュー", exact: true }).click()
+      await expect(previewFrame).toBeVisible({ timeout: 20_000 })
+      await expect(previewFrame).toHaveAttribute(
+        "src",
+        new RegExp(`/next/preview\\?path=%2F${testCase.slug}%2F${documentSlug}`),
+      )
 
-        if (testCase.slug === "works") {
-          const browser = page.context().browser()
-          expect(browser).not.toBeNull()
-          if (browser) {
-            const anonymousContext = await browser.newContext()
-            const anonymousPage = await anonymousContext.newPage()
-            try {
-              await anonymousPage.goto("http://localhost:3000/works")
-              await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
-              await anonymousPage.goto("http://localhost:3000/")
-              await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
+      await expect(
+        previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
+      ).toBeVisible({ timeout: 20_000 })
 
-              const apiResponse = await anonymousContext.request.get(
-                `http://localhost:3000/api/works?where[slug][equals]=${documentSlug}`,
-              )
-              expect(apiResponse.ok()).toBe(true)
-              const apiResult = (await apiResponse.json()) as { docs?: unknown[] }
-              expect(apiResult.docs).toEqual([])
-            } finally {
-              await anonymousContext.close()
-            }
+      if (testCase.slug === "works") {
+        const browser = page.context().browser()
+        expect(browser).not.toBeNull()
+        if (browser) {
+          const anonymousContext = await browser.newContext()
+          const anonymousPage = await anonymousContext.newPage()
+          try {
+            await anonymousPage.goto("http://localhost:3000/works")
+            await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
+            await anonymousPage.goto("http://localhost:3000/")
+            await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
+
+            const apiResponse = await anonymousContext.request.get(
+              `http://localhost:3000/api/works?where[slug][equals]=${documentSlug}`,
+            )
+            expect(apiResponse.ok()).toBe(true)
+            const apiResult: unknown = await apiResponse.json()
+            expect(readDocumentCount(apiResult)).toBe(0)
+          } finally {
+            await anonymousContext.close()
           }
-        }
-      } finally {
-        if (documentID !== undefined) {
-          const response = await page
-            .context()
-            .request.delete(`http://localhost:3000/api/${testCase.slug}/${documentID}`)
-          expect(response.ok()).toBe(true)
         }
       }
     }

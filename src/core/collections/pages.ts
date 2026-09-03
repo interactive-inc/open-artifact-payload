@@ -5,6 +5,8 @@ import { isAuthenticated } from "@/core/lib/access/is-authenticated"
 import { publishedOrAuthenticated } from "@/core/lib/access/published-or-authenticated"
 import { buildCollectionRevalidateAfterChange } from "@/core/lib/revalidate/build-collection-revalidate-after-change"
 import { buildCollectionRevalidateAfterDelete } from "@/core/lib/revalidate/build-collection-revalidate-after-delete"
+import { SHORT_TEXT_MAX_LENGTH, SLUG_MAX_LENGTH } from "@/core/lib/validation/text-limits"
+import { validatePageSlug } from "@/core/lib/validation/validate-page-slug"
 
 type PageDoc = { slug?: string }
 
@@ -38,6 +40,7 @@ export const pages: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      maxLength: SHORT_TEXT_MAX_LENGTH,
     },
     {
       name: "slug",
@@ -45,6 +48,12 @@ export const pages: CollectionConfig = {
       type: "text",
       required: true,
       unique: true,
+      maxLength: SLUG_MAX_LENGTH,
+      validate: validatePageSlug,
+      admin: {
+        description:
+          "半角小文字の英数字とハイフンのみ。/news や /about など既存ルートと同じ値は使えません。",
+      },
     },
     {
       name: "body",

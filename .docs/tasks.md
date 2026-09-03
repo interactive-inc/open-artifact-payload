@@ -54,7 +54,7 @@
 
 ### 本番シークレットと環境変数の登録
 
-判断事項: 本番デプロイ前に以下を登録してください。`PAYLOAD_SECRET` (必須)、`NEXT_PUBLIC_SERVER_URL` (ライブプレビュー / メタ URL 解決用)、`TURNSTILE_SECRET_KEY` (Turnstile 採用時)、`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` (問い合わせ通知メール採用時)、`SUPPORT_EMAIL` (管理画面ヘルプリンク)。本番では未設定の `PAYLOAD_SECRET` で起動失敗するよう変更済みです。
+判断事項: 本番デプロイ前に以下を登録してください。`PAYLOAD_SECRET` (必須)、`NEXT_PUBLIC_SERVER_URL` (ライブプレビュー / メタ URL 解決用)、`TURNSTILE_SECRET_KEY` (Turnstile 採用時)、`RESEND_API_KEY` / `EMAIL_FROM` (認証メール・問い合わせ通知メール採用時)、`CONTACT_NOTIFICATION_EMAIL` (問い合わせ通知メール採用時)、`SUPPORT_EMAIL` (管理画面ヘルプリンク)。本番では未設定の `PAYLOAD_SECRET` で起動失敗するよう変更済みです。
 
 ### 最初の管理者ユーザーのロール
 

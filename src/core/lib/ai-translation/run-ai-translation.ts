@@ -5,6 +5,7 @@ import { canUpdateTranslationTarget } from "@/core/lib/ai-translation/can-update
 import { checkUsageLimits } from "@/core/lib/ai-translation/check-usage-limits"
 import { createAiTranslationLog } from "@/core/lib/ai-translation/create-ai-translation-log"
 import { estimateTranslationCost } from "@/core/lib/ai-translation/estimate-translation-cost"
+import { expireStalePendingLogs } from "@/core/lib/ai-translation/expire-stale-pending-logs"
 import { extractTranslatableFields } from "@/core/lib/ai-translation/extract-translatable-fields"
 import { fetchTranslationDocument } from "@/core/lib/ai-translation/fetch-translation-document"
 import { filterUntranslatedFields } from "@/core/lib/ai-translation/filter-untranslated-fields"
@@ -42,11 +43,14 @@ export type AiTranslationSummary = {
 const promptOverheadTokens = 1500
 
 /**
- * AI翻訳の一連の流れ（設定確認 → 権限付き取得 → 抽出 → 更新権限の事前確認 → 上限判定 →
- * pending 予約 → 翻訳 → 検証 → 楽観ロック → 保存 → 監査ログ確定）。
+ * AI翻訳の一連の流れ（設定確認 → 権限付き取得 → 抽出 → 更新権限の事前確認 → pending 予約 →
+ * 上限判定 → 翻訳 → 検証 → 楽観ロック → 保存 → 監査ログ確定）。
  * どの段階で失敗しても既存データは変更せず、Error を返す。
- * pending 行を先に作ることで、並行リクエストが互いの実行を上限・クールダウン集計で見られる
- * （完全な原子性ではないが、競合窓を AI 呼び出しの 90 秒からミリ秒単位まで縮める）。
+ * 判定より先に pending の予約行を作り、集計では「自分の予約 id より前の予約」だけを数える。
+ * id は挿入順に増え、先に挿入された行は必ずコミット済みなので、同時に来た実行が同じ残枠を
+ * 二重に使うこと（上限超過）は起きない。
+ * 逆に、拒否された予約が rejected へ確定するまでの短い間はそれを数えてしまうため、
+ * 本来通せた実行が拒否されることはありうる。上限を守る側に倒した設計。
  */
 export async function runAiTranslation(props: Props): Promise<AiTranslationSummary | Error> {
   const now = props.now ?? new Date()
@@ -183,45 +187,6 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     return new Error(reason)
   }
 
-  const snapshot = await loadUsageSnapshot({
-    payload: props.payload,
-    userId: props.user.id,
-    targetKind: request.targetKind,
-    targetSlug: request.targetSlug,
-    targetId: request.targetId,
-    targetLocale: targetLocaleCode,
-    now,
-  })
-  // 今回の実行費用の概算。日本語原文はほぼ 1文字=1トークン、出力も同規模 + プロンプト分とみなす
-  const projectedCostUsd = estimateTranslationCost({
-    model: settings.model,
-    inputTokens: characterCount + promptOverheadTokens,
-    outputTokens: characterCount,
-  })
-  const verdict = checkUsageLimits({
-    snapshot,
-    limits: settings.limits,
-    requestedCharacterCount: characterCount,
-    projectedCostUsd,
-    now,
-  })
-
-  if (!verdict.allowed) {
-    await createAiTranslationLog({
-      payload: props.payload,
-      entry: {
-        ...logBase,
-        status: "rejected",
-        inputTokens: 0,
-        outputTokens: 0,
-        estimatedCostUsd: 0,
-        errorMessage: verdict.reason,
-      },
-    })
-
-    return new Error(verdict.reason)
-  }
-
   // translateFn を DI している場合（テスト等）は実プロバイダを呼ばないため API キー不要
   const apiKey = process.env[settings.model.apiKeyEnvName] ?? ""
 
@@ -243,9 +208,19 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     return new Error(reason)
   }
 
-  // API 呼び出しの予約行。並行リクエストはこの行を集計に含めて見るため、
-  // 上限・クールダウンの同時すり抜けを防げる。費用も見込み額で予約し、finalize で実費に置換する
-  const pendingLogId = await createAiTranslationLog({
+  // 異常終了で pending のまま残った予約を先に回収し、上限を無期限に占有させない
+  await expireStalePendingLogs({ payload: props.payload, now })
+
+  // 今回の実行費用の概算。日本語原文はほぼ 1文字=1トークン、出力も同規模 + プロンプト分とみなす
+  const projectedCostUsd = estimateTranslationCost({
+    model: settings.model,
+    inputTokens: characterCount + promptOverheadTokens,
+    outputTokens: characterCount,
+  })
+
+  // API 呼び出しの予約行。判定より先に作ることで、並行リクエストは自分より前の予約を
+  // 必ず集計に含められる。費用も見込み額で予約し、finalize で実費に置換する
+  const reservedLogId = await createAiTranslationLog({
     payload: props.payload,
     entry: {
       ...logBase,
@@ -257,28 +232,62 @@ export async function runAiTranslation(props: Props): Promise<AiTranslationSumma
     },
   })
 
+  // 予約できない実行を通すと上限の集計から漏れるため、AI を呼ばずに中止する
+  if (reservedLogId === null) {
+    return new Error("AI翻訳の実行を記録できないため中止しました。時間をおいて再実行してください")
+  }
+
   const finalize = async (outcome: {
-    status: "succeeded" | "failed"
+    status: "succeeded" | "failed" | "rejected"
     inputTokens: number
     outputTokens: number
     estimatedCostUsd: number
     errorMessage: string | null
   }) => {
-    if (pendingLogId !== null) {
-      await finalizeAiTranslationLog({
-        payload: props.payload,
-        logId: pendingLogId,
-        status: outcome.status,
-        inputTokens: outcome.inputTokens,
-        outputTokens: outcome.outputTokens,
-        estimatedCostUsd: outcome.estimatedCostUsd,
-        translatedFieldCount: logBase.translatedFieldCount,
-        errorMessage: outcome.errorMessage,
-      })
-      return
-    }
+    await finalizeAiTranslationLog({
+      payload: props.payload,
+      logId: reservedLogId,
+      status: outcome.status,
+      inputTokens: outcome.inputTokens,
+      outputTokens: outcome.outputTokens,
+      estimatedCostUsd: outcome.estimatedCostUsd,
+      translatedFieldCount: logBase.translatedFieldCount,
+      errorMessage: outcome.errorMessage,
+    })
+  }
 
-    await createAiTranslationLog({ payload: props.payload, entry: { ...logBase, ...outcome } })
+  const rejectedUsage = { inputTokens: 0, outputTokens: 0, estimatedCostUsd: 0 }
+  // 自分の予約より前に予約された実行だけを数える。id は挿入順に増えるため、
+  // 先に予約した実行は必ず見え、同時に来た実行が同じ残枠を二重に使うことはない
+  const snapshot = await loadUsageSnapshot({
+    payload: props.payload,
+    userId: props.user.id,
+    targetKind: request.targetKind,
+    targetSlug: request.targetSlug,
+    targetId: request.targetId,
+    targetLocale: targetLocaleCode,
+    beforeLogId: reservedLogId,
+    now,
+  })
+
+  if (snapshot instanceof Error) {
+    await finalize({ ...rejectedUsage, status: "rejected", errorMessage: snapshot.message })
+
+    return snapshot
+  }
+
+  const verdict = checkUsageLimits({
+    snapshot,
+    limits: settings.limits,
+    requestedCharacterCount: characterCount,
+    projectedCostUsd,
+    now,
+  })
+
+  if (!verdict.allowed) {
+    await finalize({ ...rejectedUsage, status: "rejected", errorMessage: verdict.reason })
+
+    return new Error(verdict.reason)
   }
 
   const translateFn = props.translateFn ?? resolveTranslateFn(settings.model.provider)
