@@ -6,6 +6,12 @@ import { isAuthenticated } from "@/core/lib/access/is-authenticated"
 import { publishedOrAuthenticated } from "@/core/lib/access/published-or-authenticated"
 import { buildCollectionRevalidateAfterChange } from "@/core/lib/revalidate/build-collection-revalidate-after-change"
 import { buildCollectionRevalidateAfterDelete } from "@/core/lib/revalidate/build-collection-revalidate-after-delete"
+import {
+  LONG_TEXT_MAX_LENGTH,
+  SHORT_TEXT_MAX_LENGTH,
+  SLUG_MAX_LENGTH,
+} from "@/core/lib/validation/text-limits"
+import { validateSlug } from "@/core/lib/validation/validate-slug"
 
 type WorkDoc = { slug?: string }
 
@@ -39,6 +45,7 @@ export const works: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      maxLength: SHORT_TEXT_MAX_LENGTH,
     },
     {
       name: "slug",
@@ -46,8 +53,10 @@ export const works: CollectionConfig = {
       type: "text",
       required: true,
       unique: true,
+      maxLength: SLUG_MAX_LENGTH,
+      validate: validateSlug,
       admin: {
-        description: "半角英数字とハイフンのみ。URL に使います。",
+        description: `半角小文字の英数字とハイフンのみ、${SLUG_MAX_LENGTH}文字以内。URL に使います。`,
       },
     },
     {
@@ -87,6 +96,7 @@ export const works: CollectionConfig = {
       label: "概要",
       type: "textarea",
       localized: true,
+      maxLength: LONG_TEXT_MAX_LENGTH,
     },
     {
       name: "body",

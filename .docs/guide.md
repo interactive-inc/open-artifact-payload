@@ -130,6 +130,8 @@ vp run generate:importmap            # Payload Import Map 生成
 
 vp run payload migrate               # ローカル D1 にマイグレーション適用
 vp run payload migrate:create <name> # 新規マイグレーションファイル作成
+
+vp run audit:content                 # 保存済みコンテンツを入力制約で検査 (読み取り専用)
 ```
 
 ### ローカル D1 のスキーマ管理
@@ -210,6 +212,22 @@ vp run payload migrate
 vp run generate:types
 ```
 
+フィールドを定義するときは、入力制約を `src/core/lib/validation/` の共有 validator で付けます。独自の正規表現をフィールドに直書きしないでください。
+
+- スラッグ (URL パス) — `validate: validateSlug`。汎用ページ (`pages`) だけは予約語も弾く `validatePageSlug`
+- ナビゲーションや CTA のリンク — `validate: validateLinkHref`。内部パス、ページ内リンク、https、mailto、tel だけを通す
+- SNS など外部サイトの URL — `validate: validateHttpsUrl`
+- 電話番号 (TEL / FAX) — `validate: validatePhone`
+- text と textarea の文字数 — `text-limits.ts` の `SHORT_TEXT_MAX_LENGTH` (見出しやラベル) と `LONG_TEXT_MAX_LENGTH` (説明文) を `maxLength` に指定
+
+制約を追加または変更したあとは、既存データが新しい制約に違反していないかを確認します。
+
+```bash
+vp run audit:content
+```
+
+読み取り専用のコマンドで、違反があると `collection/global, id, locale, field, reason` の形式で一覧して終了コード 1 を返します。値の直し方は内容によって変わるため、修復用のマイグレーションは用意していません。出力を見ながら管理画面で直してください。
+
 ライブプレビュー対象にするには `src/payload.config.ts` の `livePreviewCollections` 配列に slug を追加します。フロントエンドに対応するルート (`/news/[slug]` 等) が存在することが前提です。
 
 ```typescript
@@ -274,6 +292,17 @@ export const projectFeatures: ProjectFeatures = {
 変更後、マイグレーションを作成して適用し、`vp run generate:types` で型を再生成します。SEO プラグインは `enableFreePages` が true のとき自動的に `pages` を対象に含めるため、追加設定は不要です (`config-base.ts` がフラグに応じて切り替えます)。
 
 フロントで固定ページを表示するには、対応する `src/app/(frontend)/[slug]/page.tsx` ルートを案件側で追加してください (テンプレートには同梱していません。`enableFreePages` が false のときは `pages` コレクション型が生成されず、ルートを同梱すると型エラーになるため)。ルートは `payload.find({ collection: 'pages', where: { slug: { equals: params.slug } } })` で取得し、`RichText` で本文を、`generateMetadata` で `doc.meta` を描画します。実装例は `src/app/(frontend)/news/[slug]/page.tsx` を参考にしてください。
+
+### メディアのアップロード制約
+
+`media` コレクションは画像だけを受け付けます。許可する形式と容量は `src/core/lib/validation/media-limits.ts` にまとめています。
+
+- 許可する形式 — JPEG、PNG、WebP、GIF、AVIF
+- 1 ファイルあたりの上限 — 10 MB
+
+SVG は既定で受け付けません。スクリプトを埋め込める形式のため、アップロード権限を持つ編集者が意図せず実行可能なファイルを公開してしまうリスクがあります。案件で SVG が必要な場合だけ `media-limits.ts` の `ALLOWED_MEDIA_MIME_TYPES` に `image/svg+xml` を追加し、あわせてアップロードできるユーザーの範囲を見直してください。
+
+容量の上限は二か所で効きます。管理画面や REST API 経由のアップロードは `config-base.ts` の `upload.limits` が本文を読み切る前に打ち切り、Local API や MCP 経由の作成は `media` コレクションの `beforeValidate` が同じ上限で止めます。
 
 ## 案件の骨格生成 (AI 活用)
 

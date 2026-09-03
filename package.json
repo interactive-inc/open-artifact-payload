@@ -38,6 +38,7 @@
     "test:int:migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_SECRET=test-secret-do-not-use-in-production payload migrate",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vp test run",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx src/project/scripts/seed.ts",
+    "audit:content": "cross-env NODE_OPTIONS=--no-deprecation tsx src/core/scripts/audit-content-constraints.ts",
     "setup:project": "cross-env NODE_OPTIONS=--no-deprecation tsx src/core/scripts/setup-project.ts"
   },
   "dependencies": {

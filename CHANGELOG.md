@@ -11,6 +11,7 @@
 
 ### 変更
 
+- CMS の slug・リンク URL・電話番号・文字数・画像の形式と容量にサーバー側の制約を追加しました。既存データの確認には `vp run audit:content` を使います。 (#21)
 - Workers の compatibility_date を 2026-07-30 に更新し、observability を有効化しました。staging 環境の雛形を追加し、デプロイ前に必須 secret の登録を検査するようにしました。 (#18)
 - リモート D1 に対して Payload CLI を実行するには `CLOUDFLARE_REMOTE_BINDINGS=true` の明示が必要になりました（`make deploy-db` は自動で付与）。`NODE_ENV=production` だけではローカル D1 を使います。 (#12)
 - テンプレート更新の取り込み手順を `src/core` だけの subtree 取り込みから、テンプレート main の Git マージへ変更しました。案件は clone で作成し `upstream` remote を保持します。 (#13)

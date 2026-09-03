@@ -165,6 +165,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - セクションは Payload の `group` フィールドで作り、`enabled` チェックボックスを必ず含める
 - フィールドラベルは日本語、フィールド名は lowerCamelCase
 - hex 直書き禁止、Tailwind の theme トークンを使う
+- slug / URL / 電話番号 / 文字数の制約は `src/core/lib/validation/` の共有 validator と `text-limits.ts` を使う（独自の正規表現をフィールドに直書きしない）
 - 生成後は必ず `vp lint` と `vp run generate:types` を流す
 - 案件の Single Source of Truth は `.docs/project-brief.md`。ここを先に読み込んでから作業する（テンプレート直後は未生成。`vp run setup:project` が `.docs/project-brief.template.md` から生成する）
 

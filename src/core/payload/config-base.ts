@@ -20,6 +20,10 @@ import { aiTranslationLogs } from "@/core/collections/ai-translation-logs"
 import { siteSettings } from "@/core/globals/site-settings"
 import { aiTranslationSettings } from "@/core/globals/ai-translation-settings"
 import { aiTranslateEndpoint } from "@/core/lib/ai-translation/ai-translate-endpoint"
+import {
+  MEDIA_MAX_FILE_SIZE_BYTES,
+  MEDIA_MAX_FILE_SIZE_MEGABYTES,
+} from "@/core/lib/validation/media-limits"
 import { resolveEmailAdapter } from "@/core/lib/email/resolve-email-adapter"
 import { injectAiTranslateControls } from "@/core/payload/inject-ai-translate-controls"
 import { injectAiTranslateControlsIntoGlobal } from "@/core/payload/inject-ai-translate-controls-into-global"
@@ -230,6 +234,13 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
       outputFile: path.resolve(props.dirname, "payload-types.ts"),
     },
     db: sqliteD1Adapter({ binding: cloudflare.env.D1, push: false }),
+    // REST の multipart は本文を読み切る前に打ち切る。Local API / MCP 経由は
+    // media コレクションの beforeValidate (guardMediaFileSize) が同じ上限を掛ける。
+    upload: {
+      abortOnLimit: true,
+      limits: { fileSize: MEDIA_MAX_FILE_SIZE_BYTES },
+      responseOnLimit: `ファイルサイズは${MEDIA_MAX_FILE_SIZE_MEGABYTES}MB以内にしてください`,
+    },
     logger: isProduction ? cloudflareLogger : undefined,
     plugins: [
       ...(props.mcp ? [mcpPlugin(props.mcp)] : []),
