@@ -21,7 +21,8 @@
 
 以下のツールを事前にインストールしてください。
 
-- Node.js `^18.20.2` または `20.9.0` 以上
+- Node.js 22.18 以上の 22 系、または 24.11 以上（`.node-version` は 24 を指定。`package.json` の `engines` が正本）
+- Bun 1.3 以上（`package.json` の `packageManager` に固定）
 - Vite+ (`vp` コマンド)
 - Cloudflare アカウント (Free / Paid は Worker サイズと利用量に応じて選択)
 
@@ -54,8 +55,7 @@ vp run setup:project
 質問の内容は以下のとおりです。
 
 - 案件 slug (英小文字とハイフン、例: `my-client-2024`)
-- デプロイモード (`cloudflare` または `ssg`)
-- Cloudflare Account ID (Cloudflare モードのみ)
+- Cloudflare Account ID
 - Cloudflare D1 をいま作成するか (y/N)
 - 既存の D1 database_id (D1 を作成しない場合。未作成なら空欄)
 - Cloudflare R2 をいま作成するか (y/N)
@@ -84,7 +84,7 @@ R2 のバケット名は `<slug>-cms` です。トップレベルはローカル
 
 記入項目は以下のとおりです。
 
-- クライアント名、業種、目的、納品先 (cloudflare / ssg)
+- クライアント名、業種、目的、納品先 (Cloudflare Workers の Worker 名やドメイン)
 - サイトマップ
 - 固定ページの構成とセクション一覧
 - 案件固有コレクション定義
@@ -138,6 +138,24 @@ D1 アダプターは `push: false` で構成されており、開発環境で�
 
 `PAYLOAD_MIGRATING` はテストなど内部処理でのみ使用します。通常の開発起動時に手動設定する必要はありません。
 
+### worktree での並行開発
+
+Issue ごとに作業ツリーを分ける場合は、リポジトリ直下の `.worktrees/` に linked worktree を作成し、`make worktree` で初期化します。
+
+```bash
+git worktree add -b 42-fix-pagination-offset .worktrees/42-fix-pagination-offset origin/main
+cd .worktrees/42-fix-pagination-offset
+make worktree
+```
+
+`make worktree` は依存関係の導入 (`vp install --frozen-lockfile`)、`.env` の用意、ローカル D1 へのマイグレーション適用をまとめて行います。`.env` は primary checkout に存在すればコピーし、無ければ `.env.example` を元に `PAYLOAD_SECRET` を生成します。ローカル D1 (`.wrangler/state/`) は worktree ごとに独立しているため、他の作業ツリーのデータは引き継がれません。サンプルデータが必要な場合は `vp run seed` を実行してください。
+
+作業が終わった worktree は primary checkout から削除します。
+
+```bash
+git worktree remove .worktrees/42-fix-pagination-offset
+```
+
 ### CLI・MCP によるサイト操作
 
 管理画面を開かずに記事などのコンテンツを操作する場合は `intacms` CLI を使います。AI エージェントからは同じユースケースを MCP Tool として実行できます。認証、環境の切り替え、CRUD コマンド、MCP の設定方法は [[features/site-tools|CLI・MCP によるサイト操作]] を参照してください。
@@ -156,6 +174,8 @@ vp run generate:types
 - `cloudflare-env.d.ts` — Cloudflare バインディングの型定義
 
 どちらのファイルも手動で編集してはいけません。
+
+`src/app/(payload)/admin/importMap.js` も同じく Payload の生成物です。開発サーバーの起動時と `vp run generate:importmap` で上書きされるため、手動で編集せず、生成結果をそのままコミットします。フォーマッターと lint の対象からも外しています。
 
 ## コンテンツモデルの追加・変更
 
@@ -272,7 +292,7 @@ export const projectFeatures: ProjectFeatures = {
 
 `.docs/project-brief.md` の各セクションの意味は以下のとおりです。
 
-プロジェクト概要セクションには、クライアント名・業種・目的・納品先 (cloudflare または ssg) を記入します。
+プロジェクト概要セクションには、クライアント名・業種・目的・納品先 (Cloudflare Workers の Worker 名やドメイン) を記入します。
 
 サイトマップセクションには、サイトの全ページを階層的に列挙します。
 
@@ -418,19 +438,9 @@ Turnstile の公開サイトキー (フロントエンド用) は環境変数で
 
 問い合わせ種別を案件用に変更するときは、`contact-form-constraints.ts`の`CONTACT_INQUIRY_TYPES`と、問い合わせページの表示ラベルを同時に更新してください。サーバーは定義外の値を保存しません。
 
-### SSG モード (骨格)
+### SSG モード
 
-`vp run setup:project` で `ssg` を選択すると SSG モードが適用されます。これは xserver 等 Node.js が動かない環境向けの静的書き出し用モードです。
-
-SSG モード適用時の変更内容は以下のとおりです。
-
-- `src/app/(payload)/` ディレクトリを削除 (管理画面は弊社管理の別 Cloudflare にホスト)
-- `src/app/(frontend)/contact/` および問い合わせ関連ファイルを削除 (Server Action は `output: 'export'` と両立しないため)
-- `wrangler.jsonc` を削除
-- `next.config.ts` に `output: 'export'` と `unoptimized: true` を追加
-- `.github/workflows/deploy-static.yml` を生成
-
-SSG モードは現時点では骨格のみです。Payload REST API の接続先設定、rsync の詳細、本番での問い合わせ受付方法は第一案件で詰める予定です。
+静的書き出し (SSG) モードは提供していません。このテンプレートは Cloudflare Workers 専用で、`vp run setup:project` にもデプロイモードの選択肢はありません。Node.js が動かないホスティングへ静的配信したい案件は、管理画面のホスト先・問い合わせフォームの代替・静的生成と配布の仕組みを含めて別途設計が必要です。
 
 ## テンプレート更新の取り込み
 
@@ -498,7 +508,7 @@ vp run test:int
 
 ### src/project/ (案件ごとにカスタマイズ)
 
-案件固有のファイルはすべて `src/project/` 配下に置きます。
+案件固有のコードは原則 `src/project/` 配下に置きます。ただし route (`src/app/(frontend)/[locale]/**`)、Payload の composition root (`src/payload.config.ts`)、案件由来のマイグレーション、`wrangler.jsonc` などは案件側で編集します。所有境界の一覧は [[architecture|アーキテクチャ]] の「コード所有境界」を参照してください。
 
 - `src/project/pages/<page>/` — ページ単位のコロケーション (global.ts / sections/ / components/ / hooks/ / lib/)
 - `src/project/shared/` — 複数ページで使う資産 (sections / components / ui / hooks / lib)
@@ -527,7 +537,7 @@ export default buildCoreConfig({
 
 - `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
-- `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seedUser.ts`、ログイン `login.ts`)
+- `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seed-user.ts`、ログイン `login.ts`)
 
 ### GitHub Actions ワークフロー
 
