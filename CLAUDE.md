@@ -121,8 +121,8 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 
 ## 設計上の非自明ポイント
 
-- `src/core/payload/config-base.ts` の Cloudflare コンテキストは、OpenNext が注入済みなら `getCloudflareContext`、それ以外は `getPlatformProxy` を使う。Next dev は `next.config.ts` でローカル binding を注入する。CLI は production のときだけ `remoteBindings: true`、dev・テスト・ビルド時の fallback はローカル binding を使う。
-- wrangler.jsonc の D1 binding に `remote: true` があっても、`vp run build` の SSG プリレンダーはリモート D1 に接続しない。ビルドは Cloudflare アカウントや本番 DB の状態に依存せず、ローカル D1 (`.wrangler/state/v3`) を使う。デプロイ済み Worker は実行環境から渡された D1 / R2 binding を使い、production CLI で明示的に操作する場合のみリモート binding を使う。
+- `src/core/payload/config-base.ts` の Cloudflare コンテキストは、OpenNext が注入済みなら `getCloudflareContext`、それ以外は `getPlatformProxy` を使う。Next dev は `next.config.ts` でローカル binding を注入する。CLI は環境変数 `CLOUDFLARE_REMOTE_BINDINGS=true` を明示したときだけ `remoteBindings: true`（`make deploy-db` が設定する）。`NODE_ENV=production` だけでは remote にならず、dev・テスト・ビルド時の fallback はローカル binding を使う。
+- wrangler.jsonc の D1 binding に `remote: true` があっても、`vp run build` の SSG プリレンダーはリモート D1 に接続しない。ビルドは Cloudflare アカウントや本番 DB の状態に依存せず、ローカル D1 (`.wrangler/state/v3`) を使う。デプロイ済み Worker は実行環境から渡された D1 / R2 binding を使い、`CLOUDFLARE_REMOTE_BINDINGS=true` を付けた Payload CLI だけがリモート binding を使う。
 - 案件固有の Global は `src/project/pages/<page>/global.ts` に置き、`src/payload.config.ts` の `projectGlobals` に import 追加する。export 名は `<name>Global`（例 `homeGlobal`）。
 - 案件固有のコレクションは `src/project/collections/*.ts` に置き、`projectCollections` に追加する。
 - `src/payload-types.ts` は `vp run generate:types` で再生成する。手で書き換えない。

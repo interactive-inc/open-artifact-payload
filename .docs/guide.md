@@ -372,6 +372,14 @@ make preview           # トップレベルのローカル専用 D1 / R2 でプ�
 - `payload migrate` をリモート D1 に対して適用
 - `wrangler d1 execute D1 --command 'PRAGMA optimize'` でクエリプランを最適化
 
+Payload CLI がリモート D1 に接続するのは、環境変数 `CLOUDFLARE_REMOTE_BINDINGS=true` を明示した場合だけです。`make deploy-db` はこの環境変数を設定して `payload migrate` を実行します。手動でリモート D1 に対して `payload migrate:status` などを実行する場合は、以下のように同じ 3 つの環境変数を付けてください。
+
+```bash
+CLOUDFLARE_ENV=production CLOUDFLARE_REMOTE_BINDINGS=true PAYLOAD_SECRET=ignore vp run payload migrate:status
+```
+
+`CLOUDFLARE_REMOTE_BINDINGS` は `.env` には書かないでください。書いてしまうと常にリモート binding が使われ、ローカル開発が本番 D1 を触ってしまいます。
+
 `make deploy*` は最初に preflight を実行し、未設定、雛形値、命名の不一致、環境間でのリソース共有を検出すると停止します。
 `wrangler.jsonc` の以下を対象環境の値に更新してください。
 

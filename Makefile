@@ -20,9 +20,11 @@ deploy-app: deploy-preflight
 	opennextjs-cloudflare build --env=$(CLOUDFLARE_ENV)
 	opennextjs-cloudflare deploy --env=$(CLOUDFLARE_ENV)
 
-# DB マイグレーションのみ
+# DB マイグレーションのみ。remote D1 へ当てるのはこの target だけ。
+# CLOUDFLARE_REMOTE_BINDINGS=true を明示した Payload CLI だけが remote binding を使う
+# (src/core/payload/resolve-cloudflare-context-mode.ts を参照)。
 deploy-db: deploy-preflight
-	NODE_ENV=production PAYLOAD_SECRET=ignore payload migrate
+	NODE_ENV=production CLOUDFLARE_REMOTE_BINDINGS=true PAYLOAD_SECRET=ignore payload migrate
 	wrangler d1 execute D1 --command 'PRAGMA optimize' --env=$(CLOUDFLARE_ENV) --remote
 
 # ローカルプレビュー。本番環境を指定せず、トップレベルのローカル binding だけを使う
