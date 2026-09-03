@@ -13,7 +13,11 @@
 - 他コレクションからの参照 → `relationship`（depth 指定を忘れない）
 - ON/OFF 切り替え → `checkbox`
 - 選択肢 → `select`（value は英語、label は日本語）
-- リンクボタン → `text` x2（ラベル + URL。name は `ctaLabel` + `ctaHref` のパターン）
+- リンクボタン → `text` x2（ラベル + URL。name は `ctaLabel` + `ctaHref` のパターン。URL 側は `validate: validateLinkHref`）
+- ナビゲーション / ポリシー URL → `text` + `validate: validateLinkHref`
+- SNS の外部 URL → `text` + `validate: validateHttpsUrl`
+- スラッグ (URL パス) → `text` + `validate: validateSlug`（汎用ページは `validatePageSlug`）
+- 電話番号 (TEL / FAX) → `text` + `validate: validatePhone`
 - 日付 → `date`
 - 数値 → `number`
 
@@ -55,7 +59,9 @@
 - `relationship` フィールドを使うページ側の `payload.findGlobal()` / `payload.find()` に `depth: 2` 以上を指定しているか
 - `array` フィールドを含む Global で `autosave` を使う場合、D1 の `_uuid` カラム問題を認識しているか
 - `generate:types` 後の Payload 生成型と、セクションコンポーネントの型定義が整合するか
-- Tailwind クラスで hex を直書きせず `src/project/theme/tailwind.theme.ts` のトークンを使っているか
+- Tailwind クラスで hex を直書きせず `styles.css` の `@theme` / `:root` トークンを使っているか
+- text / textarea に `src/core/lib/validation/text-limits.ts` の文字数上限を付けているか
+- URL・スラッグ・電話番号のフィールドに `src/core/lib/validation/` の validate を付けているか
 
 ## D1 (SQLite) 固有の制約
 
@@ -109,7 +115,6 @@ src/project/
     ui/                     shadcn/ui 所管領域（bunx shadcn add の配置先）
     hooks/ / lib/           汎用フック / util
   collections/              案件固有コレクション（news / faq / pages 以外）
-  theme/                    Tailwind テーマトークン
   admin/                    管理画面カスタム
 ```
 
@@ -180,6 +185,8 @@ buildCoreConfig({
 
 - 既存セクションの実装パターンは `src/core/sections/` のコードを読んで踏襲すること
 - Payload のフィールド定義や API は context7 プラグインで公式ドキュメントを引くこと
-- テーマトークンは `src/project/theme/tailwind.theme.ts` を参照すること
+- テーマトークンは `src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root` を参照すること
 - 画像 URL は `src/core/lib/media/` の `resolveMediaUrl()` / `resolveMediaAlt()` を使うこと
 - リッチテキストのレンダリングは `src/core/lib/lexical.tsx` の `RichText` コンポーネント (`<RichText data={...} />`) を使うこと
+- 入力制約は `src/core/lib/validation/` の共有 validator (`validateSlug` / `validatePageSlug` / `validateLinkHref` / `validateHttpsUrl` / `validatePhone`) と `text-limits.ts` の定数を使うこと。独自の正規表現をフィールドに直書きしない
+- 制約を追加・変更したら `vp run audit:content` で既存データの違反を確認すること

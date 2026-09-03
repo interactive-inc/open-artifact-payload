@@ -1,0 +1,48 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: "/"
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: chore(deps)
+    groups:
+      payload:
+        patterns:
+          - "payload"
+          - "@payloadcms/*"
+      next-react:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "@types/react"
+          - "@types/react-dom"
+      cloudflare:
+        patterns:
+          - "wrangler"
+          - "@opennextjs/cloudflare"
+          - "@cloudflare/*"
+      storybook:
+        patterns:
+          - "storybook"
+          - "@storybook/*"
+      testing:
+        patterns:
+          - "@playwright/test"
+          - "@testing-library/*"
+          - "vitest"
+          - "jsdom"
+      vite-plus:
+        patterns:
+          - "vite-plus"
+          - "vite"
+
+  - package-ecosystem: github-actions
+    directory: "/"
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore(deps)

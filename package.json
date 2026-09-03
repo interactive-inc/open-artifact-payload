@@ -11,6 +11,7 @@
   "scripts": {
     "build": "cross-env NODE_OPTIONS=\"--no-deprecation --max-old-space-size=8000\" next build --webpack",
     "cloudflare:preflight": "tsx src/core/scripts/preflight-cloudflare-config.ts",
+    "cloudflare:preflight-secrets": "tsx src/core/scripts/preflight-cloudflare-secrets.ts",
     "dev": "cross-env NODE_OPTIONS=--no-deprecation next dev --webpack",
     "devsafe": "rm -rf .next && rm -rf .open-next && cross-env NODE_OPTIONS=--no-deprecation next dev --webpack",
     "generate:importmap": "cross-env NODE_OPTIONS=--no-deprecation payload generate:importmap",
@@ -20,7 +21,7 @@
     "cli": "vp exec tsx packages/cli/lib/index.ts",
     "intacms": "vp exec tsx packages/cli/lib/index.ts",
     "generate:types": "vp run generate:types:cloudflare && vp run generate:types:payload",
-    "generate:types:cloudflare": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
+    "generate:types:cloudflare": "tsx src/core/scripts/generate-cloudflare-types.ts",
     "generate:types:payload": "cross-env NODE_OPTIONS=--no-deprecation payload generate:types",
     "payload": "cross-env NODE_OPTIONS=--no-deprecation payload",
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
@@ -32,11 +33,12 @@
     "test": "vp run test:int && vp run test:e2e",
     "test:tools": "vp test run packages",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" vp exec playwright test --config=playwright.config.ts",
-    "test:ci": "vp run lint && vp run test:int",
-    "test:cloudflare-config": "vp test run tests/int/scripts/cloudflare-config.int.spec.ts && wrangler deploy --dry-run --strict --config tests/fixtures/cloudflare-worker/wrangler.jsonc --env=production",
+    "test:ci": "vp check && vp run test:int && vp run test:tools && vp run test:cloudflare-config && bun audit --audit-level=high",
+    "test:cloudflare-config": "vp test run tests/int/scripts/cloudflare-config.int.spec.ts && wrangler deploy --dry-run --strict --config tests/fixtures/cloudflare-worker/wrangler.jsonc --env=production && tsx src/core/scripts/generate-cloudflare-types.ts --check",
     "test:int:migrate": "cross-env NODE_OPTIONS=--no-deprecation PAYLOAD_SECRET=test-secret-do-not-use-in-production payload migrate",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vp test run",
     "seed": "cross-env NODE_OPTIONS=--no-deprecation tsx src/project/scripts/seed.ts",
+    "audit:content": "cross-env NODE_OPTIONS=--no-deprecation tsx src/core/scripts/audit-content-constraints.ts",
     "setup:project": "cross-env NODE_OPTIONS=--no-deprecation tsx src/core/scripts/setup-project.ts"
   },
   "dependencies": {
@@ -44,6 +46,7 @@
     "@open-artifact/site-management": "workspace:*",
     "@opennextjs/cloudflare": "^1.20.2",
     "@payloadcms/db-d1-sqlite": "3.88.0",
+    "@payloadcms/email-resend": "3.88.0",
     "@payloadcms/live-preview-react": "3.88.0",
     "@payloadcms/next": "3.88.0",
     "@payloadcms/plugin-mcp": "3.88.0",
@@ -74,13 +77,13 @@
     "react-dom": "19.2.6",
     "react-resizable-panels": "^4.12.2",
     "recharts": "3.8.0",
-    "resend": "^6.18.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.6.0",
     "tw-animate-css": "^1.4.0",
     "vaul": "^1.1.2"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@playwright/test": "1.60.0",
     "@storybook/addon-a11y": "10.5.7",
     "@storybook/addon-themes": "10.5.7",
@@ -105,6 +108,7 @@
     "@hono/node-server": "2.1.0",
     "@modelcontextprotocol/sdk": "1.30.0",
     "dompurify": "3.4.13",
+    "fast-uri": "3.1.6",
     "fast-xml-parser": "5.10.1",
     "ip-address": "10.5.0",
     "nanoid": "3.3.18",
@@ -113,7 +117,7 @@
     "ws": "8.21.1"
   },
   "engines": {
-    "node": "^18.20.2 || >=20.9.0"
+    "node": "^22.18.0 || >=24.11.0"
   },
   "packageManager": "bun@1.3.14",
   "catalog": {

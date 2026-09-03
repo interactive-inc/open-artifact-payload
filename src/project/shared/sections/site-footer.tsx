@@ -159,7 +159,7 @@ export function SiteFooter(props: Props) {
                 <Link
                   key={item.id ?? item.href}
                   href={withLocalePrefix(props.locale, item.href)}
-                  className="text-xs text-background/40 hover:text-background/70 transition-colors"
+                  className="text-xs text-background/60 hover:text-background transition-colors"
                 >
                   {item.label}
                 </Link>

@@ -26,7 +26,7 @@ export function FeaturedNewsSection(props: Props) {
 
   return (
     <section className="py-section-sm md:py-section">
-      <div className="max-w-container mx-auto px-6">
+      <div className="max-w-content mx-auto px-6">
         <h2 className="text-2xl font-bold mb-6">{props.data.heading ?? "最新のお知らせ"}</h2>
         <ul className="grid gap-6 md:grid-cols-3">
           {items.map((item) => {
@@ -36,7 +36,10 @@ export function FeaturedNewsSection(props: Props) {
                 <Link href={`/news/${item.slug}`}>
                   <h3 className="font-semibold text-lg">{item.title}</h3>
                   {publishedDate ? (
-                    <time dateTime={publishedDate.dateTime} className="text-sm text-muted">
+                    <time
+                      dateTime={publishedDate.dateTime}
+                      className="text-sm text-muted-foreground"
+                    >
                       {publishedDate.label}
                     </time>
                   ) : null}

@@ -107,7 +107,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 
 ### テーマ
 
-`src/project/theme/tailwind.theme.ts` - project-brief のデザイン欄を反映
+`src/app/(frontend)/[locale]/styles.css` の `:root` / `.dark`（色）と `@theme inline`（フォント）- project-brief のデザイン欄を反映
 
 ### Payload 設定への登録
 
@@ -140,7 +140,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 - `relationship` フィールドを使うページ側の `payload.findGlobal()` / `payload.find()` に `depth: 2` 以上を指定しているか
 - `array` フィールドを含む Global で `autosave` を使う場合、D1 の `_uuid` カラム問題を認識しているか
 - `generate:types` 後の Payload 生成型と、セクションコンポーネントの型定義が整合するか
-- Tailwind クラスで hex を直書きせず `src/project/theme/tailwind.theme.ts` のトークンを使っているか
+- Tailwind クラスで hex を直書きせず `styles.css` の `@theme` / `:root` トークンを使っているか
 
 1 つでも不整合があれば生成をやり直す。
 
@@ -157,7 +157,7 @@ vp run generate:types && vp lint && vp run test:int
 - 各セクション group には `enabled: checkbox` を必ず含める
 - `enabled` の label は `表示する`、defaultValue は `true`（CTA 系は `false`）
 - フィールドラベル = 日本語、フィールド名 = lowerCamelCase
-- 色は Tailwind theme トークン経由（`bg-brand` `text-accent` 等）
+- 色は Tailwind theme トークン経由（`bg-primary` `text-accent` 等）
 - hex を直接書かない
 - 相対 import を避け `@/project/...` `@/core/...` を使う
 - `select` フィールドの value は英語、label は日本語

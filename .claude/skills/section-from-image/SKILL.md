@@ -35,7 +35,7 @@ arguments: 画像ファイルパス
   - 置き場所の判定:
     - そのページでしか使わない → `src/project/pages/<page>/sections/<kebab-name>.tsx`
     - 最初から 2 ページ以上で使う → `src/project/shared/sections/<kebab-name>.tsx`
-  - Tailwind テーマ: `src/project/theme/tailwind.theme.ts` に定義済みのトークンを使う
+  - Tailwind テーマ: `src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root` に定義済みのトークンを使う
   - 画像は Payload Media relationship 経由 (`type: 'upload', relationTo: 'media'`) にする
   - 画像の URL 解決は `resolveMediaUrl()` / `resolveMediaAlt()` (`@/core/lib/media`) を使う
 - 対応する Global が既にある場合、フィールドが足りていなければ `src/project/pages/<page>/global.ts` に group フィールドを追記する（必ず `enabled` checkbox を含める）

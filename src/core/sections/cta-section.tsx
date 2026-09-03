@@ -14,7 +14,7 @@ type Props = {
 export function CtaSection(props: Props) {
   if (!props.data.enabled) return null
   return (
-    <section className="py-section-sm md:py-section bg-brand-dark text-white">
+    <section className="py-section-sm md:py-section bg-primary text-primary-foreground">
       <div className="max-w-wide mx-auto px-6 text-center">
         {props.data.heading ? (
           <h2 className="text-3xl font-bold mb-4">{props.data.heading}</h2>
@@ -25,7 +25,7 @@ export function CtaSection(props: Props) {
         {props.data.ctaLabel && props.data.ctaHref ? (
           <Link
             href={props.data.ctaHref}
-            className="inline-block px-8 py-4 bg-accent rounded-md font-semibold"
+            className="inline-block px-8 py-4 bg-accent text-accent-foreground rounded-md font-semibold"
           >
             {props.data.ctaLabel}
           </Link>
