@@ -23,8 +23,18 @@ export async function UsageSummaryPanel(props: Props) {
     targetSlug: null,
     targetId: null,
     targetLocale: null,
+    // 表示は判定を伴わないため、進行中の予約もすべて含めて集計する
+    beforeLogId: null,
     now: new Date(),
   })
+
+  if (snapshot instanceof Error) {
+    return (
+      <p style={{ color: "var(--theme-elevation-500)", marginBottom: "24px" }}>
+        今月の利用状況を集計できませんでした
+      </p>
+    )
+  }
 
   const limits = resolveEffectiveUsageLimits({ limitsGroup: settings.limits, env: process.env })
   const rows = [

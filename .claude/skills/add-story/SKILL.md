@@ -13,8 +13,8 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 
 - ガードレール: `CLAUDE.md` の「生成 AI のガードレール」章
 - 対象ファイルは `src/project/` 配下のみ。`src/core/` は読み取り専用
-- Storybook は `@storybook/nextjs-vite` 10.x を使用
-- 既存例: `src/project/shared/components/button.stories.tsx`
+- Storybook は `@storybook/react-vite` 10.x を使用（next/image・link・navigation・script は `.storybook/mocks/` でモック）
+- 既存例: `src/project/shared/ui/button.stories.tsx`
 
 ## 手順
 
@@ -36,7 +36,7 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 ### フェーズ2: 情報収集
 
 - 対象コンポーネントを `Read` し、`type Props` から controls 対象を抽出する
-- `src/project/shared/components/button.stories.tsx` をテンプレとして読む
+- `src/project/shared/ui/button.stories.tsx` をテンプレとして読む
 - セクションコンポーネントの場合は `src/core/sections/hero-section.tsx` などを読み、受け取る data 型を把握する
 - context7 で Storybook の公式ドキュメント（argTypes, decorators, play 関数）を必要に応じて参照する
 
@@ -47,7 +47,7 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 テンプレ:
 
 ```tsx
-import type { Meta, StoryObj } from "@storybook/nextjs-vite"
+import type { Meta, StoryObj } from "@storybook/react-vite"
 
 import { ComponentName } from "./component-name"
 
@@ -107,6 +107,6 @@ Payload セクションのストーリー生成の注意:
 - 1 story ファイルにつき 1 コンポーネント
 - story ファイルは対象コンポーネントと同じディレクトリに置く（コロケーション）
 - デコレータが必要な場合（テーマ、router, Payload データ）は最小限に留め、共通化は `.storybook/preview.tsx` で行う
-- hex 直書き禁止。Tailwind のテーマトークン (`src/project/theme/tailwind.theme.ts`) を使う
+- hex 直書き禁止。Tailwind のテーマトークン (`src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root`) を使う
 - `as any` 型アサーションを使わない。必要なら `Partial<T>` を使う
 - `play` 関数（interaction test）は過度に書かない。視覚確認で十分な場合は書かない

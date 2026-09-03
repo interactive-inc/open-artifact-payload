@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload"
 
 import { isAdmin } from "@/core/lib/access/is-admin"
 import { isAuthenticated } from "@/core/lib/access/is-authenticated"
+import { LONG_TEXT_MAX_LENGTH, SHORT_TEXT_MAX_LENGTH } from "@/core/lib/validation/text-limits"
 
 export const faq: CollectionConfig = {
   slug: "faq",
@@ -27,6 +28,7 @@ export const faq: CollectionConfig = {
       type: "text",
       required: true,
       localized: true,
+      maxLength: SHORT_TEXT_MAX_LENGTH,
     },
     {
       name: "answer",
@@ -34,6 +36,7 @@ export const faq: CollectionConfig = {
       type: "textarea",
       required: true,
       localized: true,
+      maxLength: LONG_TEXT_MAX_LENGTH,
     },
     {
       name: "category",

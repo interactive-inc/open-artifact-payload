@@ -54,8 +54,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: null,
       targetId: null,
       targetLocale: null,
+      beforeLogId: null,
       now,
     })
+
+    if (before instanceof Error) throw before
 
     await createLog({
       status: "succeeded",
@@ -89,8 +92,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: null,
       targetId: null,
       targetLocale: null,
+      beforeLogId: null,
       now,
     })
+
+    if (after instanceof Error) throw after
 
     expect(after.monthlyRunCount - before.monthlyRunCount).toBe(3)
     expect(after.monthlyCharacterCount - before.monthlyCharacterCount).toBe(180)
@@ -124,8 +130,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: "news",
       targetId: null,
       targetLocale: "en",
+      beforeLogId: null,
       now,
     })
+
+    if (sameLocale instanceof Error) throw sameLocale
 
     expect(sameLocale.lastRunAt).not.toBeNull()
 
@@ -136,8 +145,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: "news",
       targetId: null,
       targetLocale: "zh",
+      beforeLogId: null,
       now,
     })
+
+    if (otherLocale instanceof Error) throw otherLocale
 
     expect(otherLocale.lastRunAt).toBeNull()
   })
@@ -168,8 +180,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: null,
       targetId: null,
       targetLocale: null,
+      beforeLogId: null,
       now,
     })
+
+    if (afterRejected instanceof Error) throw afterRejected
 
     expect(afterRejected.lastRunAt).toBeNull()
 
@@ -187,8 +202,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: null,
       targetId: null,
       targetLocale: null,
+      beforeLogId: null,
       now,
     })
+
+    if (afterFailed instanceof Error) throw afterFailed
 
     expect(afterFailed.lastRunAt).not.toBeNull()
   })
@@ -201,8 +219,11 @@ describe("loadUsageSnapshot", () => {
       targetSlug: null,
       targetId: null,
       targetLocale: null,
+      beforeLogId: null,
       now: new Date(),
     })
+
+    if (snapshot instanceof Error) throw snapshot
 
     expect(snapshot.lastRunAt).toBeNull()
     expect(snapshot.monthlyRunCount).toBeGreaterThanOrEqual(0)
