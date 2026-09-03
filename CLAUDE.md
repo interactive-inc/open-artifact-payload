@@ -11,6 +11,7 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 - データベース: Cloudflare D1 (SQLite)、ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
 - リッチテキスト: Lexical Editor (`@payloadcms/richtext-lexical`)
+- ランタイム: Node.js `^22.18.0 || >=24.11.0`（`package.json` の `engines` と `.node-version` が正本。Next 16 / Vite+ / wrangler の要求範囲の共通部分）
 - ツールチェーン: Vite+（依存管理・スクリプト・lint・format・test）/ Bun 1.3+（管理対象ランタイム）
 - リンター & フォーマッター: vite-plus (`vp lint` / `vp check`)。設定は `vite.config.ts` に最小限のみ
 - 統合テスト: vite-plus test (vitest 互換) + @testing-library/react (`tests/int/`)。コンポーネントテストはファイル先頭の `@vitest-environment jsdom` で DOM を有効化
@@ -56,7 +57,7 @@ tests/int/                    統合テスト (vitest)
 tests/e2e/                    E2E テスト (Playwright)
 ```
 
-Storybook ストーリーは対象コンポーネントと同じディレクトリに `<name>.stories.tsx` としてコロケーションする（例: `src/project/shared/components/button.stories.tsx`）。ストーリー生成は `/add-story` スキルを使う。
+Storybook ストーリーは対象コンポーネントと同じディレクトリに `<name>.stories.tsx` としてコロケーションする（例: `src/project/shared/ui/button.stories.tsx`）。ストーリー生成は `/add-story` スキルを使う。
 
 コロケーションの運用ルール:
 
@@ -154,7 +155,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 ## 生成 AI のガードレール
 
 - `src/core/` は読み取り専用。改変したい場合は本体テンプレートリポジトリへ PR を送る
-- 新規ファイル作成は原則 `src/project/` 配下に限定する
+- 新規ファイル作成は原則 `src/project/` 配下に限定する（例外は route `src/app/(frontend)/[locale]/**`、`src/payload.config.ts`、`src/migrations/**`、`wrangler.jsonc`。一覧は `.docs/architecture.md` の「コード所有境界」）
 - 新規コレクション追加時は `src/payload.config.ts` の `projectCollections` への追加を忘れない
 - セクションは Payload の `group` フィールドで作り、`enabled` チェックボックスを必ず含める
 - フィールドラベルは日本語、フィールド名は lowerCamelCase

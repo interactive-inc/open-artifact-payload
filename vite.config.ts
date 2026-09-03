@@ -24,6 +24,7 @@ export default defineConfig({
       ".open-next/**",
       "src/payload-types.ts",
       "src/payload-generated-schema.ts",
+      "src/app/(payload)/admin/importMap.js",
       "src/migrations/**",
       "storybook-static/**",
     ],
@@ -34,6 +35,7 @@ export default defineConfig({
   },
   fmt: {
     semi: false,
-    ignorePatterns: ["src/payload-types.ts"],
+    // Payload が dev 起動時と generate:importmap で上書きする生成物は、書式を揃えず生成結果を正とする
+    ignorePatterns: ["src/payload-types.ts", "src/app/(payload)/admin/importMap.js"],
   },
 })

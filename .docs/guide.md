@@ -21,7 +21,8 @@
 
 以下のツールを事前にインストールしてください。
 
-- Node.js `^18.20.2` または `20.9.0` 以上
+- Node.js 22.18 以上の 22 系、または 24.11 以上（`.node-version` は 24 を指定。`package.json` の `engines` が正本）
+- Bun 1.3 以上（`package.json` の `packageManager` に固定）
 - Vite+ (`vp` コマンド)
 - Cloudflare アカウント (Free / Paid は Worker サイズと利用量に応じて選択)
 
@@ -125,6 +126,24 @@ D1 アダプターは `push: false` で構成されており、開発環境で�
 
 `PAYLOAD_MIGRATING` はテストなど内部処理でのみ使用します。通常の開発起動時に手動設定する必要はありません。
 
+### worktree での並行開発
+
+Issue ごとに作業ツリーを分ける場合は、リポジトリ直下の `.worktrees/` に linked worktree を作成し、`make worktree` で初期化します。
+
+```bash
+git worktree add -b 42-fix-pagination-offset .worktrees/42-fix-pagination-offset origin/main
+cd .worktrees/42-fix-pagination-offset
+make worktree
+```
+
+`make worktree` は依存関係の導入 (`vp install --frozen-lockfile`)、`.env` の用意、ローカル D1 へのマイグレーション適用をまとめて行います。`.env` は primary checkout に存在すればコピーし、無ければ `.env.example` を元に `PAYLOAD_SECRET` を生成します。ローカル D1 (`.wrangler/state/`) は worktree ごとに独立しているため、他の作業ツリーのデータは引き継がれません。サンプルデータが必要な場合は `vp run seed` を実行してください。
+
+作業が終わった worktree は primary checkout から削除します。
+
+```bash
+git worktree remove .worktrees/42-fix-pagination-offset
+```
+
 ### CLI・MCP によるサイト操作
 
 管理画面を開かずに記事などのコンテンツを操作する場合は `intacms` CLI を使います。AI エージェントからは同じユースケースを MCP Tool として実行できます。認証、環境の切り替え、CRUD コマンド、MCP の設定方法は [[features/site-tools|CLI・MCP によるサイト操作]] を参照してください。
@@ -143,6 +162,8 @@ vp run generate:types
 - `cloudflare-env.d.ts` — Cloudflare バインディングの型定義
 
 どちらのファイルも手動で編集してはいけません。
+
+`src/app/(payload)/admin/importMap.js` も同じく Payload の生成物です。開発サーバーの起動時と `vp run generate:importmap` で上書きされるため、手動で編集せず、生成結果をそのままコミットします。フォーマッターと lint の対象からも外しています。
 
 ## コンテンツモデルの追加・変更
 
@@ -447,7 +468,7 @@ vp run test:int
 
 ### src/project/ (案件ごとにカスタマイズ)
 
-案件固有のファイルはすべて `src/project/` 配下に置きます。
+案件固有のコードは原則 `src/project/` 配下に置きます。ただし route (`src/app/(frontend)/[locale]/**`)、Payload の composition root (`src/payload.config.ts`)、案件由来のマイグレーション、`wrangler.jsonc` などは案件側で編集します。所有境界の一覧は [[architecture|アーキテクチャ]] の「コード所有境界」を参照してください。
 
 - `src/project/pages/<page>/` — ページ単位のコロケーション (global.ts / sections/ / components/ / hooks/ / lib/)
 - `src/project/shared/` — 複数ページで使う資産 (sections / components / ui / hooks / lib)
@@ -476,7 +497,7 @@ export default buildCoreConfig({
 
 - `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
-- `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seedUser.ts`、ログイン `login.ts`)
+- `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seed-user.ts`、ログイン `login.ts`)
 
 ### GitHub Actions ワークフロー
 
