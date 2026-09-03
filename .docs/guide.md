@@ -123,7 +123,7 @@ vp check                             # フォーマット + lint + 型チェッ�
 vp test                              # Vite+ / Vitest テスト
 vp run test:e2e                      # Playwright E2E テストのみ
 vp run test                          # 統合テスト + E2E テスト
-vp run test:ci                       # lint + 統合テスト (CI 用)
+vp run test:ci                       # check + 統合テスト + packages + Cloudflare 設定 + 脆弱性監査 (CI の check job と同じ)
 
 vp run generate:types                # Payload 型定義 + Cloudflare 型を再生成
 vp run generate:importmap            # Payload Import Map 生成
@@ -636,9 +636,19 @@ E2E が前提にするコンテンツは `tests/helpers/e2e-fixtures.ts` にま�
 
 ### GitHub Actions ワークフロー
 
-テンプレートには GitHub Actions ワークフローを同梱していません。案件ごとに `.github/workflows/` を追加し、少なくとも `vp check` と `vp test` を実行してください。D1 の定期バックアップを追加する場合は、リモート D1 のダンプと R2 への保存を別ジョブとして構成します。
+テンプレートには `.github/workflows/ci.yml` を同梱しています。`pull_request` と `main` への `push` で起動し、以下の 3 job を並列実行します。同一 ref の実行は新しい push で自動キャンセルされます。
 
-デプロイやバックアップを自動化する場合は GitHub リポジトリの Settings > Secrets に以下を設定します。
+- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types:payload` 後に `src/payload-types.ts` の差分がないこと (型生成漏れの検出)、`bun run test:int`、`bun run test:tools`、`bun run test:cloudflare-config`、`bun audit --audit-level=high` を実行します
+- `build` — `bun run build`、`bunx opennextjs-cloudflare build`、`bunx wrangler deploy --dry-run --strict --env=production` で本番相当ビルドとデプロイ設定を検証し、`bun run build-storybook` と `bun run test:storybook:static` を実行します
+- `e2e` — Playwright (Chromium) で `bun run test:e2e` を実行します
+
+いずれのジョブも Cloudflare へのログインや secret の登録は不要です。D1 / R2 はローカル binding、`wrangler deploy --dry-run` はデプロイ設定の静的検証のみで実際の Cloudflare API 呼び出しを行いません。GitHub リポジトリの Settings > Secrets に何も追加しなくてもそのまま動作します。
+
+GitHub の branch protection では `check` / `build` / `e2e` の 3 つを必須ステータスチェックに設定してください。E2E が失敗した場合は `build` と `e2e` ジョブが失敗時にアップロードする `playwright-report` アーティファクト (7 日保持) を確認します。`e2e` ジョブは加えて `test-results` アーティファクトも保存します。
+
+依存更新は `.github/dependabot.yml` で `npm` (weekly) と `github-actions` (weekly) を監視します。`npm` 側は互換性のある一群をまとめて 1 つの PR にグルーピングします (`payload`、`next-react`、`cloudflare`、`storybook`、`testing`、`vite-plus`)。特に Payload は `payload` 本体と `@payloadcms/*` パッケージ全体を同一 PR でまとめて上げ、バージョンがずれた状態で個別更新しないようにします。
+
+D1 の定期バックアップを追加する場合は、`ci.yml` とは別に、リモート D1 のダンプと R2 への保存を行うワークフローを案件ごとに追加してください。その場合は GitHub リポジトリの Settings > Secrets に以下を設定します。
 
 - `PAYLOAD_SECRET` — Payload 用シークレット (統合テストは vitest.setup.ts のテスト専用フォールバックで動作する。本番は未設定だと起動失敗する)
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — Cloudflare へのデプロイやバックアップ用
