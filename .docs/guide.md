@@ -619,6 +619,19 @@ export default buildCoreConfig({
 
 - `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
+- `tests/helpers/` — テスト用ヘルパー (E2E の準備 `prepare-e2e.ts`、fixture 定義 `e2e-fixtures.ts`、ログイン `login.ts`)
+- `tests/storybook/` — Storybook の全 story を実ブラウザで開き、描画エラーと axe による a11y 違反 (serious 以上) を検査 (`vp run test:storybook`)
+
+#### E2E の専用データ
+
+E2E は開発用のローカル D1 / R2 (`.wrangler/state`) を使いません。Playwright の webServer が起動前に `tests/helpers/prepare-e2e.ts` を実行し、`.wrangler/state-e2e` を毎回削除してからマイグレーションと投入をやり直します。テストが途中で落ちても開発中のデータは汚れず、残った QA データも次の実行で消えます。保存先の切り替えは環境変数 `CLOUDFLARE_PERSIST_PATH` で行い、未設定なら wrangler 既定の `.wrangler/state/v3` を使います。
+
+E2E が前提にするコンテンツは `tests/helpers/e2e-fixtures.ts` にまとまっています。公開と下書きのお知らせ・制作実績、FAQ、サイト設定、トップページと会社概要とサービスの各グローバルを投入します。テストはこの値を起点に一意な marker を書き込んで検証するため、実行後に値を元へ戻す処理はありません。
+
+問い合わせフォームは Cloudflare Turnstile のテストキーで本番と同じ経路を通します。サイトキーは fixture のサイト設定に入り、シークレットは webServer の環境変数として渡されます。どちらも常に成功するテスト用のキーですが、ウィジェットの読み込みと siteverify で `challenges.cloudflare.com` へ接続するため、オフライン環境では `tests/e2e/contact-form.e2e.spec.ts` の送信テストが失敗します。
+
+失敗したときは `playwright-report/` の HTML レポートと、失敗したテストにだけ残る trace を確認してください。webServer の標準出力もレポートに含まれます。
+
 - `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seed-user.ts`、ログイン `login.ts`)
 - `tests/storybook/` — Storybook の全 story を実ブラウザで開き、描画エラーと axe による a11y 違反 (serious 以上) を検査 (`vp run test:storybook`)
 
