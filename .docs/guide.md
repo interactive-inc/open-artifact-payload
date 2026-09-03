@@ -555,6 +555,10 @@ SQLite の二重引用符フォールバック問題に注意してください�
 - Turnstile のサイトキーがドメインに紐づいているか (Cloudflare ダッシュボードで確認)
 - `wrangler.jsonc` の使用環境に `CONTACT_RATE_LIMITER` bindingがあり、`namespace_id`がアカウント内で一意か
 
+### vp run build で middleware 非推奨の警告が出る
+
+`The "middleware" file convention is deprecated. Please use "proxy" instead.` は意図的に残している警告です。Next.js 16 の `proxy.ts` は Node.js runtime 専用で、OpenNext for Cloudflare 1.20 は `opennextjs-cloudflare build` を `Node.js middleware is not currently supported` で拒否します（2026-09 に実測）。`src/middleware.ts` を `proxy.ts` へ移行するのは、OpenNext が Node.js middleware に対応してからにしてください。移行時は locale rewrite と `x-locale` ヘッダーの E2E が通ることを確認します。
+
 ### vp run build が失敗する
 
 メモリ不足が原因の場合は `build` スクリプトに `--max-old-space-size=8000` が付いているため、ホストに 8GB 以上のメモリが必要です。
