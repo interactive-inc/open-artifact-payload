@@ -11,6 +11,9 @@ const R2_BINDING = "R2"
 const TEMPLATE_WORKER_NAME = "open-artifact-payload"
 const DATABASE_ID_PLACEHOLDER = "<D1_DATABASE_ID>"
 const LEGACY_TEMPLATE_DATABASE_ID = "eabbe0ed-1d16-48de-b5cf-728e23a91a42"
+const EMPTY_DATABASE_ID = "00000000-0000-0000-0000-000000000000"
+const STAGING_ENVIRONMENT = "staging"
+const STAGING_WORKER_SUFFIX = "-staging"
 
 type JsonObject = Record<string, unknown>
 
@@ -97,6 +100,29 @@ function getBinding(
   return matches.length === 1 && isObject(matches[0]) ? matches[0] : undefined
 }
 
+function isTemplateWorkerName(value: string): boolean {
+  if (value === TEMPLATE_WORKER_NAME) return true
+
+  return value.startsWith(`${TEMPLATE_WORKER_NAME}-`)
+}
+
+/**
+ * 環境間の重複判定に使える database_id を返す。
+ *
+ * 雛形のプレースホルダーは全環境で同じ値になるため、重複ではなく未設定として扱う。
+ */
+function getComparableDatabaseId(binding: JsonObject | undefined): string | undefined {
+  if (!binding) return undefined
+
+  const databaseId = stringValue(binding.database_id)
+  if (!databaseId) return undefined
+  if (databaseId === DATABASE_ID_PLACEHOLDER) return undefined
+  if (databaseId === LEGACY_TEMPLATE_DATABASE_ID) return undefined
+  if (databaseId === EMPTY_DATABASE_ID) return undefined
+
+  return databaseId
+}
+
 export function assertCloudflareAccountId(value: string): void {
   if (!ACCOUNT_ID_PATTERN.test(value)) {
     throw new Error("Cloudflare Account ID は32桁の16進数で入力してください")
@@ -109,6 +135,42 @@ export function assertCloudflareDatabaseId(value: string): void {
   }
 }
 
+type ConfigChange = { path: (string | number)[]; value: unknown }
+
+type EnvironmentChangeProps = {
+  environments: JsonObject
+  environment: string
+  workerName: string
+  accountId: string
+  databaseId: string
+}
+
+/**
+ * デプロイ環境 1 つ分の書き換え内容を組み立てる。
+ *
+ * 定義されていない環境 (staging を削除した案件など) は書き換え対象から外す。
+ */
+function buildEnvironmentChanges(props: EnvironmentChangeProps): ConfigChange[] {
+  const target = props.environments[props.environment]
+  if (!isObject(target)) return []
+
+  const d1Index = getBindingIndex(target, "d1_databases", D1_BINDING)
+  const r2Index = getBindingIndex(target, "r2_buckets", R2_BINDING)
+  const resourceName = `${props.workerName}-cms`
+  const d1Path = ["env", props.environment, "d1_databases", d1Index]
+  const r2Path = ["env", props.environment, "r2_buckets", r2Index]
+
+  return [
+    { path: ["env", props.environment, "name"], value: props.workerName },
+    { path: ["env", props.environment, "account_id"], value: props.accountId },
+    { path: [...d1Path, "database_id"], value: props.databaseId },
+    { path: [...d1Path, "database_name"], value: resourceName },
+    { path: [...d1Path, "remote"], value: true },
+    { path: [...r2Path, "bucket_name"], value: resourceName },
+    { path: [...r2Path, "remote"], value: true },
+  ]
+}
+
 export function updateCloudflareConfig(props: UpdateCloudflareConfigProps): string {
   assertSlug(props.projectSlug)
   assertCloudflareAccountId(props.accountId)
@@ -116,17 +178,16 @@ export function updateCloudflareConfig(props: UpdateCloudflareConfigProps): stri
 
   const initialConfig = parseConfig(props.source)
   const environments = getObject(initialConfig.env, "env")
-  const production = getObject(environments.production, "env.production")
+  // production は必須。staging は削除している案件があるため、存在するときだけ書き換える
+  getObject(environments.production, "env.production")
   const localD1Index = getBindingIndex(initialConfig, "d1_databases", D1_BINDING)
   const localR2Index = getBindingIndex(initialConfig, "r2_buckets", R2_BINDING)
-  const productionD1Index = getBindingIndex(production, "d1_databases", D1_BINDING)
-  const productionR2Index = getBindingIndex(production, "r2_buckets", R2_BINDING)
 
   const localWorkerName = `${props.projectSlug}-local`
-  const productionResourceName = `${props.projectSlug}-cms`
   const localResourceName = `${localWorkerName}-cms`
+  const stagingWorkerName = `${props.projectSlug}${STAGING_WORKER_SUFFIX}`
 
-  const changes: Array<{ path: (string | number)[]; value: unknown }> = [
+  const localChanges: ConfigChange[] = [
     { path: ["name"], value: localWorkerName },
     { path: ["account_id"], value: props.accountId },
     { path: ["d1_databases", localD1Index, "database_id"], value: undefined },
@@ -134,28 +195,25 @@ export function updateCloudflareConfig(props: UpdateCloudflareConfigProps): stri
     { path: ["d1_databases", localD1Index, "remote"], value: false },
     { path: ["r2_buckets", localR2Index, "bucket_name"], value: localResourceName },
     { path: ["r2_buckets", localR2Index, "remote"], value: false },
-    { path: ["env", "production", "name"], value: props.projectSlug },
-    { path: ["env", "production", "account_id"], value: props.accountId },
-    {
-      path: ["env", "production", "d1_databases", productionD1Index, "database_id"],
-      value: props.productionDatabaseId ?? DATABASE_ID_PLACEHOLDER,
-    },
-    {
-      path: ["env", "production", "d1_databases", productionD1Index, "database_name"],
-      value: productionResourceName,
-    },
-    {
-      path: ["env", "production", "d1_databases", productionD1Index, "remote"],
-      value: true,
-    },
-    {
-      path: ["env", "production", "r2_buckets", productionR2Index, "bucket_name"],
-      value: productionResourceName,
-    },
-    {
-      path: ["env", "production", "r2_buckets", productionR2Index, "remote"],
-      value: true,
-    },
+  ]
+
+  // staging の D1 は setup では作成しないため、常にプレースホルダーへ戻して preflight で止める
+  const changes: ConfigChange[] = [
+    ...localChanges,
+    ...buildEnvironmentChanges({
+      environments,
+      environment: "production",
+      workerName: props.projectSlug,
+      accountId: props.accountId,
+      databaseId: props.productionDatabaseId ?? DATABASE_ID_PLACEHOLDER,
+    }),
+    ...buildEnvironmentChanges({
+      environments,
+      environment: STAGING_ENVIRONMENT,
+      workerName: stagingWorkerName,
+      accountId: props.accountId,
+      databaseId: DATABASE_ID_PLACEHOLDER,
+    }),
   ]
 
   return changes.reduce(
@@ -185,7 +243,7 @@ export function getCloudflareConfigIssues(props: ValidateCloudflareConfigProps):
   if (!targetName || !WORKER_NAME_PATTERN.test(targetName)) {
     issues.push(`env.${props.environment}.name に有効な Worker 名を設定してください`)
   }
-  if (targetName === TEMPLATE_WORKER_NAME) {
+  if (targetName && isTemplateWorkerName(targetName)) {
     issues.push(`env.${props.environment}.name が雛形のままです`)
   }
   if (localName && targetName === localName) {
@@ -237,7 +295,7 @@ export function getCloudflareConfigIssues(props: ValidateCloudflareConfigProps):
     if (
       databaseId === DATABASE_ID_PLACEHOLDER ||
       databaseId === LEGACY_TEMPLATE_DATABASE_ID ||
-      databaseId === "00000000-0000-0000-0000-000000000000"
+      databaseId === EMPTY_DATABASE_ID
     ) {
       issues.push(`env.${props.environment} の D1 database_id が雛形のままです`)
     }
@@ -270,27 +328,43 @@ export function getCloudflareConfigIssues(props: ValidateCloudflareConfigProps):
     }
   }
 
-  if (environments) {
-    for (const [name, value] of Object.entries(environments)) {
-      if (name === props.environment || !isObject(value)) continue
-      const siblingName = stringValue(value.name)
-      const siblingD1 = getBinding(value, "d1_databases", D1_BINDING)
-      const siblingR2 = getBinding(value, "r2_buckets", R2_BINDING)
-      if (targetName && siblingName === targetName) {
-        issues.push(`env.${name} と Worker 名が重複しています`)
-      }
-      const targetDatabaseId = targetD1 && stringValue(targetD1.database_id)
-      const siblingDatabaseId = siblingD1 && stringValue(siblingD1.database_id)
-      if (targetDatabaseId && siblingDatabaseId && targetDatabaseId === siblingDatabaseId) {
-        issues.push(`env.${name} と D1 database_id が重複しています`)
-      }
-      if (
-        targetR2 &&
-        siblingR2 &&
-        stringValue(targetR2.bucket_name) === stringValue(siblingR2.bucket_name)
-      ) {
-        issues.push(`env.${name} と R2 bucket_name が重複しています`)
-      }
+  // ローカル (トップレベル) と検査対象が同じ D1 / R2 を指していないか確認する
+  const targetDatabaseName = targetD1 && stringValue(targetD1.database_name)
+  const targetBucketName = targetR2 && stringValue(targetR2.bucket_name)
+  const localDatabaseName = localD1 && stringValue(localD1.database_name)
+  const localBucketName = localR2 && stringValue(localR2.bucket_name)
+  if (targetDatabaseName && localDatabaseName === targetDatabaseName) {
+    issues.push("ローカル用とデプロイ用の D1 名が同一です")
+  }
+  if (targetBucketName && localBucketName === targetBucketName) {
+    issues.push("ローカル用とデプロイ用の R2 bucket_name が同一です")
+  }
+
+  // 他のデプロイ環境 (staging / production など) とリソースを共有していないか確認する
+  const targetDatabaseId = getComparableDatabaseId(targetD1)
+  for (const name of Object.keys(environments ?? {})) {
+    if (name === props.environment) continue
+
+    const sibling = environments?.[name]
+    if (!isObject(sibling)) continue
+
+    const siblingD1 = getBinding(sibling, "d1_databases", D1_BINDING)
+    const siblingR2 = getBinding(sibling, "r2_buckets", R2_BINDING)
+    if (targetName && stringValue(sibling.name) === targetName) {
+      issues.push(`env.${name} と Worker 名が重複しています`)
+    }
+    if (targetDatabaseId && getComparableDatabaseId(siblingD1) === targetDatabaseId) {
+      issues.push(`env.${name} と D1 database_id が重複しています`)
+    }
+    if (
+      targetDatabaseName &&
+      siblingD1 &&
+      stringValue(siblingD1.database_name) === targetDatabaseName
+    ) {
+      issues.push(`env.${name} と D1 database_name が重複しています`)
+    }
+    if (targetBucketName && siblingR2 && stringValue(siblingR2.bucket_name) === targetBucketName) {
+      issues.push(`env.${name} と R2 bucket_name が重複しています`)
     }
   }
 

@@ -2,23 +2,15 @@ import { readFile } from "node:fs/promises"
 import path from "node:path"
 
 import { getCloudflareConfigIssues } from "@/core/scripts/cloudflare-config"
-
-function getOption(name: string): string | undefined {
-  const equalsPrefix = `--${name}=`
-  const equalsOption = process.argv.find((argument) => argument.startsWith(equalsPrefix))
-  if (equalsOption) return equalsOption.slice(equalsPrefix.length)
-
-  const optionIndex = process.argv.indexOf(`--${name}`)
-  return optionIndex >= 0 ? process.argv[optionIndex + 1] : undefined
-}
+import { getCliOption } from "@/core/scripts/get-cli-option"
 
 async function main(): Promise<void> {
-  const environment = getOption("env")
+  const environment = getCliOption("env")
   if (!environment) {
     throw new Error("デプロイ対象を --env=<environment> で明示してください")
   }
 
-  const configPath = path.resolve(getOption("config") ?? "wrangler.jsonc")
+  const configPath = path.resolve(getCliOption("config") ?? "wrangler.jsonc")
   const source = await readFile(configPath, "utf8")
   const issues = getCloudflareConfigIssues({
     source,
