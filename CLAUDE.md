@@ -11,11 +11,12 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 - データベース: Cloudflare D1 (SQLite)、ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
 - リッチテキスト: Lexical Editor (`@payloadcms/richtext-lexical`)
+- ランタイム: Node.js `^22.18.0 || >=24.11.0`（`package.json` の `engines` と `.node-version` が正本。Next 16 / Vite+ / wrangler の要求範囲の共通部分）
 - ツールチェーン: Vite+（依存管理・スクリプト・lint・format・test）/ Bun 1.3+（管理対象ランタイム）
 - リンター & フォーマッター: vite-plus (`vp lint` / `vp check`)。設定は `vite.config.ts` に最小限のみ
 - 統合テスト: vite-plus test (vitest 互換) + @testing-library/react (`tests/int/`)。コンポーネントテストはファイル先頭の `@vitest-environment jsdom` で DOM を有効化
 - E2E テスト: Playwright / Chromium (`tests/e2e/`)。ローカル D1 が並列に弱いため workers は 1 固定
-- UI カタログ: Storybook 10 (`@storybook/react-vite`) / `.storybook/`
+- UI カタログ: Storybook 10 (`@storybook/react-vite`) / `.storybook/`。`vp run test:storybook` が全 story の描画と axe による a11y (serious 以上) を検査する
 
 ## ディレクトリ構成の要点
 
@@ -56,7 +57,7 @@ tests/int/                    統合テスト (vitest)
 tests/e2e/                    E2E テスト (Playwright)
 ```
 
-Storybook ストーリーは対象コンポーネントと同じディレクトリに `<name>.stories.tsx` としてコロケーションする（例: `src/project/shared/components/button.stories.tsx`）。ストーリー生成は `/add-story` スキルを使う。
+Storybook ストーリーは対象コンポーネントと同じディレクトリに `<name>.stories.tsx` としてコロケーションする（例: `src/project/shared/ui/button.stories.tsx`）。ストーリー生成は `/add-story` スキルを使う。
 
 コロケーションの運用ルール:
 
@@ -123,8 +124,8 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 
 ## 設計上の非自明ポイント
 
-- `src/core/payload/config-base.ts` の Cloudflare コンテキストは、OpenNext が注入済みなら `getCloudflareContext`、それ以外は `getPlatformProxy` を使う。Next dev は `next.config.ts` でローカル binding を注入する。CLI は production のときだけ `remoteBindings: true`、dev・テスト・ビルド時の fallback はローカル binding を使う。
-- wrangler.jsonc の D1 binding に `remote: true` があっても、`vp run build` の SSG プリレンダーはリモート D1 に接続しない。ビルドは Cloudflare アカウントや本番 DB の状態に依存せず、ローカル D1 (`.wrangler/state/v3`) を使う。デプロイ済み Worker は実行環境から渡された D1 / R2 binding を使い、production CLI で明示的に操作する場合のみリモート binding を使う。
+- `src/core/payload/config-base.ts` の Cloudflare コンテキストは、OpenNext が注入済みなら `getCloudflareContext`、それ以外は `getPlatformProxy` を使う。Next dev は `next.config.ts` でローカル binding を注入する。CLI は環境変数 `CLOUDFLARE_REMOTE_BINDINGS=true` を明示したときだけ `remoteBindings: true`（`make deploy-db` が設定する）。`NODE_ENV=production` だけでは remote にならず、dev・テスト・ビルド時の fallback はローカル binding を使う。
+- wrangler.jsonc の D1 binding に `remote: true` があっても、`vp run build` の SSG プリレンダーはリモート D1 に接続しない。ビルドは Cloudflare アカウントや本番 DB の状態に依存せず、ローカル D1 (`.wrangler/state/v3`) を使う。デプロイ済み Worker は実行環境から渡された D1 / R2 binding を使い、`CLOUDFLARE_REMOTE_BINDINGS=true` を付けた Payload CLI だけがリモート binding を使う。
 - 案件固有の Global は `src/project/pages/<page>/global.ts` に置き、`src/payload.config.ts` の `projectGlobals` に import 追加する。export 名は `<name>Global`（例 `homeGlobal`）。
 - 案件固有のコレクションは `src/project/collections/*.ts` に置き、`projectCollections` に追加する。
 - `src/payload-types.ts` は `vp run generate:types` で再生成する。手で書き換えない。
@@ -156,7 +157,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 ## 生成 AI のガードレール
 
 - `src/core/` は読み取り専用。改変したい場合は本体テンプレートリポジトリへ PR を送る
-- 新規ファイル作成は原則 `src/project/` 配下に限定する
+- 新規ファイル作成は原則 `src/project/` 配下に限定する（例外は route `src/app/(frontend)/[locale]/**`、`src/payload.config.ts`、`src/migrations/**`、`wrangler.jsonc`。一覧は `.docs/architecture.md` の「コード所有境界」）
 - 新規コレクション追加時は `src/payload.config.ts` の `projectCollections` への追加を忘れない
 - セクションは Payload の `group` フィールドで作り、`enabled` チェックボックスを必ず含める
 - フィールドラベルは日本語、フィールド名は lowerCamelCase

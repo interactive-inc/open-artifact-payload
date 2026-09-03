@@ -25,6 +25,7 @@ export default defineConfig({
       ".open-next/**",
       "src/payload-types.ts",
       "src/payload-generated-schema.ts",
+      "src/app/(payload)/admin/importMap.js",
       "src/migrations/**",
       "storybook-static/**",
     ],
@@ -35,7 +36,11 @@ export default defineConfig({
   },
   fmt: {
     semi: false,
-    // wrangler が生成するファイルは整形せずそのままコミットして、再生成の差分をゼロにする
-    ignorePatterns: ["src/payload-types.ts", "cloudflare-env.d.ts"],
+    // Payload と wrangler が上書きする生成物は、書式を揃えず生成結果を正としてそのままコミットする
+    ignorePatterns: [
+      "src/payload-types.ts",
+      "src/app/(payload)/admin/importMap.js",
+      "cloudflare-env.d.ts",
+    ],
   },
 })
