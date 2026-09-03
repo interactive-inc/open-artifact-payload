@@ -50,6 +50,94 @@ describe("Cloudflare config", () => {
     expect(getCloudflareConfigIssues({ source: result, environment: "production" })).toEqual([])
   })
 
+  it("staging も案件固有の Worker / D1 / R2 名へ更新する", async () => {
+    const source = await readFile(path.resolve("wrangler.jsonc"), "utf8")
+    const result = updateCloudflareConfig({
+      source,
+      projectSlug: "sakura-trip",
+      accountId,
+      productionDatabaseId: databaseId,
+    })
+    const config = parse(result)
+
+    expect(config.env.staging).toMatchObject({
+      name: "sakura-trip-staging",
+      account_id: accountId,
+      d1_databases: [
+        {
+          binding: "D1",
+          database_id: "<D1_DATABASE_ID>",
+          database_name: "sakura-trip-staging-cms",
+          remote: true,
+        },
+      ],
+      r2_buckets: [{ binding: "R2", bucket_name: "sakura-trip-staging-cms", remote: true }],
+    })
+    expect(getCloudflareConfigIssues({ source: result, environment: "staging" })).toContain(
+      "env.staging の D1 database_id が雛形のままです",
+    )
+  })
+
+  it("staging の database_id を設定すれば staging も検査を通過する", async () => {
+    const source = await readFile(path.resolve("wrangler.jsonc"), "utf8")
+    const configured = updateCloudflareConfig({
+      source,
+      projectSlug: "sakura-trip",
+      accountId,
+      productionDatabaseId: databaseId,
+    })
+    const config = parse(configured)
+    config.env.staging.d1_databases[0].database_id = "abcdef01-1234-4234-8234-123456789abc"
+
+    expect(
+      getCloudflareConfigIssues({ source: JSON.stringify(config), environment: "staging" }),
+    ).toEqual([])
+  })
+
+  it("staging と production が同じ D1 / R2 を指していたら拒否する", async () => {
+    const source = await readFile(path.resolve("wrangler.jsonc"), "utf8")
+    const configured = updateCloudflareConfig({
+      source,
+      projectSlug: "sakura-trip",
+      accountId,
+      productionDatabaseId: databaseId,
+    })
+    const config = parse(configured)
+    config.env.staging.d1_databases[0].database_id = databaseId
+    config.env.staging.d1_databases[0].database_name = "sakura-trip-cms"
+    config.env.staging.r2_buckets[0].bucket_name = "sakura-trip-cms"
+
+    const issues = getCloudflareConfigIssues({
+      source: JSON.stringify(config),
+      environment: "production",
+    })
+
+    expect(issues).toContain("env.staging と D1 database_id が重複しています")
+    expect(issues).toContain("env.staging と D1 database_name が重複しています")
+    expect(issues).toContain("env.staging と R2 bucket_name が重複しています")
+  })
+
+  it("ローカルとデプロイ環境が同じ D1 / R2 を指していたら拒否する", async () => {
+    const source = await readFile(path.resolve("wrangler.jsonc"), "utf8")
+    const configured = updateCloudflareConfig({
+      source,
+      projectSlug: "sakura-trip",
+      accountId,
+      productionDatabaseId: databaseId,
+    })
+    const config = parse(configured)
+    config.d1_databases[0].database_name = "sakura-trip-cms"
+    config.r2_buckets[0].bucket_name = "sakura-trip-cms"
+
+    const issues = getCloudflareConfigIssues({
+      source: JSON.stringify(config),
+      environment: "production",
+    })
+
+    expect(issues).toContain("ローカル用とデプロイ用の D1 名が同一です")
+    expect(issues).toContain("ローカル用とデプロイ用の R2 bucket_name が同一です")
+  })
+
   it("D1を自動作成しない場合は既存の本番database_idをプレースホルダーへ戻す", async () => {
     const source = await readFile(path.resolve("wrangler.jsonc"), "utf8")
     const withLegacyId = source.replace("<D1_DATABASE_ID>", "eabbe0ed-1d16-48de-b5cf-728e23a91a42")
@@ -94,6 +182,9 @@ describe("Cloudflare config", () => {
     const issues = getCloudflareConfigIssues({ source, environment: "production" })
 
     expect(issues).toContain("env.production.name が雛形のままです")
+    expect(getCloudflareConfigIssues({ source, environment: "staging" })).toContain(
+      "env.staging.name が雛形のままです",
+    )
     expect(issues).toContain(
       "env.production.account_id または CLOUDFLARE_ACCOUNT_ID に有効な Account ID を設定してください",
     )

@@ -26,5 +26,5 @@ description: この Payload CMS テンプレートの変更を実際に動かし
 
 ## 注意
 
-- `wrangler types`（`vp run generate:types` の前半）は `.env` の内容から env 型を生成するため、シークレットが揃っていない環境で実行すると `cloudflare-env.d.ts` が痩せる。差分を確認し、意図しない変更なら `git restore cloudflare-env.d.ts` で戻す
+- `vp run generate:types` の Cloudflare 型は `.env.example` の変数名から生成するため、手元の `.env` の内容には依存しない。生成後の差分は `vp run test:cloudflare-config` の `--check` で検査できる
 - `vp run payload --` 系 CLI は `PAYLOAD_SECRET=test-secret-do-not-use-in-production` を付ければ `.env` 無しでも動く

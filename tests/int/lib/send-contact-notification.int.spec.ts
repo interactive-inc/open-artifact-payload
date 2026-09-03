@@ -102,4 +102,38 @@ describe("sendContactNotification", () => {
 
     expect(sendEmail).toHaveBeenCalledTimes(1)
   })
+
+  it("失敗エラーにメールアドレスが含まれても伏せ字にして返す", async () => {
+    vi.stubEnv("RESEND_API_KEY", "re_test_key")
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "admin@example.com")
+    vi.stubEnv("CONTACT_NOTIFICATION_FROM", "Contact <noreply@example.com>")
+    vi.spyOn(payload, "sendEmail").mockRejectedValue(
+      new Error("Invalid recipient admin@example.com from noreply@example.com"),
+    )
+
+    const result = await sendContactNotification({ payload, submission })
+
+    expect(result.status).toBe("failed")
+    if (result.status === "failed") {
+      expect(result.error).not.toContain("admin@example.com")
+      expect(result.error).not.toContain("noreply@example.com")
+      expect(result.error).not.toContain("taro@example.com")
+      expect(result.error).toContain("[email]")
+    }
+  })
+
+  it("失敗エラーが長すぎても 200 文字までに切り詰める", async () => {
+    vi.stubEnv("RESEND_API_KEY", "re_test_key")
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "admin@example.com")
+    vi.stubEnv("CONTACT_NOTIFICATION_FROM", "Contact <noreply@example.com>")
+    vi.spyOn(payload, "sendEmail").mockRejectedValue(new Error("x".repeat(5000)))
+
+    const result = await sendContactNotification({ payload, submission })
+
+    expect(result.status).toBe("failed")
+    if (result.status === "failed") {
+      expect(result.error).toHaveLength(201)
+      expect(result.error.endsWith("…")).toBe(true)
+    }
+  })
 })

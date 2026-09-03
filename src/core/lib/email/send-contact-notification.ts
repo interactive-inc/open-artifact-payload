@@ -60,6 +60,15 @@ export async function sendContactNotification(props: Props): Promise<ContactNoti
     })
     return { status: "sent" }
   } catch (error) {
-    return { status: "failed", error: sanitizeErrorMessage(error) }
+    // Resend のエラー文字列には宛先アドレスや件名の氏名が含まれうるので、
+    // 呼び出し元がそのままログへ出せる形に落としてから返す
+    return {
+      status: "failed",
+      error: sanitizeErrorMessage(error, [
+        props.submission.name,
+        props.submission.email,
+        props.submission.message,
+      ]),
+    }
   }
 }

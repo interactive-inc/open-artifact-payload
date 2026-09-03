@@ -48,7 +48,7 @@ async function defaultCheckRateLimit(key: string): Promise<RateLimitDecision> {
     return outcome.success ? "allowed" : "limited"
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error)
-    console.error("[contact] レート制限の確認に失敗しました:", reason)
+    console.error("[contact] レート制限の確認に失敗しました:", sanitizeErrorMessage(reason))
     return "unavailable"
   }
 }
@@ -95,7 +95,10 @@ export async function submitContact(
     rateLimitKey = await createRateLimitKey(fields.email)
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error)
-    console.error("[contact] レート制限キーの生成に失敗しました:", reason)
+    console.error(
+      "[contact] レート制限キーの生成に失敗しました:",
+      sanitizeErrorMessage(reason, [fields.email]),
+    )
     return { status: "serverError" }
   }
 
@@ -139,7 +142,17 @@ export async function submitContact(
       },
     })
     .catch((error: unknown) => {
-      console.error("[contact] 問い合わせ保存失敗:", sanitizeErrorMessage(error))
+      // 保存エラーには送信内容が echo されうるため、伏せ字と長さ制限をかけてから記録する
+      console.error(
+        "[contact] 問い合わせ保存失敗:",
+        sanitizeErrorMessage(error, [
+          fields.name,
+          fields.email,
+          fields.message,
+          fields.phone,
+          fields.companyName,
+        ]),
+      )
       return null
     })
 
