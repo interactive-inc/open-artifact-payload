@@ -18,6 +18,7 @@
 
 ### 修正
 
+- CTA ボタン、お知らせの日付、フッターのポリシーリンク、削除ボタンの文字色コントラストが WCAG AA (4.5:1) を下回っていたのを修正しました。 (#16)
 - macOS 標準の GNU make 3.81 で `make preview` / `make deploy-app` / `make deploy-db` が `opennextjs-cloudflare: No such file or directory` で失敗する問題を修正しました。Makefile の CLI 呼び出しを `vp exec` 経由にしています。 (#28)
 
 ## 2026-08-08

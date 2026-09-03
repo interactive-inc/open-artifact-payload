@@ -16,7 +16,7 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 - リンター & フォーマッター: vite-plus (`vp lint` / `vp check`)。設定は `vite.config.ts` に最小限のみ
 - 統合テスト: vite-plus test (vitest 互換) + @testing-library/react (`tests/int/`)。コンポーネントテストはファイル先頭の `@vitest-environment jsdom` で DOM を有効化
 - E2E テスト: Playwright / Chromium (`tests/e2e/`)。ローカル D1 が並列に弱いため workers は 1 固定
-- UI カタログ: Storybook 10 (`@storybook/react-vite`) / `.storybook/`
+- UI カタログ: Storybook 10 (`@storybook/react-vite`) / `.storybook/`。`vp run test:storybook` が全 story の描画と axe による a11y (serious 以上) を検査する
 
 ## ディレクトリ構成の要点
 
