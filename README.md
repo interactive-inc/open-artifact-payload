@@ -24,7 +24,7 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 
 ## セットアップ
 
-前提: bun 1.3+ / wrangler CLI / Cloudflare アカウント
+前提: Node.js 22.18+ または 24.11+ / bun 1.3+ / wrangler CLI / Cloudflare アカウント
 
 ```bash
 vp install
