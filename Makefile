@@ -15,9 +15,10 @@ deploy deploy-app deploy-db deploy-preflight: export CLOUDFLARE_ENV ?= productio
 # DB マイグレーション + アプリデプロイ
 deploy: deploy-db deploy-app
 
-# Worker / D1 / R2 / Account ID の取り違えをデプロイ前に検出
+# Worker / D1 / R2 / Account ID の取り違えと、必須 secret の登録漏れをデプロイ前に検出
 deploy-preflight:
 	vp run cloudflare:preflight -- --env=$(CLOUDFLARE_ENV)
+	vp run cloudflare:preflight-secrets -- --env=$(CLOUDFLARE_ENV)
 
 # アプリのみデプロイ
 deploy-app: deploy-preflight

@@ -71,7 +71,7 @@ vp run dev
 
 - [ ] 問い合わせフォームを残す場合はTurnstileサイトキーをサイト設定に、`TURNSTILE_SECRET_KEY`をSecret Storeに登録する（本番の設定不足はfail-closed）
 - [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` の3つが揃ったときのみ送信される
-- [ ] staging 環境が必要なら `wrangler.jsonc` の `env.staging` に staging 用 D1 / R2 を設定して `make deploy CLOUDFLARE_ENV=staging`
+- [ ] staging 環境が必要か決める。`wrangler.jsonc` に `env.staging` の雛形があるので、staging 用の D1 と R2 を作成して `database_id` を埋めれば `make deploy CLOUDFLARE_ENV=staging` でデプロイできる。secret は `--env=staging` で別途登録する
 - [ ] `.docs/tasks.md` の「人間の判断が必要なタスク」を一読して、デフォルトのままでよいか確認する
 
 ## コレクションとグローバル
@@ -98,7 +98,7 @@ make preview          # ローカルで Workers ランタイムを使ったプ�
 ```
 
 `make preview` はトップレベルのローカル専用 D1 / R2 を使用します。`make deploy*` は
-`env.production` を明示し、事前検査で Account ID、Worker名、D1 ID、R2名の未設定・不一致・環境間重複を拒否します。
+`env.production` を明示し、事前検査で Account ID、Worker名、D1 ID、R2名の未設定・不一致・環境間重複と、必須シークレットの登録漏れを拒否します。
 
 制限事項:
 

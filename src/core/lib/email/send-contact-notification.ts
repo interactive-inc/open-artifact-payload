@@ -1,5 +1,7 @@
 import { Resend } from "resend"
 
+import { sanitizeErrorMessage } from "@/core/lib/email/sanitize-error-message"
+
 type ContactPayload = {
   name: string
   email: string
@@ -53,6 +55,15 @@ export async function sendContactNotification(
     return { status: "sent" }
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    return { status: "failed", error: message }
+
+    // Resend のエラー文字列には宛先アドレスや件名の氏名が含まれうるので、
+    // 呼び出し元がそのままログへ出せる形に落としてから返す
+    return {
+      status: "failed",
+      error: sanitizeErrorMessage({
+        message,
+        redactedValues: [payload.name, payload.email, payload.message],
+      }),
+    }
   }
 }

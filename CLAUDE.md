@@ -100,7 +100,9 @@ make deploy-app       # アプリのみ
 make deploy-db        # DB マイグレーションのみ
 ```
 
-`CLOUDFLARE_ENV` を上書きすれば別環境にデプロイできる (例: `make deploy CLOUDFLARE_ENV=staging`)。
+`CLOUDFLARE_ENV` を上書きすれば別環境にデプロイできる (例: `make deploy CLOUDFLARE_ENV=staging`)。`wrangler.jsonc` には `env.staging` の雛形があり、D1 / R2 を作成して `database_id` を埋めれば使える。
+
+`make deploy*` の前段の `deploy-preflight` は、Worker / D1 / R2 / Account ID の設定に加えて、対象環境に必須シークレット (`PAYLOAD_SECRET`) が登録されているかも検査する (任意シークレットは警告のみ)。
 
 `wrangler.jsonc` で D1 (binding: `D1`) と R2 (binding: `R2`) を定義している。`database_id` と R2 の `bucket_name` は各自のリソースに合わせて更新する必要がある。
 

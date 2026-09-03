@@ -21,6 +21,7 @@ export default defineConfig({
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "cloudflare-env.d.ts",
       ".open-next/**",
       "src/payload-types.ts",
       "src/payload-generated-schema.ts",
@@ -35,7 +36,11 @@ export default defineConfig({
   },
   fmt: {
     semi: false,
-    // Payload が dev 起動時と generate:importmap で上書きする生成物は、書式を揃えず生成結果を正とする
-    ignorePatterns: ["src/payload-types.ts", "src/app/(payload)/admin/importMap.js"],
+    // Payload と wrangler が上書きする生成物は、書式を揃えず生成結果を正としてそのままコミットする
+    ignorePatterns: [
+      "src/payload-types.ts",
+      "src/app/(payload)/admin/importMap.js",
+      "cloudflare-env.d.ts",
+    ],
   },
 })

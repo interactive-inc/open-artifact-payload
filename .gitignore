@@ -39,6 +39,9 @@ yarn-error.log*
 next-env.d.ts
 
 .env
+# wrangler のローカル secret (make preview で PAYLOAD_SECRET などを渡す)
+.dev.vars
+.dev.vars.*
 
 /media
 
@@ -52,6 +55,8 @@ node_modules/
 # OpenNext
 .open-next
 .wrangler
+# 型生成専用に main を落とした一時 wrangler 設定
+.wrangler-types.jsonc
 
 # Storybook
 storybook-static

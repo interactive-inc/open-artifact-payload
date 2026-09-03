@@ -175,6 +175,12 @@ vp run generate:types
 
 どちらのファイルも手動で編集してはいけません。
 
+`cloudflare-env.d.ts` は `wrangler.jsonc` の binding と `.env.example` の変数名から生成します。環境変数を増やすときは `.env.example` にも名前を追加してから再生成してください。フォーマッターと lint の対象外にしてあるので、生成された内容をそのままコミットします。
+
+生成は誰がいつ実行しても同じ結果になるようにしてあります。手元の `.env` は読まず、`.env.example` だけを見ます。また `src/core/scripts/generate-cloudflare-types.ts` が `main` を外した一時設定を作って wrangler に渡すため、`.open-next` のビルド成果物があってもなくても出力は変わりません。
+
+生成が最新かどうかは `vp run test:cloudflare-config` が検査します。
+
 `src/app/(payload)/admin/importMap.js` も同じく Payload の生成物です。開発サーバーの起動時と `vp run generate:importmap` で上書きされるため、手動で編集せず、生成結果をそのままコミットします。フォーマッターと lint の対象からも外しています。
 
 ## コンテンツモデルの追加・変更
@@ -422,6 +428,41 @@ CLOUDFLARE_ENV=production CLOUDFLARE_REMOTE_BINDINGS=true PAYLOAD_SECRET=ignore 
 - `ratelimits[].namespace_id` — 同じCloudflareアカウント内の他bindingと重複しない正の整数。トップレベルと`env.production`も別IDにする
 
 トップレベルの Worker / D1 / R2 はローカル専用です。`env.production` と同じ名前やIDを設定しないでください。
+
+### 環境ごとの binding と secret の契約
+
+wrangler は環境を指定すると binding を継承しません。`env.production` と `env.staging` の両方に同じ binding を明示してください。
+
+- `D1` — Payload のデータベース。環境ごとに別の D1 を作成し、`database_id` と `remote: true` を設定する
+- `R2` — メディアの保存先。環境ごとに別のバケットを作成する
+- `ASSETS` — OpenNext が出力する静的アセット。`assets.binding` で定義する
+- `CONTACT_RATE_LIMITER` — 問い合わせフォームのレート制限。`namespace_id` を環境ごとに別の整数にする
+
+一方で `compatibility_date`、`compatibility_flags`、`observability` は継承されるキーです。トップレベルに書けば全環境へ効くため、環境ごとに重複して書きません。
+
+secret は環境ごとに `wrangler secret put <NAME> --env=<environment>` で登録します。`make deploy-preflight` が必須 secret の登録漏れを検出し、任意 secret は警告のみ出します。
+
+- `PAYLOAD_SECRET` — 必須
+- `TURNSTILE_SECRET_KEY` — 問い合わせフォームを残す場合は必須
+- `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メールを使う場合に登録する（API キーと宛先は必須）
+- `ANTHROPIC_API_KEY` と `OPENAI_API_KEY` — AI 翻訳で使うプロバイダーの分だけ登録する
+- `AI_TRANSLATION_MAX_MONTHLY_RUNS` などの `AI_TRANSLATION_` 系 — AI 翻訳の上限の天井を実装側で握る場合に登録する
+
+`NEXT_PUBLIC_SERVER_URL` は secret ではありません。ビルド時に焼き込まれるため `.env` の値が使われます。デプロイ前に本番ドメインへ変更してください。
+
+### compatibility_date の更新手順
+
+`compatibility_date` は同梱している wrangler の workerd で検証できる範囲に留めます。日付を進めると、その間に既定化された compatibility flag が一括で有効になり、Payload や OpenNext の挙動が変わることがあります。
+
+更新は次の順序で行います。
+
+- Cloudflare の [compatibility flags 一覧](https://developers.cloudflare.com/workers/configuration/compatibility-flags/) で、現在の日付と新しい日付の間に既定化されるフラグを確認する
+- `wrangler.jsonc` の `compatibility_date` を更新する
+- `vp run generate:types` で `cloudflare-env.d.ts` のランタイム型を再生成する
+- `make preview` を起動し、トップページ、下層ページ、`/admin`、`/api/users/me` が想定どおり応答することを確認する
+- `vp run test:e2e` を実行する
+
+問題が出たら、原因のフラグを個別に無効化するか、`compatibility_date` を問題の出ない日付まで下げます。個別の無効化は、フラグ一覧に併記されている打ち消し用の名前 (`disable_` や `no_` で始まる名前) を `compatibility_flags` に追加します。
 
 ### 環境変数
 
