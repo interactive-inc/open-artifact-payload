@@ -66,6 +66,7 @@ vp run dev
 - [ ] `.env` の `NEXT_PUBLIC_SERVER_URL` を本番ドメインにする（ビルド時に焼き込まれ、sitemap / OG の URL が参照する）
 - [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だとビルドが `no such table` で落ちる）
 - [ ] Workers に独自ドメインを設定する
+- [ ] GitHub の branch protection で `check` / `build` / `e2e` を必須にする
 
 任意・判断が必要:
 
