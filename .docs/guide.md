@@ -163,6 +163,8 @@ vp run generate:types
 
 どちらのファイルも手動で編集してはいけません。
 
+`src/app/(payload)/admin/importMap.js` も同じく Payload の生成物です。開発サーバーの起動時と `vp run generate:importmap` で上書きされるため、手動で編集せず、生成結果をそのままコミットします。フォーマッターと lint の対象からも外しています。
+
 ## コンテンツモデルの追加・変更
 
 ### コレクションの追加
