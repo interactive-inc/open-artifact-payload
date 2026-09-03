@@ -15,7 +15,7 @@
   - hooks/ lib/ 汎用フック / util
 - collections/ 案件固有コレクション (tours, staff, cases など)
 - admin/ ダッシュボードタスク定義、feature flag
-- theme/ Tailwind テーマ (色・フォント)
+- テーマトークン（色・フォント・余白・コンテナ幅）は `src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root` が正本。`theme/` ディレクトリは無い
 
 セクションをどこに置くか:
 
