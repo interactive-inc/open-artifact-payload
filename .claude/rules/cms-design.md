@@ -3,25 +3,23 @@
 デザイン（ワイヤーフレーム、Figma、スクリーンショット）から Payload CMS のフィールド構成を決めるときの判断基準。
 セクションやコレクションの生成時に必ず読むこと。
 
-## UI要素 → フィールド型の対応表
+## UI要素とフィールド型の対応
 
-| UI要素                        | フィールド型                  | 備考                                                        |
-| ----------------------------- | ----------------------------- | ----------------------------------------------------------- |
-| 1行テキスト見出し             | `text`                        |                                                             |
-| 複数行の説明文                | `textarea`                    |                                                             |
-| リッチテキスト本文            | `richText`                    | Lexical エディタ                                            |
-| 画像1枚                       | `upload, relationTo: 'media'` |                                                             |
-| 繰り返し要素（3〜6件程度）    | `array` + 内部フィールド      | D1 では autosave と非互換。後述の制約を参照                 |
-| 他コレクションからの参照      | `relationship`                | depth 指定を忘れない                                        |
-| ON/OFF切り替え                | `checkbox`                    |                                                             |
-| 選択肢                        | `select`                      | value は英語、label は日本語                                |
-| リンクボタン                  | `text` x2（ラベル + URL）     | URL 側は `validate: validateLinkHref`                       |
-| ナビゲーション / ポリシー URL | `text`                        | `validate: validateLinkHref`                                |
-| SNS の外部 URL                | `text`                        | `validate: validateHttpsUrl`                                |
-| スラッグ (URL パス)           | `text`                        | `validate: validateSlug`（汎用ページは `validatePageSlug`） |
-| 電話番号 (TEL / FAX)          | `text`                        | `validate: validatePhone`                                   |
-| 日付                          | `date`                        |                                                             |
-| 数値                          | `number`                      |                                                             |
+- 1 行テキスト見出し → `text`
+- 複数行の説明文 → `textarea`
+- リッチテキスト本文 → `richText`（Lexical エディタ）
+- 画像 1 枚 → `upload, relationTo: 'media'`
+- 繰り返し要素（3〜6 件程度）→ `array` + 内部フィールド（D1 では autosave と非互換。後述の制約を参照）
+- 他コレクションからの参照 → `relationship`（depth 指定を忘れない）
+- ON/OFF 切り替え → `checkbox`
+- 選択肢 → `select`（value は英語、label は日本語）
+- リンクボタン → `text` x2（ラベル + URL。name は `ctaLabel` + `ctaHref` のパターン。URL 側は `validate: validateLinkHref`）
+- ナビゲーション / ポリシー URL → `text` + `validate: validateLinkHref`
+- SNS の外部 URL → `text` + `validate: validateHttpsUrl`
+- スラッグ (URL パス) → `text` + `validate: validateSlug`（汎用ページは `validatePageSlug`）
+- 電話番号 (TEL / FAX) → `text` + `validate: validatePhone`
+- 日付 → `date`
+- 数値 → `number`
 
 ## 編集可能 vs 固定の判断基準
 
@@ -160,7 +158,7 @@ buildCoreConfig({
 
 フロントエンド側は以下のテンプレ構造が前提:
 
-- `src/app/(frontend)/layout.tsx` は `<RefreshRouteOnSave />` を常時レンダリング
+- `src/app/(frontend)/[locale]/layout.tsx` は `<RefreshRouteOnSave />` を常時レンダリング
 - 各 `page.tsx` は `const draftState = await draftMode()` を呼んで `payload.findGlobal({ ..., draft: draftState.isEnabled })` に渡す
 
 ## 管理画面サイドバーアイコン

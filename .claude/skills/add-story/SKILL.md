@@ -22,7 +22,7 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 
 引数または `AskUserQuestion` で以下を確認する。
 
-- 対象コンポーネントのパス（例: `src/project/shared/components/card.tsx`）
+- 対象コンポーネントのパス（例: `src/project/shared/ui/card.tsx`）
 - 既存コンポーネントなら → ストーリーのみ追加
 - 未作成なら → コンポーネント仕様（props, variant, 用途）をヒアリングしてから生成
 

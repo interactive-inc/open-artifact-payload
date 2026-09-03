@@ -6,13 +6,13 @@
 
 技術スタックの概要は以下のとおりです。
 
-- CMS: Payload CMS 3.87.0 (`@payloadcms/db-d1-sqlite`)
-- フレームワーク: Next.js 16.2.12 (App Router)
+- CMS: Payload CMS 3.88.0 (`@payloadcms/db-d1-sqlite`)。バージョンは `package.json` が正本
+- フレームワーク: Next.js 16.3.0 (App Router)
 - データベース: Cloudflare D1 (SQLite)
 - ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
 - 言語: TypeScript 5.7.3 (`strict: true`)
-- ツールチェーン: Vite+ 0.2.7
+- ツールチェーン: Vite+ 0.2.8
 - ランタイム / パッケージマネージャー: Bun 1.3.14
 
 ## セットアップ
@@ -291,7 +291,7 @@ export const projectFeatures: ProjectFeatures = {
 
 変更後、マイグレーションを作成して適用し、`vp run generate:types` で型を再生成します。SEO プラグインは `enableFreePages` が true のとき自動的に `pages` を対象に含めるため、追加設定は不要です (`config-base.ts` がフラグに応じて切り替えます)。
 
-フロントで固定ページを表示するには、対応する `src/app/(frontend)/[slug]/page.tsx` ルートを案件側で追加してください (テンプレートには同梱していません。`enableFreePages` が false のときは `pages` コレクション型が生成されず、ルートを同梱すると型エラーになるため)。ルートは `payload.find({ collection: 'pages', where: { slug: { equals: params.slug } } })` で取得し、`RichText` で本文を、`generateMetadata` で `doc.meta` を描画します。実装例は `src/app/(frontend)/news/[slug]/page.tsx` を参考にしてください。
+フロントで固定ページを表示するには、対応する `src/app/(frontend)/[locale]/[slug]/page.tsx` ルートを案件側で追加してください (テンプレートには同梱していません。`enableFreePages` が false のときは `pages` コレクション型が生成されず、ルートを同梱すると型エラーになるため)。ルートは `payload.find({ collection: 'pages', where: { slug: { equals: params.slug } } })` で取得し、`RichText` で本文を、`generateMetadata` で `doc.meta` を描画します。実装例は `src/app/(frontend)/news/[slug]/page.tsx` を参考にしてください。
 
 ### メディアのアップロード制約
 
@@ -697,7 +697,7 @@ SQLite の二重引用符フォールバック問題に注意してください�
 以下を確認してください。
 
 - `livePreviewCollections` / `livePreviewGlobals` に対象の slug が含まれているか
-- フロントエンドに対応するルートが存在するか (例: `src/app/(frontend)/news/[slug]/page.tsx`)
+- フロントエンドに対応するルートが存在するか (例: `src/app/(frontend)/[locale]/news/[slug]/page.tsx`)
 - 管理画面に管理者でログイン済みか (`/next/preview` は Payload 認証を通す)
 - `NEXT_PUBLIC_SERVER_URL` が正しい URL を指しているか
 
