@@ -4,6 +4,14 @@
 
 ## 2026-09-04
 
+### 追加
+
+- linked worktree を `make worktree` の 1 コマンドで初期化できるようにしました（依存導入、`.env` の引き継ぎ、ローカル D1 のマイグレーション）。 (#28)
+
+### 変更
+
+- Makefile の `CLOUDFLARE_ENV=production` の既定をデプロイ系 target だけに限定しました。`make preview` などのローカル操作が本番環境の bindings 定義を参照しなくなります。 (#28)
+
 ### 修正
 
 - macOS 標準の GNU make 3.81 で `make preview` / `make deploy-app` / `make deploy-db` が `opennextjs-cloudflare: No such file or directory` で失敗する問題を修正しました。Makefile の CLI 呼び出しを `vp exec` 経由にしています。 (#28)
