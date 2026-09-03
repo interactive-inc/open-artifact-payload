@@ -33,9 +33,9 @@ describe("Button", () => {
     expect(onClick).toHaveBeenCalledTimes(1)
   })
 
-  it('variant="primary" のとき bg-brand を含むクラスが付与される', () => {
+  it('variant="primary" のとき bg-primary を含むクラスが付与される', () => {
     const { getByRole } = render(<Button variant="primary">主要</Button>)
-    expect(getByRole("button", { name: "主要" }).className).toContain("bg-brand")
+    expect(getByRole("button", { name: "主要" }).className).toContain("bg-primary")
   })
 
   it('href を渡すと <button> ではなくリンク (role="link") を描画する', () => {

@@ -18,9 +18,9 @@ type Props = {
 }
 
 const variantClass: Record<Variant, string> = {
-  primary: "bg-brand text-white hover:bg-brand-dark",
-  secondary: "bg-surface text-brand border border-brand hover:bg-brand/5",
-  ghost: "bg-transparent text-brand hover:bg-brand/10",
+  primary: "bg-primary text-primary-foreground hover:bg-primary/80",
+  secondary: "bg-background text-primary border border-primary hover:bg-primary/5",
+  ghost: "bg-transparent text-primary hover:bg-primary/10",
 }
 
 const sizeClass: Record<Size, string> = {

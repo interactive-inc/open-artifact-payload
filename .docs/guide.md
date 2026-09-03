@@ -220,7 +220,7 @@ Claude Code のスラッシュコマンドで生成するのが推奨です。
 セクションコンポーネントの規約は以下のとおりです。
 
 - `enabled` が `false` のときは `null` を返す
-- hex カラー直書き禁止、Tailwind のテーマトークンを使う (`bg-brand`, `text-accent` 等)
+- hex カラー直書き禁止、Tailwind のテーマトークンを使う (`bg-primary`, `text-accent` 等)
 - フロントエンドの `page.tsx` でセクションを組み立てる
 
 ### 汎用ページ機能の有効化
@@ -253,7 +253,7 @@ export const projectFeatures: ProjectFeatures = {
 - `src/project/pages/<page>/global.ts` の固定ページグローバル定義（export 名は `<name>Global`）
 - `src/project/pages/<page>/sections/` と `src/project/shared/sections/` 配下のセクションコンポーネント
 - `src/project/admin/dashboard-tasks.ts` のタスク一覧
-- `src/project/theme/tailwind.theme.ts` のカラー・フォント設定
+- `src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root` へのカラー・フォント設定反映
 - `src/payload.config.ts` の更新
 
 ### プロジェクト概要の書き方
@@ -318,31 +318,31 @@ export const projectFeatures: ProjectFeatures = {
 
 ### Tailwind テーマトークン
 
-ブランドカラーとフォントは `src/project/theme/tailwind.theme.ts` で定義します。hex カラーはこのファイルにのみ記述し、コンポーネント内では Tailwind クラスを使います。
+テーマトークンの正本は `src/app/(frontend)/[locale]/styles.css` です。色は `:root` / `.dark` に CSS 変数 (oklch) として定義し、フォント・セクション余白・コンテナ幅は同ファイルの `@theme inline` ブロックで定義します。hex や oklch の値はこのファイルにのみ記述し、コンポーネント内では Tailwind クラスを使います。
 
-```typescript
-export const projectTailwindTheme = {
-  colors: {
-    brand: {
-      DEFAULT: "#1a5f7a",
-      light: "#3a7a94",
-      dark: "#0f4558",
-    },
-    accent: {
-      DEFAULT: "#ff6b35",
-    },
-  },
-  fontFamily: {
-    sans: ['"Noto Sans JP"', "Hiragino Sans", "sans-serif"],
-  },
+```css
+@theme inline {
+  --font-sans: "Noto Sans JP", "Hiragino Sans", "Yu Gothic", sans-serif;
+  --container-content: 75rem;
+  --container-wide: 56rem;
+  --spacing-section: 6rem;
+  --spacing-section-sm: 3.5rem;
+  --color-primary: var(--primary);
+  --color-accent: var(--accent);
+}
+
+:root {
+  --primary: oklch(0.18 0 0);
+  --accent: oklch(0.96 0 0);
 }
 ```
 
-これにより以下の Tailwind クラスが使用可能になります。
+案件のブランド色を差し替える場合は `:root` (ダークモードは `.dark`) の `--primary` / `--accent` などの変数値のみ編集すれば、全コンポーネントに反映されます。これにより以下の Tailwind クラスが使用可能になります。
 
-- `bg-brand` / `bg-brand-light` / `bg-brand-dark`
-- `text-brand` / `text-brand-light` / `text-brand-dark`
-- `bg-accent` / `text-accent`
+- `bg-primary` / `text-primary-foreground`
+- `bg-accent` / `text-accent-foreground`
+- `py-section` / `py-section-sm`
+- `max-w-content` / `max-w-wide`
 - `font-sans` (日本語フォントスタック)
 
 ### 管理画面の日本語化
@@ -464,7 +464,6 @@ vp run test:int
 - `src/project/shared/` — 複数ページで使う資産 (sections / components / ui / hooks / lib)
 - `src/project/collections/` — 案件固有コレクション定義
 - `src/project/admin/dashboard-tasks.ts` — ダッシュボードのクイックアクション一覧
-- `src/project/theme/tailwind.theme.ts` — ブランドカラー・フォント定義
 - `src/project/project-features.ts` — 機能フラグ (`enableFreePages` 等)
 - `src/project/types.ts` — プロジェクト固有の型定義
 
