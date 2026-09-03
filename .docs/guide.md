@@ -28,7 +28,19 @@
 
 ### テンプレートからプロジェクトを作成
 
-GitHub の "Use this template" ボタンからリポジトリを複製します。複製後、依存関係をインストールします。
+テンプレートの更新を後から取り込めるよう、GitHub の "Use this template" ではなく clone で作成し、テンプレートを `upstream` remote として残すことを推奨します。
+
+```bash
+git clone <テンプレートリポジトリURL> <案件名>
+cd <案件名>
+git remote rename origin upstream
+git remote add origin <案件リポジトリURL>
+git push -u origin main
+```
+
+"Use this template" で作成した場合はテンプレートと履歴を共有しないため、テンプレート更新の初回取り込みの前に履歴の接ぎ木が必要になります（「テンプレート更新の取り込み」節を参照）。
+
+依存関係をインストールします。
 
 ```bash
 vp install
@@ -432,24 +444,52 @@ Turnstile の公開サイトキー (フロントエンド用) は環境変数で
 
 ## テンプレート更新の取り込み
 
+テンプレートの修正は `src/core/` だけでなく、`src/migrations/`、`packages/`、ルート設定、依存関係、テスト、運用文書に及びます。そのため `src/core/` だけを部分的に取り込む方式は採らず、テンプレートの `main` を案件リポジトリへ Git でマージします。どのファイルがテンプレート所有・案件所有・共有編集かは [[architecture|アーキテクチャ]] の「コード所有境界」を、この方式を選んだ理由は [[decisions/004-template-update-by-upstream-merge|雛形更新の Git マージ配布]] を参照してください。
+
 ### 更新手順
 
-テンプレート本体に修正や機能追加があった場合、`src/core/` 配下を更新します。
+```bash
+git fetch upstream
+git merge upstream/main
+```
+
+"Use this template" から作成して履歴を共有していない案件は、そのままマージすると全ファイルが競合します（`--allow-unrelated-histories` でも同じです）。初回だけ、案件の最初のコミットをテンプレートの元コミットへ接ぎ木してからマージします。元コミットは、案件の最初のコミットとツリーが一致するテンプレート側のコミットとして機械的に特定できます。
 
 ```bash
 git remote add upstream <テンプレートリポジトリURL>
-git subtree pull --prefix=src/core upstream main
+git fetch upstream main
+INITIAL=$(git rev-list --max-parents=0 HEAD)
+TEMPLATE_BASE=$(git log --format='%H %T' upstream/main | awk -v tree="$(git rev-parse "$INITIAL^{tree}")" '$2 == tree { print $1 }')
+git rebase --root --onto "$TEMPLATE_BASE"
+git merge upstream/main
+```
+
+`TEMPLATE_BASE` が空になる場合は、最初のコミットでファイルを編集しているため一致するコミットがありません。案件作成日のテンプレート `main` のコミットを指定してください。`rebase` は案件の履歴を書き換えるため、共同作業者がいる場合は事前に共有し、完了後に `git push --force-with-lease` します。2 回目以降は通常のマージです。
+
+マージ後は次の順で整合を取ります。
+
+```bash
+vp install
 vp run generate:types
+vp run generate:importmap
+vp run payload migrate
+vp check
 vp run test:int
 ```
 
-テストが通ることを確認してから案件ブランチにマージしてください。
+### 競合の解決
+
+競合したファイルは所有境界で判断します。
+
+- テンプレート所有（`src/core/**` など）: upstream 側を採用します。案件側で変更していた場合は、その変更をテンプレートへ PR として送ります
+- 案件所有（`src/project/**`、route、`wrangler.jsonc` など）: 案件側を維持します。テンプレートが契約モジュール（`@/project/...`）や設定項目を追加した場合は、その分だけ手で追加します
+- 共有編集（`src/migrations/**`、`package.json`、`bun.lock`）: 両方を残します。マイグレーションはファイル名の timestamp 順に適用されるため、案件で作成済みのマイグレーションより古い timestamp のテンプレート側マイグレーションが来た場合は、ローカル D1 で `vp run payload migrate` を実行してスキーマ差分が無いことを確認します。`bun.lock` は `vp install` で再生成します
 
 ### 注意点
 
-`src/core/` 配下のファイルは案件側で直接変更しないでください。テンプレート本体への改善はリポジトリに PR を送ります。
-
-マイグレーションの競合に注意してください。テンプレート側のマイグレーションと案件側のマイグレーションが衝突する場合は、マイグレーションファイルのタイムスタンプとスキーマ差分を慎重に確認してください。
+- `src/core/` 配下のファイルは案件側で直接変更しないでください。案件で変更すると、以後のマージで毎回競合します
+- テンプレート更新にマイグレーションが含まれる場合、本番反映は通常のデプロイと同じく `make deploy-db` のあとに `make deploy-app` の順で行います
+- `CHANGELOG.md` には管理画面の利用者や運用に影響する変更を記録しています。マージ前に `CHANGELOG.md` の差分を確認し、必要なら運用者へ案内してください
 
 ## ディレクトリ構成
 
