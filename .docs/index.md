@@ -17,6 +17,8 @@ Inta CMS は、Payload CMS と Cloudflare を使って企業サイトを構築�
 - [[decisions/001-site-management-boundary|サイト管理境界の設計判断]]
 - [[decisions/002-official-payload-mcp|公式Payload MCPの採用]]
 - [[decisions/003-intacms-cli|Hiract型intacms CLIの採用]]
+- [[decisions/005-ai-translation-ordered-reservation|AI翻訳の利用上限を順序付き予約で守る]]
+
 - [[decisions/006-email-delivery-without-queue|Queueを使わないメール配信の設計判断]]
 
 - [[decisions/004-template-update-by-upstream-merge|雛形更新の Git マージ配布]]
