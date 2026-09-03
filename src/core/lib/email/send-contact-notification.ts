@@ -1,69 +1,74 @@
-import { Resend } from "resend"
+import type { Payload } from "payload"
 
 import { sanitizeErrorMessage } from "@/core/lib/email/sanitize-error-message"
 
-type ContactPayload = {
+type ContactNotificationInput = {
   name: string
   email: string
-  phone?: string
-  companyName?: string
-  inquiryType?: string
+  phone: string | null
+  companyName: string | null
+  inquiryType: string | null
   message: string
 }
 
-type NotificationResult =
+type Props = {
+  payload: Payload
+  submission: ContactNotificationInput
+}
+
+export type ContactNotificationResult =
   | { status: "sent" }
   | { status: "skipped"; reason: string }
   | { status: "failed"; error: string }
 
 /**
- * 問い合わせ受付の管理者通知メールを Resend 経由で送信する。
+ * 問い合わせ受付の管理者通知メールを Payload のメールアダプタ経由で送信する。
  *
- * RESEND_API_KEY / CONTACT_NOTIFICATION_EMAIL / CONTACT_NOTIFICATION_FROM のいずれかが未設定
- * のときは送信せず skipped で返す。送信失敗時も例外を投げず failed で返す（フォーム本体の保存は維持）。
+ * 送信基盤は認証メールと共通 (resolve-email-adapter)。RESEND_API_KEY か宛先・送信元が
+ * 未設定のときは送信せず skipped を返す。送信失敗時も例外を投げず failed を返し、
+ * 呼び出し側で配信状態として記録できるようにする。
  */
-export async function sendContactNotification(
-  payload: ContactPayload,
-): Promise<NotificationResult> {
+export async function sendContactNotification(props: Props): Promise<ContactNotificationResult> {
   const apiKey = process.env.RESEND_API_KEY
   const to = process.env.CONTACT_NOTIFICATION_EMAIL
-  const from = process.env.CONTACT_NOTIFICATION_FROM
+  const from = [process.env.CONTACT_NOTIFICATION_FROM, process.env.EMAIL_FROM].find(
+    (value) => typeof value === "string" && value.trim().length > 0,
+  )
+
   if (!apiKey) return { status: "skipped", reason: "RESEND_API_KEY 未設定" }
   if (!to) return { status: "skipped", reason: "CONTACT_NOTIFICATION_EMAIL 未設定" }
-  if (!from) return { status: "skipped", reason: "CONTACT_NOTIFICATION_FROM 未設定" }
+  if (!from) return { status: "skipped", reason: "CONTACT_NOTIFICATION_FROM / EMAIL_FROM 未設定" }
 
-  const resend = new Resend(apiKey)
   const lines: string[] = [
-    `お名前: ${payload.name}`,
-    payload.companyName ? `会社名: ${payload.companyName}` : null,
-    `メール: ${payload.email}`,
-    payload.phone ? `電話: ${payload.phone}` : null,
-    payload.inquiryType ? `種別: ${payload.inquiryType}` : null,
+    `お名前: ${props.submission.name}`,
+    props.submission.companyName ? `会社名: ${props.submission.companyName}` : null,
+    `メール: ${props.submission.email}`,
+    props.submission.phone ? `電話: ${props.submission.phone}` : null,
+    props.submission.inquiryType ? `種別: ${props.submission.inquiryType}` : null,
     "",
     "----- 本文 -----",
-    payload.message,
+    props.submission.message,
   ].filter((line): line is string => line !== null)
 
   try {
-    await resend.emails.send({
+    await props.payload.sendEmail({
       from,
       to,
-      replyTo: payload.email,
-      subject: `【お問い合わせ】${payload.name} 様より`,
+      replyTo: props.submission.email,
+      subject: `【お問い合わせ】${props.submission.name} 様より`,
       text: lines.join("\n"),
     })
     return { status: "sent" }
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-
     // Resend のエラー文字列には宛先アドレスや件名の氏名が含まれうるので、
     // 呼び出し元がそのままログへ出せる形に落としてから返す
     return {
       status: "failed",
-      error: sanitizeErrorMessage({
-        message,
-        redactedValues: [payload.name, payload.email, payload.message],
-      }),
+      error: sanitizeErrorMessage(error, [
+        props.submission.name,
+        props.submission.email,
+        props.submission.message,
+      ]),
     }
   }
 }

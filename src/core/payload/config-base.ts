@@ -20,6 +20,7 @@ import { aiTranslationLogs } from "@/core/collections/ai-translation-logs"
 import { siteSettings } from "@/core/globals/site-settings"
 import { aiTranslationSettings } from "@/core/globals/ai-translation-settings"
 import { aiTranslateEndpoint } from "@/core/lib/ai-translation/ai-translate-endpoint"
+import { resolveEmailAdapter } from "@/core/lib/email/resolve-email-adapter"
 import { injectAiTranslateControls } from "@/core/payload/inject-ai-translate-controls"
 import { injectAiTranslateControlsIntoGlobal } from "@/core/payload/inject-ai-translate-controls-into-global"
 import {
@@ -221,6 +222,9 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     globals: allGlobals,
     endpoints: enableAiTranslation ? [aiTranslateEndpoint] : [],
     editor: lexicalEditor(),
+    // パスワード再設定などの認証メールと問い合わせ通知の共通経路。
+    // 未設定なら undefined を渡し、Payload 既定の console アダプタへ委ねる
+    email: resolveEmailAdapter(),
     secret: resolveSecret(),
     typescript: {
       outputFile: path.resolve(props.dirname, "payload-types.ts"),

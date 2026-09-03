@@ -113,7 +113,9 @@ wrangler secret put PAYLOAD_SECRET --env=production
 # 任意: 利用する場合のみ
 wrangler secret put TURNSTILE_SECRET_KEY --env=production
 wrangler secret put RESEND_API_KEY --env=production
+wrangler secret put EMAIL_FROM --env=production
 wrangler secret put CONTACT_NOTIFICATION_EMAIL --env=production
+# 任意: 通知メールだけ別の送信元にする場合のみ
 wrangler secret put CONTACT_NOTIFICATION_FROM --env=production
 # 任意: AI翻訳を使う場合のみ（選択モデルのプロバイダ分だけ）
 wrangler secret put ANTHROPIC_API_KEY --env=production
@@ -134,7 +136,8 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - Payload 管理画面 / フロントエンドは `app/(payload)` と `app/(frontend)` のルートグループで分離されている。
 - リンターは ESLint ではなく vite-plus (`vp lint` / oxlint ベース) を使う。Turbopack デフォルトの仕様で webpack 設定が必要な dev/build には `--webpack` を付けて回避している。
 - ユーザーは `admin` / `editor` / `serviceAdmin` のロールを持つ。コレクションの削除など破壊的操作は admin のみ可能。`serviceAdmin` はサービス提供側（実装会社）専用で、AI翻訳設定の閲覧・変更に使う。serviceAdmin の付け外しは serviceAdmin 自身のみ可能（クライアント admin の自己昇格を hook で防止）。初回セットアップ時に実装会社のアカウントへ付与しておくこと。共通アクセス制御は `src/core/lib/access/` 配下を参照。
-- 問い合わせフォーム送信時の通知メールは Resend を使う。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` がすべて設定されたときのみ送信、失敗してもフォーム保存はブロックしない。
+- メール送信は Payload 公式の Resend アダプタ (`src/core/lib/email/resolve-email-adapter.ts`) が唯一の経路。パスワード再設定などの認証メールと問い合わせ通知が同じ経路を通る。`RESEND_API_KEY` と送信元 (`EMAIL_FROM`、無ければ `CONTACT_NOTIFICATION_FROM`) が揃わなければアダプタを渡さず、Payload 既定の console アダプタ（宛先と件名だけをログ出力）にフォールバックする。
+- 問い合わせ通知は `src/core/lib/email/deliver-contact-notification.ts` に集約している。送信結果を `contact-submissions` の `notificationStatus` / `notificationError` / `notifiedAt` に記録し、失敗してもフォーム保存はブロックしない。フォーム送信時は失敗すると 1 秒後に 1 回だけ再試行する。管理画面の編集画面にある「通知を再送」ボタン（`POST /api/contact-submissions/:id/resend-notification`、admin / serviceAdmin のみ）も同じ関数を通し、`notificationStatus` が `sent` のレコードは再送しない。ログへ出す文字列は `sanitizeErrorMessage` を通してメールアドレスを伏せる。
 - ニュース / ページ更新後は `src/core/lib/revalidate/build-collection-revalidate-after-change.ts` などの hook ビルダー経由で対象パスを `revalidatePath()` する (削除側は `build-collection-revalidate-after-delete.ts`、グローバルは `build-global-revalidate-after-change.ts`)。案件側で新コレクションを追加した場合も同 hook を使うこと。
 
 ## AI翻訳機能

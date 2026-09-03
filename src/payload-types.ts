@@ -282,6 +282,15 @@ export interface ContactSubmission {
   inquiryType?: string | null;
   message: string;
   status: 'new' | 'inProgress' | 'done';
+  /**
+   * 管理者への通知メールの配信状態。自動で記録される。失敗のままなら「通知を再送」で送り直す
+   */
+  notificationStatus?: ('pending' | 'sent' | 'failed' | 'skipped') | null;
+  /**
+   * 送信できなかった理由。メールアドレスは伏せた短い文言だけを記録する
+   */
+  notificationError?: string | null;
+  notifiedAt?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -675,6 +684,9 @@ export interface ContactSubmissionsSelect<T extends boolean = true> {
   inquiryType?: T;
   message?: T;
   status?: T;
+  notificationStatus?: T;
+  notificationError?: T;
+  notifiedAt?: T;
   updatedAt?: T;
   createdAt?: T;
 }
