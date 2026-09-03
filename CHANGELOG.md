@@ -10,6 +10,7 @@
 
 ### 変更
 
+- セットアップの「デプロイモード」から未完成だった SSG を外し、Cloudflare Workers 専用にしました。 (#14)
 - 対応する Node.js を 22.18 以上の 22 系、または 24.11 以上に統一しました。`package.json` の `engines` と `.node-version` が正本です。 (#22)
 - Makefile の `CLOUDFLARE_ENV=production` の既定をデプロイ系 target だけに限定しました。`make preview` などのローカル操作が本番環境の bindings 定義を参照しなくなります。 (#28)
 
