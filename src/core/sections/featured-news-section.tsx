@@ -36,7 +36,10 @@ export function FeaturedNewsSection(props: Props) {
                 <Link href={`/news/${item.slug}`}>
                   <h3 className="font-semibold text-lg">{item.title}</h3>
                   {publishedDate ? (
-                    <time dateTime={publishedDate.dateTime} className="text-sm text-muted">
+                    <time
+                      dateTime={publishedDate.dateTime}
+                      className="text-sm text-muted-foreground"
+                    >
                       {publishedDate.label}
                     </time>
                   ) : null}

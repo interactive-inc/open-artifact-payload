@@ -3,7 +3,9 @@
   "main": ".open-next/worker.js",
   // トップレベルはローカル専用。`vp run setup:project` が案件 slug に更新する
   "name": "open-artifact-payload-local",
-  "compatibility_date": "2025-08-15",
+  // 同梱 wrangler の workerd で検証できる上限に合わせる。
+  // 更新手順は .docs/guide.md の「compatibility_date の更新手順」を参照する
+  "compatibility_date": "2026-07-30",
   "compatibility_flags": [
     // Enable Node.js API
     // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#nodejs-compatibility-flag
@@ -12,6 +14,13 @@
     // see https://developers.cloudflare.com/workers/configuration/compatibility-flags/#global-fetch-strictly-public
     "global_fetch_strictly_public",
   ],
+  // Workers Logs。observability は継承されるキーなので、トップレベルの指定が env.production /
+  // env.staging にも効く。トラフィックが多い案件は head_sampling_rate を下げてコストを抑える。
+  // ログには問い合わせ本文や secret を出さない前提で有効化している。
+  "observability": {
+    "enabled": true,
+    "head_sampling_rate": 1,
+  },
   "assets": {
     "directory": ".open-next/assets",
     "binding": "ASSETS",
@@ -56,8 +65,8 @@
     },
   ],
 
-  // 本番環境。セットアップ完了まで account_id は未設定、database_id はプレースホルダーにして誤デプロイを防ぐ。
-  // wrangler は環境を指定するとトップレベルの bindings を継承しないため、本番値を明示する。
+  // デプロイ環境。セットアップ完了まで account_id は未設定、database_id はプレースホルダーにして誤デプロイを防ぐ。
+  // wrangler は環境を指定するとトップレベルの bindings を継承しないため、各環境で本番値を明示する。
   "env": {
     "production": {
       "name": "open-artifact-payload",
@@ -82,6 +91,38 @@
         {
           "name": "CONTACT_RATE_LIMITER",
           "namespace_id": "1002",
+          "simple": {
+            "limit": 5,
+            "period": 60,
+          },
+        },
+      ],
+    },
+    // 検証環境の雛形。D1 と R2 を作成して database_id を埋めれば
+    // `make deploy CLOUDFLARE_ENV=staging` でデプロイできる。secret は環境ごとに登録する
+    "staging": {
+      "name": "open-artifact-payload-staging",
+      "services": [],
+      "d1_databases": [
+        {
+          "binding": "D1",
+          // `vp exec wrangler d1 create <slug>-staging-cms` の出力を貼る
+          "database_id": "<D1_DATABASE_ID>",
+          "database_name": "open-artifact-payload-staging-cms",
+          "remote": true,
+        },
+      ],
+      "r2_buckets": [
+        {
+          "binding": "R2",
+          "bucket_name": "open-artifact-payload-staging-cms",
+          "remote": true,
+        },
+      ],
+      "ratelimits": [
+        {
+          "name": "CONTACT_RATE_LIMITER",
+          "namespace_id": "1003",
           "simple": {
             "limit": 5,
             "period": 60,

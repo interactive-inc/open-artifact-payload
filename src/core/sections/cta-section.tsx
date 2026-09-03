@@ -25,7 +25,7 @@ export function CtaSection(props: Props) {
         {props.data.ctaLabel && props.data.ctaHref ? (
           <Link
             href={props.data.ctaHref}
-            className="inline-block px-8 py-4 bg-accent rounded-md font-semibold"
+            className="inline-block px-8 py-4 bg-accent text-accent-foreground rounded-md font-semibold"
           >
             {props.data.ctaLabel}
           </Link>

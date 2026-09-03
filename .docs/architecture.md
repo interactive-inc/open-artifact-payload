@@ -17,6 +17,34 @@ MCP client -> @payloadcms/plugin-mcp -> generated CRUD / custom use case ──�
 - `packages/cli`: argv、環境、ログインセッションをHonoの内部リクエストへ変換するInterface
 - `src/project/mcp.ts`: 共有カタログから公式MCP設定を生成し、公開操作の上限にする
 
+## コード所有境界
+
+案件実装者がどのファイルを変更してよいかを整理します。
+
+- テンプレート所有
+  - 所有者: 本体テンプレート
+  - 主なパス: `src/core/**`、`packages/**`、`.storybook/**`、`Makefile`、`vite.config.ts`、`playwright*.config.ts`、`tests/int/core/**`、`tests/int/lib/**`
+  - 変更の流れ: 案件では編集せず、変更したい場合は本体テンプレートリポジトリへ PR を送ります
+- 案件所有
+  - 所有者: 案件
+  - 主なパス: route (`src/app/(frontend)/[locale]/**` の各 page)、`src/app/icon.svg`、`public/**`、`src/payload.config.ts`、`src/project/mcp.ts`、`wrangler.jsonc`、`portless.json`、`next.config.ts` の `images.remotePatterns`、`.docs/project-brief.md`、`.env`
+  - 変更の流れ: 案件が自由に編集します
+- 共有編集
+  - 所有者: テンプレートと案件の両方
+  - 主なパス: `src/migrations/**`、`tests/e2e/**`、`package.json` / `bun.lock`、`.docs/guide.md` などの運用文書
+  - 変更の流れ: `src/migrations/**` はテンプレート由来と案件由来のファイルが混在し、timestamp 順で管理します。`tests/e2e/**` はテンプレート同梱のシナリオに案件のシナリオを追加します。`package.json` / `bun.lock` はテンプレート更新で依存が変わります。`.docs/guide.md` などの運用文書は両者が更新します
+
+core が参照する案件側の契約モジュールは次のとおりです。
+
+- `@/project/types`（型 `ProjectFeatures`）
+- `@/project/admin/dashboard-tasks`
+- `@/project/shared/lib/locale-types`
+- `@/project/shared/lib/is-locale`
+- `@/project/shared/lib/with-locale-prefix`
+- `@/project/shared/lib/get-ui-dictionary`
+
+案件はこれらのファイルと export を必ず維持します。core はこれ以外を `@/project` から import しません。`tests/int/core/dependency-direction.int.spec.ts` が検査します。
+
 ## 依存方向
 
 CLIはInterfaceからApplication、Domain、Infrastructureへの一方向です。リソース操作はCLIがHonoの内部リクエストへ変換し、`SiteManagementRuntime`だけを呼びます。PayloadのREST URLと認証ヘッダーはRuntime配下のInfrastructureが組み立てます。ログイン、設定ファイル、環境選択はCLIホスト固有の境界なので `packages/cli` 内に閉じています。
