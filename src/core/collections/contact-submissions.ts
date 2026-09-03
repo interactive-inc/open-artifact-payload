@@ -1,8 +1,9 @@
-import { type CollectionConfig, validations } from "payload"
+import type { CollectionConfig } from "payload"
 
 import { isAdmin } from "@/core/lib/access/is-admin"
 import { isAuthenticated } from "@/core/lib/access/is-authenticated"
 import { CONTACT_FIELD_LIMITS } from "@/core/frontend/forms/contact-form-constraints"
+import { validateEmail } from "@/core/lib/validation/validate-email"
 
 export const contactSubmissions: CollectionConfig = {
   slug: "contact-submissions",
@@ -42,15 +43,7 @@ export const contactSubmissions: CollectionConfig = {
       label: "メールアドレス",
       type: "email",
       required: true,
-      validate: async (value, options) => {
-        const emailResult = await validations.email(value, options)
-        if (emailResult !== true) return emailResult
-        return (
-          !value ||
-          value.length <= CONTACT_FIELD_LIMITS.email ||
-          `メールアドレスは${CONTACT_FIELD_LIMITS.email}文字以内で入力してください`
-        )
-      },
+      validate: validateEmail,
     },
     {
       name: "phone",
