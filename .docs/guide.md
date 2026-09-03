@@ -21,7 +21,8 @@
 
 以下のツールを事前にインストールしてください。
 
-- Node.js `^18.20.2` または `20.9.0` 以上
+- Node.js 22.18 以上の 22 系、または 24.11 以上（`.node-version` は 24 を指定。`package.json` の `engines` が正本）
+- Bun 1.3 以上（`package.json` の `packageManager` に固定）
 - Vite+ (`vp` コマンド)
 - Cloudflare アカウント (Free / Paid は Worker サイズと利用量に応じて選択)
 
@@ -458,7 +459,7 @@ vp run test:int
 
 ### src/project/ (案件ごとにカスタマイズ)
 
-案件固有のファイルはすべて `src/project/` 配下に置きます。
+案件固有のコードは原則 `src/project/` 配下に置きます。ただし route (`src/app/(frontend)/[locale]/**`)、Payload の composition root (`src/payload.config.ts`)、案件由来のマイグレーション、`wrangler.jsonc` などは案件側で編集します。所有境界の一覧は [[architecture|アーキテクチャ]] の「コード所有境界」を参照してください。
 
 - `src/project/pages/<page>/` — ページ単位のコロケーション (global.ts / sections/ / components/ / hooks/ / lib/)
 - `src/project/shared/` — 複数ページで使う資産 (sections / components / ui / hooks / lib)
@@ -487,7 +488,7 @@ export default buildCoreConfig({
 
 - `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
-- `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seedUser.ts`、ログイン `login.ts`)
+- `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seed-user.ts`、ログイン `login.ts`)
 
 ### GitHub Actions ワークフロー
 
