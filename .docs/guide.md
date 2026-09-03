@@ -488,6 +488,7 @@ export default buildCoreConfig({
 - `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
 - `tests/helpers/` — テスト用ヘルパー (ユーザー作成 `seedUser.ts`、ログイン `login.ts`)
+- `tests/storybook/` — Storybook の全 story を実ブラウザで開き、描画エラーと axe による a11y 違反 (serious 以上) を検査 (`vp run test:storybook`)
 
 ### GitHub Actions ワークフロー
 

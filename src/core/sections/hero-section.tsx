@@ -40,7 +40,7 @@ export function HeroSection(props: Props) {
           {props.data.ctaLabel && props.data.ctaHref ? (
             <Link
               href={props.data.ctaHref}
-              className="inline-block mt-8 px-6 py-3 bg-accent rounded-md font-semibold"
+              className="inline-block mt-8 px-6 py-3 bg-accent text-accent-foreground rounded-md font-semibold"
             >
               {props.data.ctaLabel}
             </Link>
