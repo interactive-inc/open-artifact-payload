@@ -91,13 +91,25 @@ const cloudflareLogger = {
   silent: () => {},
 } as unknown as Config["logger"]
 
+// E2E は CLOUDFLARE_PERSIST_PATH で専用のローカル D1 / R2 を使い、開発用の状態を汚さない。
+// 未設定なら wrangler 既定の .wrangler/state/v3 をそのまま使う。
+function buildPlatformProxyOptions(remoteBindings: boolean): GetPlatformProxyOptions {
+  const persistPath = process.env.CLOUDFLARE_PERSIST_PATH
+
+  if (persistPath) {
+    return {
+      environment: process.env.CLOUDFLARE_ENV,
+      remoteBindings,
+      persist: { path: persistPath },
+    }
+  }
+
+  return { environment: process.env.CLOUDFLARE_ENV, remoteBindings }
+}
+
 function getCloudflareContextFromWrangler(remoteBindings = false): Promise<CloudflareContext> {
   return import(/* webpackIgnore: true */ `${"__wrangler".replaceAll("_", "")}`).then(
-    ({ getPlatformProxy }) =>
-      getPlatformProxy({
-        environment: process.env.CLOUDFLARE_ENV,
-        remoteBindings,
-      } satisfies GetPlatformProxyOptions),
+    ({ getPlatformProxy }) => getPlatformProxy(buildPlatformProxyOptions(remoteBindings)),
   )
 }
 

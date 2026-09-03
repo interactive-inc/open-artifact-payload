@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test"
 
+import { e2eFixtures } from "../helpers/e2e-fixtures"
+
 test.describe("Frontend", () => {
   test("サイトアイコンがロケール変換されず配信される", async ({ request }) => {
     const response = await request.get("http://localhost:3000/icon.svg")
@@ -19,9 +21,12 @@ test.describe("Frontend", () => {
     await expect(page.locator("h1", { hasText: "お知らせ" })).toBeVisible()
   })
 
-  test("FAQ ページが表示される", async ({ page }) => {
+  test("FAQ ページに fixture の質問が表示される", async ({ page }) => {
     await page.goto("http://localhost:3000/faq")
     await expect(page.locator("h1", { hasText: "よくある質問" })).toBeVisible()
+    // 質問文はアコーディオンのトリガー内に "Q" と並ぶテキストノードなので、
+    // 完全一致ではなくボタンのアクセシブル名で照合する。
+    await expect(page.getByRole("button", { name: e2eFixtures.faqQuestion })).toBeVisible()
   })
 
   test("お問い合わせページにフォームが表示される", async ({ page }) => {

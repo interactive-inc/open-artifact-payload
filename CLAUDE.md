@@ -14,7 +14,7 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 - ツールチェーン: Vite+（依存管理・スクリプト・lint・format・test）/ Bun 1.3+（管理対象ランタイム）
 - リンター & フォーマッター: vite-plus (`vp lint` / `vp check`)。設定は `vite.config.ts` に最小限のみ
 - 統合テスト: vite-plus test (vitest 互換) + @testing-library/react (`tests/int/`)。コンポーネントテストはファイル先頭の `@vitest-environment jsdom` で DOM を有効化
-- E2E テスト: Playwright / Chromium (`tests/e2e/`)。ローカル D1 が並列に弱いため workers は 1 固定
+- E2E テスト: Playwright / Chromium (`tests/e2e/`)。ローカル D1 が並列に弱いため workers は 1 固定。開発用の `.wrangler/state` とは別に `.wrangler/state-e2e` を毎回作り直し、fixture (`tests/helpers/e2e-fixtures.ts`) を投入してから実行する
 - UI カタログ: Storybook 10 (`@storybook/react-vite`) / `.storybook/`
 
 ## ディレクトリ構成の要点
