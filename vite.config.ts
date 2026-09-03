@@ -21,6 +21,7 @@ export default defineConfig({
       "out/**",
       "build/**",
       "next-env.d.ts",
+      "cloudflare-env.d.ts",
       ".open-next/**",
       "src/payload-types.ts",
       "src/payload-generated-schema.ts",
@@ -34,6 +35,7 @@ export default defineConfig({
   },
   fmt: {
     semi: false,
-    ignorePatterns: ["src/payload-types.ts"],
+    // wrangler が生成するファイルは整形せずそのままコミットして、再生成の差分をゼロにする
+    ignorePatterns: ["src/payload-types.ts", "cloudflare-env.d.ts"],
   },
 })

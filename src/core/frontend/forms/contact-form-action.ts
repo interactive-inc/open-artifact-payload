@@ -3,6 +3,7 @@
 import { getPayload } from "payload"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 
+import { sanitizeErrorMessage } from "@/core/lib/email/sanitize-error-message"
 import { sendContactNotification } from "@/core/lib/email/send-contact-notification"
 import config from "@/payload.config"
 import type { ContactSubmitResult } from "@/core/frontend/forms/types"
@@ -43,7 +44,10 @@ async function defaultCheckRateLimit(key: string): Promise<RateLimitDecision> {
     return outcome.success ? "allowed" : "limited"
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error)
-    console.error("[contact] レート制限の確認に失敗しました:", reason)
+    console.error(
+      "[contact] レート制限の確認に失敗しました:",
+      sanitizeErrorMessage({ message: reason }),
+    )
     return "unavailable"
   }
 }
@@ -90,7 +94,10 @@ export async function submitContact(
     rateLimitKey = await createRateLimitKey(fields.email)
   } catch (error) {
     const reason = error instanceof Error ? error.message : String(error)
-    console.error("[contact] レート制限キーの生成に失敗しました:", reason)
+    console.error(
+      "[contact] レート制限キーの生成に失敗しました:",
+      sanitizeErrorMessage({ message: reason, redactedValues: [fields.email] }),
+    )
     return { status: "serverError" }
   }
 
@@ -133,7 +140,21 @@ export async function submitContact(
     // D1 タイムアウト / ロック / スキーマ不整合などを catch して
     // UI 側で再試行可能な状態にする (action が reject して UI が固まらないように)。
     const reason = error instanceof Error ? error.message : String(error)
-    console.error("[contact] 問い合わせ保存失敗:", reason)
+
+    // 保存エラーには送信内容が echo されうるため、伏せ字と長さ制限をかけてから記録する
+    console.error(
+      "[contact] 問い合わせ保存失敗:",
+      sanitizeErrorMessage({
+        message: reason,
+        redactedValues: [
+          fields.name,
+          fields.email,
+          fields.message,
+          fields.phone,
+          fields.companyName,
+        ],
+      }),
+    )
     return { status: "serverError" }
   }
 

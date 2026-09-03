@@ -4,6 +4,15 @@ import { beforeAll, describe, expect, it, vi } from "vite-plus/test"
 import config from "@/payload.config"
 import { submitContact } from "@/core/frontend/forms/contact-form-action"
 
+const sendMock = vi.fn()
+
+// new Resend() で生成されるため、コンストラクタとして呼べる通常関数でモックする
+function ResendMock() {
+  return { emails: { send: sendMock } }
+}
+
+vi.mock("resend", () => ({ Resend: ResendMock }))
+
 let payload: Payload
 
 describe("submitContact", () => {
@@ -78,6 +87,82 @@ describe("submitContact", () => {
       where: { email: { equals: uniqueEmail } },
     })
     expect(saved.docs).toHaveLength(0)
+  })
+
+  it("保存に失敗しても送信者の氏名・メール・本文をログに出さない", async () => {
+    const senderName = "ログ検査 太郎"
+    const senderEmail = `log-check-${crypto.randomUUID()}@example.com`
+    const senderMessage = "ログに出てはいけない本文"
+    const formData = new FormData()
+    formData.set("name", senderName)
+    formData.set("email", senderEmail)
+    formData.set("message", senderMessage)
+
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined)
+    const create = vi
+      .spyOn(payload, "create")
+      .mockRejectedValue(
+        new Error(`D1_ERROR: failed to insert ${senderEmail} / ${senderName} / ${senderMessage}`),
+      )
+    try {
+      const result = await submitContact(formData, {
+        verifyTurnstile: vi.fn().mockResolvedValue(true),
+        checkRateLimit: vi.fn().mockResolvedValue("allowed"),
+      })
+
+      expect(result.status).toBe("serverError")
+      const logged = consoleError.mock.calls.map((call) => call.join(" ")).join("\n")
+      expect(logged).toContain("[contact] 問い合わせ保存失敗:")
+      expect(logged).not.toContain(senderEmail)
+      expect(logged).not.toContain(senderName)
+      expect(logged).not.toContain(senderMessage)
+    } finally {
+      create.mockRestore()
+      consoleError.mockRestore()
+    }
+  })
+
+  it("通知メールに失敗しても送信者の氏名・メール・本文をログに出さない", async () => {
+    const senderName = "通知失敗 太郎"
+    const senderEmail = `notify-fail-${crypto.randomUUID()}@example.com`
+    const senderMessage = "通知が失敗してもログに出てはいけない本文"
+    const formData = new FormData()
+    formData.set("name", senderName)
+    formData.set("email", senderEmail)
+    formData.set("message", senderMessage)
+
+    vi.stubEnv("RESEND_API_KEY", "re_test_key")
+    vi.stubEnv("CONTACT_NOTIFICATION_EMAIL", "admin@example.com")
+    vi.stubEnv("CONTACT_NOTIFICATION_FROM", "Contact <noreply@example.com>")
+    sendMock.mockRejectedValue(
+      new Error(`Resend rejected ${senderEmail}: ${senderName} / ${senderMessage}`),
+    )
+    const consoleError = vi.spyOn(console, "error").mockImplementation(() => undefined)
+    try {
+      const result = await submitContact(formData, {
+        verifyTurnstile: vi.fn().mockResolvedValue(true),
+        checkRateLimit: vi.fn().mockResolvedValue("allowed"),
+      })
+
+      expect(result.status).toBe("ok")
+      const logged = consoleError.mock.calls.map((call) => call.join(" ")).join("\n")
+      expect(logged).toContain("[contact] 通知メール送信失敗:")
+      expect(logged).not.toContain(senderEmail)
+      expect(logged).not.toContain(senderName)
+      expect(logged).not.toContain(senderMessage)
+    } finally {
+      consoleError.mockRestore()
+      sendMock.mockReset()
+      vi.unstubAllEnvs()
+    }
+
+    const saved = await payload.find({
+      collection: "contact-submissions",
+      where: { email: { equals: senderEmail } },
+    })
+    for (const doc of saved.docs) {
+      await payload.delete({ collection: "contact-submissions", id: doc.id })
+    }
   })
 
   it("本番でTurnstileシークレットが未設定ならfail-closedにする", async () => {
