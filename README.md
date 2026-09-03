@@ -24,7 +24,7 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 
 ## セットアップ
 
-前提: bun 1.3+ / wrangler CLI / Cloudflare アカウント
+前提: Node.js 22.18+ または 24.11+ / bun 1.3+ / wrangler CLI / Cloudflare アカウント
 
 ```bash
 vp install
@@ -64,14 +64,14 @@ vp run dev
 - [ ] 本番シークレットを登録する（`PAYLOAD_SECRET` と、問い合わせフォームを残す場合の `TURNSTILE_SECRET_KEY` は必須。Resend は通知を使う場合のみ）
 - [ ] `wrangler.jsonc` の `CONTACT_RATE_LIMITER` の `namespace_id` がCloudflareアカウント内で一意か確認する
 - [ ] `.env` の `NEXT_PUBLIC_SERVER_URL` を本番ドメインにする（ビルド時に焼き込まれ、sitemap / OG の URL が参照する）
-- [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だとビルドが `no such table` で落ちる）
+- [ ] `make deploy-db` でリモート D1 に migrate してから `make deploy-app` を実行する（順序が逆だと、新しいスキーマを前提にしたアプリが本番で `no such table` になる。ビルド自体はローカル D1 を使うためリモートの状態に依存しない）
 - [ ] Workers に独自ドメインを設定する
 
 任意・判断が必要:
 
 - [ ] 問い合わせフォームを残す場合はTurnstileサイトキーをサイト設定に、`TURNSTILE_SECRET_KEY`をSecret Storeに登録する（本番の設定不足はfail-closed）
-- [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` の3つが揃ったときのみ送信される
-- [ ] staging 環境が必要なら `wrangler.jsonc` の `env.staging` に staging 用 D1 / R2 を設定して `make deploy CLOUDFLARE_ENV=staging`
+- [ ] 問い合わせ通知メール (Resend) を使うか決める。`RESEND_API_KEY` と `CONTACT_NOTIFICATION_EMAIL` が揃ったときに送信される（送信元は `EMAIL_FROM`、無ければ `CONTACT_NOTIFICATION_FROM`）
+- [ ] staging 環境が必要か決める。`wrangler.jsonc` に `env.staging` の雛形があるので、staging 用の D1 と R2 を作成して `database_id` を埋めれば `make deploy CLOUDFLARE_ENV=staging` でデプロイできる。secret は `--env=staging` で別途登録する
 - [ ] `.docs/tasks.md` の「人間の判断が必要なタスク」を一読して、デフォルトのままでよいか確認する
 
 ## コレクションとグローバル
@@ -98,7 +98,7 @@ make preview          # ローカルで Workers ランタイムを使ったプ�
 ```
 
 `make preview` はトップレベルのローカル専用 D1 / R2 を使用します。`make deploy*` は
-`env.production` を明示し、事前検査で Account ID、Worker名、D1 ID、R2名の未設定・不一致・環境間重複を拒否します。
+`env.production` を明示し、事前検査で Account ID、Worker名、D1 ID、R2名の未設定・不一致・環境間重複と、必須シークレットの登録漏れを拒否します。
 
 制限事項:
 

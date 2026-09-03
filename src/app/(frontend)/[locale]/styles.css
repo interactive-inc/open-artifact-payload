@@ -73,7 +73,9 @@
     --muted-foreground: oklch(0.5 0 0);
     --accent: oklch(0.96 0 0);
     --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
+    /* bg-destructive/10 の淡い下地に text-destructive を重ねる shadcn の配色で
+       WCAG AA (4.5:1) を満たす濃さ。既定の 0.577 では 4.0:1 で不足する。 */
+    --destructive: oklch(0.5 0.245 27.325);
     --destructive-foreground: oklch(0.985 0 0);
     --border: oklch(0.91 0 0);
     --input: oklch(0.91 0 0);
