@@ -3,7 +3,8 @@
 import { getPayload } from "payload"
 import { getCloudflareContext } from "@opennextjs/cloudflare"
 
-import { sendContactNotification } from "@/core/lib/email/send-contact-notification"
+import { deliverContactNotification } from "@/core/lib/email/deliver-contact-notification"
+import { sanitizeErrorMessage } from "@/core/lib/email/sanitize-error-message"
 import config from "@/payload.config"
 import type { ContactSubmitResult } from "@/core/frontend/forms/types"
 import {
@@ -15,7 +16,11 @@ type RateLimitDecision = "allowed" | "limited" | "unavailable"
 type Options = {
   verifyTurnstile?: (token: string) => Promise<boolean>
   checkRateLimit?: (key: string) => Promise<RateLimitDecision>
+  // 通知メール失敗時の再試行までの待ち時間。テストから短縮するための注入口
+  notificationRetryDelayMs?: number
 }
+
+const defaultNotificationRetryDelayMs = 1000
 
 async function createRateLimitKey(email: string): Promise<string> {
   const siteScope = process.env.NEXT_PUBLIC_SERVER_URL ?? "open-artifact-payload"
@@ -116,38 +121,53 @@ export async function submitContact(
 
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  try {
-    await payload.create({
+
+  // D1 タイムアウト / ロック / スキーマ不整合などを拾って
+  // UI 側で再試行可能な状態にする (action が reject して UI が固まらないように)。
+  const submission = await payload
+    .create({
       collection: "contact-submissions",
       data: {
         name: fields.name,
         email: fields.email,
-        phone: fields.phone.length > 0 ? fields.phone : undefined,
-        companyName: fields.companyName.length > 0 ? fields.companyName : undefined,
-        inquiryType: fields.inquiryType.length > 0 ? fields.inquiryType : undefined,
+        phone: fields.phone.length > 0 ? fields.phone : null,
+        companyName: fields.companyName.length > 0 ? fields.companyName : null,
+        inquiryType: fields.inquiryType.length > 0 ? fields.inquiryType : null,
         message: fields.message,
         status: "new",
+        notificationStatus: "pending",
       },
     })
-  } catch (error) {
-    // D1 タイムアウト / ロック / スキーマ不整合などを catch して
-    // UI 側で再試行可能な状態にする (action が reject して UI が固まらないように)。
-    const reason = error instanceof Error ? error.message : String(error)
-    console.error("[contact] 問い合わせ保存失敗:", reason)
-    return { status: "serverError" }
+    .catch((error: unknown) => {
+      console.error("[contact] 問い合わせ保存失敗:", sanitizeErrorMessage(error))
+      return null
+    })
+
+  if (!submission) return { status: "serverError" }
+
+  // 通知メールの失敗は CMS への保存をブロックしない（取りこぼし防止）。
+  // 一時障害に備えて 1 度だけ再試行し、最終結果はレコードの通知状態へ残る。
+  const delivery = await deliverContactNotification({ payload, submissionId: submission.id })
+
+  if (delivery instanceof Error || delivery.status !== "failed") {
+    return { status: "ok" }
   }
 
-  // 通知メールの失敗は CMS への保存をブロックしない（取りこぼし防止）
-  const notification = await sendContactNotification({
-    name: fields.name,
-    email: fields.email,
-    phone: fields.phone,
-    companyName: fields.companyName,
-    inquiryType: fields.inquiryType,
-    message: fields.message,
-  })
-  if (notification.status === "failed") {
-    console.error("[contact] 通知メール送信失敗:", notification.error)
+  console.error("[contact] 通知メール送信失敗:", delivery.error)
+
+  const retryDelayMs = options.notificationRetryDelayMs ?? defaultNotificationRetryDelayMs
+
+  await new Promise((resolve) => setTimeout(resolve, retryDelayMs))
+
+  const retried = await deliverContactNotification({ payload, submissionId: submission.id })
+
+  if (retried instanceof Error) {
+    console.error("[contact] 通知メールの再試行に失敗しました:", retried.message)
+    return { status: "ok" }
+  }
+
+  if (retried.status === "failed") {
+    console.error("[contact] 通知メールの再試行も失敗しました:", retried.error)
   }
 
   return { status: "ok" }

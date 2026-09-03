@@ -390,7 +390,9 @@ make preview           # トップレベルのローカル専用 D1 / R2 でプ�
 - `PAYLOAD_SECRET` — 必須。`openssl rand -hex 32` で生成した 32 バイトのランダム文字列
 - `NEXT_PUBLIC_SERVER_URL` — ライブプレビューの URL 解決に使用。デプロイ先の URL を設定
 - `TURNSTILE_SECRET_KEY` — 問い合わせフォームのCloudflare Turnstile検証用。フォームを残す本番環境では必須 (サーバー側のみ。サイトキーは管理画面のサイト設定で入力する)
-- `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メール (任意。3 つすべて設定で通知有効)
+- `RESEND_API_KEY` — Resend の API キー。認証メールと問い合わせ通知メールの共通の送信基盤 (任意)
+- `EMAIL_FROM` — 認証メールと通知メールの送信元。`Name <address@example.com>` 形式。未設定なら `CONTACT_NOTIFICATION_FROM` を使う (任意)
+- `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知の宛先と送信元 (任意。通知には `RESEND_API_KEY` と宛先の両方が必要)
 - `SUPPORT_EMAIL` — ダッシュボードのヘルプリンク用 (任意)
 - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` — AI 翻訳で使用するプロバイダーの API キー (任意)
 - `AI_TRANSLATION_MAX_*` — AI 翻訳の月間・実行単位の上限。管理画面と環境変数の小さい方を採用 (任意)
@@ -399,6 +401,8 @@ make preview           # トップレベルのローカル専用 D1 / R2 でプ�
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — デプロイやバックアップ自動化を追加する場合に使用 (任意)
 
 ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
+
+メール送信は環境ごとに運用を分けます。dev は `RESEND_API_KEY` を設定せず、Payload 既定の console アダプタで宛先と件名だけがログに出る状態にします。staging と production は Resend を使い、`RESEND_API_KEY` と `EMAIL_FROM` を wrangler secret へ登録します。`EMAIL_FROM` のドメインは事前に Resend 側でドメイン認証 (SPF / DKIM) を済ませてください。認証が無いと送信が拒否されます。パスワード再設定などの認証メールもこの経路を通るため、`RESEND_API_KEY` が未設定の環境では再設定メールは届かず、ログに送信を試みた記録が残るだけになります。
 
 Turnstile の公開サイトキー (フロントエンド用) は環境変数ではなく、管理画面の「サイト設定」グローバルの `turnstileSiteKey` で設定します。サイトキーが設定されると問い合わせフォームが Turnstile ウィジェットを読み込みます。
 
@@ -554,6 +558,25 @@ SQLite の二重引用符フォールバック問題に注意してください�
 - 管理画面のサイト設定 (site-settings) で Turnstile サイトキーが入力されているか
 - Turnstile のサイトキーがドメインに紐づいているか (Cloudflare ダッシュボードで確認)
 - `wrangler.jsonc` の使用環境に `CONTACT_RATE_LIMITER` bindingがあり、`namespace_id`がアカウント内で一意か
+
+### 問い合わせ通知メールが届かない
+
+問い合わせは保存が成功していれば管理画面の「問い合わせ一覧」に残ります。通知メールが届かない場合は、一覧の「通知状態」列で配信結果を確認してください。
+
+- 送信済み — 通知は送れています。受信側の迷惑メール判定を確認してください
+- 送信失敗 — 一時的な障害か送信設定の誤りです。編集画面を開いて「通知の失敗理由」を読み、原因を直してから画面上部の「通知を再送」を押します
+- 送信スキップ — `RESEND_API_KEY` か `CONTACT_NOTIFICATION_EMAIL` が未設定です。環境変数を設定してから「通知を再送」を押します
+- 送信待ち — 送信処理の途中で中断しています。「通知を再送」で送り直せます
+
+再送は admin とサービス管理者だけが実行できます。送信済みのレコードは押しても二重送信されません。
+
+### パスワード再設定メールが届かない
+
+認証メールは問い合わせ通知と同じ Resend 経由で送ります。`RESEND_API_KEY` と `EMAIL_FROM` (未設定なら `CONTACT_NOTIFICATION_FROM`) が揃っていない環境では送信されません。ローカル開発では未設定が既定のため、再設定リンクはメールでは届きません。届かない場合は以下を確認してください。
+
+- 対象環境に `RESEND_API_KEY` が登録されているか
+- `EMAIL_FROM` のドメインが Resend でドメイン認証済みか
+- `NEXT_PUBLIC_SERVER_URL` が正しい URL を指しているか (再設定リンクの生成に使う)
 
 ### vp run build が失敗する
 
