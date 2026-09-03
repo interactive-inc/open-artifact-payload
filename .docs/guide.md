@@ -404,7 +404,7 @@ secret は環境ごとに `wrangler secret put <NAME> --env=<environment>` で�
 
 - `PAYLOAD_SECRET` — 必須
 - `TURNSTILE_SECRET_KEY` — 問い合わせフォームを残す場合は必須
-- `RESEND_API_KEY` と `CONTACT_NOTIFICATION_EMAIL` と `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メールを使う場合に 3 つとも登録する
+- `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メールを使う場合に登録する（API キーと宛先は必須）
 - `ANTHROPIC_API_KEY` と `OPENAI_API_KEY` — AI 翻訳で使うプロバイダーの分だけ登録する
 - `AI_TRANSLATION_MAX_MONTHLY_RUNS` などの `AI_TRANSLATION_` 系 — AI 翻訳の上限の天井を実装側で握る場合に登録する
 
