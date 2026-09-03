@@ -21,6 +21,7 @@
 
 ### 修正
 
+- テンプレートの参照セクション（hero / CTA）が背景色を持たず見出しが白地に白で見えない問題を修正しました。テーマトークンの正本を `styles.css` に一本化しています。 (#37)
 - AI 翻訳を同時に実行すると月間の回数・文字数・費用上限を超えられる問題を修正しました。異常終了した実行の予約は 10 分で失効し費用として計上されます。 (#20)
 - CTA ボタン、お知らせの日付、フッターのポリシーリンク、削除ボタンの文字色コントラストが WCAG AA (4.5:1) を下回っていたのを修正しました。 (#16)
 - macOS 標準の GNU make 3.81 で `make preview` / `make deploy-app` / `make deploy-db` が `opennextjs-cloudflare: No such file or directory` で失敗する問題を修正しました。Makefile の CLI 呼び出しを `vp exec` 経由にしています。 (#28)

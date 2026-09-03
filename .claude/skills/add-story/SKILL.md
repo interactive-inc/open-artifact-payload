@@ -107,6 +107,6 @@ Payload セクションのストーリー生成の注意:
 - 1 story ファイルにつき 1 コンポーネント
 - story ファイルは対象コンポーネントと同じディレクトリに置く（コロケーション）
 - デコレータが必要な場合（テーマ、router, Payload データ）は最小限に留め、共通化は `.storybook/preview.tsx` で行う
-- hex 直書き禁止。Tailwind のテーマトークン (`src/project/theme/tailwind.theme.ts`) を使う
+- hex 直書き禁止。Tailwind のテーマトークン (`src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root`) を使う
 - `as any` 型アサーションを使わない。必要なら `Partial<T>` を使う
 - `play` 関数（interaction test）は過度に書かない。視覚確認で十分な場合は書かない

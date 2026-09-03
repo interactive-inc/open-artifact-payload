@@ -30,7 +30,7 @@ src/
     payload/config-base.ts    buildCoreConfig（案件側 payload.config.ts から呼ばれる）
     sections/                 汎用セクション (hero / featured-news / rich-text / cta)
     frontend/                 共通フロントエンド資産 (components/RefreshRouteOnSave, forms/問い合わせフォーム)
-    lib/                      media/ (画像URL解決) / lexical (RichText) / revalidate/ / format-news-date / build-metadata / load-site-settings / access/ / email/ / theme-tokens
+    lib/                      media/ (画像URL解決) / lexical (RichText) / revalidate/ / format-news-date / build-metadata / load-site-settings / access/ / email/
     test-support/             Storybook・テスト用の型付きサンプルデータ (本番バンドルには含まれない)
     admin/                    管理画面カスタム
   project/                    案件固有。新規ファイルは原則ここに
@@ -47,7 +47,6 @@ src/
       ui/                     shadcn/ui 所管領域
       hooks/ / lib/           汎用フック / util
     collections/              案件固有コレクション (works など。news/faq は core 側)
-    theme/tailwind.theme.ts   Tailwind テーマトークン
     admin/                    管理画面カスタム (ダッシュボードタスク等)
   app/(frontend)/             フロントエンドページ (ルート / about / service / works / news / faq / contact / 404)。汎用ページ [slug] は enableFreePages 有効時に案件側で追加
   app/(payload)/              Payload の管理画面 / REST / GraphQL
@@ -139,6 +138,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - メール送信は Payload 公式の Resend アダプタ (`src/core/lib/email/resolve-email-adapter.ts`) が唯一の経路。パスワード再設定などの認証メールと問い合わせ通知が同じ経路を通る。`RESEND_API_KEY` と送信元 (`EMAIL_FROM`、無ければ `CONTACT_NOTIFICATION_FROM`) が揃わなければアダプタを渡さず、Payload 既定の console アダプタ（宛先と件名だけをログ出力）にフォールバックする。
 - 問い合わせ通知は `src/core/lib/email/deliver-contact-notification.ts` に集約している。送信結果を `contact-submissions` の `notificationStatus` / `notificationError` / `notifiedAt` に記録し、失敗してもフォーム保存はブロックしない。フォーム送信時は失敗すると 1 秒後に 1 回だけ再試行する。管理画面の編集画面にある「通知を再送」ボタン（`POST /api/contact-submissions/:id/resend-notification`、admin / serviceAdmin のみ）も同じ関数を通し、`notificationStatus` が `sent` のレコードは再送しない。ログへ出す文字列は `sanitizeErrorMessage` を通してメールアドレスを伏せる。
 - ニュース / ページ更新後は `src/core/lib/revalidate/build-collection-revalidate-after-change.ts` などの hook ビルダー経由で対象パスを `revalidatePath()` する (削除側は `build-collection-revalidate-after-delete.ts`、グローバルは `build-global-revalidate-after-change.ts`)。案件側で新コレクションを追加した場合も同 hook を使うこと。
+- テーマトークン（色・フォント・余白・コンテナ幅）の正本は `src/app/(frontend)/[locale]/styles.css` の `@theme inline` と `:root` / `.dark`。案件のブランド色を変える場合はここを編集する。
 
 ## AI翻訳機能
 
@@ -164,7 +164,7 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - 新規コレクション追加時は `src/payload.config.ts` の `projectCollections` への追加を忘れない
 - セクションは Payload の `group` フィールドで作り、`enabled` チェックボックスを必ず含める
 - フィールドラベルは日本語、フィールド名は lowerCamelCase
-- hex 直書き禁止、Tailwind の theme トークンを使う
+- hex 直書き禁止。色・余白・コンテナ幅は `styles.css` の `@theme` / `:root` で定義したトークン（`bg-primary`、`py-section`、`max-w-content` など）を使う
 - slug / URL / 電話番号 / 文字数の制約は `src/core/lib/validation/` の共有 validator と `text-limits.ts` を使う（独自の正規表現をフィールドに直書きしない）
 - 生成後は必ず `vp lint` と `vp run generate:types` を流す
 - 案件の Single Source of Truth は `.docs/project-brief.md`。ここを先に読み込んでから作業する（テンプレート直後は未生成。`vp run setup:project` が `.docs/project-brief.template.md` から生成する）

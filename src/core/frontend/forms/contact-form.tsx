@@ -123,7 +123,7 @@ export function ContactForm(props: Props) {
         <button
           type="submit"
           disabled={isPending}
-          className="bg-brand text-white px-6 py-3 rounded disabled:opacity-50 disabled:cursor-not-allowed"
+          className="bg-primary text-primary-foreground px-6 py-3 rounded disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isPending ? dictionary.contactForm.submitting : dictionary.contactForm.submit}
         </button>

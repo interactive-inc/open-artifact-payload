@@ -8,19 +8,17 @@
 
 ### カラートークンの確定値
 
-暫定対応として、フロント用のトークンを管理画面 (custom.scss) のモノクロ系パレットに揃えて定義しました。
+暫定対応として、色トークンの正本を `src/app/(frontend)/[locale]/styles.css` の `:root` / `.dark` に一本化しました（未配線だった `src/project/theme/tailwind.theme.ts` と `src/core/lib/theme-tokens.ts` は削除済み）。フロント用のトークン (primary / accent / muted / border 等) は管理画面 (custom.scss) のモノクロ系パレットに揃えた shadcn 標準の oklch 値です。
 
-採用値: `surface=#ffffff` / `foreground=#111212` / `muted=#767979` / `border=#d2d4d5` / `error=#c42b2b` / `success=#2d7a4f`、ブランド色は既存維持 (`brand=#1a5f7a` / `accent=#ff6b35`)。
+判断事項: 実案件のブランドガイドに合わせて色を差し替えるか。差し替える場合は `styles.css` の `:root` (ダークモードは `.dark`) の該当変数 (`--primary` / `--accent` など) のみ変更すれば全コンポーネントに反映されます。
 
-判断事項: 実案件のブランドガイドに合わせて hex を差し替えるか。差し替える場合は `src/project/theme/tailwind.theme.ts` の該当値のみ変更すれば全コンポーネントに反映されます。
-
-補足 (アクセシビリティ): アクセントカラー (#ff6b35) の上に白文字を載せた CTA ボタン (ヒーロー / CTA セクション) はコントラスト比が約 2.8:1 で WCAG AA を下回ります。ブランド表現の判断になるため自動修正していません。AA を満たすにはアクセントを少し暗くする (例 #e85a26) か、CTA の文字色を濃色に変更してください。補助テキスト (muted) は AA を満たす濃さ (#5c5f5f) に調整済みです。
+補足 (アクセシビリティ): ヒーロー / CTA セクションの CTA ボタンは `bg-accent text-accent-foreground` で、現状の shadcn 標準配色 (薄いグレー背景 + 濃いグレー文字) では WCAG AA (4.5:1) を満たします。ブランドカラーに差し替える際は組み合わせのコントラスト比を確認してください。
 
 ### セクション余白とコンテナ幅のトークン
 
-暫定対応として、`src/core/lib/theme-tokens.ts` の値を Tailwind に配線し、`py-section` (96px) / `py-section-sm` (56px) / `max-w-container` (1200px) / `max-w-prose` (768px) / `max-w-wide` (896px) を定義してセクションの余白とコンテナ幅を統一しました (従来は py-16/20/24・max-w-3xl/4xl/6xl が混在)。
+暫定対応として、`styles.css` の `@theme inline` に `--spacing-section` (96px) / `--spacing-section-sm` (56px) / `--container-content` (1200px) / `--container-wide` (896px) を定義し、`py-section` / `py-section-sm` / `max-w-content` / `max-w-prose` (768px, Tailwind 既定) / `max-w-wide` を使えるようにしてセクションの余白とコンテナ幅を統一しました (従来は py-16/20/24・max-w-3xl/4xl/6xl が混在)。
 
-判断事項: この余白リズムとコンテナ幅で良いか。変更する場合は `tailwind.theme.ts` / `theme-tokens.ts` の値を調整します。
+判断事項: この余白リズムとコンテナ幅で良いか。変更する場合は `styles.css` の該当変数を調整します。
 
 ### サイトヘッダー / フッターのデザイン
 
