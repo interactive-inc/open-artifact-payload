@@ -6,7 +6,7 @@
 
 ### 追加
 
-- PRごとに静的検査・統合テスト・脆弱性監査・本番相当ビルド・Storybook・E2Eを実行するGitHub Actionsと、依存更新のDependabot設定を同梱しました。 (#17)
+- PR ごとに静的検査・統合テスト・脆弱性監査・本番相当ビルド・Storybook・E2E を実行する GitHub Actions と、依存更新の Dependabot 設定を同梱しました。 (#17)
 
 ## 2026-08-08
 

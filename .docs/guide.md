@@ -111,7 +111,7 @@ vp check                             # フォーマット + lint + 型チェッ�
 vp test                              # Vite+ / Vitest テスト
 vp run test:e2e                      # Playwright E2E テストのみ
 vp run test                          # 統合テスト + E2E テスト
-vp run test:ci                       # lint + 統合テスト (CI 用)
+vp run test:ci                       # check + 統合テスト + packages + Cloudflare 設定 + 脆弱性監査 (CI の check job と同じ)
 
 vp run generate:types                # Payload 型定義 + Cloudflare 型を再生成
 vp run generate:importmap            # Payload Import Map 生成

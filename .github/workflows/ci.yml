@@ -144,7 +144,8 @@ jobs:
 
       - run: bunx playwright install --with-deps chromium
 
-      # E2E の webServer は migrate を行わないため、ローカル D1 にスキーマを先に作る
+      # 現行の E2E webServer は migrate を行わないため、ローカル D1 にスキーマを先に作る。
+      # E2E が専用 D1 を自前で migrate するようになった時点で削除する (#47)
       - run: bun run payload migrate
 
       - run: bun run test:e2e
