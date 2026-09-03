@@ -42,8 +42,7 @@ vp run setup:project
 質問の内容は以下のとおりです。
 
 - 案件 slug (英小文字とハイフン、例: `my-client-2024`)
-- デプロイモード (`cloudflare` または `ssg`)
-- Cloudflare Account ID (Cloudflare モードのみ)
+- Cloudflare Account ID
 - Cloudflare D1 をいま作成するか (y/N)
 - 既存の D1 database_id (D1 を作成しない場合。未作成なら空欄)
 - Cloudflare R2 をいま作成するか (y/N)
@@ -72,7 +71,7 @@ R2 のバケット名は `<slug>-cms` です。トップレベルはローカル
 
 記入項目は以下のとおりです。
 
-- クライアント名、業種、目的、納品先 (cloudflare / ssg)
+- クライアント名、業種、目的、納品先 (Cloudflare Workers の Worker 名やドメイン)
 - サイトマップ
 - 固定ページの構成とセクション一覧
 - 案件固有コレクション定義
@@ -260,7 +259,7 @@ export const projectFeatures: ProjectFeatures = {
 
 `.docs/project-brief.md` の各セクションの意味は以下のとおりです。
 
-プロジェクト概要セクションには、クライアント名・業種・目的・納品先 (cloudflare または ssg) を記入します。
+プロジェクト概要セクションには、クライアント名・業種・目的・納品先 (Cloudflare Workers の Worker 名やドメイン) を記入します。
 
 サイトマップセクションには、サイトの全ページを階層的に列挙します。
 
@@ -406,19 +405,9 @@ Turnstile の公開サイトキー (フロントエンド用) は環境変数で
 
 問い合わせ種別を案件用に変更するときは、`contact-form-constraints.ts`の`CONTACT_INQUIRY_TYPES`と、問い合わせページの表示ラベルを同時に更新してください。サーバーは定義外の値を保存しません。
 
-### SSG モード (骨格)
+### SSG モード
 
-`vp run setup:project` で `ssg` を選択すると SSG モードが適用されます。これは xserver 等 Node.js が動かない環境向けの静的書き出し用モードです。
-
-SSG モード適用時の変更内容は以下のとおりです。
-
-- `src/app/(payload)/` ディレクトリを削除 (管理画面は弊社管理の別 Cloudflare にホスト)
-- `src/app/(frontend)/contact/` および問い合わせ関連ファイルを削除 (Server Action は `output: 'export'` と両立しないため)
-- `wrangler.jsonc` を削除
-- `next.config.ts` に `output: 'export'` と `unoptimized: true` を追加
-- `.github/workflows/deploy-static.yml` を生成
-
-SSG モードは現時点では骨格のみです。Payload REST API の接続先設定、rsync の詳細、本番での問い合わせ受付方法は第一案件で詰める予定です。
+静的書き出し (SSG) モードは提供していません。このテンプレートは Cloudflare Workers 専用で、`vp run setup:project` にもデプロイモードの選択肢はありません。Node.js が動かないホスティングへ静的配信したい案件は、管理画面のホスト先・問い合わせフォームの代替・静的生成と配布の仕組みを含めて別途設計が必要です。
 
 ## テンプレート更新の取り込み
 
