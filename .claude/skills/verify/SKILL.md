@@ -8,7 +8,7 @@ description: この Payload CMS テンプレートの変更を実際に動かし
 ## 起動
 
 - `.env` に `PAYLOAD_SECRET=<任意の文字列>` と `NEXT_PUBLIC_SERVER_URL=http://localhost:3000` が必要（無いと Payload が起動時に落ちる）
-- `.claude/launch.json` の `dev`（`bun dev` / port 3000）を preview_start で起動する
+- `.claude/launch.json` の `dev`（`vp run dev` / port 3000）を preview_start で起動する
 - 初回アクセスは `/admin` のコンパイルで数秒かかる。navigate が失敗したら少し待って再試行
 
 ## 管理画面ログイン

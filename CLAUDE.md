@@ -6,7 +6,7 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 
 ## 技術スタック
 
-- CMS: Payload CMS 3.87 (`@payloadcms/db-d1-sqlite`)
+- CMS: Payload CMS 3.88 (`@payloadcms/db-d1-sqlite`)。バージョンは `package.json` が正本
 - フレームワーク: Next.js 16 (App Router) / React 19 / TypeScript 5.7 (`strict: true`)
 - データベース: Cloudflare D1 (SQLite)、ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
@@ -24,8 +24,8 @@ src/
   payload.config.ts           Payload CMS 設定 (D1 / R2 / i18n / プラグイン)
   payload-types.ts            Payload 自動生成型定義 (手編集禁止)
   core/                       テンプレ本体。読み取り専用、改変は本体リポジトリへ PR
-    collections/              users / media / news / faq / contact-submissions / pages
-    globals/site-settings.ts  サイト設定 (グローバル)
+    collections/              users / media / news / faq / contact-submissions / pages / ai-translation-logs
+    globals/                  site-settings (サイト設定) / ai-translation-settings (AI翻訳設定)
     payload/config-base.ts    buildCoreConfig（案件側 payload.config.ts から呼ばれる）
     sections/                 汎用セクション (hero / featured-news / rich-text / cta)
     frontend/                 共通フロントエンド資産 (components/RefreshRouteOnSave, forms/問い合わせフォーム)
@@ -48,7 +48,7 @@ src/
     collections/              案件固有コレクション (works など。news/faq は core 側)
     theme/tailwind.theme.ts   Tailwind テーマトークン
     admin/                    管理画面カスタム (ダッシュボードタスク等)
-  app/(frontend)/             フロントエンドページ (ルート / about / service / works / news / faq / contact / 404)。汎用ページ [slug] は enableFreePages 有効時に案件側で追加
+  app/(frontend)/[locale]/    フロントエンドページ (ルート / about / service / works / news / faq / contact / 404)。汎用ページ [slug] は enableFreePages 有効時に案件側で追加
   app/(payload)/              Payload の管理画面 / REST / GraphQL
   app/sitemap.ts, robots.ts   サイトマップと robots.txt (公開済みコンテンツから動的生成)
 .storybook/                   Storybook 設定 (main.ts / preview.tsx)

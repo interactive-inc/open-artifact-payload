@@ -116,7 +116,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 
 ### フロントエンドの下書きプレビュー対応
 
-`src/app/(frontend)/layout.tsx` と各 `page.tsx` は以下の形でテンプレから提供される前提:
+`src/app/(frontend)/[locale]/layout.tsx` と各 `page.tsx` は以下の形でテンプレから提供される前提:
 
 - layout.tsx は `<RefreshRouteOnSave />` を常時レンダリング（Payload 管理画面からの保存イベントで iframe をリフレッシュ）
 - page.tsx は `const draftState = await draftMode()` と `payload.findGlobal({ ..., draft: draftState.isEnabled })` / `payload.find({ ..., draft: draftState.isEnabled })` を必ず通す
@@ -135,7 +135,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 
 - Global のフィールド名とセクションコンポーネントの `props.data.xxx` 参照が完全に一致しているか
 - セクションコンポーネントの先頭で `if (!props.data.enabled) return null` しているか
-- ページ側で `{home.sectionName?.enabled && <Section data={home.sectionName ?? {}} />}` の形になっているか
+- セクション側の先頭で `if (!props.data.enabled) return null` している自己ガード方式になっているか（ページ側は `<Section data={home.sectionName ?? {}} />` と無条件で渡してよい。`cms-design.md` の繋ぎ込みチェックリストと同じ方針）
 - `upload` フィールドの画像は `resolveMediaUrl()` / `resolveMediaAlt()` で解決しているか
 - `relationship` フィールドを使うページ側の `payload.findGlobal()` / `payload.find()` に `depth: 2` 以上を指定しているか
 - `array` フィールドを含む Global で `autosave` を使う場合、D1 の `_uuid` カラム問題を認識しているか

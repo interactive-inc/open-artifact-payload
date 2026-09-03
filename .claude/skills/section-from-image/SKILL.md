@@ -39,7 +39,7 @@ arguments: 画像ファイルパス
   - 画像は Payload Media relationship 経由 (`type: 'upload', relationTo: 'media'`) にする
   - 画像の URL 解決は `resolveMediaUrl()` / `resolveMediaAlt()` (`@/core/lib/media`) を使う
 - 対応する Global が既にある場合、フィールドが足りていなければ `src/project/pages/<page>/global.ts` に group フィールドを追記する（必ず `enabled` checkbox を含める）
-- ページ側（`src/app/(frontend)/` 配下）に条件レンダリングを追加する
+- ページ側（`src/app/(frontend)/[locale]/` 配下）に条件レンダリングを追加する
 
 ### フェーズ4: 自己検証
 

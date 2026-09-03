@@ -11,9 +11,12 @@ Inta CMS は、Payload CMS と Cloudflare を使って企業サイトを構築�
 ## 製品ドキュメント
 
 - [[guide|運用ガイド]]
+- [[tasks|人間の判断が必要なタスク]]
 - [[architecture|アーキテクチャ]]
 - [[domain|ドメインモデル]]
 - [[features/site-tools|CLI / MCP によるサイト操作]]
 - [[decisions/001-site-management-boundary|サイト管理境界の設計判断]]
 - [[decisions/002-official-payload-mcp|公式Payload MCPの採用]]
 - [[decisions/003-intacms-cli|Hiract型intacms CLIの採用]]
+
+利用者に影響する変更の履歴はリポジトリ直下の `CHANGELOG.md` に記録します。

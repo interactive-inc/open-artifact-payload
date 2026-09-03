@@ -16,7 +16,7 @@ CLIとMCPは公開リソースを共有し、認証情報は用途ごとに分�
 リポジトリ内では次のどちらでも実行できます。
 
 ```bash
-bun run intacms --help
+vp run intacms --help
 bun packages/cli/lib/index.ts --help
 ```
 
