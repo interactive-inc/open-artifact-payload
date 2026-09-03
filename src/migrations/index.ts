@@ -20,6 +20,7 @@ import * as migration_20260803_074553_official_mcp_plugin from "./20260803_07455
 import * as migration_20260803_142729_mcp_security_hardening from "./20260803_142729_mcp_security_hardening"
 import * as migration_20260803_143601_mcp_key_expiry from "./20260803_143601_mcp_key_expiry"
 import * as migration_20260808_151600_cleanup_orphaned_document_locks from "./20260808_151600_cleanup_orphaned_document_locks"
+import * as migration_20260903_190045_core_contact_notification_status from "./20260903_190045_core_contact_notification_status"
 
 export const migrations = [
   {
@@ -131,5 +132,10 @@ export const migrations = [
     up: migration_20260808_151600_cleanup_orphaned_document_locks.up,
     down: migration_20260808_151600_cleanup_orphaned_document_locks.down,
     name: "20260808_151600_cleanup_orphaned_document_locks",
+  },
+  {
+    up: migration_20260903_190045_core_contact_notification_status.up,
+    down: migration_20260903_190045_core_contact_notification_status.down,
+    name: "20260903_190045_core_contact_notification_status",
   },
 ]

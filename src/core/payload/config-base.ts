@@ -20,8 +20,17 @@ import { aiTranslationLogs } from "@/core/collections/ai-translation-logs"
 import { siteSettings } from "@/core/globals/site-settings"
 import { aiTranslationSettings } from "@/core/globals/ai-translation-settings"
 import { aiTranslateEndpoint } from "@/core/lib/ai-translation/ai-translate-endpoint"
+import {
+  MEDIA_MAX_FILE_SIZE_BYTES,
+  MEDIA_MAX_FILE_SIZE_MEGABYTES,
+} from "@/core/lib/validation/media-limits"
+import { resolveEmailAdapter } from "@/core/lib/email/resolve-email-adapter"
 import { injectAiTranslateControls } from "@/core/payload/inject-ai-translate-controls"
 import { injectAiTranslateControlsIntoGlobal } from "@/core/payload/inject-ai-translate-controls-into-global"
+import {
+  resolveCloudflareContextMode,
+  type CloudflareContextMode,
+} from "@/core/payload/resolve-cloudflare-context-mode"
 import type { ProjectFeatures } from "@/project/types"
 
 type LivePreviewUrlValue = NonNullable<
@@ -49,6 +58,7 @@ const isCLI = process.argv.some((value) =>
 )
 const isProduction = process.env.NODE_ENV === "production"
 const hasOpenNextCloudflareContext = Reflect.has(globalThis, Symbol.for("__cloudflare-context__"))
+const isRemoteBindingsRequested = process.env.CLOUDFLARE_REMOTE_BINDINGS === "true"
 
 // 本番で PAYLOAD_SECRET が未設定のまま空文字で起動すると認証トークンの署名が無防備になる。
 // 空文字へ暗黙フォールバックせず、本番では明示的に起動を失敗させる。
@@ -101,6 +111,14 @@ function getCloudflareContextFromWrangler(remoteBindings = false): Promise<Cloud
   )
 }
 
+function getCloudflareContextForMode(mode: CloudflareContextMode): Promise<CloudflareContext> {
+  if (mode === "wrangler-remote") return getCloudflareContextFromWrangler(true)
+
+  if (mode === "opennext") return getCloudflareContext({ async: true })
+
+  return getCloudflareContextFromWrangler()
+}
+
 // デフォルト言語は locales prop に追従するため、'ja' 固定ではなくファクトリで受け取る
 const buildDefaultLivePreviewUrl =
   (defaultLocaleCode: string): LivePreviewUrlFn =>
@@ -130,12 +148,14 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
   // Next/WorkerではOpenNextが共有するコンテキストを使う。Vitestや単独スクリプトは
   // Nextの初期化を通らないため、Wranglerからローカルbindingを直接取得する。
   // SSG workerにも本番bindingを要求するとビルドがCloudflareアカウントへ依存するため、
-  // OpenNextが実際にコンテキストを注入した場合だけ共有bindingを利用する。
-  const cloudflare = isCLI
-    ? await getCloudflareContextFromWrangler(isProduction)
-    : hasOpenNextCloudflareContext
-      ? await getCloudflareContext({ async: true })
-      : await getCloudflareContextFromWrangler()
+  // CLOUDFLARE_REMOTE_BINDINGS=true を明示したPayload CLIだけがリモートbindingを使う
+  // (判定ルールは resolveCloudflareContextMode を参照)。
+  const cloudflareContextMode = resolveCloudflareContextMode({
+    isCLI,
+    hasOpenNextContext: hasOpenNextCloudflareContext,
+    isRemoteBindingsRequested,
+  })
+  const cloudflare = await getCloudflareContextForMode(cloudflareContextMode)
 
   const enableAiTranslation = props.features.enableAiTranslation
 
@@ -206,11 +226,21 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     globals: allGlobals,
     endpoints: enableAiTranslation ? [aiTranslateEndpoint] : [],
     editor: lexicalEditor(),
+    // パスワード再設定などの認証メールと問い合わせ通知の共通経路。
+    // 未設定なら undefined を渡し、Payload 既定の console アダプタへ委ねる
+    email: resolveEmailAdapter(),
     secret: resolveSecret(),
     typescript: {
       outputFile: path.resolve(props.dirname, "payload-types.ts"),
     },
     db: sqliteD1Adapter({ binding: cloudflare.env.D1, push: false }),
+    // REST の multipart は本文を読み切る前に打ち切る。Local API / MCP 経由は
+    // media コレクションの beforeValidate (guardMediaFileSize) が同じ上限を掛ける。
+    upload: {
+      abortOnLimit: true,
+      limits: { fileSize: MEDIA_MAX_FILE_SIZE_BYTES },
+      responseOnLimit: `ファイルサイズは${MEDIA_MAX_FILE_SIZE_MEGABYTES}MB以内にしてください`,
+    },
     logger: isProduction ? cloudflareLogger : undefined,
     plugins: [
       ...(props.mcp ? [mcpPlugin(props.mcp)] : []),

@@ -5,19 +5,23 @@
 
 ## UI要素 → フィールド型の対応表
 
-| UI要素                     | フィールド型                  | 備考                                        |
-| -------------------------- | ----------------------------- | ------------------------------------------- |
-| 1行テキスト見出し          | `text`                        |                                             |
-| 複数行の説明文             | `textarea`                    |                                             |
-| リッチテキスト本文         | `richText`                    | Lexical エディタ                            |
-| 画像1枚                    | `upload, relationTo: 'media'` |                                             |
-| 繰り返し要素（3〜6件程度） | `array` + 内部フィールド      | D1 では autosave と非互換。後述の制約を参照 |
-| 他コレクションからの参照   | `relationship`                | depth 指定を忘れない                        |
-| ON/OFF切り替え             | `checkbox`                    |                                             |
-| 選択肢                     | `select`                      | value は英語、label は日本語                |
-| リンクボタン               | `text` x2（ラベル + URL）     | name は `ctaLabel` + `ctaHref` のパターン   |
-| 日付                       | `date`                        |                                             |
-| 数値                       | `number`                      |                                             |
+| UI要素                        | フィールド型                  | 備考                                                        |
+| ----------------------------- | ----------------------------- | ----------------------------------------------------------- |
+| 1行テキスト見出し             | `text`                        |                                                             |
+| 複数行の説明文                | `textarea`                    |                                                             |
+| リッチテキスト本文            | `richText`                    | Lexical エディタ                                            |
+| 画像1枚                       | `upload, relationTo: 'media'` |                                                             |
+| 繰り返し要素（3〜6件程度）    | `array` + 内部フィールド      | D1 では autosave と非互換。後述の制約を参照                 |
+| 他コレクションからの参照      | `relationship`                | depth 指定を忘れない                                        |
+| ON/OFF切り替え                | `checkbox`                    |                                                             |
+| 選択肢                        | `select`                      | value は英語、label は日本語                                |
+| リンクボタン                  | `text` x2（ラベル + URL）     | URL 側は `validate: validateLinkHref`                       |
+| ナビゲーション / ポリシー URL | `text`                        | `validate: validateLinkHref`                                |
+| SNS の外部 URL                | `text`                        | `validate: validateHttpsUrl`                                |
+| スラッグ (URL パス)           | `text`                        | `validate: validateSlug`（汎用ページは `validatePageSlug`） |
+| 電話番号 (TEL / FAX)          | `text`                        | `validate: validatePhone`                                   |
+| 日付                          | `date`                        |                                                             |
+| 数値                          | `number`                      |                                                             |
 
 ## 編集可能 vs 固定の判断基準
 
@@ -58,6 +62,8 @@
 - `array` フィールドを含む Global で `autosave` を使う場合、D1 の `_uuid` カラム問題を認識しているか
 - `generate:types` 後の Payload 生成型と、セクションコンポーネントの型定義が整合するか
 - Tailwind クラスで hex を直書きせず `src/project/theme/tailwind.theme.ts` のトークンを使っているか
+- text / textarea に `src/core/lib/validation/text-limits.ts` の文字数上限を付けているか
+- URL・スラッグ・電話番号のフィールドに `src/core/lib/validation/` の validate を付けているか
 
 ## D1 (SQLite) 固有の制約
 
@@ -185,3 +191,5 @@ buildCoreConfig({
 - テーマトークンは `src/project/theme/tailwind.theme.ts` を参照すること
 - 画像 URL は `src/core/lib/media/` の `resolveMediaUrl()` / `resolveMediaAlt()` を使うこと
 - リッチテキストのレンダリングは `src/core/lib/lexical.tsx` の `RichText` コンポーネント (`<RichText data={...} />`) を使うこと
+- 入力制約は `src/core/lib/validation/` の共有 validator (`validateSlug` / `validatePageSlug` / `validateLinkHref` / `validateHttpsUrl` / `validatePhone`) と `text-limits.ts` の定数を使うこと。独自の正規表現をフィールドに直書きしない
+- 制約を追加・変更したら `vp run audit:content` で既存データの違反を確認すること
