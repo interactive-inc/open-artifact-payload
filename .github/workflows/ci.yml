@@ -144,6 +144,9 @@ jobs:
 
       - run: bunx playwright install --with-deps chromium
 
+      # E2E の webServer は migrate を行わないため、ローカル D1 にスキーマを先に作る
+      - run: bun run payload migrate
+
       - run: bun run test:e2e
 
       - name: Upload Playwright report
