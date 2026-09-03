@@ -126,6 +126,24 @@ D1 アダプターは `push: false` で構成されており、開発環境で�
 
 `PAYLOAD_MIGRATING` はテストなど内部処理でのみ使用します。通常の開発起動時に手動設定する必要はありません。
 
+### worktree での並行開発
+
+Issue ごとに作業ツリーを分ける場合は、リポジトリ直下の `.worktrees/` に linked worktree を作成し、`make worktree` で初期化します。
+
+```bash
+git worktree add -b 42-fix-pagination-offset .worktrees/42-fix-pagination-offset origin/main
+cd .worktrees/42-fix-pagination-offset
+make worktree
+```
+
+`make worktree` は依存関係の導入 (`vp install --frozen-lockfile`)、`.env` の用意、ローカル D1 へのマイグレーション適用をまとめて行います。`.env` は primary checkout に存在すればコピーし、無ければ `.env.example` を元に `PAYLOAD_SECRET` を生成します。ローカル D1 (`.wrangler/state/`) は worktree ごとに独立しているため、他の作業ツリーのデータは引き継がれません。サンプルデータが必要な場合は `vp run seed` を実行してください。
+
+作業が終わった worktree は primary checkout から削除します。
+
+```bash
+git worktree remove .worktrees/42-fix-pagination-offset
+```
+
 ### CLI・MCP によるサイト操作
 
 管理画面を開かずに記事などのコンテンツを操作する場合は `intacms` CLI を使います。AI エージェントからは同じユースケースを MCP Tool として実行できます。認証、環境の切り替え、CRUD コマンド、MCP の設定方法は [[features/site-tools|CLI・MCP によるサイト操作]] を参照してください。
