@@ -646,7 +646,18 @@ E2E が前提にするコンテンツは `tests/helpers/e2e-fixtures.ts` にま�
 
 GitHub の branch protection では `check` / `build` / `e2e` の 3 つを必須ステータスチェックに設定してください。E2E が失敗した場合は `build` と `e2e` ジョブが失敗時にアップロードする `playwright-report` アーティファクト (7 日保持) を確認します。`e2e` ジョブは加えて `test-results` アーティファクトも保存します。
 
-依存更新は `.github/dependabot.yml` で `npm` (weekly) と `github-actions` (weekly) を監視します。`npm` 側は互換性のある一群をまとめて 1 つの PR にグルーピングします (`payload`、`next-react`、`cloudflare`、`storybook`、`testing`、`vite-plus`)。特に Payload は `payload` 本体と `@payloadcms/*` パッケージ全体を同一 PR でまとめて上げ、バージョンがずれた状態で個別更新しないようにします。
+依存更新は 2 通りに分けます。GitHub Actions の版は `.github/dependabot.yml` の `github-actions` (weekly) が監視し、CI が緑なら取り込みます。npm パッケージは Dependabot に任せません。この雛形は bun の catalog 付き workspace を使っており、Dependabot が生成する `bun.lock` は workspace 側の依存指定を更新しきれず、CI の `bun install --frozen-lockfile` が必ず失敗するためです。
+
+npm パッケージは次の手順で手動更新します。
+
+```bash
+bun outdated                       # 更新候補を確認する
+# package.json の該当バージョンを書き換える (Payload 一式は payload と @payloadcms/* を同一版に揃える)
+vp install                         # bun.lock を再生成する
+vp check && vp run test:int        # 手元で確認してから PR を作り、CI の check / build / e2e を通す
+```
+
+major 更新 (Next / React / Payload / wrangler / OpenNext / TypeScript) はリリースノートを読み、1 系統ずつ別 PR で上げます。依存更新の自動化が必要になった場合は、bun の workspace と catalog に対応した Renovate を使ってください。
 
 D1 の定期バックアップを追加する場合は、`ci.yml` とは別に、リモート D1 のダンプと R2 への保存を行うワークフローを案件ごとに追加してください。その場合は GitHub リポジトリの Settings > Secrets に以下を設定します。
 
