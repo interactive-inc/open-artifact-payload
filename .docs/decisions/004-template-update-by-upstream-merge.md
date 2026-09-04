@@ -17,7 +17,7 @@ Accepted
 ## Decision
 
 - 案件リポジトリはテンプレートを clone して作成し、テンプレートを `upstream` remote として保持する
-- 更新は `git merge upstream/main` で取り込む。履歴を共有しない既存案件は、初回だけ最初のコミットをテンプレートの元コミットへ `git rebase --root --onto` で接ぎ木する（`--allow-unrelated-histories` は全ファイルが競合するため使わない）
+- 更新は `git merge upstream/main` で取り込む。履歴を共有しない既存案件は、初回だけ最初のコミットをテンプレートの元コミットへ `git replace --graft` で接ぎ木してからマージする（履歴を書き換えず force push も不要。`--allow-unrelated-histories` は全ファイルが競合するため使わない）。取り込みは merge commit で行い、squash しない
 - 競合の判断基準は [[architecture]] の「コード所有境界」に置き、テンプレート所有は upstream、案件所有は案件、共有編集は両方を残す
 - 専用 sync コマンド、manifest による自動マージ、fixture 案件による更新 E2E は導入しない。マージ運用で競合が常態化した領域が見えてから判断する
 
