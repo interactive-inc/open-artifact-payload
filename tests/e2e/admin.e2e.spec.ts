@@ -52,6 +52,85 @@ async function gotoCollectionCreate(page: Page, slug: string): Promise<void> {
   })
 }
 
+type DraftPreviewCase = { slug: "news" | "works"; publishedAt: string }
+
+// 下書き作成 → ライブプレビュー反映 → (works は) 公開側に漏れないこと、を 1 コレクション分検証する。
+// news と works を 1 テストで回すと CI では 120 秒の予算を共有して落ちるため、テストごとに呼ぶ。
+async function verifyDraftLivePreview(page: Page, testCase: DraftPreviewCase): Promise<void> {
+  const unique = Date.now()
+  const marker = `${testCase.slug} ライブプレビュー QA ${unique}`
+  const documentSlug = `qa-${testCase.slug}-${unique}`
+  let documentID: number | string | undefined
+
+  await gotoCollectionCreate(page, testCase.slug)
+  const titleInput = page.locator('input[name="title"]')
+  const slugInput = page.locator('input[name="slug"]')
+  const publishedAtInput = page.locator("main").getByRole("textbox").nth(2)
+  await expect(titleInput).toBeVisible({ timeout: 60_000 })
+  await expect(publishedAtInput).toBeVisible({ timeout: 60_000 })
+
+  const currentPath = new URL(page.url()).pathname
+  const autoSavedID = currentPath.match(
+    new RegExp(`/admin/collections/${testCase.slug}/([^/]+)$`),
+  )?.[1]
+  if (autoSavedID && autoSavedID !== "create") documentID = autoSavedID
+
+  const saveResponsePromise = page.waitForResponse((response) => {
+    const responsePath = new URL(response.url()).pathname
+    const method = response.request().method()
+    return (
+      (responsePath === `/api/${testCase.slug}` ||
+        responsePath.startsWith(`/api/${testCase.slug}/`)) &&
+      (method === "POST" || method === "PATCH")
+    )
+  })
+  await titleInput.fill(marker)
+  await slugInput.fill(documentSlug)
+  await publishedAtInput.fill(testCase.publishedAt)
+  await publishedAtInput.press("Escape")
+  const saveResponse = await saveResponsePromise
+  expect(saveResponse.ok()).toBe(true)
+  const savedDocument: unknown = await saveResponse.json()
+  documentID = readDocumentID(savedDocument) ?? documentID
+  expect(documentID).toBeDefined()
+
+  const previewFrame = page.locator("iframe").first()
+  await page.getByRole("button", { name: "プレビュー", exact: true }).click()
+  await expect(previewFrame).toBeVisible({ timeout: 60_000 })
+  await expect(previewFrame).toHaveAttribute(
+    "src",
+    new RegExp(`/next/preview\\?path=%2F${testCase.slug}%2F${documentSlug}`),
+  )
+
+  await expect(
+    previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
+  ).toBeVisible({ timeout: 60_000 })
+
+  if (testCase.slug === "works") {
+    const browser = page.context().browser()
+    expect(browser).not.toBeNull()
+    if (browser) {
+      const anonymousContext = await browser.newContext()
+      const anonymousPage = await anonymousContext.newPage()
+      try {
+        await anonymousPage.goto("http://localhost:3000/works")
+        await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
+        await anonymousPage.goto("http://localhost:3000/")
+        await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
+
+        const apiResponse = await anonymousContext.request.get(
+          `http://localhost:3000/api/works?where[slug][equals]=${documentSlug}`,
+        )
+        expect(apiResponse.ok()).toBe(true)
+        const apiResult: unknown = await apiResponse.json()
+        expect(readDocumentCount(apiResult)).toBe(0)
+      } finally {
+        await anonymousContext.close()
+      }
+    }
+  }
+}
+
 test.describe("Admin Panel", () => {
   test.describe.configure({ timeout: 120_000 })
   let page: Page
@@ -64,7 +143,15 @@ test.describe("Admin Panel", () => {
 
     // ライブプレビューの iframe が開く公開ページは dev server が初回アクセス時にコンパイルする。
     // CI ではその時間がプレビュー描画の待ち時間を超えるため、先に一度ずつ開いて温めておく。
-    for (const path of ["/ja", "/ja/about", "/ja/service", "/ja/news", "/ja/works"]) {
+    for (const path of [
+      "/ja",
+      "/ja/about",
+      "/ja/service",
+      "/ja/news",
+      `/ja/news/${e2eFixtures.publishedNews.slug}`,
+      "/ja/works",
+      `/ja/works/${e2eFixtures.publishedWork.slug}`,
+    ]) {
       await page.goto(`http://localhost:3000${path}`, {
         waitUntil: "domcontentloaded",
         timeout: 120_000,
@@ -285,85 +372,11 @@ test.describe("Admin Panel", () => {
     }
   })
 
-  test("お知らせと制作実績の下書き作成が各ライブプレビューへ反映される", async () => {
-    const cases = [
-      { slug: "news", publishedAt: "2026-08-08 14:00" },
-      { slug: "works", publishedAt: "2026-08-08" },
-    ] as const
+  test("お知らせの下書き作成がライブプレビューへ反映される", async () => {
+    await verifyDraftLivePreview(page, { slug: "news", publishedAt: "2026-08-08 14:00" })
+  })
 
-    for (const testCase of cases) {
-      const unique = Date.now()
-      const marker = `${testCase.slug} ライブプレビュー QA ${unique}`
-      const documentSlug = `qa-${testCase.slug}-${unique}`
-      let documentID: number | string | undefined
-
-      await gotoCollectionCreate(page, testCase.slug)
-      const titleInput = page.locator('input[name="title"]')
-      const slugInput = page.locator('input[name="slug"]')
-      const publishedAtInput = page.locator("main").getByRole("textbox").nth(2)
-      await expect(titleInput).toBeVisible({ timeout: 60_000 })
-      await expect(publishedAtInput).toBeVisible({ timeout: 60_000 })
-
-      const currentPath = new URL(page.url()).pathname
-      const autoSavedID = currentPath.match(
-        new RegExp(`/admin/collections/${testCase.slug}/([^/]+)$`),
-      )?.[1]
-      if (autoSavedID && autoSavedID !== "create") documentID = autoSavedID
-
-      const saveResponsePromise = page.waitForResponse((response) => {
-        const responsePath = new URL(response.url()).pathname
-        const method = response.request().method()
-        return (
-          (responsePath === `/api/${testCase.slug}` ||
-            responsePath.startsWith(`/api/${testCase.slug}/`)) &&
-          (method === "POST" || method === "PATCH")
-        )
-      })
-      await titleInput.fill(marker)
-      await slugInput.fill(documentSlug)
-      await publishedAtInput.fill(testCase.publishedAt)
-      await publishedAtInput.press("Escape")
-      const saveResponse = await saveResponsePromise
-      expect(saveResponse.ok()).toBe(true)
-      const savedDocument: unknown = await saveResponse.json()
-      documentID = readDocumentID(savedDocument) ?? documentID
-      expect(documentID).toBeDefined()
-
-      const previewFrame = page.locator("iframe").first()
-      await page.getByRole("button", { name: "プレビュー", exact: true }).click()
-      await expect(previewFrame).toBeVisible({ timeout: 60_000 })
-      await expect(previewFrame).toHaveAttribute(
-        "src",
-        new RegExp(`/next/preview\\?path=%2F${testCase.slug}%2F${documentSlug}`),
-      )
-
-      await expect(
-        previewFrame.contentFrame().getByRole("heading", { name: marker, exact: true }),
-      ).toBeVisible({ timeout: 60_000 })
-
-      if (testCase.slug === "works") {
-        const browser = page.context().browser()
-        expect(browser).not.toBeNull()
-        if (browser) {
-          const anonymousContext = await browser.newContext()
-          const anonymousPage = await anonymousContext.newPage()
-          try {
-            await anonymousPage.goto("http://localhost:3000/works")
-            await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
-            await anonymousPage.goto("http://localhost:3000/")
-            await expect(anonymousPage.getByText(marker, { exact: true })).toHaveCount(0)
-
-            const apiResponse = await anonymousContext.request.get(
-              `http://localhost:3000/api/works?where[slug][equals]=${documentSlug}`,
-            )
-            expect(apiResponse.ok()).toBe(true)
-            const apiResult: unknown = await apiResponse.json()
-            expect(readDocumentCount(apiResult)).toBe(0)
-          } finally {
-            await anonymousContext.close()
-          }
-        }
-      }
-    }
+  test("制作実績の下書き作成がライブプレビューへ反映され公開側に漏れない", async () => {
+    await verifyDraftLivePreview(page, { slug: "works", publishedAt: "2026-08-08" })
   })
 })
