@@ -639,7 +639,7 @@ E2E が前提にするコンテンツは `tests/helpers/e2e-fixtures.ts` にま�
 
 テンプレートには `.github/workflows/ci.yml` を同梱しています。`pull_request` と `main` への `push` で起動し、以下の 3 job を並列実行します。同一 ref の実行は新しい push で自動キャンセルされます。
 
-- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types:payload` 後に `src/payload-types.ts` の差分がないこと (型生成漏れの検出)、`bun run test:int`、`bun run test:tools`、`bun run test:cloudflare-config`、`bun audit --audit-level=high` を実行します
+- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types:payload` 後に `src/payload-types.ts` の差分がないこと (型生成漏れの検出)、`bun run test:int`、`bun run test:tools`、`bun run test:cloudflare-config`、`bun audit --audit-level=high`（レジストリの一時障害で偽陽性にならないよう 30 秒間隔で 3 回まで試し、それでも失敗したら本物の失敗として扱う） を実行します
 - `build` — `bun run build`、`bunx opennextjs-cloudflare build`、`bunx wrangler deploy --dry-run --strict --env=production` で本番相当ビルドとデプロイ設定を検証し、`bun run build-storybook` と `bun run test:storybook:static` を実行します
 - `e2e` — Playwright (Chromium) で `bun run test:e2e` を実行します
 
