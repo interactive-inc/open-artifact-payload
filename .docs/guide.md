@@ -535,18 +535,19 @@ git fetch upstream
 git merge upstream/main
 ```
 
-"Use this template" から作成して履歴を共有していない案件は、そのままマージすると全ファイルが競合します（`--allow-unrelated-histories` でも同じです）。初回だけ、案件の最初のコミットをテンプレートの元コミットへ接ぎ木してからマージします。元コミットは、案件の最初のコミットとツリーが一致するテンプレート側のコミットとして機械的に特定できます。
+"Use this template" から作成して履歴を共有していない案件は、そのままマージすると全ファイルが競合します（`--allow-unrelated-histories` でも同じです）。初回だけ、案件の最初のコミットの親をテンプレートの元コミットに見せかける接ぎ木（`git replace --graft`）をしてからマージします。元コミットは、案件の最初のコミットとツリーが一致するテンプレート側のコミットとして機械的に特定できます。接ぎ木はローカル限定の参照で履歴を書き換えないため、force push は不要で、共同作業者の clone も通常の `git pull` で追従できます。
 
 ```bash
 git remote add upstream <テンプレートリポジトリURL>
 git fetch upstream main
 INITIAL=$(git rev-list --max-parents=0 HEAD)
 TEMPLATE_BASE=$(git log --format='%H %T' upstream/main | awk -v tree="$(git rev-parse "$INITIAL^{tree}")" '$2 == tree { print $1 }')
-git rebase --root --onto "$TEMPLATE_BASE"
-git merge upstream/main
+git replace --graft "$INITIAL" "$TEMPLATE_BASE"
+git merge --no-ff upstream/main
+git replace -d "$INITIAL"
 ```
 
-`TEMPLATE_BASE` が空になる場合は、最初のコミットでファイルを編集しているため一致するコミットがありません。案件作成日のテンプレート `main` のコミットを指定してください。`rebase` は案件の履歴を書き換えるため、共同作業者がいる場合は事前に共有し、完了後に `git push --force-with-lease` します。2 回目以降は通常のマージです。
+`TEMPLATE_BASE` が空になる場合は、最初のコミットでファイルを編集しているため一致するコミットがありません。案件作成日のテンプレート `main` のコミットを指定してください（差分は競合として現れるので案件側を採用します）。マージコミットがテンプレートの履歴を親に持つため、2 回目以降は通常のマージです。マージは squash ではなく merge commit で取り込んでください。squash するとテンプレート側の履歴が親から消え、次回のマージで再び全ファイルが競合します。
 
 マージ後は次の順で整合を取ります。
 
