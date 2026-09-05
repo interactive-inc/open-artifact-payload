@@ -1,4 +1,4 @@
-import { draftMode } from "next/headers"
+import { getFrontendAccess } from "@/core/lib/preview/get-frontend-access"
 import { notFound } from "next/navigation"
 import { getPayload } from "payload"
 import Link from "next/link"
@@ -41,9 +41,8 @@ export default async function ServicePage(props: Props) {
   const locale = resolveLocale(params.locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const draftState = await draftMode()
-  const isDraft = draftState.isEnabled
-  const service = await payload.findGlobal({ slug: "service", depth: 1, draft: isDraft, locale })
+  const access = await getFrontendAccess()
+  const service = await payload.findGlobal({ slug: "service", depth: 1, ...access, locale })
 
   return (
     <>

@@ -71,7 +71,7 @@ MCPは公式プラグインが追加する `payload-mcp-api-keys` を使い、`A
 2. MCP API Keyで管理者が有効にした操作
 3. 紐づくPayloadユーザーのcollection / global access
 
-`payload-mcp-api-keys` 自体はadminだけが管理でき、キーは既定90日で失効します。collection削除、ユーザー、問い合わせ、翻訳設定・ログは1の段階でMCP対象外にしています。Users collectionはadmin/serviceAdmin以外に自分の行だけを返し、他ユーザーのUsers API Keyを露出しません。
+`payload-mcp-api-keys` 自体はadminだけが管理でき、キーは既定90日で失効します。collection削除、ユーザー、問い合わせ、翻訳設定・ログは1の段階でMCP対象外にしています。Users collectionはadmin/serviceAdmin以外に自分の行だけを返します。APIキーの閲覧権限は別途本人だけに制限し、adminでも他ユーザーのキーは取得できません。ロック解除も明示的に認可し、一般adminによるserviceAdminの解除を拒否します。詳しくは[セキュリティ方針](security.md)を参照してください。
 
 MCPキーはPayload上の独立したauth collectionでもありますが、その認証主体自身を通常のコンテンツユーザーとは扱いません。共通accessはUsers由来の有効ロールを検証するため、MCPキーをPayload RESTの認証ヘッダーへ直接流用しても、Toolごとの権限を迂回できません。
 

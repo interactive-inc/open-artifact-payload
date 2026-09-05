@@ -366,6 +366,8 @@ SVG は既定で受け付けません。スクリプトを埋め込める形式�
 
 ### ライブプレビュー
 
+開始時だけでなく下書き取得時にもUsersの通常ログインセッションを確認します。ログアウトや失効後は、プレビューCookieが残っていても公開表示に戻ります。Users API KeyとMCPキーでは下書きを表示しません。詳細は[セキュリティ方針](security.md)を参照してください。
+
 ライブプレビューの仕組みは以下のとおりです。
 
 - 管理画面のエディタが iframe を開き `/next/preview` ルートにリクエストする
@@ -510,7 +512,7 @@ secret は環境ごとに `wrangler secret put <NAME> --env=<environment>` で�
 - `PAYLOAD_LOG_LEVEL` — Payload のログレベル。未設定時は `info` (任意)
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — デプロイやバックアップ自動化を追加する場合に使用 (任意)
 
-ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定の場合、ローカル開発として Turnstile 検証がスキップされます。本番では必ず設定してください。
+ローカル開発では `.env` ファイルに設定します。`TURNSTILE_SECRET_KEY` が未設定でも検証は自動で省略されません。ローカルだけで省略する場合は `TURNSTILE_ALLOW_INSECURE_LOCAL=true` を明示します。本番ではこのフラグは無効です。
 
 メール送信は環境ごとに運用を分けます。dev は `RESEND_API_KEY` を設定せず、Payload 既定の console アダプタで宛先と件名だけがログに出る状態にします。staging と production は Resend を使い、`RESEND_API_KEY` と `EMAIL_FROM` を wrangler secret へ登録します。`EMAIL_FROM` のドメインは事前に Resend 側でドメイン認証 (SPF / DKIM) を済ませてください。認証が無いと送信が拒否されます。パスワード再設定などの認証メールもこの経路を通るため、`RESEND_API_KEY` が未設定の環境では再設定メールは届かず、ログに送信を試みた記録が残るだけになります。
 
@@ -716,7 +718,7 @@ SQLite の二重引用符フォールバック問題に注意してください�
 
 ### 問い合わせフォームが動かない
 
-`TURNSTILE_SECRET_KEY` が未設定のとき、検証をスキップするのはローカル開発だけです。本番では設定エラーとして保存せず、画面には再試行可能なエラーを表示します。フォームが送信できない場合は以下を確認してください。
+`TURNSTILE_SECRET_KEY` が未設定のとき、検証をスキップできるのは `TURNSTILE_ALLOW_INSECURE_LOCAL=true` を指定したローカル開発だけです。本番では設定エラーとして保存せず、画面には再試行可能なエラーを表示します。フォームが送信できない場合は以下を確認してください。
 
 - 本番環境で `TURNSTILE_SECRET_KEY` (env) が設定されているか
 - 管理画面のサイト設定 (site-settings) で Turnstile サイトキーが入力されているか

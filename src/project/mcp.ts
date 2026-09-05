@@ -53,6 +53,7 @@ export const projectMcpConfig = {
       read: isAdmin,
       update: isAdmin,
       delete: isAdmin,
+      unlock: () => false,
     },
     fields: [
       ...collection.fields,

@@ -1,4 +1,4 @@
-import { draftMode } from "next/headers"
+import { getFrontendAccess } from "@/core/lib/preview/get-frontend-access"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -48,14 +48,13 @@ export default async function WorksListPage(props: Props) {
   const dictionary = getUiDictionary(locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const draftState = await draftMode()
-  const isDraft = draftState.isEnabled
+  const access = await getFrontendAccess()
   const result = await payload.find({
     collection: "works",
     limit: 50,
     sort: "-publishedAt",
-    draft: isDraft,
-    where: isDraft ? undefined : { _status: { equals: "published" } },
+    ...access,
+    where: access.draft ? undefined : { _status: { equals: "published" } },
     depth: 1,
     locale,
   })
