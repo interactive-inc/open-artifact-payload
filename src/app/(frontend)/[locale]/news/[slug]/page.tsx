@@ -1,5 +1,5 @@
 import { cache } from "react"
-import { draftMode } from "next/headers"
+import { getFrontendAccess, type FrontendAccess } from "@/core/lib/preview/get-frontend-access"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import { getPayload } from "payload"
@@ -42,20 +42,20 @@ function resolveLocale(locale: string): Locale {
 }
 
 // generateMetadata と本体で同一クエリを共有するため React.cache で memo 化する。
-const loadNewsBySlug = cache(async (slug: string, locale: Locale, isDraft: boolean) => {
+const loadNewsBySlug = cache(async (slug: string, locale: Locale, access: FrontendAccess) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   // 公開フロントでは下書きを除外。ライブプレビュー時のみ下書きも対象。
   // collection の access 制御 (publishedOrAuthenticated) でも防御しているが、
   // クエリ側でも明示することで意図を明確にする。
   const conditions: Record<string, { equals: string }>[] = [{ slug: { equals: slug } }]
-  if (!isDraft) conditions.push({ _status: { equals: "published" } })
+  if (!access.draft) conditions.push({ _status: { equals: "published" } })
   const result = await payload.find({
     collection: "news",
     where: { and: conditions },
     limit: 1,
     depth: 1,
-    draft: isDraft,
+    ...access,
     locale,
   })
   return result.docs[0] ?? null
@@ -64,8 +64,8 @@ const loadNewsBySlug = cache(async (slug: string, locale: Locale, isDraft: boole
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const locale = resolveLocale(params.locale)
-  const draftState = await draftMode()
-  const item = await loadNewsBySlug(params.slug, locale, draftState.isEnabled)
+  const access = await getFrontendAccess()
+  const item = await loadNewsBySlug(params.slug, locale, access)
   if (!item) return {}
   return buildPageMetadata({
     meta: item.meta,
@@ -78,8 +78,8 @@ export default async function NewsDetailPage(props: Props) {
   const params = await props.params
   const locale = resolveLocale(params.locale)
   const dictionary = getUiDictionary(locale)
-  const draftState = await draftMode()
-  const item = await loadNewsBySlug(params.slug, locale, draftState.isEnabled)
+  const access = await getFrontendAccess()
+  const item = await loadNewsBySlug(params.slug, locale, access)
   if (!item) {
     notFound()
   }

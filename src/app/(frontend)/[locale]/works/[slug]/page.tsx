@@ -1,5 +1,5 @@
 import { cache } from "react"
-import { draftMode } from "next/headers"
+import { getFrontendAccess, type FrontendAccess } from "@/core/lib/preview/get-frontend-access"
 import { notFound } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
@@ -35,17 +35,17 @@ function resolveLocale(locale: string): Locale {
 }
 
 // generateMetadata と本体で同一クエリを共有するため React.cache で memo 化する。
-const loadWorkBySlug = cache(async (slug: string, locale: Locale, isDraft: boolean) => {
+const loadWorkBySlug = cache(async (slug: string, locale: Locale, access: FrontendAccess) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const conditions: Record<string, { equals: string }>[] = [{ slug: { equals: slug } }]
-  if (!isDraft) conditions.push({ _status: { equals: "published" } })
+  if (!access.draft) conditions.push({ _status: { equals: "published" } })
   const result = await payload.find({
     collection: "works",
     where: { and: conditions },
     limit: 1,
     depth: 1,
-    draft: isDraft,
+    ...access,
     locale,
   })
   return result.docs[0] ?? null
@@ -54,8 +54,8 @@ const loadWorkBySlug = cache(async (slug: string, locale: Locale, isDraft: boole
 export async function generateMetadata(props: Props): Promise<Metadata> {
   const params = await props.params
   const locale = resolveLocale(params.locale)
-  const draftState = await draftMode()
-  const item = await loadWorkBySlug(params.slug, locale, draftState.isEnabled)
+  const access = await getFrontendAccess()
+  const item = await loadWorkBySlug(params.slug, locale, access)
   if (!item) return {}
 
   // meta.description 未入力時は概要文を SEO ディスクリプションとして流用する。
@@ -74,8 +74,8 @@ export default async function WorkDetailPage(props: Props) {
   const params = await props.params
   const locale = resolveLocale(params.locale)
   const dictionary = getUiDictionary(locale)
-  const draftState = await draftMode()
-  const item = await loadWorkBySlug(params.slug, locale, draftState.isEnabled)
+  const access = await getFrontendAccess()
+  const item = await loadWorkBySlug(params.slug, locale, access)
   if (!item) {
     notFound()
   }

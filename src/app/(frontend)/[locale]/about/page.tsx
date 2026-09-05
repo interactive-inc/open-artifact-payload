@@ -1,4 +1,4 @@
-import { draftMode } from "next/headers"
+import { getFrontendAccess } from "@/core/lib/preview/get-frontend-access"
 import { notFound } from "next/navigation"
 import { getPayload } from "payload"
 import Image from "next/image"
@@ -39,9 +39,8 @@ export default async function AboutPage(props: Props) {
   const locale = resolveLocale(params.locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const draftState = await draftMode()
-  const isDraft = draftState.isEnabled
-  const about = await payload.findGlobal({ slug: "about", depth: 1, draft: isDraft, locale })
+  const access = await getFrontendAccess()
+  const about = await payload.findGlobal({ slug: "about", depth: 1, ...access, locale })
 
   return (
     <>

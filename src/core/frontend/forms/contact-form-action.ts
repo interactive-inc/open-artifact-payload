@@ -12,6 +12,8 @@ import {
   validateContactFormFields,
 } from "@/core/frontend/forms/contact-form-constraints"
 
+import { verifyTurnstileToken } from "@/core/frontend/forms/verify-turnstile-token"
+
 type RateLimitDecision = "allowed" | "limited" | "unavailable"
 type Options = {
   verifyTurnstile?: (token: string) => Promise<boolean>
@@ -53,32 +55,6 @@ async function defaultCheckRateLimit(key: string): Promise<RateLimitDecision> {
   }
 }
 
-async function defaultVerifyTurnstile(token: string): Promise<boolean> {
-  const secret = process.env.TURNSTILE_SECRET_KEY
-  // ローカルだけは未設定を許可する。本番の設定不足は submitContact 側で保存前に拒否する。
-  if (!secret) return process.env.NODE_ENV !== "production"
-  if (!token) return false
-  try {
-    const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
-      method: "POST",
-      body: new URLSearchParams({ secret, response: token }),
-    })
-    const raw: unknown = await response.json()
-    if (
-      raw !== null &&
-      typeof raw === "object" &&
-      "success" in raw &&
-      typeof raw.success === "boolean"
-    ) {
-      return raw.success
-    }
-    return false
-  } catch {
-    // ネットワーク障害時はスパム対策として fail-closed（通さない）
-    return false
-  }
-}
-
 export async function submitContact(
   formData: FormData,
   options: Options = {},
@@ -110,13 +86,13 @@ export async function submitContact(
   if (
     process.env.NODE_ENV === "production" &&
     !options.verifyTurnstile &&
-    !process.env.TURNSTILE_SECRET_KEY
+    !process.env.TURNSTILE_SECRET_KEY?.trim()
   ) {
     console.error("[contact] TURNSTILE_SECRET_KEY が本番環境に設定されていません")
     return { status: "serverError" }
   }
 
-  const verify = options.verifyTurnstile ?? defaultVerifyTurnstile
+  const verify = options.verifyTurnstile ?? verifyTurnstileToken
   const passed = await verify(fields.turnstileToken)
   if (!passed) {
     return { status: "turnstileFailed" }
@@ -130,6 +106,8 @@ export async function submitContact(
   const submission = await payload
     .create({
       collection: "contact-submissions",
+      // 入力・レート制限・Turnstileを検証済みのServer Action専用経路。
+      overrideAccess: true,
       data: {
         name: fields.name,
         email: fields.email,

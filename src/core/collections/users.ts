@@ -7,6 +7,8 @@ import { isAdmin } from "@/core/lib/access/is-admin"
 import { isAdminField } from "@/core/lib/access/is-admin-field"
 import { isUserAccount } from "@/core/lib/access/is-user-account"
 import { readUsers } from "@/core/lib/access/read-users"
+import { isOwnUserField } from "@/core/lib/access/is-own-user-field"
+import { unlockUsers } from "@/core/lib/access/unlock-users"
 
 export const users: CollectionConfig = {
   slug: "users",
@@ -28,6 +30,7 @@ export const users: CollectionConfig = {
     create: isAdmin,
     update: isAdmin,
     delete: isAdmin,
+    unlock: unlockUsers,
     // admin プロパティは boolean | Promise<boolean> しか返せない仕様のため直書き
     admin: (args) => isUserAccount(args.req.user),
   },
@@ -38,6 +41,12 @@ export const users: CollectionConfig = {
     beforeDelete: [guardServiceAdminAccountDelete, deleteUserDocumentLocks],
   },
   fields: [
+    {
+      // 標準apiKeyフィールドの暗号化hookを維持して閲覧権限を追加する。
+      name: "apiKey",
+      type: "text",
+      access: { read: isOwnUserField },
+    },
     {
       name: "roles",
       label: "ロール",

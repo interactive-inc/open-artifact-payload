@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { draftMode } from "next/headers"
+import { getFrontendAccess } from "@/core/lib/preview/get-frontend-access"
 import { notFound } from "next/navigation"
 import { getPayload } from "payload"
 import React from "react"
@@ -43,8 +43,7 @@ export default async function NewsListPage(props: Props) {
   const dictionary = getUiDictionary(locale)
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const draftState = await draftMode()
-  const isDraft = draftState.isEnabled
+  const access = await getFrontendAccess()
   // Payload は draft: false でも _status='draft' のレコードを返してしまうため、
   // 公開フロントでは where: { _status: 'published' } を明示する。
   // ライブプレビュー(isDraft=true)時はその制約を外し、下書きを含めて見せる。
@@ -52,8 +51,8 @@ export default async function NewsListPage(props: Props) {
     collection: "news",
     limit: 20,
     sort: "-publishedAt",
-    draft: isDraft,
-    where: isDraft ? undefined : { _status: { equals: "published" } },
+    ...access,
+    where: access.draft ? undefined : { _status: { equals: "published" } },
     locale,
   })
 

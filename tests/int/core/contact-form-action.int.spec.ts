@@ -24,6 +24,7 @@ describe("submitContact", () => {
     formData.set("name", "山田太郎")
     formData.set("email", uniqueEmail)
     formData.set("message", "テスト送信")
+    formData.set("status", "done")
     formData.set("cf-turnstile-response", "test-token")
 
     const verifier = vi.fn().mockResolvedValue(true)
@@ -39,6 +40,7 @@ describe("submitContact", () => {
       where: { email: { equals: uniqueEmail } },
     })
     expect(saved.docs).toHaveLength(1)
+    expect(saved.docs[0].status).toBe("new")
     await payload.delete({ collection: "contact-submissions", id: saved.docs[0].id })
     expect(verifier).toHaveBeenCalledWith("test-token")
     expect(rateLimiter).toHaveBeenCalledOnce()
