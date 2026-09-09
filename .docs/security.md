@@ -22,6 +22,12 @@ Turnstileは秘密鍵の設定不足、非成功HTTP応答、不正JSON、検証
 
 Payload 3.88.0の [GHSA-jg8r-5jh2-v2xj](https://github.com/advisories/GHSA-jg8r-5jh2-v2xj) は、アプリケーション側の明示的な `access.unlock` と実APIの回帰テストで対策する。バージョンだけを見る依存監査にはこの警告が残る。監査から一律に除外せず、上流更新時にも再評価する。
 
+2026-09-09にNext.jsを16.3.4、sharpを0.35.4、js-yamlを4.3.2へ更新した。Next.jsのWindowsホストとAVIF画像最適化に関する2件、sharpのlibheif、js-yamlのmerge処理に関するhigh / criticalの監査エラーを修正版で解消する。Next.js 16.3.4は現在のPayload / OpenNextが宣言する対応範囲内で、React・Payload・OpenNextの版は維持する。
+
+sharpは既存のoverrideを更新し、Wrangler / Miniflare経由も同じ修正版へ揃える。js-yamlは依存元が要求する4系の修正版をoverrideで指定し、API互換性を確認していない5系へ強制移行しない。上流が修正版を要求するようになったらoverrideの必要性を再評価する。監査の閾値やCIの失敗条件は緩めない。
+
+更新直後の `vp exec bun audit --audit-level=high` は成功した。閾値なしの監査には6件のmoderate（Payload、Hono、Vitest / mocker）が残っているため、「全脆弱性0件」とは扱わない。今回の3パッケージ以外の更新は含めていない。
+
 ## 本番適用
 
 問い合わせフォームを使う場合、Turnstileのサイトキーと秘密鍵を設定する。以前APIキーを有効化したserviceAdminを一般adminが閲覧できた環境では、コード変更だけで過去の漏えいを判断できないため、修正反映後に対象キーをローテーションする。

@@ -60,10 +60,16 @@ buildの既存middleware非推奨警告や、Nextのリクエスト外のrevalid
 - sharp 0.35.3: [libheifに関する指摘](https://github.com/advisories/GHSA-rgj7-g3m4-5g8c)（high）
 - js-yaml: [merge key処理のCPU使用量に関する指摘](https://github.com/advisories/GHSA-2883-xcg3-v3hh)（high）
 
-これは依存監査の結果であり、このアプリの本番環境における各問題の成立条件を検証したものではない。ユーザーの指定どおり、構成改善へ無関係な依存更新は混ぜていない。依存の修正と再監査は別作業として残る。
+これは構成改善の初回検証時点の依存監査結果であり、このアプリの本番環境における各問題の成立条件を検証したものではない。その後、ユーザーから依存更新も依頼されたため、同じPRでNext.js 16.3.4、sharp 0.35.4、js-yaml 4.3.2へ更新した。更新方針と残るmoderateの監査結果は [セキュリティ方針](../security.md#依存監査) を参照する。
 
 ## PRレビュー後の追加検証
 
 PR #77の自己レビューで、問い合わせCollectionだけが利用するPayloadメール検証が共通libに残っていることを確認した。`core/inquiry/infrastructure/validate-contact-email.ts` へ移し、`core/lib` から問い合わせ処理への依存を拒否する境界検査を追加した。検証ロジック・保存条件の変更はない。
 
 修正後に `vp check`、`vp test run`（82ファイル・429件: unit 81 / integration 348）、SDKとDB/runtime起動を拒否したunit単独実行（81件、setup 0ms）が成功した。型・importMapも再生成し、3生成物のSHA-256が修正前と一致することを確認した。上表のE2E・build・Storybookはこの追加の配置修正前のローカル結果であり、PRの最終コミットに対するGitHub Actionsの結果とは区別する。
+
+## 依存更新後の検証
+
+ユーザーからの追加依頼でNext.js 16.3.4、sharp 0.35.4、js-yaml 4.3.2へ更新した後、管理対象のBun 1.3.14で `vp run test:ci` 全体が終了コード0となった。check、unit 81件、integration 348件、Cloudflare fixtureのdry-run・型整合性、high以上の依存監査がすべて成功している。監査条件の緩和や検査の削除は行っていない。
+
+型・importMapも更新後の依存で再生成し、Payload型・Cloudflare型・importMapの3生成物は更新前とSHA-256が一致した。lockfileの変更はNext.js・sharp・js-yamlと、その更新に必要なSWC・プラットフォーム別バイナリ・libvipsだけである。build / E2E / Storybookを含む最終コミットのCI結果はPR #77のChecksで確認する。
