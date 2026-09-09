@@ -37,7 +37,7 @@ CSS・表示用JSONも利用するrouteまたは共通部品の近くに置き�
 
 問い合わせ種別は `core/inquiry/domain/contact-inquiry-type.ts` の6コードが正本です。`i18n/contact-inquiry-labels.ts` は `satisfies Record<Locale, Record<ContactInquiryType, string>>` で全言語・全コードの表示を型検査します。文言変更で保存コードを変えません。サーバー側の未選択許容、任意項目、保存形式、権限・通知再送は既存仕様のままです。
 
-共通libに置くのは、業務知識なしで使える技術処理だけです。問い合わせ種別やCMSコレクションを知らずに使えるかで判断します。複数箇所で使うだけでは業務規則をlibへ移しません。問い合わせ専用の通知・再送は `core/inquiry/infrastructure` に置き、認証メールと共通の送信アダプターやPII秘匿処理だけを `core/lib/email` に残します。
+共通libに置くのは、業務知識なしで使える技術処理だけです。問い合わせ種別やCMSコレクションを知らずに使えるかで判断します。複数箇所で使うだけでは業務規則をlibへ移しません。問い合わせ専用の通知・再送・Payloadメールフィールド検証は `core/inquiry/infrastructure` に置き、認証メールと共通の送信アダプターやPII秘匿処理だけを `core/lib/email` に残します。`core/lib` から問い合わせ処理への依存も境界テストで拒否します。
 
 ## 設定・生成・テスト
 

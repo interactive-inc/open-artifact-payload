@@ -84,6 +84,8 @@ function dependencyViolations(file: string, refs: Reference[]) {
     const target = reference.target
     const error = `${file} -> ${reference.specifier}`
     if (target && within(target, "src/project")) return [`Old project reference: ${error}`]
+    if (target && within(file, "src/core/lib") && within(target, inquiry))
+      return [`Shared technical library to inquiry: ${error}`]
     if (
       target &&
       within(file, "src/core") &&
@@ -232,6 +234,17 @@ describe("source ownership and dependency direction", () => {
     expect(inspect("src/core/example.ts", 'import { value } from "../project/types"')).toHaveLength(
       1,
     )
+  })
+
+  it("keeps inquiry knowledge out of shared technical libraries", () => {
+    expect(
+      inspect(
+        "src/core/lib/validation/email.ts",
+        'import { CONTACT_FIELD_LIMITS } from "@/core/inquiry/domain/contact-form-fields"',
+      ),
+    ).toEqual([
+      "Shared technical library to inquiry: src/core/lib/validation/email.ts -> @/core/inquiry/domain/contact-form-fields",
+    ])
   })
 
   it.each([

@@ -30,6 +30,7 @@ Vitestはunitとintegrationの2 projects。unitは実装隣と `tests/unit`、in
 | `project/collections` / `admin` / `types.ts` / `mcp.ts` / `project-features.ts` | `cms` の対応ファイル                                                                          |
 | `project/scripts`                                                               | `scripts`                                                                                     |
 | `core/frontend/forms` の入力規則・送信・Turnstile                               | `core/inquiry` の対応責務（フォーム表示は元の場所）                                           |
+| `core/lib/validation/validate-email.ts`                                         | `core/inquiry/infrastructure/validate-contact-email.ts`（問い合わせCollection専用）          |
 
 案件側で6つのre-exportだけの互換ファイルを先行導入している場合も、更新後のcoreと全利用側が新しい6契約へ切り替わったことを確認する。互換ファイルに案件の実装が追加されていないかを読み、追加実装があれば先に所有元へ移す。
 

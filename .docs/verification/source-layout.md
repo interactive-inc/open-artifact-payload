@@ -61,3 +61,9 @@ buildの既存middleware非推奨警告や、Nextのリクエスト外のrevalid
 - js-yaml: [merge key処理のCPU使用量に関する指摘](https://github.com/advisories/GHSA-2883-xcg3-v3hh)（high）
 
 これは依存監査の結果であり、このアプリの本番環境における各問題の成立条件を検証したものではない。ユーザーの指定どおり、構成改善へ無関係な依存更新は混ぜていない。依存の修正と再監査は別作業として残る。
+
+## PRレビュー後の追加検証
+
+PR #77の自己レビューで、問い合わせCollectionだけが利用するPayloadメール検証が共通libに残っていることを確認した。`core/inquiry/infrastructure/validate-contact-email.ts` へ移し、`core/lib` から問い合わせ処理への依存を拒否する境界検査を追加した。検証ロジック・保存条件の変更はない。
+
+修正後に `vp check`、`vp test run`（82ファイル・429件: unit 81 / integration 348）、SDKとDB/runtime起動を拒否したunit単独実行（81件、setup 0ms）が成功した。型・importMapも再生成し、3生成物のSHA-256が修正前と一致することを確認した。上表のE2E・build・Storybookはこの追加の配置修正前のローカル結果であり、PRの最終コミットに対するGitHub Actionsの結果とは区別する。

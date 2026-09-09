@@ -3,7 +3,7 @@ import type { CollectionConfig } from "payload"
 import { isAdmin } from "@/core/lib/access/is-admin"
 import { isAuthenticated } from "@/core/lib/access/is-authenticated"
 import { CONTACT_FIELD_LIMITS } from "@/core/inquiry/domain/contact-form-fields"
-import { validateEmail } from "@/core/lib/validation/validate-email"
+import { validateContactEmail } from "@/core/inquiry/infrastructure/validate-contact-email"
 import { resendContactNotificationEndpoint } from "@/core/inquiry/infrastructure/resend-contact-notification-endpoint"
 
 export const contactSubmissions: CollectionConfig = {
@@ -52,7 +52,7 @@ export const contactSubmissions: CollectionConfig = {
       label: "メールアドレス",
       type: "email",
       required: true,
-      validate: validateEmail,
+      validate: validateContactEmail,
     },
     {
       name: "phone",
