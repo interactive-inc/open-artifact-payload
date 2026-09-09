@@ -12,7 +12,7 @@ user_invocable: true
 
 - 参照: `CLAUDE.md` / `.claude/rules/cms-design.md`（設計ルール）
 - ガードレール: `CLAUDE.md` の「生成 AI のガードレール」章
-- 対象ファイルは `src/project/` 配下のみ。`src/core/` は読み取り専用
+- 配置は `src/README.md` に従う。公開UIは `src/app/(frontend)/`、CMS定義は `src/cms/`。案件での `src/core/` 変更は本体へ提案する（本体テンプレートの開発では編集できる）
 
 ## フェーズ1: 情報収集
 
@@ -75,7 +75,7 @@ project-brief のセクション記述から、`.claude/rules/cms-design.md` の
 
 ### Global 定義
 
-`src/project/pages/<page>/global.ts` - 固定ページごとに 1 ファイル
+`src/cms/globals/<page>.ts` - 固定ページごとに 1 ファイル
 export 名は `<name>Global`（例 `homeGlobal`, `aboutGlobal`）
 
 ライブプレビュー対応のため以下を必ず含める:
@@ -88,22 +88,22 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 
 ### Collection 定義
 
-`src/project/collections/*.ts` - 案件固有コレクション
+`src/cms/collections/*.ts` - 案件固有コレクション
 
 ### セクションコンポーネント
 
-- `src/project/pages/<page>/sections/*.tsx` - そのページでしか使わないセクション
-- `src/project/shared/sections/*.tsx` - 2 ページ以上で使うセクション（site-header / site-footer / contact-cta など）
+- `src/app/(frontend)/[locale]/<page>/_sections/*.tsx` - そのページでしか使わないセクション
+- `src/app/(frontend)/_sections/*.tsx` - 2 ページ以上で使うセクション（site-header / site-footer / contact-cta など）
 
-素の Tailwind で仮デザインを当てる。shared/sections に置くかどうかは「最初から 2 ページ以上で使うことが確定しているか」で判定する。
+素の Tailwind で仮デザインを当てる。app/(frontend)/_sections に置くかどうかは「最初から 2 ページ以上で使うことが確定しているか」で判定する。
 
 ### 管理画面カスタマイズ
 
-`src/project/admin/dashboard-tasks.ts` - project-brief のダッシュボードタスク列を反映
+`src/cms/admin/dashboard-tasks.ts` - project-brief のダッシュボードタスク列を反映
 
 ### Feature Flag
 
-`src/project/project-features.ts` - 汎用ページ feature flag の ON/OFF
+`src/cms/project-features.ts` - 汎用ページ feature flag の ON/OFF
 
 ### テーマ
 
@@ -111,7 +111,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 
 ### Payload 設定への登録
 
-`src/payload.config.ts` に project globals と collections の import を追加する（`@/project/pages/<page>/global` から `<name>Global` を import）。
+`src/payload.config.ts` に project globals と collections の import を追加する（`@/cms/globals/<page>` から `<name>Global` を import）。
 併せて `livePreviewGlobals` に生成した全 Global の slug を追加し、必要に応じて `livePreviewUrl` で URL マッピングを定義する。
 
 ### フロントエンドの下書きプレビュー対応
@@ -125,7 +125,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 
 ### テスト
 
-`tests/int/sections/` に各セクションの最小スモークテストを追加する（enabled=true / enabled=false の 2 ケース）
+セクションの隣に `*.test.tsx` として最小スモークテストを追加する（enabled=true / enabled=false の 2 ケース）
 
 ## フェーズ4: 自己検証
 
@@ -147,7 +147,7 @@ slug が `home` / `top` など `home-page` 以外の場合は、`livePreviewUrl`
 ### 自動検証
 
 ```bash
-vp run generate:types && vp lint && vp run test:int
+vp run generate:types && vp check && vp run test:unit && vp run test:int
 ```
 
 全て通ったことを確認してからコミットを提案する。
@@ -159,6 +159,6 @@ vp run generate:types && vp lint && vp run test:int
 - フィールドラベル = 日本語、フィールド名 = lowerCamelCase
 - 色は Tailwind theme トークン経由（`bg-primary` `text-accent` 等）
 - hex を直接書かない
-- 相対 import を避け `@/project/...` `@/core/...` を使う
+- 相対 import を避け `@/app/(frontend)/...`、`@/cms/...`、`@/i18n/...`、`@/core/...` など配置に合う直接 import を使う
 - `select` フィールドの value は英語、label は日本語
 - `array` フィールドと `autosave` の併用に注意（D1 制約）

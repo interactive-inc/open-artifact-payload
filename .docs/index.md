@@ -21,5 +21,7 @@ Inta CMS は、Payload CMS と Cloudflare を使って企業サイトを構築�
 - [[decisions/004-template-update-by-upstream-merge|雛形更新の Git マージ配布]]
 - [[decisions/005-ai-translation-ordered-reservation|AI翻訳の利用上限を順序付き予約で守る]]
 - [[decisions/006-email-delivery-without-queue|Queueを使わないメール配信の設計判断]]
+- [[decisions/007-source-layout-and-inquiry-boundaries|公開UIの配置・問い合わせ境界・既存案件の移行]]
+- [[verification/source-layout|構成改善の検証記録と制約]]
 
 利用者に影響する変更の履歴はリポジトリ直下の `CHANGELOG.md` に記録します。

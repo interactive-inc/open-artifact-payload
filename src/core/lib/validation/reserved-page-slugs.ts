@@ -1,4 +1,4 @@
-import { locales } from "@/project/shared/lib/locale-types"
+import { locales } from "@/i18n/locale-types"
 
 /**
  * 汎用ページ (/[slug]) が既存ルートを乗っ取らないよう予約しておくスラッグ。

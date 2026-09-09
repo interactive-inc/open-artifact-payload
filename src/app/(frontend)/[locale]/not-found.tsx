@@ -3,11 +3,11 @@ import React from "react"
 import { headers } from "next/headers"
 import { ArrowRightIcon } from "lucide-react"
 
-import { Button } from "@/project/shared/ui/button"
-import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { defaultLocale } from "@/project/shared/lib/locale-types"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { Button } from "@/app/(frontend)/_ui/button"
+import { getUiDictionary } from "@/i18n/get-ui-dictionary"
+import { isLocale } from "@/i18n/is-locale"
+import { defaultLocale } from "@/i18n/locale-types"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
 import "./styles.css"
 
 // 存在しない URL に来たときの 404。サイト共通レイアウト（ヘッダー / フッター）の中に表示される。

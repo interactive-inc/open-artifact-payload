@@ -2,14 +2,14 @@ import path from "path"
 import { fileURLToPath } from "url"
 
 import { buildCoreConfig } from "@/core/payload/config-base"
-import { projectFeatures } from "@/project/project-features"
-import { projectMcpConfig } from "@/project/mcp"
-import { homeGlobal } from "@/project/pages/home/global"
-import { aboutGlobal } from "@/project/pages/about/global"
-import { serviceGlobal } from "@/project/pages/service/global"
-import { works } from "@/project/collections/works"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { projectFeatures } from "@/cms/project-features"
+import { projectMcpConfig } from "@/cms/mcp"
+import { homeGlobal } from "@/cms/globals/home"
+import { aboutGlobal } from "@/cms/globals/about"
+import { serviceGlobal } from "@/cms/globals/service"
+import { works } from "@/cms/collections/works"
+import { isLocale } from "@/i18n/is-locale"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)

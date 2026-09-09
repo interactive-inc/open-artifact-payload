@@ -3,17 +3,18 @@ import { PhoneIcon, MapPinIcon, HelpCircleIcon } from "lucide-react"
 import { notFound } from "next/navigation"
 
 import { ContactForm } from "@/core/frontend/forms/contact-form"
-import type { ContactInquiryType } from "@/core/frontend/forms/contact-form-constraints"
+import { CONTACT_INQUIRY_TYPES } from "@/core/inquiry/domain/contact-inquiry-type"
+import { contactInquiryLabels } from "@/i18n/contact-inquiry-labels"
 import { loadSiteSettings } from "@/core/lib/load-site-settings"
-import { Card, CardContent, CardHeader, CardTitle } from "@/project/shared/ui/card"
-import { Button } from "@/project/shared/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/app/(frontend)/_ui/card"
+import { Button } from "@/app/(frontend)/_ui/button"
 import Link from "next/link"
-import { PageHeader } from "@/project/shared/sections/page-header"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
-import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
-import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
-import type { Locale } from "@/project/shared/lib/locale-types"
+import { PageHeader } from "@/app/(frontend)/_sections/page-header"
+import { isLocale } from "@/i18n/is-locale"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
+import { getUiDictionary } from "@/i18n/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/seo/build-locale-alternates"
+import type { Locale } from "@/i18n/locale-types"
 import type { Metadata } from "next"
 
 import "../styles.css"
@@ -25,28 +26,6 @@ type Props = {
 function resolveLocale(locale: string): Locale {
   if (!isLocale(locale)) notFound()
   return locale
-}
-
-const inquiryOptionsByLocale: Record<
-  Locale,
-  Array<{ value: ContactInquiryType; label: string }>
-> = {
-  ja: [
-    { value: "service", label: "サービスに関するお問い合わせ" },
-    { value: "estimate", label: "お見積もりのご依頼" },
-    { value: "consultation", label: "技術相談・ご相談" },
-    { value: "recruitment", label: "採用に関するお問い合わせ" },
-    { value: "media", label: "取材・メディアのお問い合わせ" },
-    { value: "other", label: "その他" },
-  ],
-  en: [
-    { value: "service", label: "Service inquiries" },
-    { value: "estimate", label: "Request a quote" },
-    { value: "consultation", label: "Technical consultation" },
-    { value: "recruitment", label: "Recruitment inquiries" },
-    { value: "media", label: "Press and media inquiries" },
-    { value: "other", label: "Other" },
-  ],
 }
 
 export async function generateMetadata(props: Props): Promise<Metadata> {
@@ -76,7 +55,10 @@ export default async function ContactPage(props: Props) {
               <h2 className="text-xl font-bold mb-6">{dictionary.contact.formHeading}</h2>
               <ContactForm
                 turnstileSiteKey={settings.turnstileSiteKey ?? undefined}
-                inquiryOptions={inquiryOptionsByLocale[locale]}
+                inquiryOptions={CONTACT_INQUIRY_TYPES.map((value) => ({
+                  value,
+                  label: contactInquiryLabels[locale][value],
+                }))}
                 locale={locale}
               />
             </div>

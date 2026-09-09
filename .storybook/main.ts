@@ -4,7 +4,12 @@ import type { StorybookConfig } from "@storybook/react-vite"
 const mock = (fileName: string) => fileURLToPath(new URL(`./mocks/${fileName}`, import.meta.url))
 
 const config: StorybookConfig = {
-  stories: ["../src/core/**/*.stories.@(ts|tsx|mdx)", "../src/project/**/*.stories.@(ts|tsx|mdx)"],
+  stories: [
+    "../src/core/**/*.stories.@(ts|tsx|mdx)",
+    // Route-group parentheses are interpreted by Storybook's glob matcher.
+    "../src/app/**/*.stories.@(ts|tsx|mdx)",
+    "../src/cms/**/*.stories.@(ts|tsx|mdx)",
+  ],
   addons: ["@storybook/addon-a11y", "@storybook/addon-themes"],
   framework: {
     name: "@storybook/react-vite",

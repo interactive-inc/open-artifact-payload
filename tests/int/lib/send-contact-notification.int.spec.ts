@@ -1,7 +1,7 @@
 import { getPayload, type Payload } from "payload"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vite-plus/test"
 
-import { sendContactNotification } from "@/core/lib/email/send-contact-notification"
+import { sendContactNotification } from "@/core/inquiry/infrastructure/send-contact-notification"
 import config from "@/payload.config"
 
 let payload: Payload

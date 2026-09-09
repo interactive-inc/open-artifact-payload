@@ -11,7 +11,7 @@ Accepted
 ## Decision
 
 - 基本CRUDは `@payloadcms/plugin-mcp` を使い、`/api/mcp` で公開する
-- 公開可能なcollection / globalと操作は `src/project/mcp.ts` に明示する
+- 公開可能なcollection / globalと操作は `src/cms/mcp.ts` に明示する
 - 実運用の権限はMCP専用API Keyごとに最小化し、紐づくPayloadユーザーのaccessも必ず適用する
 - MCP専用API Keyの管理はadminだけに許可し、作成時から90日の有効期限を既定にする。期限未設定・期限切れキーは拒否する
 - MCP専用API Key自身は通常のコンテンツ操作ユーザーとして認証済み扱いにせず、Payload REST経由でTool権限を迂回できないようにする

@@ -1,8 +1,10 @@
 import { AxeBuilder } from "@axe-core/playwright"
 import { expect, test } from "@playwright/test"
+import { readdirSync } from "node:fs"
+import path from "node:path"
 
 type StoryIndex = {
-  entries: Record<string, { id: string; type: string }>
+  entries: Record<string, { id: string; type: string; importPath: string }>
 }
 
 /**
@@ -40,6 +42,19 @@ test("all stories render without browser runtime errors or serious a11y violatio
   const indexResponse = await request.get(`${baseURL}/index.json`)
   expect(indexResponse.ok()).toBe(true)
   const index = (await indexResponse.json()) as StoryIndex
+  // A successful render check must not hide stories omitted by a broken discovery glob.
+  const sourceStoryFiles = readdirSync("src", { recursive: true, withFileTypes: true })
+    .filter((entry) => entry.isFile() && /\.stories\.(ts|tsx|mdx)$/.test(entry.name))
+    .map((entry) => path.relative(process.cwd(), path.join(entry.parentPath, entry.name)))
+    .map((file) => file.split(path.sep).join("/"))
+    .sort()
+  const indexedStoryFiles = [
+    ...new Set(Object.values(index.entries).map((entry) => entry.importPath.replace(/^\.\//, ""))),
+  ].sort()
+  expect(indexedStoryFiles, "Storybook must index every colocated story file").toEqual(
+    sourceStoryFiles,
+  )
+
   const stories = Object.values(index.entries)
     .filter((entry) => entry.type === "story")
     .sort((left, right) => left.id.localeCompare(right.id))

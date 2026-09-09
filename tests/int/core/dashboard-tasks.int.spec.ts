@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vite-plus/test"
 
-import { dashboardTasks } from "@/project/admin/dashboard-tasks"
+import { dashboardTasks } from "@/cms/admin/dashboard-tasks"
 
 describe("dashboard tasks", () => {
   it("タスク id は重複しない", () => {

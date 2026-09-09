@@ -279,7 +279,7 @@ export interface ContactSubmission {
   email: string;
   phone?: string | null;
   /**
-   * 案件固有の選択肢がある場合、project 側で select フィールドに差し替えてから利用する
+   * 案件固有の選択肢がある場合、cms 側で select フィールドに差し替えてから利用する
    */
   inquiryType?: string | null;
   message: string;

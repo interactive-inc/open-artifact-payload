@@ -1,6 +1,6 @@
 import { type EmailFieldValidation, validations } from "payload"
 
-import { CONTACT_FIELD_LIMITS } from "@/core/frontend/forms/contact-form-constraints"
+import { CONTACT_FIELD_LIMITS } from "@/core/inquiry/domain/contact-form-fields"
 
 /**
  * Payload 標準のメール形式チェックに、保存前の長さ上限を足したもの。

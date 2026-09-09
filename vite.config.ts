@@ -5,14 +5,33 @@ export default defineConfig({
     tsconfigPaths: true,
   },
   test: {
-    // globals を有効にすると @testing-library/react の自動クリーンアップ (afterEach) が働き、
-    // 同一ファイル内で複数回 render しても要素が積み重ならない。
-    globals: true,
-    environment: "node",
-    setupFiles: ["./vitest.setup.ts"],
-    globalSetup: ["./vitest.global-setup.ts"],
-    include: ["tests/int/**/*.int.spec.{ts,tsx}", "packages/**/*.test.ts"],
+    // D1は直列実行。DB準備はintegrationだけに限定する。
     fileParallelism: false,
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: "unit",
+          globals: true,
+          environment: "node",
+          include: ["src/**/*.test.{ts,tsx}", "tests/unit/**/*.test.{ts,tsx}"],
+          setupFiles: [],
+          globalSetup: [],
+        },
+      },
+      {
+        extends: true,
+        test: {
+          name: "integration",
+          // React Testing Libraryの自動cleanupを有効にする。
+          globals: true,
+          environment: "node",
+          include: ["tests/int/**/*.int.spec.{ts,tsx}", "packages/**/*.test.ts"],
+          setupFiles: ["./vitest.setup.ts"],
+          globalSetup: ["./vitest.global-setup.ts"],
+        },
+      },
+    ],
   },
   lint: {
     plugins: ["oxc", "typescript", "react", "nextjs"],

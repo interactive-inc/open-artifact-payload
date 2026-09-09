@@ -15,7 +15,7 @@ MCP client -> @payloadcms/plugin-mcp -> generated CRUD / custom use case ──�
 - ルート: サイト本体。Payload のコレクション、グローバル、アクセス制御、フックを正本とする
 - `packages/site-management`: Domain / Application / Infrastructure / Runtime。CLIとMCPの共有リソースカタログも持つ
 - `packages/cli`: argv、環境、ログインセッションをHonoの内部リクエストへ変換するInterface
-- `src/project/mcp.ts`: 共有カタログから公式MCP設定を生成し、公開操作の上限にする
+- `src/cms/mcp.ts`: 共有カタログから公式MCP設定を生成し、公開操作の上限にする
 
 ## コード所有境界
 
@@ -23,11 +23,11 @@ MCP client -> @payloadcms/plugin-mcp -> generated CRUD / custom use case ──�
 
 - テンプレート所有
   - 所有者: 本体テンプレート
-  - 主なパス: `src/core/**`、`packages/**`、`.storybook/**`、`Makefile`、`vite.config.ts`、`playwright*.config.ts`、`tests/int/core/**`、`tests/int/lib/**`
-  - 変更の流れ: 案件では編集せず、変更したい場合は本体テンプレートリポジトリへ PR を送ります
+  - 主なパス: `src/core/**`、`packages/**`、`.storybook/**`、`Makefile`、`vite.config.ts`、`playwright*.config.ts`、`tests/unit/source-boundaries.test.ts`、`tests/int/core/**`、`tests/int/lib/**`
+  - 変更の流れ: 案件では編集せず、変更したい場合は本体テンプレートリポジトリへ PR を送ります。本体テンプレートの開発では、この共通基盤・設定・テストも変更できます
 - 案件所有
   - 所有者: 案件
-  - 主なパス: route (`src/app/(frontend)/[locale]/**` の各 page)、`src/app/icon.svg`、`public/**`、`src/payload.config.ts`、`src/project/mcp.ts`、`wrangler.jsonc`、`portless.json`、`next.config.ts` の `images.remotePatterns`、`.docs/project-brief.md`、`.env`
+  - 主なパス: `src/app/(frontend)/**`、`src/cms/**`、`src/i18n/**`、`src/seo/**`、`src/scripts/**`、`src/app/icon.svg`、`public/**`、`src/payload.config.ts`、`src/cms/mcp.ts`、`wrangler.jsonc`、`portless.json`、`next.config.ts` の `images.remotePatterns`、`.docs/project-brief.md`、`.env`
   - 変更の流れ: 案件が自由に編集します
 - 共有編集
   - 所有者: テンプレートと案件の両方
@@ -36,14 +36,16 @@ MCP client -> @payloadcms/plugin-mcp -> generated CRUD / custom use case ──�
 
 core が参照する案件側の契約モジュールは次のとおりです。
 
-- `@/project/types`（型 `ProjectFeatures`）
-- `@/project/admin/dashboard-tasks`
-- `@/project/shared/lib/locale-types`
-- `@/project/shared/lib/is-locale`
-- `@/project/shared/lib/with-locale-prefix`
-- `@/project/shared/lib/get-ui-dictionary`
+- `@/cms/types`（型 `ProjectFeatures`）
+- `@/cms/admin/dashboard-tasks`
+- `@/i18n/locale-types`
+- `@/i18n/is-locale`
+- `@/i18n/with-locale-prefix`
+- `@/i18n/get-ui-dictionary`
 
-案件はこれらのファイルと export を必ず維持します。core はこれ以外を `@/project` から import しません。`tests/int/core/dependency-direction.int.spec.ts` が検査します。
+案件はこれらのファイルと export を維持します。coreはこの6契約以外の案件所有モジュールと公開UIをimportしません。旧配置への参照や互換facadeは残しません。`tests/unit/source-boundaries.test.ts` が相対importを含めて検査します。
+
+公開画面のコロケーションと共通libの判断は [src/README.md](../src/README.md) が正本です。問い合わせの共通処理は `src/core/inquiry` に閉じ、domain/applicationはSDK・環境へ依存せず、入口が外部接続を注入します。案件固有のフォームは案件の業務モジュールが所有し、雛形の共通処理と混同しません。
 
 ## 依存方向
 
@@ -67,7 +69,7 @@ prod-lockは既定で有効です。本番URLは設定必須とし、`--prod` �
 
 MCPは公式プラグインが追加する `payload-mcp-api-keys` を使い、`Authorization: Bearer <key>` で認証します。権限は次の積集合です。
 
-1. `src/project/mcp.ts` が公開を許可した操作
+1. `src/cms/mcp.ts` が公開を許可した操作
 2. MCP API Keyで管理者が有効にした操作
 3. 紐づくPayloadユーザーのcollection / global access
 

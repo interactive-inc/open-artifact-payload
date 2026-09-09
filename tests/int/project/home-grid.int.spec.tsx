@@ -4,9 +4,9 @@ import { render, screen } from "@testing-library/react"
 import { describe, expect, it, vi } from "vite-plus/test"
 
 import type { News } from "@/payload-types"
-import { HomeGrid } from "@/project/pages/home/sections/home-grid"
+import { HomeGrid } from "@/app/(frontend)/[locale]/_sections/home-grid"
 
-vi.mock("@/project/shared/components/generative-canvas", () => ({
+vi.mock("@/app/(frontend)/_components/generative-canvas", () => ({
   GenerativeCanvas: () => <div data-testid="generative-canvas" />,
 }))
 

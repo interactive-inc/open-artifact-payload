@@ -6,10 +6,10 @@ import React from "react"
 import type { Metadata } from "next"
 
 import config from "@/payload.config"
-import { buildPageMetadata } from "@/project/shared/lib/build-page-metadata"
-import { HomeGrid } from "@/project/pages/home/sections/home-grid"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import type { Locale } from "@/project/shared/lib/locale-types"
+import { buildPageMetadata } from "@/seo/build-page-metadata"
+import { HomeGrid } from "@/app/(frontend)/[locale]/_sections/home-grid"
+import { isLocale } from "@/i18n/is-locale"
+import type { Locale } from "@/i18n/locale-types"
 
 type Props = {
   params: Promise<{ locale: string }>

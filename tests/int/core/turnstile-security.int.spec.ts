@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test, vi } from "vite-plus/test"
 
-import { verifyTurnstileToken } from "@/core/frontend/forms/verify-turnstile-token"
+import { verifyTurnstileToken } from "@/core/inquiry/infrastructure/verify-turnstile-token"
 
 afterEach(() => {
   vi.unstubAllEnvs()

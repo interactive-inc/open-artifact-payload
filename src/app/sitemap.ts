@@ -3,8 +3,8 @@ import { getPayload } from "payload"
 import type { MetadataRoute } from "next"
 
 import config from "@/payload.config"
-import { locales, type Locale } from "@/project/shared/lib/locale-types"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
+import { locales, type Locale } from "@/i18n/locale-types"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
 
 // コンテンツは D1 由来のため、ビルド時ではなくリクエスト時に生成する。
 export const dynamic = "force-dynamic"

@@ -122,8 +122,10 @@ make preview                         # Cloudflare Workers ローカルプレビ�
 vp check                             # フォーマット + lint + 型チェック
 vp test                              # Vite+ / Vitest テスト
 vp run test:e2e                      # Playwright E2E テストのみ
-vp run test                          # 統合テスト + E2E テスト
-vp run test:ci                       # check + 統合テスト + packages + Cloudflare 設定 + 脆弱性監査 (CI の check job と同じ)
+vp run test                          # 単体 + 統合テスト + E2E テスト
+vp run test:unit                     # DB準備なしの単体テスト
+vp run test:int                      # Payload/D1 + packagesの統合テスト
+vp run test:ci                       # check + 単体 + 統合テスト (packagesを含む) + Cloudflare 設定 + 脆弱性監査 (CI の check job と同じ)
 
 vp run generate:types                # Payload 型定義 + Cloudflare 型を再生成
 vp run generate:importmap            # Payload Import Map 生成
@@ -197,7 +199,7 @@ Claude Code のスラッシュコマンドで追加するのが最も簡単で�
 
 手動で追加する場合の手順は以下のとおりです。
 
-- `src/project/collections/<slug>.ts` にコレクション定義を作成する
+- `src/cms/collections/<slug>.ts` にコレクション定義を作成する
 - `src/payload.config.ts` の `buildCoreConfig` の `projectCollections` 配列に追加する
 - マイグレーションファイルを作成して適用する
 
@@ -244,7 +246,7 @@ export default buildCoreConfig({
 
 固定ページは「1 Global = 1 ページ」の考え方で設計します。グローバルにはそのページの全セクションフィールドを `group` でまとめて定義します。
 
-- `src/project/pages/<page>/global.ts` にグローバル定義を作成する（export 名は `<name>Global`）
+- `src/cms/globals/<page>.ts` にグローバル定義を作成する（export 名は `<name>Global`）
 - 各 `group` (セクション) には `enabled` チェックボックスを必ず含める
 - `src/payload.config.ts` の `projectGlobals` 配列に追加する
 
@@ -270,8 +272,8 @@ Claude Code のスラッシュコマンドで生成するのが推奨です。
 
 手動で追加する場合は置き場所を判定します:
 
-- そのページでしか使わない → `src/project/pages/<page>/sections/<name>.tsx`
-- 最初から 2 ページ以上で使う → `src/project/shared/sections/<name>.tsx`
+- そのページでしか使わない → `src/app/(frontend)/[locale]/<page>/_sections/<name>.tsx`
+- 最初から 2 ページ以上で使う → `src/app/(frontend)/_sections/<name>.tsx`
 
 セクションコンポーネントの規約は以下のとおりです。
 
@@ -281,7 +283,7 @@ Claude Code のスラッシュコマンドで生成するのが推奨です。
 
 ### 汎用ページ機能の有効化
 
-`pages` コレクション (タイトル、スラッグ、リッチテキスト、SEO) を有効化する場合は `src/project/project-features.ts` を変更します。
+`pages` コレクション (タイトル、スラッグ、リッチテキスト、SEO) を有効化する場合は `src/cms/project-features.ts` を変更します。
 
 ```typescript
 export const projectFeatures: ProjectFeatures = {
@@ -316,10 +318,10 @@ SVG は既定で受け付けません。スクリプトを埋め込める形式�
 
 これによりブリーフの内容をもとに以下のファイルが一括生成されます。
 
-- `src/project/collections/` 配下の案件固有コレクション定義
-- `src/project/pages/<page>/global.ts` の固定ページグローバル定義（export 名は `<name>Global`）
-- `src/project/pages/<page>/sections/` と `src/project/shared/sections/` 配下のセクションコンポーネント
-- `src/project/admin/dashboard-tasks.ts` のタスク一覧
+- `src/cms/collections/` 配下の案件固有コレクション定義
+- `src/cms/globals/<page>.ts` の固定ページグローバル定義（export 名は `<name>Global`）
+- `src/app/(frontend)/[locale]/<page>/_sections/` と `src/app/(frontend)/_sections/` 配下のセクションコンポーネント
+- `src/cms/admin/dashboard-tasks.ts` のタスク一覧
 - `src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root` へのカラー・フォント設定反映
 - `src/payload.config.ts` の更新
 
@@ -343,7 +345,7 @@ SVG は既定で受け付けません。スクリプトを埋め込める形式�
 
 ### ダッシュボードタスク
 
-`src/project/admin/dashboard-tasks.ts` を編集します。`DashboardTask` 型の定義は以下のとおりです。
+`src/cms/admin/dashboard-tasks.ts` を編集します。`DashboardTask` 型の定義は以下のとおりです。
 
 - `id` — 一意の識別子 (文字列)
 - `icon` — アイコン名 (後述)
@@ -520,7 +522,7 @@ Turnstile の公開サイトキー (フロントエンド用) は環境変数で
 
 公開フォームは匿名のPayload REST/GraphQL createを使用せず、Server Actionだけを入口にします。Server Actionは入力上限・問い合わせ種別・Cloudflare Rate Limiting・Turnstileを確認してからLocal APIで保存します。既定のレートは正規化したメールアドレスとサイト識別子のSHA-256ごとに5回/60秒で、生のメールアドレスやIPアドレスをカウンターキーやログへ渡しません。CloudflareのRate Limitingは拠点ごとの近似的な制御なので、Turnstileと組み合わせた二次防御です。設定は[Cloudflare Rate Limiting API](https://developers.cloudflare.com/workers/runtime-apis/bindings/rate-limit/)を参照してください。
 
-問い合わせ種別を案件用に変更するときは、`contact-form-constraints.ts`の`CONTACT_INQUIRY_TYPES`と、問い合わせページの表示ラベルを同時に更新してください。サーバーは定義外の値を保存しません。
+雛形の既定の問い合わせ種別を本体側で変更するときは、`core/inquiry/domain/contact-inquiry-type.ts`の`CONTACT_INQUIRY_TYPES`と、`i18n/contact-inquiry-labels.ts`の全言語の表示ラベルを同時に更新してください。サーバーは定義外の値を保存しません。案件だけの分類や項目が必要な場合は、案件の業務モジュールで入力規則・受付を所有し、公開フォームから接続します。共通の `core/inquiry` を案件固有の仕様に置き換えません。
 
 ### SSG モード
 
@@ -559,6 +561,7 @@ vp run generate:types
 vp run generate:importmap
 vp run payload migrate
 vp check
+vp run test:unit
 vp run test:int
 ```
 
@@ -567,7 +570,7 @@ vp run test:int
 競合したファイルは所有境界で判断します。
 
 - テンプレート所有（`src/core/**` など）: upstream 側を採用します。案件側で変更していた場合は、その変更をテンプレートへ PR として送ります
-- 案件所有（`src/project/**`、route、`wrangler.jsonc` など）: 案件側を維持します。テンプレートが契約モジュール（`@/project/...`）や設定項目を追加した場合は、その分だけ手で追加します
+- 案件所有（`src/app/(frontend)/**`、`src/cms/**`、`src/i18n/**`、`src/seo/**`、`src/scripts/**`、`wrangler.jsonc` など）: 案件の内容を維持しつつ、構成変更がある場合は新配置へ移して参照先を更新します。6契約のexportと設定項目を揃えます。移動・削除競合で旧ファイルを無条件に残さず、[構成移行](decisions/007-source-layout-and-inquiry-boundaries.md) の削除条件を確認します
 - 共有編集（`src/migrations/**`、`package.json`、`bun.lock`）: 両方を残します。マイグレーションはファイル名の timestamp 順に適用されるため、案件で作成済みのマイグレーションより古い timestamp のテンプレート側マイグレーションが来た場合は、ローカル D1 で `vp run payload migrate` を実行してスキーマ差分が無いことを確認します。`bun.lock` は `vp install` で再生成します
 
 ### 注意点
@@ -585,22 +588,18 @@ vp run test:int
 - `src/core/collections/` — ビルトインコレクション定義 (users, media, news, faq, pages, contact-submissions)
 - `src/core/globals/` — ビルトイングローバル定義 (site-settings)
 - `src/core/admin/` — 管理画面カスタムコンポーネント (ダッシュボード、ナビゲーション、テーマ)
-- `src/core/frontend/` — フロントエンド共通コンポーネントとフォーム
+- `src/core/frontend/` — フロントエンド共通コンポーネントとフォーム表示
+- `src/core/inquiry/` — 雛形の入力規則・受付手順・外部接続・Server Action
 - `src/core/sections/` — ビルトインセクションコンポーネント
 - `src/core/payload/` — Payload 設定ビルダー (`config-base.ts`)
 - `src/core/lib/` — 共通ユーティリティ
 - `src/core/scripts/` — セットアップスクリプト群
 
-### src/project/ (案件ごとにカスタマイズ)
+### 案件のソース配置
 
-案件固有のコードは原則 `src/project/` 配下に置きます。ただし route (`src/app/(frontend)/[locale]/**`)、Payload の composition root (`src/payload.config.ts`)、案件由来のマイグレーション、`wrangler.jsonc` などは案件側で編集します。所有境界の一覧は [[architecture|アーキテクチャ]] の「コード所有境界」を参照してください。
+配置の正本は [src/README.md](../src/README.md) です。公開ページ本文と専用部品はURLのroute周辺、複数ページで使う表示はfrontend直下のprivate folderへ置きます。CMS定義・設定は `src/cms/`、言語は `src/i18n/`、metadata補助は `src/seo/`、運用処理は `src/scripts/` が所有します。
 
-- `src/project/pages/<page>/` — ページ単位のコロケーション (global.ts / sections/ / components/ / hooks/ / lib/)
-- `src/project/shared/` — 複数ページで使う資産 (sections / components / ui / hooks / lib)
-- `src/project/collections/` — 案件固有コレクション定義
-- `src/project/admin/dashboard-tasks.ts` — ダッシュボードのクイックアクション一覧
-- `src/project/project-features.ts` — 機能フラグ (`enableFreePages` 等)
-- `src/project/types.ts` — プロジェクト固有の型定義
+`src/cms/globals/<page>.ts` のexportは `<name>Global`、`src/cms/project-features.ts` と `src/cms/types.ts` の設定契約名は維持します。`src/cms/admin/dashboard-tasks.ts` がクイックアクションを定義します。旧配置の互換入口や個別aliasは不要です。
 
 ### Payload 設定のエントリポイント
 
@@ -619,7 +618,8 @@ export default buildCoreConfig({
 
 ### テスト
 
-- `tests/int/` — vitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
+- `src/**/*.test.ts(x)` / `tests/unit/**/*.test.ts(x)` — DB setupなしのunit project (`vp run test:unit`)
+- `tests/int/` と `packages/**/*.test.ts` — integration project (`vp run test:int`) のvitest 統合テスト (Node.js 環境、ファイル単位で jsdom)
 - `.wrangler/state-test/` — 統合テスト専用のローカル D1 / R2。`vp run test:int` が実行のたびに削除して migrate し直すため、開発用の `.wrangler/state/` にはテストが一切触れない（E2E の `.wrangler/state-e2e/` と同じ仕組み）
 - `tests/e2e/` — Playwright E2E テスト (Chromium)
 - `tests/helpers/` — テスト用ヘルパー (E2E の準備 `prepare-e2e.ts`、fixture 定義 `e2e-fixtures.ts`、ログイン `login.ts`)
@@ -642,7 +642,7 @@ E2E が前提にするコンテンツは `tests/helpers/e2e-fixtures.ts` にま�
 
 テンプレートには `.github/workflows/ci.yml` を同梱しています。`pull_request` と `main` への `push` で起動し、以下の 3 job を並列実行します。同一 ref の実行は新しい push で自動キャンセルされます。
 
-- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types:payload` 後に `src/payload-types.ts` の差分がないこと (型生成漏れの検出)、`bun run test:int`、`bun run test:tools`、`bun run test:cloudflare-config`、`bun audit --audit-level=high`（レジストリの一時障害で偽陽性にならないよう 30 秒間隔で 3 回まで試し、それでも失敗したら本物の失敗として扱う） を実行します
+- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types` / `bun run generate:importmap` 後に生成物の差分がないこと (型生成漏れの検出)、`bun run test:unit`、`bun run test:int`（packagesのテストも一度だけ含む）、`bun run test:cloudflare-config`、`bun audit --audit-level=high`（レジストリの一時障害で偽陽性にならないよう 30 秒間隔で 3 回まで試し、それでも失敗したら本物の失敗として扱う） を実行します
 - `build` — `bun run build`、`bunx opennextjs-cloudflare build`、`bunx wrangler deploy --dry-run --strict --env=production` で本番相当ビルドとデプロイ設定を検証し、`bun run build-storybook` と `bun run test:storybook:static` を実行します
 - `e2e` — Playwright (Chromium) で `bun run test:e2e` を実行します
 
@@ -658,7 +658,7 @@ npm パッケージは次の手順で手動更新します。
 bun outdated                       # 更新候補を確認する
 # package.json の該当バージョンを書き換える (Payload 一式は payload と @payloadcms/* を同一版に揃える)
 vp install                         # bun.lock を再生成する
-vp check && vp run test:int        # 手元で確認してから PR を作り、CI の check / build / e2e を通す
+vp check && vp test               # 手元で確認してから PR を作り、CI の check / build / e2e を通す
 ```
 
 major 更新 (Next / React / Payload / wrangler / OpenNext / TypeScript) はリリースノートを読み、1 系統ずつ別 PR で上げます。依存更新の自動化が必要になった場合は、bun の workspace と catalog に対応した Renovate を使ってください。

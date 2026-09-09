@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { defaultLocale } from "@/project/shared/lib/locale-types"
+import { isLocale } from "@/i18n/is-locale"
+import { defaultLocale } from "@/i18n/locale-types"
 
 export const config = {
   // OpenNext for Cloudflare does not support the Node.js-only Next 16 proxy runtime yet.

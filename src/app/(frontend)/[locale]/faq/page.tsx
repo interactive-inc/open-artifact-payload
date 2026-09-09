@@ -9,15 +9,15 @@ import {
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
-} from "@/project/shared/ui/accordion"
-import { Button } from "@/project/shared/ui/button"
-import { Separator } from "@/project/shared/ui/separator"
-import { PageHeader } from "@/project/shared/sections/page-header"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
-import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
-import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
-import type { Locale } from "@/project/shared/lib/locale-types"
+} from "@/app/(frontend)/_ui/accordion"
+import { Button } from "@/app/(frontend)/_ui/button"
+import { Separator } from "@/app/(frontend)/_ui/separator"
+import { PageHeader } from "@/app/(frontend)/_sections/page-header"
+import { isLocale } from "@/i18n/is-locale"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
+import { getUiDictionary } from "@/i18n/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/seo/build-locale-alternates"
+import type { Locale } from "@/i18n/locale-types"
 import type { Metadata } from "next"
 
 import "../styles.css"

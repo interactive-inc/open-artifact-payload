@@ -5,7 +5,7 @@ import { CheckCircleIcon } from "lucide-react"
 
 import type { Metadata } from "next"
 
-import { Button } from "@/project/shared/ui/button"
+import { Button } from "@/app/(frontend)/_ui/button"
 import {
   Card,
   CardContent,
@@ -13,12 +13,12 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/project/shared/ui/card"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
-import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
-import { buildLocaleAlternates } from "@/project/shared/lib/build-locale-alternates"
-import type { Locale } from "@/project/shared/lib/locale-types"
+} from "@/app/(frontend)/_ui/card"
+import { isLocale } from "@/i18n/is-locale"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
+import { getUiDictionary } from "@/i18n/get-ui-dictionary"
+import { buildLocaleAlternates } from "@/seo/build-locale-alternates"
+import type { Locale } from "@/i18n/locale-types"
 import "../../styles.css"
 
 type Props = {

@@ -12,7 +12,7 @@ arguments: 画像ファイルパス
 ## 前提
 
 - ガードレール: `CLAUDE.md` の「生成 AI のガードレール」章
-- 対象ファイルは `src/project/` 配下のみ。`src/core/` は読み取り専用
+- 配置は `src/README.md` に従う。公開UIは `src/app/(frontend)/`、CMS定義は `src/cms/`。案件での `src/core/` 変更は本体へ提案する（本体テンプレートの開発では編集できる）
 
 ## 手順
 
@@ -33,12 +33,12 @@ arguments: 画像ファイルパス
 
 - `section-from-design` と同じ生成ルールでセクションを作る
   - 置き場所の判定:
-    - そのページでしか使わない → `src/project/pages/<page>/sections/<kebab-name>.tsx`
-    - 最初から 2 ページ以上で使う → `src/project/shared/sections/<kebab-name>.tsx`
+    - そのページでしか使わない → `src/app/(frontend)/[locale]/<page>/_sections/<kebab-name>.tsx`
+    - 最初から 2 ページ以上で使う → `src/app/(frontend)/_sections/<kebab-name>.tsx`
   - Tailwind テーマ: `src/app/(frontend)/[locale]/styles.css` の `@theme` / `:root` に定義済みのトークンを使う
   - 画像は Payload Media relationship 経由 (`type: 'upload', relationTo: 'media'`) にする
   - 画像の URL 解決は `resolveMediaUrl()` / `resolveMediaAlt()` (`@/core/lib/media`) を使う
-- 対応する Global が既にある場合、フィールドが足りていなければ `src/project/pages/<page>/global.ts` に group フィールドを追記する（必ず `enabled` checkbox を含める）
+- 対応する Global が既にある場合、フィールドが足りていなければ `src/cms/globals/<page>.ts` に group フィールドを追記する（必ず `enabled` checkbox を含める）
 - ページ側（`src/app/(frontend)/[locale]/` 配下）に条件レンダリングを追加する
 
 ### フェーズ4: 自己検証
@@ -56,12 +56,12 @@ arguments: 画像ファイルパス
 
 1つでも不整合があれば該当箇所を修正する。
 
-- `tests/int/sections/<kebab-name>.int.spec.tsx` に enabled=true / enabled=false のスモークテストを追加する
-- `vp run generate:types && vp lint && vp run test:int` を実行して通ったことを確認する
+- 対象の隣の `<kebab-name>.test.tsx` に enabled=true / enabled=false のスモークテストを追加する
+- `vp run generate:types && vp check && vp run test:unit && vp run test:int` を実行して通ったことを確認する
 
 ## ルール
 
 - フィールドラベル日本語、フィールド名 lowerCamelCase
 - hex 直書き禁止
-- `src/core/` を書き換えない
+- 案件では `src/core/` を書き換えない（本体テンプレートの改善は対象にできる）
 - 生成セクションは `'use client'` を付けない（Server Component で Payload データを受け取る前提）

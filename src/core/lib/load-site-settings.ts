@@ -2,7 +2,7 @@ import { cache } from "react"
 import { getPayload } from "payload"
 
 import config from "@/payload.config"
-import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Locale } from "@/i18n/locale-types"
 
 /**
  * サイト設定グローバルを取得する。React.cache でメモ化しており、

@@ -2,9 +2,9 @@ import type { CollectionConfig } from "payload"
 
 import { isAdmin } from "@/core/lib/access/is-admin"
 import { isAuthenticated } from "@/core/lib/access/is-authenticated"
-import { CONTACT_FIELD_LIMITS } from "@/core/frontend/forms/contact-form-constraints"
+import { CONTACT_FIELD_LIMITS } from "@/core/inquiry/domain/contact-form-fields"
 import { validateEmail } from "@/core/lib/validation/validate-email"
-import { resendContactNotificationEndpoint } from "@/core/lib/email/resend-contact-notification-endpoint"
+import { resendContactNotificationEndpoint } from "@/core/inquiry/infrastructure/resend-contact-notification-endpoint"
 
 export const contactSubmissions: CollectionConfig = {
   slug: "contact-submissions",
@@ -67,7 +67,7 @@ export const contactSubmissions: CollectionConfig = {
       maxLength: CONTACT_FIELD_LIMITS.inquiryType,
       admin: {
         description:
-          "案件固有の選択肢がある場合、project 側で select フィールドに差し替えてから利用する",
+          "案件固有の選択肢がある場合、cms 側で select フィールドに差し替えてから利用する",
       },
     },
     {

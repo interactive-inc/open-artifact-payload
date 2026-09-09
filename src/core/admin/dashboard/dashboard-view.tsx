@@ -2,7 +2,7 @@ import { getPayload } from "payload"
 import React from "react"
 
 import config from "@/payload.config"
-import { dashboardTasks } from "@/project/admin/dashboard-tasks"
+import { dashboardTasks } from "@/cms/admin/dashboard-tasks"
 import { HelpLink } from "./help-link"
 import { RecentUpdates } from "./recent-updates"
 import { TaskCard } from "./task-card"

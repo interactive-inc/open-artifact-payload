@@ -24,3 +24,9 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+## ソースの所有と配置
+
+配置の正本は [src/README.md](src/README.md)、編集権限は [.docs/architecture.md](.docs/architecture.md)。本体テンプレートを改修する作業ではcore・共通設定・テストも必要範囲で編集できる。公開UIはroute周辺、CMSは `src/cms`、言語は `src/i18n`、SEOは `src/seo`、運用処理は `src/scripts`。問い合わせの共通規則は `src/core/inquiry` が所有する。小さい機能に空の層や本文を返すだけの入口を作らない。
+
+`vp test` はunitとintegrationの両方。`vp run test:unit` はDB setupなし、`vp run test:int` は使い捨てDB付き。生成物は `generate:types` / `generate:importmap` で同期する。

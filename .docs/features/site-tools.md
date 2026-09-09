@@ -4,7 +4,7 @@
 
 開発者やAIクライアントが、管理画面を手操作せずにサイトコンテンツを確認・更新する。操作はPayloadの既存権限、バリデーション、revalidation hookを通る。
 
-CLIとMCPは公開リソースを共有し、認証情報は用途ごとに分離しています。
+CLIとMCPは公開リソースを共有し、認証情報は用途ごとに分離しています。公開操作の上限は `src/cms/mcp.ts`、案件のCollection/Globalは `src/cms/collections` / `src/cms/globals` に置きます。ソース編集の権限と配置は [architecture](../architecture.md) / [src/README.md](../../src/README.md) に従い、APIキーのコンテンツ操作権限とは区別します。
 
 - CLI: 人が使う場合はPayloadログインのJWTセッション、CIではUsers API Keyを使う
 - MCP: AIクライアントからの対話操作。公式Payload MCP専用API Keyを使う
@@ -143,7 +143,7 @@ intacms news --limit 20
 
 キーの有効期限は作成時から90日後が既定です。期限切れ、無効な日時、期限未設定の既存キーはMCP接続を拒否するため、期限前に新しいキーへローテーションします。
 
-コード上の公開上限は共有 `SITE_RESOURCE_CATALOG` から `src/project/mcp.ts` が生成します。CLIと同じ8リソースだけを公開できます。
+コード上の公開上限は共有 `SITE_RESOURCE_CATALOG` から `src/cms/mcp.ts` が生成します。CLIと同じ8リソースだけを公開できます。
 
 ### クライアント設定
 
