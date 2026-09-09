@@ -9,7 +9,7 @@ import {
 } from "@/core/lib/validation/content-constraint-rules"
 import { isRegisteredCollectionSlug } from "@/core/lib/validation/is-registered-collection-slug"
 import { isRegisteredGlobalSlug } from "@/core/lib/validation/is-registered-global-slug"
-import { locales } from "@/project/shared/lib/locale-types"
+import { locales } from "@/i18n/locale-types"
 
 async function auditCollections(payload: Payload): Promise<string[]> {
   const rows: string[] = []

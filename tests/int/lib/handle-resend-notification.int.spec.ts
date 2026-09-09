@@ -1,7 +1,7 @@
 import { getPayload, type Payload } from "payload"
 import { afterAll, afterEach, beforeAll, describe, expect, it, vi } from "vite-plus/test"
 
-import { handleResendNotification } from "@/core/lib/email/handle-resend-notification"
+import { handleResendNotification } from "@/core/inquiry/infrastructure/handle-resend-notification"
 import config from "@/payload.config"
 
 let payload: Payload

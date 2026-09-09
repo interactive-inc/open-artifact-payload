@@ -47,9 +47,8 @@ jobs:
       - run: bun run generate:importmap
       - run: git diff --exit-code -- src/payload-types.ts cloudflare-env.d.ts 'src/app/(payload)/admin/importMap.js'
 
+      - run: bun run test:unit
       - run: bun run test:int
-
-      - run: bun run test:tools
 
       - run: bun run test:cloudflare-config
 

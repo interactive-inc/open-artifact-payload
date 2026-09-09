@@ -20,6 +20,8 @@ Cloudflare Workers 専用です（Vercel 等の他プラットフォームには
 - `packages/cli` — Hiract型の `intacms` CLI（環境設定、JWTログイン、REST型コマンド）
 - ルートの Payload — 公式 `@payloadcms/plugin-mcp` による Streamable HTTP MCP サーバー
 
+ソースの置き場所は [src/README.md](src/README.md)、既存案件の移行は [構成移行](.docs/decisions/007-source-layout-and-inquiry-boundaries.md) を参照してください。
+
 設計判断は `.docs/architecture.md` と `.docs/domain.md`、操作手順は `.docs/features/site-tools.md` を参照してください。
 
 ## セットアップ
@@ -54,7 +56,7 @@ vp run dev
 - [ ] 管理画面のサイト設定を入力する（サイト名 / ロゴ / 会社情報 / ヘッダー・フッターナビ / SNS / GA・GTM の ID）
 - [ ] favicon を差し替える（`src/app/icon.svg`、いまは仮の S アイコン）
 - [ ] OG デフォルト画像を差し替える（`public/og-default.png`、いまは SAMPLE inc. のプレースホルダ）
-- [ ] トップページのハードコードされたサンプルデータを実データまたは CMS に置き換える（`src/project/pages/home/sections/home-grid.tsx` の実績数値・使用技術・お客様の声）
+- [ ] トップページのハードコードされたサンプルデータを実データまたは CMS に置き換える（`src/app/(frontend)/[locale]/_sections/home-grid.tsx` の実績数値・使用技術・お客様の声）
 - [ ] news / works のダミー記事を削除して実コンテンツを入れる
 
 インフラ・デプロイ:
@@ -83,7 +85,7 @@ vp run dev
 - お問い合わせ `contact-submissions` — フォームの受信内容
 - メディア `media` — 画像アップロード（R2）
 - ユーザー `users` — 管理者 (admin) / 編集者 (editor)
-- ページ `pages` — 汎用ページ。`src/project/project-features.ts` の `enableFreePages: true` で有効化（デフォルト無効）
+- ページ `pages` — 汎用ページ。`src/cms/project-features.ts` の `enableFreePages: true` で有効化（デフォルト無効）
 - サイト設定 `site-settings`（グローバル）— サイト名・ロゴ・会社情報・ナビ・SNS・計測タグ・Turnstile サイトキー
 
 ## デプロイ
@@ -115,7 +117,9 @@ vp lint                         # lint
 vp fmt                          # フォーマット確認
 vp test                         # Vite+ のテスト
 vp check                        # format + lint + 型チェック
-vp run test                     # 統合テスト + E2E すべて
+vp run test                     # 単体 + 統合テスト + E2E すべて
+vp run test:unit                # DB準備なしの単体テスト
+vp run test:int                 # Payload/D1 + packagesの統合テスト
 vp run intacms --help           # サイト操作 CLI のヘルプ
 vp run payload migrate          # ローカル D1 にマイグレーション
 vp run seed                     # サンプルデータ投入

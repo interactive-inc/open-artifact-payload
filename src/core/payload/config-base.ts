@@ -31,7 +31,7 @@ import {
   resolveCloudflareContextMode,
   type CloudflareContextMode,
 } from "@/core/payload/resolve-cloudflare-context-mode"
-import type { ProjectFeatures } from "@/project/types"
+import type { ProjectFeatures } from "@/cms/types"
 
 type LivePreviewUrlValue = NonNullable<
   NonNullable<NonNullable<Config["admin"]>["livePreview"]>["url"]

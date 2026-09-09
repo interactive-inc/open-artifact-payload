@@ -2,7 +2,7 @@ import { getPayload, type Payload } from "payload"
 import { afterEach, beforeAll, describe, expect, it, vi } from "vite-plus/test"
 
 import config from "@/payload.config"
-import { submitContact } from "@/core/frontend/forms/contact-form-action"
+import { submitContact } from "@/core/inquiry/actions/submit-contact"
 
 let payload: Payload
 

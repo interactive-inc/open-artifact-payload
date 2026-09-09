@@ -1,4 +1,4 @@
-import type { Locale } from "@/project/shared/lib/locale-types"
+import type { Locale } from "@/i18n/locale-types"
 
 type FormattedDate = {
   // <time dateTime> 用の YYYY-MM-DD

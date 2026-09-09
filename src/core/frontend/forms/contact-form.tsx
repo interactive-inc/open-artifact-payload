@@ -3,11 +3,11 @@
 import Script from "next/script"
 import React, { useActionState } from "react"
 
-import { submitContactForm } from "@/core/frontend/forms/submit-contact-form"
-import type { ContactSubmitResult } from "@/core/frontend/forms/types"
-import { CONTACT_FIELD_LIMITS } from "@/core/frontend/forms/contact-form-constraints"
-import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
-import { defaultLocale, type Locale } from "@/project/shared/lib/locale-types"
+import { submitContactForm } from "@/core/inquiry/actions/submit-contact-form"
+import type { ContactSubmitResult } from "@/core/inquiry/application/contact-submit-result"
+import { CONTACT_FIELD_LIMITS } from "@/core/inquiry/domain/contact-form-fields"
+import { getUiDictionary } from "@/i18n/get-ui-dictionary"
+import { defaultLocale, type Locale } from "@/i18n/locale-types"
 
 type InquiryOption = { value: string; label: string }
 

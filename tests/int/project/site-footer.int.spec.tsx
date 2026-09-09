@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react"
 import { describe, expect, it } from "vite-plus/test"
 
 import { exampleSiteSettings } from "@/core/test-support/example-site-settings"
-import { SiteFooter } from "@/project/shared/sections/site-footer"
+import { SiteFooter } from "@/app/(frontend)/_sections/site-footer"
 
 describe("SiteFooter", () => {
   it("CMSのサイト名・FAX・全SNSリンクを公開フッターへ反映する", () => {

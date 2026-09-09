@@ -2,7 +2,7 @@ import React from "react"
 import type { Preview } from "@storybook/react-vite"
 import { withThemeByClassName } from "@storybook/addon-themes"
 
-import { TooltipProvider } from "../src/project/shared/ui/tooltip"
+import { TooltipProvider } from "../src/app/(frontend)/_ui/tooltip"
 import "../src/app/(frontend)/[locale]/styles.css"
 
 const preview: Preview = {

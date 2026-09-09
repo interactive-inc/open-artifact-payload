@@ -12,9 +12,9 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 ## 前提
 
 - ガードレール: `CLAUDE.md` の「生成 AI のガードレール」章
-- 対象ファイルは `src/project/` 配下のみ。`src/core/` は読み取り専用
+- 配置は `src/README.md` に従う。公開UIは `src/app/(frontend)/`、CMS定義は `src/cms/`。案件での `src/core/` 変更は本体へ提案する（本体テンプレートの開発では編集できる）
 - Storybook は `@storybook/react-vite` 10.x を使用（next/image・link・navigation・script は `.storybook/mocks/` でモック）
-- 既存例: `src/project/shared/ui/button.stories.tsx`
+- 既存例: `src/app/(frontend)/_ui/button.stories.tsx`
 
 ## 手順
 
@@ -22,21 +22,21 @@ Storybook のストーリーを対話形式で生成する。コンポーネン�
 
 引数または `AskUserQuestion` で以下を確認する。
 
-- 対象コンポーネントのパス（例: `src/project/shared/ui/card.tsx`）
+- 対象コンポーネントのパス（例: `src/app/(frontend)/_ui/card.tsx`）
 - 既存コンポーネントなら → ストーリーのみ追加
 - 未作成なら → コンポーネント仕様（props, variant, 用途）をヒアリングしてから生成
 
 コンポーネントを新規に作る場合の置き場所は以下で判断する。
 
-- そのページでしか使わない → `src/project/pages/<page>/components/<kebab-name>.tsx`
-- 複数ページで使う / 汎用 → `src/project/shared/components/<kebab-name>.tsx`
-- shadcn/ui 由来 → `src/project/shared/ui/<kebab-name>.tsx`（このスキルでは触らない）
-- セクション（Payload データを受ける） → `pages/<page>/sections/` または `shared/sections/`
+- そのページでしか使わない → `src/app/(frontend)/[locale]/<page>/_components/<kebab-name>.tsx`
+- 複数ページで使う / 汎用 → `src/app/(frontend)/_components/<kebab-name>.tsx`
+- shadcn/ui 由来 → `src/app/(frontend)/_ui/<kebab-name>.tsx`（このスキルでは触らない）
+- セクション（Payload データを受ける） → `app/(frontend)/[locale]/<page>/_sections/` または `app/(frontend)/_sections/`
 
 ### フェーズ2: 情報収集
 
 - 対象コンポーネントを `Read` し、`type Props` から controls 対象を抽出する
-- `src/project/shared/ui/button.stories.tsx` をテンプレとして読む
+- `src/app/(frontend)/_ui/button.stories.tsx` をテンプレとして読む
 - セクションコンポーネントの場合は `src/core/sections/hero-section.tsx` などを読み、受け取る data 型を把握する
 - context7 で Storybook の公式ドキュメント（argTypes, decorators, play 関数）を必要に応じて参照する
 
@@ -76,17 +76,17 @@ export const Variant: Story = {
 
 title 命名規則:
 
-- `src/project/shared/components/<name>` → `Shared/<PascalName>`
-- `src/project/shared/sections/<name>` → `Shared/Sections/<PascalName>`
-- `src/project/pages/<page>/components/<name>` → `Pages/<Page>/<PascalName>`
-- `src/project/pages/<page>/sections/<name>` → `Pages/<Page>/Sections/<PascalName>`
+- `src/app/(frontend)/_components/<name>` → `Shared/<PascalName>`
+- `src/app/(frontend)/_sections/<name>` → `Shared/Sections/<PascalName>`
+- `src/app/(frontend)/[locale]/<page>/_components/<name>` → `Pages/<Page>/<PascalName>`
+- `src/app/(frontend)/[locale]/<page>/_sections/<name>` → `Pages/<Page>/Sections/<PascalName>`
 
 ストーリーのバリエーション生成ルール:
 
 - `variant` や `size` のような union 型の prop → それぞれ個別ストーリーを作る（例: `Primary`, `Secondary`, `Ghost`）
 - 境界ケース（最長タイトル、空データ、画像なし、disabled など）は追加ストーリーとして作る
 - `enabled` チェックボックスがあるセクションは `Enabled` / `Disabled` の 2 つを最低限作る
-- リレーション data を受けるセクションは `mockNewsItem` 等のフィクスチャを story ファイル内で定義する（外部共有が必要になったら `src/project/shared/lib/fixtures/` に移動）
+- リレーション data を受けるセクションは `mockNewsItem` 等のフィクスチャを story ファイル内で定義する。共有が必要になったら利用範囲に合う `_data/fixtures/` に移す。テンプレートの型付きサンプルは `src/core/test-support/` を使う
 
 Payload セクションのストーリー生成の注意:
 
@@ -103,7 +103,7 @@ Payload セクションのストーリー生成の注意:
 
 ## ルール
 
-- `src/core/` のコンポーネントに対してストーリーを書かない（テンプレ本体に手を入れない）
+- 案件では `src/core/` のコンポーネントのストーリーを直接変更しない。本体テンプレートの改善では既存コンポーネント隣に追加できる
 - 1 story ファイルにつき 1 コンポーネント
 - story ファイルは対象コンポーネントと同じディレクトリに置く（コロケーション）
 - デコレータが必要な場合（テーマ、router, Payload データ）は最小限に留め、共通化は `.storybook/preview.tsx` で行う

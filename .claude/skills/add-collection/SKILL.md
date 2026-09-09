@@ -11,7 +11,7 @@ user_invocable: true
 ## 前提
 
 - ガードレール: `CLAUDE.md` の「生成 AI のガードレール」章
-- 対象ファイルは `src/project/` 配下のみ。`src/core/` は読み取り専用
+- 配置は `src/README.md` に従う。公開UIは `src/app/(frontend)/`、CMS定義は `src/cms/`。案件での `src/core/` 変更は本体へ提案する（本体テンプレートの開発では編集できる）
 
 ## 手順
 
@@ -29,23 +29,23 @@ user_invocable: true
 
 以下を生成する:
 
-- `src/project/collections/<slug>.ts`
+- `src/cms/collections/<slug>.ts`
 - 一覧用セクションを作る場合:
-  - そのコレクションが 1 ページでしか使われない → `src/project/pages/<page>/sections/<slug>-list-section.tsx`
-  - 複数ページで使う（例: ホームと /news 両方） → `src/project/shared/sections/<slug>-list-section.tsx`
+  - そのコレクションが 1 ページでしか使われない → `src/app/(frontend)/[locale]/<page>/_sections/<slug>-list-section.tsx`
+  - 複数ページで使う（例: ホームと /news 両方） → `src/app/(frontend)/_sections/<slug>-list-section.tsx`
 - `src/payload.config.ts` に import 追加
-- `src/project/admin/dashboard-tasks.ts` への追記（必要な場合）
+- `src/cms/admin/dashboard-tasks.ts` への追記（必要な場合）
 
 ### フェーズ3: マイグレーションと検証
 
 - `vp run payload -- migrate:create project_<slug>` を実行する
 - `vp run payload -- migrate` でローカル D1 に反映する
-- `vp run generate:types && vp lint && vp run test:int` を流す
+- `vp run generate:types && vp check && vp run test:unit && vp run test:int` を流す
 - 結果をユーザーに報告してコミットを提案する
 
 ## ルール
 
-- 生成先は `src/project/` 配下のみ
+- 生成先は `src/README.md` の役割別配置に従う
 - フィールドラベル日本語/フィールド名 lowerCamelCase
-- `src/core/` を一切触らない
+- 案件では `src/core/` を変更しない（本体テンプレートの改善は対象にできる）
 - サイドバーアイコンは自動で付く（コンテンツグループは汎用ページアイコンを一括適用）。個別アイコンを指定したい場合のみ `src/app/(payload)/custom.scss` の「ナビアイコン」節に `#nav-<slug>::before { @include mask-icon($icon-xxx); }` を追加する

@@ -13,13 +13,13 @@ import { RichText } from "@/core/lib/lexical"
 import { formatNewsDate } from "@/core/lib/format-news-date"
 import { loadSiteSettings } from "@/core/lib/load-site-settings"
 import { resolveMediaUrl } from "@/core/lib/media/resolve-media-url"
-import { buildPageMetadata } from "@/project/shared/lib/build-page-metadata"
-import { JsonLd } from "@/project/shared/components/json-ld"
-import { Badge } from "@/project/shared/ui/badge"
-import { isLocale } from "@/project/shared/lib/is-locale"
-import { withLocalePrefix } from "@/project/shared/lib/with-locale-prefix"
-import { getUiDictionary } from "@/project/shared/lib/get-ui-dictionary"
-import type { Locale } from "@/project/shared/lib/locale-types"
+import { buildPageMetadata } from "@/seo/build-page-metadata"
+import { JsonLd } from "@/app/(frontend)/_components/json-ld"
+import { Badge } from "@/app/(frontend)/_ui/badge"
+import { isLocale } from "@/i18n/is-locale"
+import { withLocalePrefix } from "@/i18n/with-locale-prefix"
+import { getUiDictionary } from "@/i18n/get-ui-dictionary"
+import type { Locale } from "@/i18n/locale-types"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,9 +27,9 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/project/shared/ui/breadcrumb"
-import { Separator } from "@/project/shared/ui/separator"
-import { Button } from "@/project/shared/ui/button"
+} from "@/app/(frontend)/_ui/breadcrumb"
+import { Separator } from "@/app/(frontend)/_ui/separator"
+import { Button } from "@/app/(frontend)/_ui/button"
 import "../../styles.css"
 
 type Props = {

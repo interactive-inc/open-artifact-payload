@@ -101,34 +101,17 @@ value には英語を使い、label に日本語を設定する。value に日�
 
 ## ファイル配置ルール
 
-案件ファイルは `src/project/` 配下のコロケーション構造に従う。
+案件ファイルは [src/README.md](../../src/README.md) の役割別配置に従う。
 
-```
-src/project/
-  pages/<page>/
-    global.ts               Payload Global 定義。export 名は <name>Global
-    sections/<name>.tsx     このページ専用のセクション
-    components/ hooks/ lib/ このページ専用の補助モジュール
-  shared/
-    sections/               2 ページ以上で使うセクション（site-header / site-footer など）
-    components/             汎用 UI コンポーネント（フラット配置）
-    ui/                     shadcn/ui 所管領域（bunx shadcn add の配置先）
-    hooks/ / lib/           汎用フック / util
-  collections/              案件固有コレクション（news / faq / pages 以外）
-  admin/                    管理画面カスタム
+```text
+src/cms/globals/<page>.ts               Payload Global
+src/cms/collections/<collection>.ts    Payload Collection
+src/app/(frontend)/[locale]/<page>/page.tsx
+src/app/(frontend)/[locale]/<page>/_sections/
+src/app/(frontend)/_sections/          複数routeで共用する表示
 ```
 
-セクションをどこに置くか:
-
-- そのページでしか使わない → `pages/<page>/sections/`
-- 最初から 2 ページ以上で使うことが決まっている → `shared/sections/`
-- 最初は 1 ページ用に作った後に再利用したくなった → `pages/*/sections/` から `shared/sections/` に移動
-
-Global のファイル名と export:
-
-- ファイル: `src/project/pages/<page>/global.ts`
-- export: `<name>Global`（例: `homeGlobal`, `aboutGlobal`）
-- `src/payload.config.ts` の `projectGlobals: [homeGlobal, ...]` に追加する
+トップページ専用は `[locale]/_sections/`。専用部品・CSS・JSONは同routeのprivate folderに置き、必要なディレクトリだけ作る。CMS・業務処理から公開UIへ依存させない。Globalはページ専用でもCMS側に置く。
 
 ## ライブプレビュー
 
