@@ -41,7 +41,7 @@ describe("認証情報・ロック解除・問い合わせのアクセス境界"
         },
       })
     admin = await create(["admin"], adminKey)
-    serviceAdmin = await create(["admin", "serviceAdmin"], serviceKey)
+    serviceAdmin = await create(["serviceAdmin"], serviceKey)
     editor = await create(["editor"], editorKey)
   })
 

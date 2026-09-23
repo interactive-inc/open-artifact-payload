@@ -4,6 +4,8 @@ import { UnauthorizedError } from "payload"
 
 import { hasAdminRole } from "@/core/lib/access/has-admin-role"
 import { isAdmin } from "@/core/lib/access/is-admin"
+import { isUserAccount } from "@/core/lib/access/is-user-account"
+import { getMcpOAuthIdentity } from "@/platform/cloudflare/mcp-oauth-context"
 
 const mcpKeyLifetimeMilliseconds = 90 * 24 * 60 * 60 * 1000
 
@@ -69,7 +71,43 @@ export const projectMcpConfig = {
       },
     ],
   }),
-  overrideAuth: async (_request, getDefaultMcpAccessSettings) => {
+  overrideAuth: async (request, getDefaultMcpAccessSettings) => {
+    const identity = getMcpOAuthIdentity()
+    if (identity) {
+      const user = await request.payload.findByID({
+        collection: "users",
+        id: Number(identity.userId),
+        depth: 0,
+        disableErrors: true,
+        showHiddenFields: true,
+        select: { email: true, roles: true, lockUntil: true },
+      })
+      const principal = user
+        ? { ...user, collection: "users" as const, _strategy: "mcp-oauth" }
+        : null
+      if (
+        !isUserAccount(principal) ||
+        (user?.lockUntil && Date.parse(user.lockUntil) > Date.now())
+      ) {
+        throw new UnauthorizedError()
+      }
+      const canRead = identity.scopes.includes("mcp:read")
+      const canWrite = canRead && identity.scopes.includes("mcp:write")
+      return {
+        user: principal,
+        ...Object.fromEntries(
+          SITE_RESOURCE_CATALOG.map((resource) => [
+            resource.slug,
+            {
+              find: canRead && resource.mcpOperations.includes("find"),
+              create: canWrite && resource.mcpOperations.includes("create"),
+              update: canWrite && resource.mcpOperations.includes("update"),
+              delete: false,
+            },
+          ]),
+        ),
+      }
+    }
     const settings = await getDefaultMcpAccessSettings()
     if (isExpiredMcpKey(settings)) throw new UnauthorizedError()
     return settings

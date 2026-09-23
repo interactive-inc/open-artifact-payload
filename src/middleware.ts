@@ -7,7 +7,7 @@ export const config = {
   // OpenNext for Cloudflare does not support the Node.js-only Next 16 proxy runtime yet.
   // Keep the deprecated middleware convention to compile this request boundary for Edge.
   matcher: [
-    "/((?!admin|api|next|_next|favicon.ico|icon.svg|og-default.png|sitemap.xml|robots.txt).*)",
+    "/((?!admin|api|oauth|next|_next|favicon.ico|icon.svg|og-default.png|sitemap.xml|robots.txt).*)",
   ],
 }
 

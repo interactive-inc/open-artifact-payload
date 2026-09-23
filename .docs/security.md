@@ -33,3 +33,5 @@ sharpは既存のoverrideを更新し、Wrangler / Miniflare経由も同じ修�
 問い合わせフォームを使う場合、Turnstileのサイトキーと秘密鍵を設定する。以前APIキーを有効化したserviceAdminを一般adminが閲覧できた環境では、コード変更だけで過去の漏えいを判断できないため、修正反映後に対象キーをローテーションする。
 
 この変更にDBマイグレーションは不要。検証は実認証情報を持たないPR用worktreeと使い捨てのローカルD1/R2で行う。本番デプロイや本番キーの操作は含めない。
+
+serviceAdminはadminの全権限を含み、MCPキーと通常サイト設定も管理できます。serviceAdminの付与・剥奪・アカウント変更は引き続きserviceAdminだけに許可します。OAuthの `mcp:write` もPayload accessを超えません。接続先ごとに独立したトークンとKVを使い、詳細は [OAuth接続](features/mcp-oauth.md) を参照してください。

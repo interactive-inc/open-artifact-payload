@@ -4,10 +4,12 @@
 
 開発者やAIクライアントが、管理画面を手操作せずにサイトコンテンツを確認・更新する。操作はPayloadの既存権限、バリデーション、revalidation hookを通る。
 
-CLIとMCPは公開リソースを共有し、認証情報は用途ごとに分離しています。公開操作の上限は `src/cms/mcp.ts`、案件のCollection/Globalは `src/cms/collections` / `src/cms/globals` に置きます。ソース編集の権限と配置は [architecture](../architecture.md) / [src/README.md](../../src/README.md) に従い、APIキーのコンテンツ操作権限とは区別します。
+CLIとMCPは公開リソースを共有し、認証情報は用途ごとに分離しています。
 
 - CLI: 人が使う場合はPayloadログインのJWTセッション、CIではUsers API Keyを使う
-- MCP: AIクライアントからの対話操作。公式Payload MCP専用API Keyを使う
+- MCP: AIクライアントからの対話操作。ChatGPT・Claudeは [OAuth接続](mcp-oauth.md)、固定キー対応クライアントは公式Payload MCP専用API Keyを使う
+
+管理画面を開いてAIと共同編集する場合は、ブラウザのログイン状態を使う [WebMCP](webmcp.md) も利用できます。通常のMCPとは接続方法と用途が異なります。
 
 ## CLI
 
@@ -69,6 +71,47 @@ intacms config set prod-lock true
 intacms news                 # エラー
 intacms news --prod          # 実行
 ```
+
+### Basic認証がある開発環境
+
+開発URLにはBasic認証とCMS認証の両方が必要です。CLIは選択した環境の次の環境変数を読みます。パスワードをコマンド引数やGit管理ファイルへ書かず、端末の非表示入力かCIのsecretから渡してください。
+
+| フラグ           | Basic認証用の環境変数                                                                   |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| `--staging`      | `INTACMS_STAGING_BASIC_AUTH_USERNAME` / `INTACMS_STAGING_BASIC_AUTH_PASSWORD`           |
+| `--staging-blue` | `INTACMS_STAGING_BLUE_BASIC_AUTH_USERNAME` / `INTACMS_STAGING_BLUE_BASIC_AUTH_PASSWORD` |
+| `--local`        | `INTACMS_LOCAL_BASIC_AUTH_USERNAME` / `INTACMS_LOCAL_BASIC_AUTH_PASSWORD`               |
+| `--prod`         | `INTACMS_PROD_BASIC_AUTH_USERNAME` / `INTACMS_PROD_BASIC_AUTH_PASSWORD`                 |
+
+macOSのzshでの例です。リポジトリ内では `intacms` を `vp run intacms` に置き換えられます。
+
+```zsh
+intacms config set endpoint.staging https://staging.example.com
+read -r 'INTACMS_STAGING_BASIC_AUTH_USERNAME?Basic username: '
+read -rs 'INTACMS_STAGING_BASIC_AUTH_PASSWORD?Basic password: '
+export INTACMS_STAGING_BASIC_AUTH_USERNAME INTACMS_STAGING_BASIC_AUTH_PASSWORD
+
+# 次に入力するのはCMSユーザーのパスワード
+intacms login --staging --email admin@example.com
+intacms whoami --staging
+intacms news --staging
+```
+
+Basic認証情報はCLIの設定・セッションファイルへ保存しません。端末を開き直したら再設定します。ログイン、再ログイン時の失効、取得・更新、logoutの全てで同じ認証を使います。片方だけの設定はエラーです。Basic認証はHTTPSに限定し、認証情報を付けたリクエストのリダイレクトには追従しません。このサイトの末尾スラッシュ付きAPIへ直接送信します。
+
+選択環境にBasic認証情報がなければ通常のCMS認証で接続します。`--prod` に切り替えてもSTAGINGのBasic認証情報は送信しません。`OPEN_ARTIFACT_ENDPOINT` が選択環境の登録URLを別URLへ上書きする場合、Basic認証情報は送信せずエラーにします。
+
+### 本番公開時の接続先切り替え
+
+本番URLを登録して、その環境へ別途ログインします。`example.com` は実際の本番ドメインに置き換えてください。本番でBasic認証を使わない場合、`INTACMS_PROD_BASIC_AUTH_*` は設定しません。
+
+```bash
+intacms config set endpoint.prod https://www.example.com
+intacms login --prod --email admin@example.com
+intacms news --prod
+```
+
+JWTセッションは接続先URLごとに分離します。CIの `OPEN_ARTIFACT_API_KEY` は実行環境ごとのsecretで切り替えてください。CLIのUsers API KeyとMCP API Keyは別物です。mainへのマージや公開で、クライアントの接続先が自動的に変わることはありません。
 
 ### REST形式のリソース操作
 
@@ -135,9 +178,9 @@ intacms news --limit 20
 
 ### MCP API Keyの準備
 
-1. `/admin` へadminロールの管理者としてログインする（editorはMCPキーを閲覧・作成・変更・削除できない）
+1. `/admin` へ管理者（admin）またはサービス管理者（serviceAdmin）としてログインする。serviceAdminは管理者の全権限を含むため、adminを追加する必要はない（editorはMCPキーを閲覧・作成・変更・削除できない）
 2. サイドバーの「MCP」→「API Keys」を開く
-3. キーを紐づけるPayloadユーザーと用途ラベルを選ぶ
+3. 用途ラベルを入力する。キーはログイン中のPayloadユーザーに紐づく
 4. API Keyを有効化し、必要なcollection / globalの操作だけをチェックする
 5. 表示されたキーをMCPクライアントのsecret設定へ保存する
 
@@ -151,14 +194,34 @@ Streamable HTTP対応MCPクライアントへ、次の接続情報を登録し�
 
 ```json
 {
-  "url": "https://example.com/api/mcp",
+  "url": "https://example.com/api/mcp/",
   "headers": {
     "Authorization": "Bearer replace-with-mcp-api-key"
   }
 }
 ```
 
-ローカル開発ではURLを `http://localhost:3000/api/mcp` にします。MCPキーとCLIのUsers API Keyは互換ではありません。MCPキーをPayload RESTのAPI Keyとして直接利用しても、通常のコンテンツ操作ユーザーとは認証されません。
+ローカル開発ではURLを `http://localhost:3000/api/mcp/` にします。末尾スラッシュなしのURLもNext.jsのリダイレクト経由で利用できます。専用のRoute HandlerがMCPへ渡すURLを正規化し、サイトの `trailingSlash` 設定とMCPのパス完全一致判定を両立させています。
+
+Basic認証が有効な共有開発環境では、追加HTTPヘッダーを設定できるMCPクライアントを使います。次の2つのヘッダーが必要です。値はクライアントのsecret機能で管理してください。
+
+```json
+{
+  "url": "https://staging.example.com/api/mcp/",
+  "headers": {
+    "Authorization": "Basic <Basicのユーザー名:パスワードをUTF-8でBase64化した値>",
+    "X-IntaCMS-Authorization": "Bearer <開発環境で発行したMCP API Key>"
+  }
+}
+```
+
+Base64化した値も認証情報です。URLには埋め込まず、接続先はリダイレクトのない末尾スラッシュ付きURLを指定します。クライアントが追加ヘッダーに対応しない場合、この直接接続方式は利用できません。Basic認証の回避や無効化はしません。
+
+開発用 `cms-dev` と本番用 `cms-prod` を別接続として登録し、利用する環境の接続を選びます。本番は本番URLの `/api/mcp/` と本番で発行したMCPキーを使い、Basic認証がなければ最初の例の `Authorization: Bearer …` だけを設定します。MCPにはCLIの `--prod` フラグはありません。WebMCPは開いている管理画面の環境を操作します。
+
+MCPキーとCLIのUsers API Keyは互換ではありません。MCPキーをPayload RESTのAPI Keyとして直接利用しても、通常のコンテンツ操作ユーザーとは認証されません。
+
+Cloudflare Workersは実行時の `new Function` を禁止するため、`@payloadcms/plugin-mcp@3.88.0` のスキーマ変換にBun patchを適用しています。Zod 3対応の `zod-from-json-schema@0.0.5` で直接スキーマを構築し、nullable値・関連ID・自由形式JSONを保持します。認証・権限・CRUDは公式プラグインをそのまま使います。プラグイン更新時はパッチの要否を見直し、Worker上のMCP E2Eを実行してください。
 
 公式プラグインは、許可されたリソースに対して次の名前でToolを生成します。
 
@@ -176,6 +239,9 @@ Streamable HTTP対応MCPクライアントへ、次の接続情報を登録し�
 ```bash
 vp check
 vp test run packages tests/int/mcp-plugin.int.spec.ts tests/int/site-management-api-key.int.spec.ts tests/int/core/users-read-access.int.spec.ts
+vp run test:e2e tests/e2e/mcp.e2e.spec.ts
+vp run build:preview
+vp run test:e2e:development-access
 ```
 
 構成と依存方向は [[architecture]]、守る規則は [[domain]]、採用理由は [[decisions/002-official-payload-mcp]] と [[decisions/003-intacms-cli]] を参照してください。

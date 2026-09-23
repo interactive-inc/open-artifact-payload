@@ -9,9 +9,11 @@ import {
   type CliProcessEnvironment,
 } from "./cli-process-environment"
 import { formatCliOutput } from "./format-cli-output"
+import { createCliFetchPort } from "./create-cli-fetch-port"
 import { parseCliInvocation, type CliInvocation } from "./parse-cli-invocation"
 import { PayloadAuthClient } from "./payload-auth-client"
 import { resolveCliEnvironment, type ResolvedCliEnvironment } from "./resolve-cli-environment"
+import { resolveCliBasicAuthorization } from "./resolve-cli-basic-authorization"
 import { searchSiteCommands } from "./resource-catalog"
 import { updateCliPreferences } from "./update-cli-preferences"
 
@@ -95,11 +97,26 @@ export async function runCli(props: RunCliProps): Promise<number> {
     )
   }
 
+  const basicAuthorization = resolveCliBasicAuthorization({
+    environment,
+    processEnvironment,
+    preferences,
+  })
+  if (basicAuthorization instanceof Error) return writeError(props.io, basicAuthorization)
+  const transportProps = {
+    ...props,
+    fetchPort: createCliFetchPort({
+      endpoint: environment.endpoint,
+      basicAuthorization,
+      fetchPort: props.fetchPort,
+    }),
+  }
+
   if (invocation.kind === "login") {
-    return await login({ invocation, environment, store, props })
+    return await login({ invocation, environment, store, props: transportProps })
   }
   if (invocation.kind === "logout") {
-    return await logout({ environment, store, props })
+    return await logout({ environment, store, props: transportProps })
   }
 
   const authentication = await resolveAuthentication({
@@ -110,7 +127,7 @@ export async function runCli(props: RunCliProps): Promise<number> {
   if (authentication instanceof Error) return writeError(props.io, authentication)
 
   if (invocation.kind === "whoami") {
-    const user = await new PayloadAuthClient(props.fetchPort).findCurrentUser({
+    const user = await new PayloadAuthClient(transportProps.fetchPort).findCurrentUser({
       endpoint: environment.endpoint,
       authorization: authentication.authorization,
       authCollection: authentication.authCollection,
@@ -127,7 +144,7 @@ export async function runCli(props: RunCliProps): Promise<number> {
       OPEN_ARTIFACT_TOKEN: authentication.token,
       OPEN_ARTIFACT_AUTH_COLLECTION: authentication.authCollection,
     },
-    fetchPort: props.fetchPort,
+    fetchPort: transportProps.fetchPort,
   })
   if (runtime instanceof Error) {
     return writeError(props.io, runtime)

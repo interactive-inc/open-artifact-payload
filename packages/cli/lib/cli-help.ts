@@ -25,6 +25,12 @@ export const CLI_HELP = `Inta CMS CLI
   intacms config set endpoint.staging https://staging.example.com
   intacms config set prod-lock true
 
+開発URLのBasic認証:
+  INTACMS_STAGING_BASIC_AUTH_USERNAME / INTACMS_STAGING_BASIC_AUTH_PASSWORD を環境変数で渡す。
+  --staging-blue は STAGING_BLUE、--local は LOCAL、--prod は PROD を使う。
+  Basic認証の設定がない環境は従来のCMS認証を使う。Basic認証にはHTTPSが必要。
+  詳しい設定例: .docs/features/site-tools.md
+
 安全策:
   パスワードは端末で非表示入力します。--password は履歴漏えい防止のため使えません。
   本番は既定でロックされ、明示 --prod が必要です。

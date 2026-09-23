@@ -130,3 +130,5 @@ vp run storybook                # Storybook (http://localhost:6006)
 詳細な運用ガイドは `.docs/guide.md` を参照してください。
 
 セキュリティの権限境界、依存監査と本番適用時の注意点は[セキュリティ方針](.docs/security.md)を参照してください。
+
+ChatGPT・Claude・CodexからのCMS操作は [OAuth接続手順](.docs/features/mcp-oauth.md) を参照してください。

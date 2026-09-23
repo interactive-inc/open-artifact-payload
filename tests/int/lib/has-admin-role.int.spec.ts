@@ -31,6 +31,16 @@ describe("hasAdminRole", () => {
     expect(hasAdminRole({ roles: ["admin"] })).toBe(true)
   })
 
+  it("serviceAdmin 単独でも管理者権限を持つ", () => {
+    expect(hasAdminRole({ roles: ["serviceAdmin"] })).toBe(true)
+  })
+
+  it("未知のロールや空配列には管理者権限を与えない", () => {
+    expect(hasAdminRole({ roles: ["unknown"] })).toBe(false)
+    expect(hasAdminRole({ roles: [] })).toBe(false)
+    expect(hasAdminRole({ roles: "serviceAdmin" })).toBe(false)
+  })
+
   it("roles に admin と editor の両方を含む配列の場合は true を返す", () => {
     expect(hasAdminRole({ roles: ["admin", "editor"] })).toBe(true)
   })

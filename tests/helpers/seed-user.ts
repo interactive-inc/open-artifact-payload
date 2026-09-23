@@ -10,6 +10,11 @@ export const previewUser = {
   password: "test-password-1234",
 }
 
+export const serviceAdminUser = {
+  email: "service-admin-e2e@payloadcms.com",
+  password: "test-password-1234",
+}
+
 export const previewMcpApiKeys = {
   active: "preview-e2e-active-00000000-0000-4000-8000-000000000001",
   expired: "preview-e2e-expired-00000000-0000-4000-8000-000000000002",
