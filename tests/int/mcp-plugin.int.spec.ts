@@ -151,105 +151,125 @@ describe("official Payload MCP plugin", () => {
     expect(await findResponse.text()).toContain(slug)
   })
 
-  test("allows only administrators to manage MCP API keys", async () => {
-    const payloadConfig = await config
-    const payload = await getPayload({ config: payloadConfig })
-    const editor = await payload.create({
-      collection: "users",
-      data: {
-        email: `mcp-editor-${crypto.randomUUID()}@example.com`,
-        password: "test-password-1234",
-        roles: ["editor"],
-      },
-    })
-    const administrator = await payload.create({
-      collection: "users",
-      data: {
-        email: `mcp-admin-${crypto.randomUUID()}@example.com`,
-        password: "test-password-1234",
-        roles: ["admin"],
-      },
-    })
-    const editorApiKey = `mcp-editor-key-${crypto.randomUUID()}`
+  test.each<"admin" | "serviceAdmin">(["admin", "serviceAdmin"])(
+    "%s can manage MCP API keys while editors cannot",
+    async (role) => {
+      const payloadConfig = await config
+      const payload = await getPayload({ config: payloadConfig })
+      const editor = await payload.create({
+        collection: "users",
+        data: {
+          email: `mcp-editor-${crypto.randomUUID()}@example.com`,
+          password: "test-password-1234",
+          roles: ["editor"],
+        },
+      })
+      const administrator = await payload.create({
+        collection: "users",
+        data: {
+          email: `mcp-admin-${crypto.randomUUID()}@example.com`,
+          password: "test-password-1234",
+          roles: [role],
+        },
+      })
+      const editorApiKey = `mcp-editor-key-${crypto.randomUUID()}`
 
-    await expect(
-      payload.find({
+      await expect(
+        payload.find({
+          collection: "payload-mcp-api-keys",
+          overrideAccess: false,
+          user: editor,
+        }),
+      ).rejects.toThrow()
+      await expect(
+        payload.create({
+          collection: "payload-mcp-api-keys",
+          data: {
+            user: editor.id,
+            label: "Forbidden editor key",
+            enableAPIKey: true,
+            apiKey: `forbidden-${crypto.randomUUID()}`,
+            news: { find: true, create: false, update: false },
+          },
+          overrideAccess: false,
+          user: editor,
+        }),
+      ).rejects.toThrow()
+
+      const visible = await payload.find({
         collection: "payload-mcp-api-keys",
         overrideAccess: false,
-        user: editor,
-      }),
-    ).rejects.toThrow()
-    await expect(
-      payload.create({
+        user: administrator,
+      })
+      expect(visible.totalDocs).toBeGreaterThanOrEqual(0)
+
+      const createdKey = await payload.create({
         collection: "payload-mcp-api-keys",
         data: {
           user: editor.id,
-          label: "Forbidden editor key",
+          label: "Administrator-managed editor key",
           enableAPIKey: true,
-          apiKey: `forbidden-${crypto.randomUUID()}`,
+          apiKey: editorApiKey,
           news: { find: true, create: false, update: false },
         },
         overrideAccess: false,
-        user: editor,
-      }),
-    ).rejects.toThrow()
-
-    const visible = await payload.find({
-      collection: "payload-mcp-api-keys",
-      overrideAccess: false,
-      user: administrator,
-    })
-    expect(visible.totalDocs).toBeGreaterThanOrEqual(0)
-
-    await payload.create({
-      collection: "payload-mcp-api-keys",
-      data: {
-        user: editor.id,
-        label: "Administrator-managed editor key",
-        enableAPIKey: true,
-        apiKey: editorApiKey,
-        news: { find: true, create: false, update: false },
-      },
-      overrideAccess: false,
-      user: administrator,
-    })
-    const editorTools = await readToolNames(
-      await postMcp({
-        apiKey: editorApiKey,
-        body: { jsonrpc: "2.0", id: 1, method: "tools/list", params: {} },
-      }),
-    )
-    expect(editorTools).toEqual(["findNews"])
-
-    const directCreateResponse = await handleEndpoints({
-      config: payloadConfig,
-      request: new Request("http://payload.local/api/news", {
-        method: "POST",
-        headers: {
-          authorization: `payload-mcp-api-keys API-Key ${editorApiKey}`,
-          "content-type": "application/json",
-        },
-        body: JSON.stringify({
-          title: "MCP capability bypass attempt",
-          slug: `mcp-bypass-${crypto.randomUUID()}`,
-          publishedAt: new Date().toISOString(),
-          category: "info",
-          _status: "draft",
+        user: administrator,
+      })
+      const editorTools = await readToolNames(
+        await postMcp({
+          apiKey: editorApiKey,
+          body: { jsonrpc: "2.0", id: 1, method: "tools/list", params: {} },
         }),
-      }),
-    })
-    expect(directCreateResponse.status).toBe(403)
+      )
+      expect(editorTools).toEqual(["findNews"])
 
-    const directUsersResponse = await handleEndpoints({
-      config: payloadConfig,
-      request: new Request("http://payload.local/api/users", {
-        headers: {
-          authorization: `payload-mcp-api-keys API-Key ${editorApiKey}`,
-        },
-      }),
-    })
-    expect(directUsersResponse.status).toBe(403)
-  })
+      const directCreateResponse = await handleEndpoints({
+        config: payloadConfig,
+        request: new Request("http://payload.local/api/news", {
+          method: "POST",
+          headers: {
+            authorization: `payload-mcp-api-keys API-Key ${editorApiKey}`,
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            title: "MCP capability bypass attempt",
+            slug: `mcp-bypass-${crypto.randomUUID()}`,
+            publishedAt: new Date().toISOString(),
+            category: "info",
+            _status: "draft",
+          }),
+        }),
+      })
+      expect(directCreateResponse.status).toBe(403)
+
+      const directUsersResponse = await handleEndpoints({
+        config: payloadConfig,
+        request: new Request("http://payload.local/api/users", {
+          headers: {
+            authorization: `payload-mcp-api-keys API-Key ${editorApiKey}`,
+          },
+        }),
+      })
+      expect(directUsersResponse.status).toBe(403)
+
+      const updatedKey = await payload.update({
+        collection: "payload-mcp-api-keys",
+        id: createdKey.id,
+        data: { label: "Updated key" },
+        overrideAccess: false,
+        user: administrator,
+      })
+      expect(updatedKey.label).toBe("Updated key")
+
+      const deletedKey = await payload.delete({
+        collection: "payload-mcp-api-keys",
+        id: createdKey.id,
+        overrideAccess: false,
+        user: administrator,
+      })
+      expect(deletedKey.id).toBe(createdKey.id)
+    },
+  )
 
   test("rejects expired MCP API keys", async () => {
     const payloadConfig = await config

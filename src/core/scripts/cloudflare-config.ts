@@ -238,6 +238,47 @@ export function getCloudflareConfigIssues(props: ValidateCloudflareConfigProps):
   }
   const target: JsonObject = targetValue
 
+  if (isObject(target.vars) && target.vars.MCP_OAUTH_ENABLED === "true") {
+    const bindings = Array.isArray(target.kv_namespaces) ? target.kv_namespaces : []
+    const kv = bindings.filter((item) => isObject(item) && item.binding === "OAUTH_KV")
+    const id = kv.length === 1 && isObject(kv[0]) ? stringValue(kv[0].id) : undefined
+    if (!id || !/^[a-f0-9]{32}$/i.test(id) || /^0+$/.test(id)) {
+      issues.push(`env.${props.environment} のOAuthには専用 OAUTH_KV namespace IDが必要です`)
+    }
+    for (const [name, sibling] of Object.entries(environments ?? {})) {
+      if (name === props.environment || !isObject(sibling) || !Array.isArray(sibling.kv_namespaces))
+        continue
+      if (
+        id &&
+        sibling.kv_namespaces.some(
+          (item) => isObject(item) && item.binding === "OAUTH_KV" && item.id === id,
+        )
+      ) {
+        issues.push(`env.${name} と OAUTH_KV namespace を共有できません`)
+      }
+    }
+    try {
+      const origin = new URL(stringValue(target.vars.NEXT_PUBLIC_SERVER_URL) ?? "")
+      if (
+        origin.protocol !== "https:" ||
+        origin.origin !== origin.href.replace(/\/$/, "") ||
+        origin.username ||
+        origin.password
+      )
+        throw new Error("Invalid origin")
+    } catch {
+      issues.push(
+        `env.${props.environment}.vars.NEXT_PUBLIC_SERVER_URL にOAuthの正規HTTPS originを設定してください`,
+      )
+    }
+    if (
+      !Array.isArray(target.ratelimits) ||
+      !target.ratelimits.some((item) => isObject(item) && item.name === "OAUTH_RATE_LIMITER")
+    ) {
+      issues.push(`env.${props.environment} のOAuthには OAUTH_RATE_LIMITER が必要です`)
+    }
+  }
+
   const localName = stringValue(config.name)
   const targetName = stringValue(target.name)
   if (!targetName || !WORKER_NAME_PATTERN.test(targetName)) {

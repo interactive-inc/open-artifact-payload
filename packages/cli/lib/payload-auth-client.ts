@@ -87,7 +87,11 @@ export class PayloadAuthClient {
       },
     )
     if (response instanceof Error) return response
-    if (response.ok || response.status === 401) return null
+    if (
+      response.ok ||
+      (response.status === 401 && !response.headers.get("www-authenticate")?.startsWith("Basic"))
+    )
+      return null
     const raw = await readResponseJson(response)
     if (raw instanceof Error) return raw
     return new Error(toPayloadErrorMessage(response.status, raw))

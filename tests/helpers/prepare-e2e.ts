@@ -5,7 +5,7 @@ import { getPayload, type Payload } from "payload"
 import { getPlatformProxy } from "wrangler"
 
 import { seedE2eFixtures } from "./e2e-fixtures.js"
-import { previewMcpApiKeys, previewUser, testUser } from "./seed-user.js"
+import { previewMcpApiKeys, previewUser, serviceAdminUser, testUser } from "./seed-user.js"
 
 // E2E 専用のローカル D1 / R2 を毎回作り直す。開発用の .wrangler/state には触れないため、
 // テストが途中で落ちても開発中のデータは汚れず、残った QA データも次回の実行で消える。
@@ -54,6 +54,10 @@ try {
   const previewAdmin = await payload.create({
     collection: "users",
     data: { ...previewUser, roles: ["admin"] },
+  })
+  await payload.create({
+    collection: "users",
+    data: { ...serviceAdminUser, roles: ["serviceAdmin"] },
   })
   for (const [apiKey, expiresAt] of [
     [previewMcpApiKeys.active, "2099-01-01T00:00:00.000Z"],

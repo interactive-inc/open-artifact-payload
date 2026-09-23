@@ -24,8 +24,54 @@ describe("serviceAdmin ロール", () => {
     payload = await getPayload({ config: payloadConfig })
 
     // 内部処理（req.user なし）は付与できる = 初期セットアップの経路
-    serviceAdmin = await createUser(["admin", "serviceAdmin"])
+    serviceAdmin = await createUser(["serviceAdmin"])
     clientAdmin = await createUser(["admin"])
+  })
+
+  it("serviceAdmin 単独でユーザーの作成・ロール変更・削除ができる", async () => {
+    const created = await payload.create({
+      collection: "users",
+      data: {
+        email: `svc-managed-${crypto.randomUUID()}@example.com`,
+        password: "test-password-1234",
+        roles: ["editor"],
+      },
+      overrideAccess: false,
+      user: serviceAdmin,
+    })
+
+    const updated = await payload.update({
+      collection: "users",
+      id: created.id,
+      data: { roles: ["admin"] },
+      overrideAccess: false,
+      user: serviceAdmin,
+    })
+
+    expect(updated.roles).toEqual(["admin"])
+
+    const deleted = await payload.delete({
+      collection: "users",
+      id: created.id,
+      overrideAccess: false,
+      user: serviceAdmin,
+    })
+
+    expect(deleted.id).toBe(created.id)
+  })
+
+  it("serviceAdmin 単独で管理者限定のサイト設定を更新できる", async () => {
+    const settings = await payload.findGlobal({ slug: "site-settings" })
+    const updated = await payload.updateGlobal({
+      slug: "site-settings",
+      data: { siteName: "Service administrator site" },
+      overrideAccess: false,
+      user: serviceAdmin,
+    })
+
+    expect(updated.siteName).toBe("Service administrator site")
+
+    await payload.updateGlobal({ slug: "site-settings", data: { siteName: settings.siteName } })
   })
 
   it("クライアント admin は serviceAdmin を付与できない", async () => {

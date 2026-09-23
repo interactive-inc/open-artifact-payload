@@ -43,13 +43,20 @@ export default defineConfig({
     },
   ],
   webServer: {
+    // E2E_SERVER=workers は build:preview 済みのコードを使用し、初回コンパイル/HMRを除外する。
     // Next devと同時に別のMiniflareを開くとローカルD1が競合するため、
     // 専用D1の作り直し・マイグレーション・フィクスチャ投入はサーバー起動前に済ませる。
-    command: "vp exec tsx tests/helpers/prepare-e2e.ts && bun dev",
+    command:
+      "vp exec tsx tests/helpers/prepare-e2e.ts && " +
+      (process.env.E2E_SERVER === "workers"
+        ? "vp run preview --persist-to .wrangler/state-e2e"
+        : "bun dev"),
     env: {
       PAYLOAD_SECRET: process.env.PAYLOAD_SECRET ?? "test-secret-do-not-use-in-production",
       // 開発用の .wrangler/state とは別のローカル D1 / R2 を使う
-      CLOUDFLARE_PERSIST_PATH: ".wrangler/state-e2e",
+      // Wrangler CLI は persist-to の下へ v3 を足す。getPlatformProxy は指定pathを直接使う。
+      CLOUDFLARE_PERSIST_PATH:
+        process.env.E2E_SERVER === "workers" ? ".wrangler/state-e2e/v3" : ".wrangler/state-e2e",
       // Cloudflare のテスト用シークレット。siteverify は常に success を返す
       TURNSTILE_SECRET_KEY: e2eTurnstileKeys.secretKey,
     },

@@ -73,8 +73,10 @@ MCPは公式プラグインが追加する `payload-mcp-api-keys` を使い、`A
 2. MCP API Keyで管理者が有効にした操作
 3. 紐づくPayloadユーザーのcollection / global access
 
-`payload-mcp-api-keys` 自体はadminだけが管理でき、キーは既定90日で失効します。collection削除、ユーザー、問い合わせ、翻訳設定・ログは1の段階でMCP対象外にしています。Users collectionはadmin/serviceAdmin以外に自分の行だけを返します。APIキーの閲覧権限は別途本人だけに制限し、adminでも他ユーザーのキーは取得できません。ロック解除も明示的に認可し、一般adminによるserviceAdminの解除を拒否します。詳しくは[セキュリティ方針](security.md)を参照してください。
+`payload-mcp-api-keys` 自体はadmin/serviceAdminだけが管理でき、キーは既定90日で失効します。collection削除、ユーザー、問い合わせ、翻訳設定・ログは1の段階でMCP対象外にしています。Users collectionはadmin/serviceAdmin以外に自分の行だけを返します。APIキーの閲覧権限は別途本人だけに制限し、adminでも他ユーザーのキーは取得できません。ロック解除も明示的に認可し、一般adminによるserviceAdminの解除を拒否します。詳しくは[セキュリティ方針](security.md)を参照してください。
 
 MCPキーはPayload上の独立したauth collectionでもありますが、その認証主体自身を通常のコンテンツユーザーとは扱いません。共通accessはUsers由来の有効ロールを検証するため、MCPキーをPayload RESTの認証ヘッダーへ直接流用しても、Toolごとの権限を迂回できません。
 
 詳細な採用理由は [[decisions/001-site-management-boundary]]、[[decisions/002-official-payload-mcp]]、[[decisions/003-intacms-cli]] を参照してください。
+
+OAuth接続では `/mcp` のWorker入口でトークンを検証し、リクエスト固有contextからPayload公式MCPへユーザーとscopeを渡します。CMSの通常ログイン・明示的同意・接続解除・環境別KVについては [OAuth接続](features/mcp-oauth.md) を参照してください。APIキー接続と同じPayload accessを使います。

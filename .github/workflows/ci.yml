@@ -152,7 +152,23 @@ jobs:
 
       - run: bunx playwright install --with-deps chromium
 
+      # Worker runtime の bindings は job の環境変数を継承しないため、CI専用のダミー値を渡す。
+      - name: Configure local Worker bindings
+        run: |
+          cat > .dev.vars <<'EOF'
+          PAYLOAD_SECRET=ci-secret-do-not-use-in-production
+          NEXT_PUBLIC_SERVER_URL=http://localhost:3000
+          TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+          EOF
+
+      # Next dev の初回コンパイルとメモリ閾値による再起動をE2Eから除く。
+      - run: bun run build:preview
+
       - run: bun run test:e2e
+        env:
+          E2E_SERVER: workers
+
+      - run: bun run test:e2e:development-access
 
       - name: Upload Playwright report
         if: failure()

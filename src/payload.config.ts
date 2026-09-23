@@ -4,6 +4,7 @@ import { fileURLToPath } from "url"
 import { buildCoreConfig } from "@/core/payload/config-base"
 import { projectFeatures } from "@/cms/project-features"
 import { projectMcpConfig } from "@/cms/mcp"
+import { configureAdminWebMcp } from "@/cms/admin/webmcp/configure-admin-webmcp"
 import { homeGlobal } from "@/cms/globals/home"
 import { aboutGlobal } from "@/cms/globals/about"
 import { serviceGlobal } from "@/cms/globals/service"
@@ -41,4 +42,10 @@ export default buildCoreConfig({
     }
     return toPreview("/")
   },
+}).then((config) => {
+  config.admin.components.afterNavLinks = [
+    ...(config.admin.components.afterNavLinks ?? []),
+    "@/cms/admin/mcp-connections-link#McpConnectionsLink",
+  ]
+  return configureAdminWebMcp(config)
 })
