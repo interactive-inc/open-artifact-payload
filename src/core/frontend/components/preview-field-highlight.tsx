@@ -13,7 +13,7 @@ export function PreviewFieldHighlight() {
       hidden
       aria-hidden="true"
       data-preview-field-highlight=""
-      className="pointer-events-none fixed top-0 left-0 z-[2147483647] rounded-sm border-2 border-preview-highlight bg-preview-highlight/10"
+      className="pointer-events-none fixed top-0 left-0 z-[2147483647] rounded-[6px] border-[1.5px] border-preview-highlight bg-preview-highlight/[0.04] transition-opacity duration-150 ease-out starting:opacity-0 data-moving:transition-[opacity,transform,width,height] data-moving:duration-200 motion-reduce:transition-none"
     />
   )
 }

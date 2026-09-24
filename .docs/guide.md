@@ -383,7 +383,7 @@ SVG は既定で受け付けません。スクリプトを埋め込める形式�
 
 #### 編集中の項目のハイライト
 
-管理画面で項目にフォーカスすると、横に開いたプレビューの対応する要素が枠で囲まれ、画面外ならそこまでスクロールします。どの項目が画面のどこに出るかを編集者が探さずに済むようにするための機能です。
+管理画面で項目にフォーカスすると、横に開いたプレビューの対応する要素が少し余白を取った枠で囲まれ、画面外や固定ヘッダーの裏にあるときはヘッダーの下の見える位置までスクロールします。どの項目が画面のどこに出るかを編集者が探さずに済むようにするための機能です。
 
 - 管理画面側の `src/core/admin/preview/field-focus-bridge.tsx` が、フォーカスした項目の Payload パス（例 `hero.title`）を iframe へ postMessage で送る。`buildCoreConfig` が `admin.components.providers` に登録するため、案件側の設定は要らない。フィールドではない要素にフォーカスすると解除を送る
 - 公開画面側の `src/core/frontend/components/preview-field-highlight.tsx` は `[locale]/layout.tsx` に置き、編集画面の iframe の中にいるときだけ購読する。送信元の window と origin が編集画面と一致するメッセージだけを受け付ける。枠の色は `styles.css` の `--preview-highlight`
