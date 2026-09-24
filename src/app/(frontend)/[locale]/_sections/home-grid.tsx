@@ -101,7 +101,10 @@ export function HomeGrid(props: Props) {
     <>
       {/* KV：ページ内で唯一の動きのある装飾。 */}
       {props.hero.enabled !== false ? (
-        <section className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-white pb-16 pt-24 md:pb-24">
+        <section
+          className="relative isolate flex min-h-[92dvh] items-end overflow-hidden bg-white pb-16 pt-24 md:pb-24"
+          data-cms-field="hero"
+        >
           {heroImageUrl ? (
             <Image
               src={heroImageUrl}
@@ -119,11 +122,17 @@ export function HomeGrid(props: Props) {
             className="absolute inset-0 -z-10 bg-[radial-gradient(ellipse_at_70%_80%,rgba(255,255,255,0.82)_0%,transparent_65%)]"
           />
           <div className="container-site flex flex-col items-end text-right">
-            <h1 className="max-w-5xl whitespace-pre-wrap text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl">
+            <h1
+              className="max-w-5xl whitespace-pre-wrap text-5xl font-bold leading-[1.05] tracking-tight md:text-7xl"
+              data-cms-field="hero.title"
+            >
               {props.hero.title ?? dictionary.home.heroTitle}
             </h1>
             {props.hero.subtitle ? (
-              <p className="mt-6 max-w-2xl whitespace-pre-wrap text-lg leading-relaxed text-muted-foreground">
+              <p
+                className="mt-6 max-w-2xl whitespace-pre-wrap text-lg leading-relaxed text-muted-foreground"
+                data-cms-field="hero.subtitle"
+              >
                 {props.hero.subtitle}
               </p>
             ) : null}
@@ -133,6 +142,7 @@ export function HomeGrid(props: Props) {
                 render={<Link href={withLocalePrefix(props.locale, props.hero.ctaHref)} />}
                 size="lg"
                 className="mt-8 w-fit transition-transform active:scale-[0.98]"
+                data-cms-field="hero.ctaLabel"
               >
                 {props.hero.ctaLabel}
                 <ArrowRightIcon data-icon="inline-end" />
@@ -144,38 +154,57 @@ export function HomeGrid(props: Props) {
 
       {/* サービス：枠もカードも使わず、番号と余白だけで区切る。 */}
       {props.services.enabled !== false ? (
-        <section className="container-site py-24 md:py-32">
+        <section className="container-site py-24 md:py-32" data-cms-field="services">
           <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
             {dictionary.home.whatWeDo}
           </p>
           {props.services.heading ? (
-            <h2 className="mt-5 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance md:text-5xl">
+            <h2
+              className="mt-5 max-w-3xl text-3xl font-semibold leading-tight tracking-tight text-balance md:text-5xl"
+              data-cms-field="services.heading"
+            >
               {props.services.heading}
             </h2>
           ) : null}
           {props.services.subheading ? (
-            <p className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground">
+            <p
+              className="mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground"
+              data-cms-field="services.subheading"
+            >
               {props.services.subheading}
             </p>
           ) : null}
-          <div className="mt-16 grid grid-cols-1 gap-12 md:mt-24 md:grid-cols-3 md:gap-10">
+          <div
+            className="mt-16 grid grid-cols-1 gap-12 md:mt-24 md:grid-cols-3 md:gap-10"
+            data-cms-field="services.items"
+          >
             {serviceItems.map((item, index) => (
-              <article key={index}>
+              <article key={index} data-cms-field={`services.items.${index}`}>
                 <div className="flex items-center gap-3 text-sm text-muted-foreground tabular-nums">
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   {item.icon ? (
-                    <span className="text-xl" aria-hidden>
+                    <span
+                      className="text-xl"
+                      aria-hidden
+                      data-cms-field={`services.items.${index}.icon`}
+                    >
                       {item.icon}
                     </span>
                   ) : null}
                 </div>
                 {item.title ? (
-                  <h3 className="mt-3 text-xl font-semibold tracking-tight md:text-2xl">
+                  <h3
+                    className="mt-3 text-xl font-semibold tracking-tight md:text-2xl"
+                    data-cms-field={`services.items.${index}.title`}
+                  >
                     {item.title}
                   </h3>
                 ) : null}
                 {item.description ? (
-                  <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  <p
+                    className="mt-4 text-sm leading-relaxed text-muted-foreground"
+                    data-cms-field={`services.items.${index}.description`}
+                  >
                     {item.description}
                   </p>
                 ) : null}
@@ -199,20 +228,29 @@ export function HomeGrid(props: Props) {
 
       {/* 会社紹介：左に見出し、右に本文の 2 カラム。 */}
       {props.about.enabled !== false ? (
-        <section className="container-site grid grid-cols-1 gap-8 py-24 md:grid-cols-12 md:gap-16 md:py-32">
+        <section
+          className="container-site grid grid-cols-1 gap-8 py-24 md:grid-cols-12 md:gap-16 md:py-32"
+          data-cms-field="aboutPreview"
+        >
           <div className="md:col-span-4">
             <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
               {dictionary.home.aboutLabel}
             </p>
             {props.about.heading ? (
-              <h2 className="mt-5 text-3xl font-semibold leading-snug tracking-tight whitespace-pre-wrap md:text-4xl">
+              <h2
+                className="mt-5 text-3xl font-semibold leading-snug tracking-tight whitespace-pre-wrap md:text-4xl"
+                data-cms-field="aboutPreview.heading"
+              >
                 {props.about.heading}
               </h2>
             ) : null}
           </div>
           <div className="md:col-span-8 md:pt-14">
             {aboutImageUrl ? (
-              <div className="relative mb-8 aspect-[16/9] w-full max-w-3xl overflow-hidden bg-muted">
+              <div
+                className="relative mb-8 aspect-[16/9] w-full max-w-3xl overflow-hidden bg-muted"
+                data-cms-field="aboutPreview.image"
+              >
                 <Image
                   src={aboutImageUrl}
                   alt={aboutImageAlt}
@@ -223,7 +261,10 @@ export function HomeGrid(props: Props) {
               </div>
             ) : null}
             {props.about.description ? (
-              <p className="max-w-2xl whitespace-pre-wrap text-lg leading-relaxed text-muted-foreground">
+              <p
+                className="max-w-2xl whitespace-pre-wrap text-lg leading-relaxed text-muted-foreground"
+                data-cms-field="aboutPreview.description"
+              >
                 {props.about.description}
               </p>
             ) : null}
@@ -233,6 +274,7 @@ export function HomeGrid(props: Props) {
                 render={<Link href={withLocalePrefix(props.locale, props.about.ctaHref)} />}
                 variant="outline"
                 className="mt-8"
+                data-cms-field="aboutPreview.ctaLabel"
               >
                 {props.about.ctaLabel}
                 <ArrowRightIcon data-icon="inline-end" />
@@ -345,13 +387,16 @@ export function HomeGrid(props: Props) {
 
       {/* お知らせ：罫線なしのリスト。行間とホバー下線だけで整える。 */}
       {props.news.enabled !== false && newsItems.length > 0 ? (
-        <section className="container-site py-24 md:py-32">
+        <section className="container-site py-24 md:py-32" data-cms-field="featuredNews">
           <div className="flex items-end justify-between">
             <div>
               <p className="text-xs font-medium uppercase tracking-[0.25em] text-muted-foreground">
                 {dictionary.home.newsLabel}
               </p>
-              <h2 className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl">
+              <h2
+                className="mt-5 text-3xl font-semibold tracking-tight md:text-4xl"
+                data-cms-field="featuredNews.heading"
+              >
                 {props.news.heading ?? dictionary.home.newsHeading}
               </h2>
             </div>
@@ -365,7 +410,7 @@ export function HomeGrid(props: Props) {
               <ArrowRightIcon data-icon="inline-end" />
             </Button>
           </div>
-          <ul className="mt-12">
+          <ul className="mt-12" data-cms-field="featuredNews.items">
             {newsItems.slice(0, 3).map((item) => {
               const publishedDate = new Date(item.publishedAt)
 
@@ -399,13 +444,19 @@ export function HomeGrid(props: Props) {
 
       {/* CTA：墨ベタの全幅バンド。ページ唯一の反転ブロックとして締める。 */}
       {props.cta.enabled !== false && props.cta.heading ? (
-        <section className="bg-primary py-24 text-primary-foreground md:py-32">
+        <section className="bg-primary py-24 text-primary-foreground md:py-32" data-cms-field="cta">
           <div className="container-site">
-            <h2 className="max-w-3xl text-3xl font-bold leading-tight tracking-tight md:text-5xl">
+            <h2
+              className="max-w-3xl text-3xl font-bold leading-tight tracking-tight md:text-5xl"
+              data-cms-field="cta.heading"
+            >
               {props.cta.heading}
             </h2>
             {props.cta.description ? (
-              <p className="mt-6 max-w-2xl text-lg leading-relaxed text-primary-foreground/75">
+              <p
+                className="mt-6 max-w-2xl text-lg leading-relaxed text-primary-foreground/75"
+                data-cms-field="cta.description"
+              >
                 {props.cta.description}
               </p>
             ) : null}
@@ -416,6 +467,7 @@ export function HomeGrid(props: Props) {
                 variant="secondary"
                 size="lg"
                 className="mt-10 transition-transform active:scale-[0.98]"
+                data-cms-field="cta.ctaLabel"
               >
                 {props.cta.ctaLabel}
                 <ArrowRightIcon data-icon="inline-end" />

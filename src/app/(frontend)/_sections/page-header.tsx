@@ -5,13 +5,18 @@ import { GenerativeCanvas } from "@/app/(frontend)/_components/generative-canvas
 type Props = {
   title: string
   description?: string | null
+  /** ライブプレビューで囲む CMS の group のパス（例 hero） */
+  field?: string
 }
 
 // 下層ページ共通のヘッダー。動きのあるアトラクターはトップ KV 専用とし、
 // 下層は静的なタイルパターンを薄く敷いて控えめに世界観を揃える。
 export function PageHeader(props: Props) {
   return (
-    <section className="relative isolate overflow-hidden bg-white text-foreground">
+    <section
+      className="relative isolate overflow-hidden bg-white text-foreground"
+      data-cms-field={props.field}
+    >
       <GenerativeCanvas
         variant="truchet"
         className="absolute inset-0 -z-10 size-full opacity-[0.14]"

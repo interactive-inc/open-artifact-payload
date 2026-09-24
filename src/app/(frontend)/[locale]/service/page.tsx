@@ -47,20 +47,27 @@ export default async function ServicePage(props: Props) {
   return (
     <>
       {service.hero?.enabled ? (
-        <PageHeader title={service.hero.title ?? ""} description={service.hero.subtitle} />
+        <PageHeader
+          title={service.hero.title ?? ""}
+          description={service.hero.subtitle}
+          field="hero"
+        />
       ) : null}
 
       {service.services?.enabled ? (
-        <section className="py-20">
+        <section className="py-20" data-cms-field="services">
           <div className="container-site">
             {service.services.heading ? (
-              <h2 className="text-3xl font-bold tracking-tight text-center mb-16">
+              <h2
+                className="text-3xl font-bold tracking-tight text-center mb-16"
+                data-cms-field="services.heading"
+              >
                 {service.services.heading}
               </h2>
             ) : null}
-            <div className="space-y-12">
+            <div className="space-y-12" data-cms-field="services.items">
               {(service.services.items ?? []).map((item, index) => (
-                <Card key={index}>
+                <Card key={index} data-cms-field={`services.items.${index}`}>
                   <CardContent className="p-8">
                     <div
                       className={`flex flex-col md:flex-row gap-10 items-start ${index % 2 === 1 ? "md:flex-row-reverse" : ""}`}
@@ -68,23 +75,43 @@ export default async function ServicePage(props: Props) {
                       <div className="flex-1">
                         <div className="flex items-center gap-4 mb-4">
                           {item.icon ? (
-                            <span className="text-4xl">{item.icon}</span>
+                            <span
+                              className="text-4xl"
+                              data-cms-field={`services.items.${index}.icon`}
+                            >
+                              {item.icon}
+                            </span>
                           ) : (
                             <div className="size-12 bg-primary/10 rounded-lg flex items-center justify-center">
                               <div className="size-6 bg-primary rounded" />
                             </div>
                           )}
-                          <h3 className="text-2xl font-bold">{item.title}</h3>
+                          <h3
+                            className="text-2xl font-bold"
+                            data-cms-field={`services.items.${index}.title`}
+                          >
+                            {item.title}
+                          </h3>
                         </div>
                         {item.description ? (
-                          <p className="text-muted-foreground leading-relaxed text-lg mb-6">
+                          <p
+                            className="text-muted-foreground leading-relaxed text-lg mb-6"
+                            data-cms-field={`services.items.${index}.description`}
+                          >
                             {item.description}
                           </p>
                         ) : null}
                         {(item.features ?? []).length > 0 ? (
-                          <ul className="space-y-2">
+                          <ul
+                            className="space-y-2"
+                            data-cms-field={`services.items.${index}.features`}
+                          >
                             {(item.features ?? []).map((feature, featureIndex) => (
-                              <li key={featureIndex} className="flex items-center gap-2 text-sm">
+                              <li
+                                key={featureIndex}
+                                className="flex items-center gap-2 text-sm"
+                                data-cms-field={`services.items.${index}.features.${featureIndex}.text`}
+                              >
                                 <CheckIcon className="size-4 text-primary flex-shrink-0" />
                                 {feature.text}
                               </li>
@@ -111,26 +138,41 @@ export default async function ServicePage(props: Props) {
       ) : null}
 
       {service.process?.enabled ? (
-        <section className="py-20 bg-muted/30">
+        <section className="py-20 bg-muted/30" data-cms-field="process">
           <div className="container-site">
             {service.process.heading ? (
-              <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+              <h2
+                className="text-3xl font-bold tracking-tight text-center mb-12"
+                data-cms-field="process.heading"
+              >
                 {service.process.heading}
               </h2>
             ) : null}
-            <div className="space-y-4">
+            <div className="space-y-4" data-cms-field="process.steps">
               {(service.process.steps ?? []).map((step, index) => (
-                <div key={index} className="flex gap-4 items-start">
+                <div
+                  key={index}
+                  className="flex gap-4 items-start"
+                  data-cms-field={`process.steps.${index}`}
+                >
                   <Badge className="size-8 rounded-full flex items-center justify-center p-0 flex-shrink-0 text-sm font-bold">
                     {index + 1}
                   </Badge>
                   <Card className="flex-1">
                     <CardHeader className="pb-2">
-                      <CardTitle className="text-base">{step.title}</CardTitle>
+                      <CardTitle
+                        className="text-base"
+                        data-cms-field={`process.steps.${index}.title`}
+                      >
+                        {step.title}
+                      </CardTitle>
                     </CardHeader>
                     {step.description ? (
                       <CardContent>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p
+                          className="text-sm text-muted-foreground leading-relaxed"
+                          data-cms-field={`process.steps.${index}.description`}
+                        >
                           {step.description}
                         </p>
                       </CardContent>
@@ -144,13 +186,17 @@ export default async function ServicePage(props: Props) {
       ) : null}
 
       {service.cta?.enabled ? (
-        <section className="py-20 bg-foreground text-background">
+        <section className="py-20 bg-foreground text-background" data-cms-field="cta">
           <div className="container-site text-center">
             {service.cta.heading ? (
-              <h2 className="text-3xl font-bold tracking-tight mb-4">{service.cta.heading}</h2>
+              <h2 className="text-3xl font-bold tracking-tight mb-4" data-cms-field="cta.heading">
+                {service.cta.heading}
+              </h2>
             ) : null}
             {service.cta.description ? (
-              <p className="text-lg text-background/80 mb-8">{service.cta.description}</p>
+              <p className="text-lg text-background/80 mb-8" data-cms-field="cta.description">
+                {service.cta.description}
+              </p>
             ) : null}
             {service.cta.ctaLabel && service.cta.ctaHref ? (
               <Button
@@ -158,6 +204,7 @@ export default async function ServicePage(props: Props) {
                 render={<Link href={withLocalePrefix(locale, service.cta.ctaHref)} />}
                 size="lg"
                 variant="secondary"
+                data-cms-field="cta.ctaLabel"
               >
                 {service.cta.ctaLabel}
                 <ArrowRightIcon data-icon="inline-end" />

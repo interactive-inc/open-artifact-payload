@@ -34,6 +34,7 @@ import { UsageSummaryField as UsageSummaryField_6d27d244c7dcf25c024a4f2e07241227
 import { OpenPublicSite as OpenPublicSite_a32f58d12f662118787c60bde32ef7d1 } from '@/core/admin/nav/open-public-site'
 import { McpConnectionsLink as McpConnectionsLink_b1e36964672c7d09f376dbe3143e6722 } from '@/cms/admin/mcp-connections-link'
 import { AdminThemeProvider as AdminThemeProvider_7a4c7f5d682695795df5b02d5a624dd0 } from '@/core/admin/theme/admin-theme-provider'
+import { FieldFocusBridge as FieldFocusBridge_1cdf4539efeab8ee7716d87b6eed6187 } from '@/core/admin/preview/field-focus-bridge'
 import { R2ClientUploadHandler as R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d } from '@payloadcms/storage-r2/client'
 import { AdminWebMcpProvider as AdminWebMcpProvider_d6622075f9ef6b1954afdb92b7ef82af } from '@/cms/admin/webmcp/admin-webmcp-provider'
 import { DashboardView as DashboardView_b3f92b239126f53a95e19831615bc362 } from '@/core/admin/dashboard/dashboard-view'
@@ -77,6 +78,7 @@ export const importMap = {
   "@/core/admin/nav/open-public-site#OpenPublicSite": OpenPublicSite_a32f58d12f662118787c60bde32ef7d1,
   "@/cms/admin/mcp-connections-link#McpConnectionsLink": McpConnectionsLink_b1e36964672c7d09f376dbe3143e6722,
   "@/core/admin/theme/admin-theme-provider#AdminThemeProvider": AdminThemeProvider_7a4c7f5d682695795df5b02d5a624dd0,
+  "@/core/admin/preview/field-focus-bridge#FieldFocusBridge": FieldFocusBridge_1cdf4539efeab8ee7716d87b6eed6187,
   "@payloadcms/storage-r2/client#R2ClientUploadHandler": R2ClientUploadHandler_85cc02ed84006fcc91d3aff39dda669d,
   "@/cms/admin/webmcp/admin-webmcp-provider#AdminWebMcpProvider": AdminWebMcpProvider_d6622075f9ef6b1954afdb92b7ef82af,
   "@/core/admin/dashboard/dashboard-view#DashboardView": DashboardView_b3f92b239126f53a95e19831615bc362,

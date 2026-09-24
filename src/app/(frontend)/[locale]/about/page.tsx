@@ -45,28 +45,39 @@ export default async function AboutPage(props: Props) {
   return (
     <>
       {about.hero?.enabled ? (
-        <PageHeader title={about.hero.title ?? ""} description={about.hero.subtitle} />
+        <PageHeader title={about.hero.title ?? ""} description={about.hero.subtitle} field="hero" />
       ) : null}
 
       {about.mission?.enabled ? (
-        <section className="py-20">
+        <section className="py-20" data-cms-field="mission">
           <div className="container-site">
             <div className="text-center mb-12">
               {about.mission.heading ? (
-                <h2 className="text-3xl font-bold tracking-tight">{about.mission.heading}</h2>
+                <h2 className="text-3xl font-bold tracking-tight" data-cms-field="mission.heading">
+                  {about.mission.heading}
+                </h2>
               ) : null}
               {about.mission.description ? (
-                <p className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                <p
+                  className="mt-4 text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed"
+                  data-cms-field="mission.description"
+                >
                   {about.mission.description}
                 </p>
               ) : null}
             </div>
             {(about.mission.values ?? []).length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12">
+              <div
+                className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-12"
+                data-cms-field="mission.values"
+              >
                 {(about.mission.values ?? []).map((value, index) => (
-                  <Card key={index}>
+                  <Card key={index} data-cms-field={`mission.values.${index}`}>
                     <CardHeader className="pb-2">
-                      <CardTitle className="flex items-center gap-3 text-lg">
+                      <CardTitle
+                        className="flex items-center gap-3 text-lg"
+                        data-cms-field={`mission.values.${index}.title`}
+                      >
                         <Badge
                           variant="outline"
                           className="size-8 rounded-full flex items-center justify-center p-0 text-sm font-bold"
@@ -78,7 +89,12 @@ export default async function AboutPage(props: Props) {
                     </CardHeader>
                     {value.description ? (
                       <CardContent>
-                        <p className="text-muted-foreground leading-relaxed">{value.description}</p>
+                        <p
+                          className="text-muted-foreground leading-relaxed"
+                          data-cms-field={`mission.values.${index}.description`}
+                        >
+                          {value.description}
+                        </p>
                       </CardContent>
                     ) : null}
                   </Card>
@@ -90,23 +106,32 @@ export default async function AboutPage(props: Props) {
       ) : null}
 
       {about.companyProfile?.enabled ? (
-        <section className="py-20 bg-muted/30">
+        <section className="py-20 bg-muted/30" data-cms-field="companyProfile">
           <div className="container-site">
             {about.companyProfile.heading ? (
-              <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+              <h2
+                className="text-3xl font-bold tracking-tight text-center mb-12"
+                data-cms-field="companyProfile.heading"
+              >
                 {about.companyProfile.heading}
               </h2>
             ) : null}
             <Card>
               <CardContent className="p-0">
                 <table className="w-full">
-                  <tbody>
+                  <tbody data-cms-field="companyProfile.rows">
                     {(about.companyProfile.rows ?? []).map((row, index) => (
-                      <tr key={index}>
-                        <th className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground w-36 whitespace-nowrap border-b border-border">
+                      <tr key={index} data-cms-field={`companyProfile.rows.${index}`}>
+                        <th
+                          className="px-6 py-4 text-left text-sm font-semibold text-muted-foreground w-36 whitespace-nowrap border-b border-border"
+                          data-cms-field={`companyProfile.rows.${index}.label`}
+                        >
                           {row.label}
                         </th>
-                        <td className="px-6 py-4 text-sm border-b border-border leading-relaxed whitespace-pre-wrap">
+                        <td
+                          className="px-6 py-4 text-sm border-b border-border leading-relaxed whitespace-pre-wrap"
+                          data-cms-field={`companyProfile.rows.${index}.value`}
+                        >
                           {row.value}
                         </td>
                       </tr>
@@ -120,20 +145,33 @@ export default async function AboutPage(props: Props) {
       ) : null}
 
       {about.members?.enabled ? (
-        <section className="py-20">
+        <section className="py-20" data-cms-field="members">
           <div className="container-site">
             {about.members.heading ? (
-              <h2 className="text-3xl font-bold tracking-tight text-center mb-12">
+              <h2
+                className="text-3xl font-bold tracking-tight text-center mb-12"
+                data-cms-field="members.heading"
+              >
                 {about.members.heading}
               </h2>
             ) : null}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div
+              className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+              data-cms-field="members.items"
+            >
               {(about.members.items ?? []).map((member, index) => {
                 const imageUrl = resolveMediaUrl(member.image as never)
                 return (
-                  <Card key={index} className="text-center">
+                  <Card
+                    key={index}
+                    className="text-center"
+                    data-cms-field={`members.items.${index}`}
+                  >
                     <CardHeader className="items-center pb-2">
-                      <div className="size-24 mx-auto mb-2 rounded-full overflow-hidden bg-muted">
+                      <div
+                        className="size-24 mx-auto mb-2 rounded-full overflow-hidden bg-muted"
+                        data-cms-field={`members.items.${index}.image`}
+                      >
                         {imageUrl ? (
                           <Image
                             src={imageUrl}
@@ -160,16 +198,25 @@ export default async function AboutPage(props: Props) {
                           </div>
                         )}
                       </div>
-                      <CardTitle className="text-lg">{member.name}</CardTitle>
+                      <CardTitle className="text-lg" data-cms-field={`members.items.${index}.name`}>
+                        {member.name}
+                      </CardTitle>
                       {member.position ? (
-                        <Badge variant="secondary" className="mt-1">
+                        <Badge
+                          variant="secondary"
+                          className="mt-1"
+                          data-cms-field={`members.items.${index}.position`}
+                        >
                           {member.position}
                         </Badge>
                       ) : null}
                     </CardHeader>
                     {member.bio ? (
                       <CardContent>
-                        <p className="text-sm text-muted-foreground leading-relaxed">
+                        <p
+                          className="text-sm text-muted-foreground leading-relaxed"
+                          data-cms-field={`members.items.${index}.bio`}
+                        >
                           {member.bio}
                         </p>
                       </CardContent>
