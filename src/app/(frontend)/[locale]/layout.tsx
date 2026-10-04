@@ -5,6 +5,7 @@ import type { Metadata } from "next"
 
 import { loadSiteSettings } from "@/core/lib/load-site-settings"
 import { RefreshRouteOnSave } from "@/core/frontend/components/refresh-route-on-save"
+import { PreviewFieldHighlight } from "@/core/frontend/components/preview-field-highlight"
 import { SiteHeader } from "@/app/(frontend)/_sections/site-header"
 import { SiteFooter } from "@/app/(frontend)/_sections/site-footer"
 import { SiteAnalytics } from "@/app/(frontend)/_components/site-analytics"
@@ -73,6 +74,7 @@ export default async function RootLayout(props: Props) {
         <JsonLd data={organizationJsonLd} />
         {/* ライブプレビューを成立させるため、ドラフトモード判定なしで常時マウントする */}
         <RefreshRouteOnSave />
+        <PreviewFieldHighlight />
         <TooltipProvider>
           <SiteHeader settings={settings} locale={locale} />
           <main className="flex-1">{props.children}</main>

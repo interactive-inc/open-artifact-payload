@@ -214,7 +214,11 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         description: "Inta CMS 管理画面",
       },
       components: {
-        providers: ["@/core/admin/theme/admin-theme-provider#AdminThemeProvider"],
+        providers: [
+          "@/core/admin/theme/admin-theme-provider#AdminThemeProvider",
+          // フォーカスした項目をライブプレビューの枠で示す。印の付け方は guide.md のライブプレビュー節
+          "@/core/admin/preview/field-focus-bridge#FieldFocusBridge",
+        ],
         afterNavLinks: ["@/core/admin/nav/open-public-site#OpenPublicSite"],
         views: {
           dashboard: {

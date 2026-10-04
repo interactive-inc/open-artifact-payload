@@ -381,6 +381,16 @@ SVG は既定で受け付けません。スクリプトを埋め込める形式�
 
 プレビュー URL の解決ロジックは `src/core/payload/config-base.ts` の `livePreview.url` 関数で定義されています。`home-page` グローバルは `/` に、その他のグローバルは `/<slug>` に、コレクションは `/<collectionSlug>/<documentSlug>` にマップされます。
 
+#### 編集中の項目のハイライト
+
+管理画面で項目にフォーカスすると、横に開いたプレビューの対応する要素の中身（文字や子要素）が少し余白を取った枠で囲まれ（周りの文字と詰まっているところでは、線が文字の間に収まるよう余白を狭める）、画面外や固定ヘッダーの裏にあるときはヘッダーの下の見える位置までスクロールします。どの項目が画面のどこに出るかを編集者が探さずに済むようにするための機能です。
+
+- 管理画面側の `src/core/admin/preview/field-focus-bridge.tsx` が、フォーカスした項目の Payload パス（例 `hero.title`）を iframe へ postMessage で送る。`buildCoreConfig` が `admin.components.providers` に登録するため、案件側の設定は要らない。フィールドではない要素にフォーカスすると解除を送る
+- 公開画面側の `src/core/frontend/components/preview-field-highlight.tsx` は `[locale]/layout.tsx` に置き、編集画面の iframe の中にいるときだけ購読する。送信元の window と origin が編集画面と一致するメッセージだけを受け付ける。枠の色は `styles.css` の `--preview-highlight`
+- 対応する要素には `data-cms-field="<Payload パス>"` を付ける。配列は行番号を含める（``data-cms-field={`services.items.${index}`}``）。一致する印が無ければパスを後ろから削り、行やセクションの印で代わりに囲む。何も一致しなければ枠を出さない
+- 新しいセクションやページをプレビュー対象にしたら、少なくともセクションの group 名（`enabled` を持つ要素）と配列の行に印を付ける。項目単位の印は、編集者が場所を探しにくい項目から足す
+- 対象は横に並ぶ iframe のプレビューだけ。別ウィンドウで開いたプレビューと、いま表示していないページの項目はハイライトされない
+
 ### 公開サイトリンク
 
 管理画面サイドバーの「公開サイトを開く」リンクは `src/core/admin/nav/open-public-site.tsx` で定義されています。クリックすると `/next/exit-preview` 経由で Draft Mode が解除された状態でフロントエンドが開きます。

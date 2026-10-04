@@ -88,20 +88,32 @@ export default async function WorkDetailPage(props: Props) {
   return (
     <article>
       <header className="container-site pb-12 pt-36 md:pt-40">
-        <p className="mb-4 text-sm font-medium tracking-[0.2em] text-muted-foreground">
+        <p
+          className="mb-4 text-sm font-medium tracking-[0.2em] text-muted-foreground"
+          data-cms-field="category"
+        >
           {workCategoryLabels[item.category] ?? item.category}
         </p>
-        <h1 className="text-4xl font-bold leading-tight tracking-tight md:text-6xl">
+        <h1
+          className="text-4xl font-bold leading-tight tracking-tight md:text-6xl"
+          data-cms-field="title"
+        >
           {item.title}
         </h1>
         {item.summary ? (
-          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground">
+          <p
+            className="mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground"
+            data-cms-field="summary"
+          >
             {item.summary}
           </p>
         ) : null}
       </header>
 
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-muted">
+      <div
+        className="relative aspect-[16/9] w-full overflow-hidden bg-muted"
+        data-cms-field="thumbnail"
+      >
         <Image src={imageUrl} alt={imageAlt} fill priority className="object-cover" />
       </div>
 
@@ -117,7 +129,7 @@ export default async function WorkDetailPage(props: Props) {
               </div>
               <div>
                 <dt className="text-muted-foreground">{dictionary.works.publishedAt}</dt>
-                <dd className="mt-1 font-medium tabular-nums">
+                <dd className="mt-1 font-medium tabular-nums" data-cms-field="publishedAt">
                   {publishedDate.toLocaleDateString(dateLocale, {
                     year: "numeric",
                     month: "long",
@@ -127,7 +139,7 @@ export default async function WorkDetailPage(props: Props) {
             </dl>
           </div>
           <div className="md:col-span-8">
-            <div className="prose max-w-none">
+            <div className="prose max-w-none" data-cms-field="body">
               <RichText data={item.body} />
             </div>
           </div>

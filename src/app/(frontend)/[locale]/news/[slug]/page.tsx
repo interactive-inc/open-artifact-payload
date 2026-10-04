@@ -131,20 +131,26 @@ export default async function NewsDetailPage(props: Props) {
         <header className="mb-8">
           <div className="flex items-center gap-3 mb-4">
             {item.category ? (
-              <Badge variant="secondary">
+              <Badge variant="secondary" data-cms-field="category">
                 {dictionary.news.categoryLabels[item.category] ?? item.category}
               </Badge>
             ) : null}
             {publishedDate ? (
-              <time dateTime={publishedDate.dateTime} className="text-sm text-muted-foreground">
+              <time
+                dateTime={publishedDate.dateTime}
+                className="text-sm text-muted-foreground"
+                data-cms-field="publishedAt"
+              >
                 {publishedDate.label}
               </time>
             ) : null}
           </div>
-          <h1 className="text-3xl font-bold tracking-tight leading-tight">{item.title}</h1>
+          <h1 className="text-3xl font-bold tracking-tight leading-tight" data-cms-field="title">
+            {item.title}
+          </h1>
         </header>
         <Separator className="mb-8" />
-        <div className="prose max-w-none">
+        <div className="prose max-w-none" data-cms-field="body">
           <RichText data={item.body} />
         </div>
         <Separator className="mt-12 mb-8" />
