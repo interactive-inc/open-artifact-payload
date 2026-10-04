@@ -69,9 +69,17 @@ describe("認証情報・ロック解除・問い合わせのアクセス境界"
       }),
     )
     expect(JSON.stringify(body).includes(serviceKey)).toBe(false)
+    // Payload 3.90 から API キーは本人の読み取りにも返らない。本人のキーで認証できることだけを確かめる
     const own = await request(`users/${serviceAdmin.id}`, serviceKey)
     expect(own.status).toBe(200)
-    expect(JSON.stringify(await own.json()).includes(serviceKey)).toBe(true)
+    const ownDoc = await own.json()
+    expect(JSON.stringify(ownDoc).includes(serviceKey)).toBe(false)
+    expect(ownDoc).toEqual(expect.objectContaining({ id: serviceAdmin.id, hasAPIKey: true }))
+    // 表示用の窓口（useAPIKey.reveal）は有効にしていないため、管理者も本人もキーを取り出せない
+    for (const key of [adminKey, serviceKey]) {
+      const reveal = await request(`users/${serviceAdmin.id}/api-key/reveal`, key, {})
+      expect(reveal.status).not.toBe(200)
+    }
     expect((await request("globals/ai-translation-settings", adminKey)).status).toBe(403)
     expect((await request("globals/ai-translation-settings", serviceKey)).status).toBe(200)
   })

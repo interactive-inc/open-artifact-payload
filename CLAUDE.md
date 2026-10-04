@@ -6,8 +6,8 @@ Payload CMS 3 + Next.js 16 (App Router) + Cloudflare (D1/R2/Workers) で構築�
 
 ## 技術スタック
 
-- CMS: Payload CMS 3.88 (`@payloadcms/db-d1-sqlite`)。バージョンは `package.json` が正本
-- フレームワーク: Next.js 16 (App Router) / React 19 / TypeScript 5.7 (`strict: true`)
+- CMS: Payload CMS 3.90 (`@payloadcms/db-d1-sqlite`)。バージョンは `package.json` が正本
+- フレームワーク: Next.js 16 (App Router) / React 19 / TypeScript 5.9 (`strict: true`)
 - データベース: Cloudflare D1 (SQLite)、ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
 - リッチテキスト: Lexical Editor (`@payloadcms/richtext-lexical`)

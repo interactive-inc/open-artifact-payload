@@ -1,5 +1,5 @@
 import { getPayload, type Payload } from "payload"
-import { afterAll, beforeAll, describe, expect, it, vi } from "vite-plus/test"
+import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 
 import config from "@/payload.config"
 
@@ -24,6 +24,15 @@ describe("forgotPassword", () => {
     })
 
     userId = created.id
+  })
+
+  // Payload 3.90 から、同じユーザーへの再設定要求は一定間隔内なら受け付けない。各テストを独立させる
+  beforeEach(async () => {
+    await payload.db.updateOne({
+      collection: "users",
+      id: userId,
+      data: { resetPasswordRequestedAt: null },
+    })
   })
 
   afterAll(async () => {
@@ -87,6 +96,27 @@ describe("forgotPassword", () => {
       consoleError.mockRestore()
       loggerInfo.mockRestore()
       loggerError.mockRestore()
+    }
+  })
+
+  it("間隔内の再要求ではメールもトークンも出さない", async () => {
+    const sendEmail = vi.spyOn(payload.email, "sendEmail").mockResolvedValue(undefined)
+
+    try {
+      const first = await payload.forgotPassword({
+        collection: "users",
+        data: { email: userEmail },
+      })
+      const second = await payload.forgotPassword({
+        collection: "users",
+        data: { email: userEmail },
+      })
+
+      expect(first.length).toBeGreaterThan(0)
+      expect(second).toBeNull()
+      expect(sendEmail).toHaveBeenCalledTimes(1)
+    } finally {
+      sendEmail.mockRestore()
     }
   })
 })

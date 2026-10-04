@@ -221,7 +221,7 @@ Base64化した値も認証情報です。URLには埋め込まず、接続先�
 
 MCPキーとCLIのUsers API Keyは互換ではありません。MCPキーをPayload RESTのAPI Keyとして直接利用しても、通常のコンテンツ操作ユーザーとは認証されません。
 
-Cloudflare Workersは実行時の `new Function` を禁止するため、`@payloadcms/plugin-mcp@3.88.0` のスキーマ変換にBun patchを適用しています。Zod 3対応の `zod-from-json-schema@0.0.5` で直接スキーマを構築し、nullable値・関連ID・自由形式JSONを保持します。認証・権限・CRUDは公式プラグインをそのまま使います。プラグイン更新時はパッチの要否を見直し、Worker上のMCP E2Eを実行してください。
+Cloudflare Workersは実行時の `new Function` を禁止するため、`@payloadcms/plugin-mcp@3.90.2` のスキーマ変換にBun patchを適用しています。3.90.2 でも上流は `new Function` で変換しているため、パッチを同じ内容で版だけ移しました。Zod 3対応の `zod-from-json-schema@0.0.5` で直接スキーマを構築し、nullable値・関連ID・自由形式JSONを保持します。認証・権限・CRUDは公式プラグインをそのまま使います。プラグイン更新時はパッチの要否を見直し、Worker上のMCP E2Eを実行してください。
 
 公式プラグインは、許可されたリソースに対して次の名前でToolを生成します。
 

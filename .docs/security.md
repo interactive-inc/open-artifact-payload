@@ -2,7 +2,7 @@
 
 ## 認証とデータ取得
 
-Usersレコードの閲覧権限とAPIキーの閲覧権限は別にする。キーを読めるのは本人だけで、一般adminがserviceAdminのキーを取得することはできない。Payload標準の暗号化・復号hookは維持する。
+Usersレコードの閲覧権限とAPIキーの閲覧権限は別にする。Payload 3.90からは、発行後のAPIキーは本人を含めて読み取りの応答に含まれず、代わりに `hasAPIKey` だけが返る。表示用の窓口（`auth.useAPIKey.reveal`）は有効にしていないため、一般adminがserviceAdminのキーを取得することはできない。キーは発行時に表示されたものを保存し、失くした場合は再発行する。Payload標準の暗号化・復号hookは維持する。
 
 プレビューの開始と下書き取得には、Usersの通常ログインセッションを要求する。MCPキーとUsers API Keyは対象外。プレビューCookieは表示モードを表すだけで、認証失効後やログアウト後の下書き取得を許可しない。公開ページとメタデータは共通の `getFrontendAccess` を使い、Local APIの `overrideAccess: false` によりコレクションと関連データのread権限も適用する。認証の共有はReactのリクエスト内キャッシュに限定する。
 
@@ -27,6 +27,12 @@ Payload 3.88.0の [GHSA-jg8r-5jh2-v2xj](https://github.com/advisories/GHSA-jg8r-
 sharpは既存のoverrideを更新し、Wrangler / Miniflare経由も同じ修正版へ揃える。js-yamlは依存元が要求する4系の修正版をoverrideで指定し、API互換性を確認していない5系へ強制移行しない。上流が修正版を要求するようになったらoverrideの必要性を再評価する。監査の閾値やCIの失敗条件は緩めない。
 
 更新直後の `vp exec bun audit --audit-level=high` は成功した。閾値なしの監査には6件のmoderate（Payload、Hono、Vitest / mocker）が残っているため、「全脆弱性0件」とは扱わない。今回の3パッケージ以外の更新は含めていない。
+
+2026-10-04に、メジャー版を変えない範囲で依存を最新へ更新した（Payload 3.90.2、Next.js 16.3.8、React 19.3.0、TypeScript 5.9.3、wrangler 4.147.0 など）。Next.jsのcritical、fast-uri・undici・dompurify・ip-addressは修正版で、brace-expansionはロックファイルの範囲内更新で解消した。fast-uri・undici・dompurify・ip-addressのoverrideは修正版へ上げた。Payload 3.90.2ではGHSA-jg8r-5jh2-v2xjが監査に出なくなったが、アプリ側の明示的な `access.unlock` と回帰テストは維持する。
+
+braces 3.0.3の [GHSA-vfj7-8cjw-p6xm](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm) は、対象が3.0.3以下で修正版が公開されていない。CIと `test:ci` の監査は、この1件だけを `--ignore` で除外する。これは「監査の閾値やCIの失敗条件は緩めない」方針の例外で、他のhigh以上は従来どおり失敗させる。bracesはsass・chokidar・micromatch経由のビルド時のglob展開で使われ、パターンはコード内の固定値で利用者の入力は届かない。修正版が公開されたら除外を外す。
+
+閾値なしの監査には、Vitest / mockerのmoderate（GHSA-82fw-gwwq-j7x9）が残る。修正版はvite-plus 0.2系が固定するVitestの範囲外で、vite-plus 1.0へのメジャー更新で解消する。メジャー更新（TypeScript 7、vite-plus 1.0、jsdom 30、graphql 17、cross-env 10、dotenv 18、@cloudflare/workers-oauth-provider 1.x、zod-from-json-schema 0.5）は、運用ガイドの方針どおり1系統ずつ別PRで扱う。
 
 ## 本番適用
 

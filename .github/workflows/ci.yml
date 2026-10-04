@@ -53,10 +53,12 @@ jobs:
       - run: bun run test:cloudflare-config
 
       # レジストリの一時的な接続不良で偽陽性にならないよう 3 回まで試す。3 回失敗したら本物の失敗
+      # GHSA-vfj7-8cjw-p6xm (braces) は修正版が未公開のため除外する。対象は sass / micromatch 経由の
+      # ビルド時の glob 展開で、パターンはコード内の固定値。修正版が出たら除外を外す
       - name: Audit dependencies
         run: |
           for attempt in 1 2 3; do
-            if bun audit --audit-level=high; then exit 0; fi
+            if bun audit --audit-level=high --ignore=GHSA-vfj7-8cjw-p6xm; then exit 0; fi
             echo "bun audit failed (attempt $attempt)"
             sleep 30
           done
