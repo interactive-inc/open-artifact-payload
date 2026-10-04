@@ -1,8 +1,8 @@
 diff --git a/dist/utils/schemaConversion/convertCollectionSchemaToZod.js b/dist/utils/schemaConversion/convertCollectionSchemaToZod.js
-index 07a2628fdc987d663885c7e918152539ca7c1766..c410dab9eedd2475b9797528b6a8522810ee3510 100644
+index 504c0a041cacdefe438ceae9e2c59c6d3da5300f..2c6517ace17644ffb250221fca47f99fc2dcdd61 100644
 --- a/dist/utils/schemaConversion/convertCollectionSchemaToZod.js
 +++ b/dist/utils/schemaConversion/convertCollectionSchemaToZod.js
-@@ -1,43 +1,31 @@
+@@ -1,61 +1,33 @@
 -import { jsonSchemaToZod } from 'json-schema-to-zod';
 -import * as ts from 'typescript';
 +import { convertJsonSchemaToZod } from 'zod-from-json-schema';
@@ -26,6 +26,19 @@ index 07a2628fdc987d663885c7e918152539ca7c1766..c410dab9eedd2475b9797528b6a85228
 -                target: ts.ScriptTarget.ES2018
 -            }
 -        });
+-        // TypeScript 6 prepends a `"use strict";` directive to the transpiled module
+-        // output (TypeScript 5 did not). Combined with the `return ${output}` wrapper
+-        // below, that becomes `return "use strict"; <schema>`, so the evaluated
+-        // function returns the *string* `"use strict"` instead of the Zod schema, and
+-        // the create/update tools then throw `convertedFields.partial is not a
+-        // function`, aborting MCP tool registration for the entire endpoint.
+-        //
+-        // Strip the directive AND the whitespace that follows it: the transpiled
+-        // output is `"use strict";\n<expr>`, and stripping only the directive leaves
+-        // `return \n<expr>`, where ASI inserts a semicolon after `return` — yielding
+-        // `undefined` and an empty input schema. Consuming the trailing whitespace
+-        // keeps the expression on the `return` line.
+-        const transpiledOutput = transpileResult.outputText.replace(/^\s*['"]use strict['"];?\s*/, '');
 -        /**
 -     * This Function evaluation is safe because:
 -     * 1. The input schema comes from Payload's collection configuration, which is controlled by the application developer
@@ -34,15 +47,20 @@ index 07a2628fdc987d663885c7e918152539ca7c1766..c410dab9eedd2475b9797528b6a85228
 -     * 4. The resulting Zod schema is used only for parameter validation in MCP tools, not for data processing
 -     * 5. No user input or external data is involved in the schema generation process
 -     */ // eslint-disable-next-line @typescript-eslint/no-implied-eval
--        return new Function('z', `return ${transpileResult.outputText}`)(z);
+-        const converted = new Function('z', `return ${transpiledOutput}`)(z);
+-        // Callers (the create/update tools) rely on the result being a ZodObject —
+-        // they spread `.partial().shape`. If conversion produced anything else, fall
+-        // back to a permissive object so tool registration can't crash.
+-        return converted instanceof z.ZodObject ? converted : z.object({}).passthrough();
 -    } catch (error) {
 -        // If schema conversion fails (e.g., due to Zod v4 toJSONSchema null-check bug
 -        // with record schemas that have undefined valueType, or bundler transforms
 -        // stripping Zod internals), return a permissive schema so tools/list doesn't
 -        // crash entirely. The tool will still be listed but without strict validation.
--        // See: https://github.com/colinhacks/zod/issues/5821
+-        // A ZodObject (rather than z.record) is returned so callers that rely on
+-        // .partial()/.shape don't throw. See: https://github.com/colinhacks/zod/issues/5821
 -        console.warn(`[plugin-mcp] Schema conversion failed, using permissive fallback:`, error instanceof Error ? error.message : error);
--        return z.record(z.any());
+-        return z.object({}).passthrough();
 +
 +/** Preserve nullable scalar types and open JSON objects in the runtime converter. */
 +const normalizeSchema = (schema) => {
@@ -52,13 +70,11 @@ index 07a2628fdc987d663885c7e918152539ca7c1766..c410dab9eedd2475b9797528b6a85228
 +    if (Array.isArray(normalized.type)) {
 +        const { type, ...rest } = normalized;
 +        return { anyOf: type.map((type) => ({ ...rest, type })) };
-     }
++    }
 +    if (normalized.type === 'object' && !normalized.properties) normalized.properties = {};
 +    return normalized;
- };
- 
--//# sourceMappingURL=convertCollectionSchemaToZod.js.map
-\ No newline at end of file
++};
++
 +/** Workers prohibit runtime code generation; build Zod objects without eval or Function. */
 +export const convertCollectionSchemaToZod = (schema) => {
 +    const schemaClone = JSON.parse(JSON.stringify(schema));
@@ -68,6 +84,9 @@ index 07a2628fdc987d663885c7e918152539ca7c1766..c410dab9eedd2475b9797528b6a85228
 +    const converted = convertJsonSchemaToZod(normalized);
 +    if (!(converted instanceof z.ZodObject)) {
 +        throw new Error('MCP resource schema must be an object');
-+    }
+     }
 +    return converted;
-+};
+ };
+ 
+ //# sourceMappingURL=convertCollectionSchemaToZod.js.map
+\ No newline at end of file

@@ -19,7 +19,11 @@ test("serviceAdmin 単独でMCPメニューとキー作成画面を利用でき�
 
   await page.goto("http://localhost:3000/admin/collections/payload-mcp-api-keys/create/")
   await expect(page.locator('input[name="label"]')).toBeEditable()
-  await expect(page.locator('input[name="enableAPIKey"]')).toBeEnabled()
+  // Payload 3.90 から API キーは有効化のチェックボックスではなく生成ボタンで作る
+  const generateKey = page.locator("#generate-api-key")
+  await expect(generateKey).toBeEnabled()
+  await generateKey.click()
+  await expect(page.locator("#apiKey")).toHaveValue(/.+/)
 
   await page.goto("http://localhost:3000/admin/account/")
   await expect(page.locator('input[name="email"]')).toBeEditable()

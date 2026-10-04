@@ -6,12 +6,12 @@
 
 技術スタックの概要は以下のとおりです。
 
-- CMS: Payload CMS 3.88.0 (`@payloadcms/db-d1-sqlite`)。バージョンは `package.json` が正本
+- CMS: Payload CMS 3.90.2 (`@payloadcms/db-d1-sqlite`)。バージョンは `package.json` が正本
 - フレームワーク: Next.js 16.3.0 (App Router)
 - データベース: Cloudflare D1 (SQLite)
 - ストレージ: Cloudflare R2
 - デプロイ: Cloudflare Workers (`@opennextjs/cloudflare`)
-- 言語: TypeScript 5.7.3 (`strict: true`)
+- 言語: TypeScript 5.9.3 (`strict: true`)
 - ツールチェーン: Vite+ 0.2.8
 - ランタイム / パッケージマネージャー: Bun 1.3.14
 
@@ -581,7 +581,7 @@ vp run test:int
 
 - テンプレート所有（`src/core/**` など）: upstream 側を採用します。案件側で変更していた場合は、その変更をテンプレートへ PR として送ります
 - 案件所有（`src/app/(frontend)/**`、`src/cms/**`、`src/i18n/**`、`src/seo/**`、`src/scripts/**`、`wrangler.jsonc` など）: 案件の内容を維持しつつ、構成変更がある場合は新配置へ移して参照先を更新します。6契約のexportと設定項目を揃えます。移動・削除競合で旧ファイルを無条件に残さず、[構成移行](decisions/007-source-layout-and-inquiry-boundaries.md) の削除条件を確認します
-- 共有編集（`src/migrations/**`、`package.json`、`bun.lock`）: 両方を残します。マイグレーションはファイル名の timestamp 順に適用されるため、案件で作成済みのマイグレーションより古い timestamp のテンプレート側マイグレーションが来た場合は、ローカル D1 で `vp run payload migrate` を実行してスキーマ差分が無いことを確認します。`bun.lock` は `vp install` で再生成します
+- 共有編集（`src/migrations/**`、`package.json`、`bun.lock`）: 両方を残します。マイグレーションはファイル名の timestamp 順に適用されるため、案件で作成済みのマイグレーションより古い timestamp のテンプレート側マイグレーションが来た場合は、ローカル D1 で `vp run payload migrate` を実行してスキーマ差分が無いことを確認します。テンプレート側のマイグレーションに付く `.json` スナップショットはテンプレートのスキーマだけを表すため、案件のマイグレーションより新しいテンプレート側マイグレーションを取り込んだら、`vp run payload migrate:create` で案件のコレクションを作り直す差分が出ないか確かめます。出る場合は、そのマイグレーションのファイルを一時的に外して案件側で同じ SQL のマイグレーションを生成し、SQL が一致することを確かめてから、生成された `.json` でテンプレート側の `.json` を置き換えます。`bun.lock` は `vp install` で再生成します
 
 ### 注意点
 
@@ -652,7 +652,7 @@ E2E が前提にするコンテンツは `tests/helpers/e2e-fixtures.ts` にま�
 
 テンプレートには `.github/workflows/ci.yml` を同梱しています。`pull_request` と `main` への `push` で起動し、以下の 3 job を並列実行します。同一 ref の実行は新しい push で自動キャンセルされます。
 
-- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types` / `bun run generate:importmap` 後に生成物の差分がないこと (型生成漏れの検出)、`bun run test:unit`、`bun run test:int`（packagesのテストも一度だけ含む）、`bun run test:cloudflare-config`、`bun audit --audit-level=high`（レジストリの一時障害で偽陽性にならないよう 30 秒間隔で 3 回まで試し、それでも失敗したら本物の失敗として扱う） を実行します
+- `check` — `bun run check` (フォーマット・lint・型チェック)、`bun run generate:types` / `bun run generate:importmap` 後に生成物の差分がないこと (型生成漏れの検出)、`bun run test:unit`、`bun run test:int`（packagesのテストも一度だけ含む）、`bun run test:cloudflare-config`、`bun audit --audit-level=high`（修正版が未公開の 1 件だけを `--ignore` で除外する。理由は [セキュリティ方針](security.md#依存監査)。レジストリの一時障害で偽陽性にならないよう 30 秒間隔で 3 回まで試し、それでも失敗したら本物の失敗として扱う） を実行します
 - `build` — `bun run build`、`bunx opennextjs-cloudflare build`、`bunx wrangler deploy --dry-run --strict --env=production` で本番相当ビルドとデプロイ設定を検証し、`bun run build-storybook` と `bun run test:storybook:static` を実行します
 - `e2e` — Playwright (Chromium) で `bun run test:e2e` を実行します
 
