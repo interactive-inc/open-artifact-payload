@@ -8,7 +8,10 @@ const editorOrigin = "http://localhost:3000"
 
 const scrollTo = vi.fn()
 
-const topmostElement = { current: null as Element | null }
+const topmostElement: { current: Element | null } = { current: null }
+
+/** jsdom はレイアウトを持たないため、要素の中身が描かれている範囲を指定する */
+const contentRects = new Map<Node, DOMRect>()
 
 const stops: Array<() => void> = []
 
@@ -23,6 +26,15 @@ beforeEach(() => {
     value: () => topmostElement.current,
     configurable: true,
   })
+  // jsdom の Range は位置を測るメソッドを持たないため足す。指定の無い要素は中身なしとして要素の箱を使う
+  Object.defineProperty(Range.prototype, "getBoundingClientRect", {
+    value: function (this: Range) {
+      return contentRects.get(this.startContainer) ?? new DOMRect(0, 0, 0, 0)
+    },
+    configurable: true,
+  })
+  // 周りの文字は置かないため、どの文字も描かれていないものとして余白は縮まない
+  Object.defineProperty(Range.prototype, "getClientRects", { value: () => [], configurable: true })
 })
 
 afterEach(() => {
@@ -30,6 +42,9 @@ afterEach(() => {
   document.body.innerHTML = ""
   scrollTo.mockClear()
   topmostElement.current = null
+  contentRects.clear()
+  Reflect.deleteProperty(Range.prototype, "getBoundingClientRect")
+  Reflect.deleteProperty(Range.prototype, "getClientRects")
   vi.unstubAllGlobals()
   vi.useRealTimers()
 })
@@ -79,6 +94,17 @@ describe("startPreviewFieldHighlight", () => {
     expect(preview.overlay.style.width).toBe("320px")
     expect(preview.overlay.style.height).toBe("60px")
     expect(scrollTo).not.toHaveBeenCalled()
+  })
+
+  it("frames the drawn text rather than a cell that spans the whole column", () => {
+    const preview = openPreview()
+    const cell = place("profile.rows.0.label", 100)
+    contentRects.set(cell, new DOMRect(20, 100, 48, 24))
+    preview.send({ type: "cms-field-focus", path: "profile.rows.0.label" })
+
+    expect(preview.overlay.style.transform).toBe("translate(10px, 90px)")
+    expect(preview.overlay.style.width).toBe("68px")
+    expect(preview.overlay.style.height).toBe("44px")
   })
 
   it("keeps the frame inside the viewport for a full-width element", () => {

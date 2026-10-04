@@ -1,5 +1,7 @@
 import { parseFieldFocusMessage } from "@/core/lib/preview/field-focus-message"
 import { findPreviewFieldElement } from "@/core/lib/preview/find-preview-field-element"
+import { getContentRect } from "@/core/lib/preview/get-content-rect"
+import { type FrameGaps, getFrameGaps } from "@/core/lib/preview/get-frame-gaps"
 
 type Props = {
   overlay: HTMLElement
@@ -12,9 +14,11 @@ type State = {
   target: Element | null
   frame: number | null
   moveTimer: number | null
+  /** 辺ごとの余白と、それを測ったときの中身の大きさ。大きさが変わったら測り直す */
+  gaps: { value: FrameGaps; size: string } | null
 }
 
-/** 枠と要素の間の余白。文字に線が触れないようにする */
+/** 見えているかの判定とスクロール位置に使う、枠と中身の間の余白の目安 */
 const overlayGap = 10
 
 /** 画面の左右端に接する要素でも線が見えるよう、枠を画面の内側に収める幅 */
@@ -28,7 +32,7 @@ const moveDuration = 200
  * 停止用の関数を返す
  */
 export function startPreviewFieldHighlight(props: Props): () => void {
-  const state: State = { path: null, target: null, frame: null, moveTimer: null }
+  const state: State = { path: null, target: null, frame: null, moveTimer: null, gaps: null }
 
   const onMessage = (event: MessageEvent) => {
     if (event.source !== props.editor || event.origin !== props.editorOrigin) return
@@ -69,9 +73,11 @@ function followTarget(overlay: HTMLElement, state: State) {
   state.frame = null
   if (state.path !== null && (state.target === null || !state.target.isConnected)) {
     state.target = findPreviewFieldElement(document, state.path)
+    state.gaps = null
   }
 
-  placeOverlay(overlay, state.target)
+  const rect = state.target === null ? null : getContentRect(state.target)
+  placeOverlay(overlay, rect, measureGaps(state, rect))
 
   if (state.target !== null) {
     state.frame = requestAnimationFrame(() => followTarget(overlay, state))
@@ -91,21 +97,35 @@ function endMove(overlay: HTMLElement, state: State) {
 }
 
 /**
- * 要素の位置に余白を足して枠を合わせる。要素が無い、または大きさを持たないときは隠す。
+ * 周りの文字を調べる処理は重いため、対象が変わったときと中身の大きさが変わったときだけ測る。
+ * スクロールでは中身と周りが一緒に動くので測り直さない
+ */
+function measureGaps(state: State, rect: DOMRect | null): FrameGaps | null {
+  if (state.target === null || rect === null) return null
+
+  const size = `${Math.round(rect.width)}x${Math.round(rect.height)}`
+  if (state.gaps === null || state.gaps.size !== size) {
+    state.gaps = { value: getFrameGaps(state.target, rect), size }
+  }
+
+  return state.gaps.value
+}
+
+/**
+ * 要素の中身が描かれている範囲に辺ごとの余白を足して枠を合わせる。要素が無い、または大きさを持たないときは隠す。
  * 毎フレーム呼ばれるため、値が変わったときだけ書き込んで再レイアウトを起こさない
  */
-function placeOverlay(overlay: HTMLElement, target: Element | null) {
-  const rect = target?.getBoundingClientRect() ?? null
-  if (rect === null || (rect.width === 0 && rect.height === 0)) {
+function placeOverlay(overlay: HTMLElement, rect: DOMRect | null, gaps: FrameGaps | null) {
+  if (rect === null || gaps === null || (rect.width === 0 && rect.height === 0)) {
     overlay.hidden = true
     return
   }
 
-  const left = Math.max(rect.left - overlayGap, viewportInset)
-  const right = Math.min(rect.right + overlayGap, window.innerWidth - viewportInset)
-  const transform = `translate(${left}px, ${rect.top - overlayGap}px)`
+  const left = Math.max(rect.left - gaps.left, viewportInset)
+  const right = Math.min(rect.right + gaps.right, window.innerWidth - viewportInset)
+  const transform = `translate(${left}px, ${rect.top - gaps.top}px)`
   const width = `${Math.max(right - left, 0)}px`
-  const height = `${rect.height + overlayGap * 2}px`
+  const height = `${rect.height + gaps.top + gaps.bottom}px`
 
   if (overlay.hidden) overlay.hidden = false
   if (overlay.style.transform !== transform) overlay.style.transform = transform
@@ -118,7 +138,7 @@ function placeOverlay(overlay: HTMLElement, target: Element | null) {
  * 見える範囲より高い要素は、先頭をヘッダーのすぐ下に合わせる
  */
 function revealElement(target: Element) {
-  const rect = target.getBoundingClientRect()
+  const rect = getContentRect(target)
   const headerBottom = getTopObstruction()
   const isVisible =
     rect.top - overlayGap >= headerBottom && rect.bottom + overlayGap <= window.innerHeight
