@@ -391,6 +391,34 @@ SVG は既定で受け付けません。スクリプトを埋め込める形式�
 - 新しいセクションやページをプレビュー対象にしたら、少なくともセクションの group 名（`enabled` を持つ要素）と配列の行に印を付ける。項目単位の印は、編集者が場所を探しにくい項目から足す
 - 対象は横に並ぶ iframe のプレビューだけ。別ウィンドウで開いたプレビューと、いま表示していないページの項目はハイライトされない
 
+### 繰り返し項目の見出し
+
+array フィールドの行の見出しは、Payload 標準では「Row 01」と連番だけが出ます。`src/core/admin/row-label/row-label-from.ts` の `rowLabelFrom(<項目名>, <未入力時の名前>)` を `admin.components.RowLabel` に渡すと、行の入力値（ラベル・タイトルなど）を見出しにします。あわせて `labels` を付けると、追加ボタンも「リンク を追加」のように表示されます。
+
+```ts
+{
+  name: "headerNav",
+  type: "array",
+  labels: { singular: "リンク", plural: "リンク" },
+  admin: { components: { RowLabel: rowLabelFrom("label", "リンク") } },
+  fields: [{ name: "label", type: "text" }],
+}
+```
+
+### リッチテキストの部品
+
+ニュース本文は `src/core/lib/rich-text/rich-text-editor.ts` の `richTextEditor` を使います。標準の機能に加えて、次を入力できます。他の richText フィールドでも `editor: richTextEditor` を指定すれば同じ部品を使えます。
+
+- 見出しは h2・h3 だけ（h1 は記事タイトルが使う）
+- 画像のキャプション（画像の編集ボタンから入力）
+- 「+」メニューの「リンクボタン」（文言・リンク先・大きさ）と「記号付きリスト」（1）・ア、・※。1 行 1 項目）
+
+表示は `src/core/lib/lexical.tsx` の `RichText` が `richTextConverters` で行います。見た目は公開画面の CSS（`styles.css` の `.prose` 内の `rich-text-*` / `marked-list*`）で付けます。
+
+- 下書き（自動保存・ライブプレビュー）では必須項目が未入力のまま届くため、文言かリンク先が欠けたリンクボタンは描画しない。リンク先は描画側でも `validateLinkHref` を通す
+- エディタで指定した配置（中央・右）は Payload が描画結果へ `style` として差し込む。部品は受け取った `style` を外側の要素へ渡す
+- ブロックとキャプションは本文の JSON に保存されるため、DB のマイグレーションは要らない。AI 翻訳は本文の文字だけを訳し、ブロックの入力値（ボタンの文言・リストの項目）とキャプションは訳さない
+
 ### 公開サイトリンク
 
 管理画面サイドバーの「公開サイトを開く」リンクは `src/core/admin/nav/open-public-site.tsx` で定義されています。クリックすると `/next/exit-preview` 経由で Draft Mode が解除された状態でフロントエンドが開きます。
