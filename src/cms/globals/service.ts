@@ -7,6 +7,7 @@ import {
   SHORT_TEXT_MAX_LENGTH,
 } from "@/core/lib/validation/text-limits"
 import { validateLinkHref } from "@/core/lib/validation/validate-link-href"
+import { rowLabelFrom } from "@/core/admin/row-label/row-label-from"
 
 export const serviceGlobal: GlobalConfig = {
   slug: "service",
@@ -59,6 +60,8 @@ export const serviceGlobal: GlobalConfig = {
           name: "items",
           label: "サービス",
           type: "array",
+          labels: { singular: "サービス", plural: "サービス" },
+          admin: { components: { RowLabel: rowLabelFrom("title", "サービス") } },
           maxRows: 10,
           fields: [
             {
@@ -86,6 +89,8 @@ export const serviceGlobal: GlobalConfig = {
               name: "features",
               label: "特徴・機能リスト",
               type: "array",
+              labels: { singular: "特徴", plural: "特徴" },
+              admin: { components: { RowLabel: rowLabelFrom("text", "特徴") } },
               maxRows: 6,
               fields: [
                 {
@@ -119,6 +124,8 @@ export const serviceGlobal: GlobalConfig = {
           name: "steps",
           label: "ステップ一覧",
           type: "array",
+          labels: { singular: "ステップ", plural: "ステップ" },
+          admin: { components: { RowLabel: rowLabelFrom("title", "ステップ") } },
           maxRows: 6,
           fields: [
             {

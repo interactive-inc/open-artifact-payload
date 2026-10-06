@@ -2,6 +2,7 @@ import type { GlobalConfig } from "payload"
 
 import { isAuthenticated } from "@/core/lib/access/is-authenticated"
 import { LONG_TEXT_MAX_LENGTH, SHORT_TEXT_MAX_LENGTH } from "@/core/lib/validation/text-limits"
+import { rowLabelFrom } from "@/core/admin/row-label/row-label-from"
 
 export const aboutGlobal: GlobalConfig = {
   slug: "about",
@@ -61,6 +62,8 @@ export const aboutGlobal: GlobalConfig = {
           name: "values",
           label: "バリュー一覧",
           type: "array",
+          labels: { singular: "バリュー", plural: "バリュー" },
+          admin: { components: { RowLabel: rowLabelFrom("title", "バリュー") } },
           maxRows: 4,
           fields: [
             {
@@ -99,6 +102,8 @@ export const aboutGlobal: GlobalConfig = {
           name: "rows",
           label: "情報一覧",
           type: "array",
+          labels: { singular: "項目", plural: "項目" },
+          admin: { components: { RowLabel: rowLabelFrom("label", "項目") } },
           fields: [
             {
               name: "label",
@@ -137,6 +142,8 @@ export const aboutGlobal: GlobalConfig = {
           name: "items",
           label: "メンバー一覧",
           type: "array",
+          labels: { singular: "メンバー", plural: "メンバー" },
+          admin: { components: { RowLabel: rowLabelFrom("name", "メンバー") } },
           maxRows: 8,
           fields: [
             {
