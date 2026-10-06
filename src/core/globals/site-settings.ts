@@ -11,6 +11,7 @@ import {
 import { validateHttpsUrl } from "@/core/lib/validation/validate-https-url"
 import { validateLinkHref } from "@/core/lib/validation/validate-link-href"
 import { validatePhone } from "@/core/lib/validation/validate-phone"
+import { rowLabelFrom } from "@/core/admin/row-label/row-label-from"
 
 const LINK_DESCRIPTION =
   "/about のような内部パス、https:// から始まる URL、mailto:、tel: のみ指定できます"
@@ -84,7 +85,9 @@ export const siteSettings: GlobalConfig = {
       name: "headerNav",
       label: "ヘッダーナビゲーション",
       type: "array",
+      labels: { singular: "リンク", plural: "リンク" },
       admin: {
+        components: { RowLabel: rowLabelFrom("label", "リンク") },
         description: `表示順で並べる。${LINK_DESCRIPTION}`,
       },
       fields: [
@@ -111,7 +114,9 @@ export const siteSettings: GlobalConfig = {
       name: "footerNav",
       label: "フッターナビゲーション",
       type: "array",
+      labels: { singular: "リンク", plural: "リンク" },
       admin: {
+        components: { RowLabel: rowLabelFrom("label", "リンク") },
         description: LINK_DESCRIPTION,
       },
       fields: [
@@ -138,7 +143,9 @@ export const siteSettings: GlobalConfig = {
       name: "policyLinks",
       label: "ポリシー系リンク",
       type: "array",
+      labels: { singular: "リンク", plural: "リンク" },
       admin: {
+        components: { RowLabel: rowLabelFrom("label", "リンク") },
         description: `プライバシーポリシー、特定商取引法、サイトマップなど、フッター下部に出すリンク。${LINK_DESCRIPTION}`,
       },
       fields: [

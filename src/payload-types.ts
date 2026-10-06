@@ -1388,6 +1388,35 @@ export interface CollectionsWidget {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "LinkButtonBlock".
+ */
+export interface LinkButtonBlock {
+  label: string;
+  /**
+   * サイト内は / から始まるパス、外部サイトは https:// から入力します。外部サイトは別タブで開きます。
+   */
+  href: string;
+  size: 'standard' | 'small';
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'linkButton';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "MarkedListBlock".
+ */
+export interface MarkedListBlock {
+  marker: 'parenNumber' | 'katakana' | 'note';
+  /**
+   * 1行が1項目になります。空の行は表示しません。
+   */
+  items: string;
+  id?: string | null;
+  blockName?: string | null;
+  blockType: 'markedList';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "auth".
  */
 export interface Auth {

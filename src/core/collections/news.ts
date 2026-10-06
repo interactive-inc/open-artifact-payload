@@ -7,6 +7,7 @@ import { buildCollectionRevalidateAfterChange } from "@/core/lib/revalidate/buil
 import { buildCollectionRevalidateAfterDelete } from "@/core/lib/revalidate/build-collection-revalidate-after-delete"
 import { SHORT_TEXT_MAX_LENGTH, SLUG_MAX_LENGTH } from "@/core/lib/validation/text-limits"
 import { validateSlug } from "@/core/lib/validation/validate-slug"
+import { richTextEditor } from "@/core/lib/rich-text/rich-text-editor"
 
 type NewsDoc = { slug?: string }
 
@@ -90,6 +91,7 @@ export const news: CollectionConfig = {
       label: "本文",
       type: "richText",
       localized: true,
+      editor: richTextEditor,
     },
   ],
   versions: {

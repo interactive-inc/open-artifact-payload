@@ -213,6 +213,9 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
         titleSuffix: " | Inta CMS",
         description: "Inta CMS 管理画面",
       },
+      // 既定の "MMMM do yyyy, h:mm a" は日本語で「9月 6日 2026, 11:21 午前」になるため、
+      // 更新日時・一覧の日付列を、公開日などの入力欄と同じ表記に揃える
+      dateFormat: "yyyy-MM-dd HH:mm",
       components: {
         providers: [
           "@/core/admin/theme/admin-theme-provider#AdminThemeProvider",

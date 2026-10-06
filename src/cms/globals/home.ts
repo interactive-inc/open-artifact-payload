@@ -8,6 +8,7 @@ import {
   SHORT_TEXT_MAX_LENGTH,
 } from "@/core/lib/validation/text-limits"
 import { validateLinkHref } from "@/core/lib/validation/validate-link-href"
+import { rowLabelFrom } from "@/core/admin/row-label/row-label-from"
 
 export const homeGlobal: GlobalConfig = {
   slug: "home-page",
@@ -86,6 +87,8 @@ export const homeGlobal: GlobalConfig = {
           name: "items",
           label: "サービス一覧",
           type: "array",
+          labels: { singular: "サービス", plural: "サービス" },
+          admin: { components: { RowLabel: rowLabelFrom("title", "サービス") } },
           maxRows: 6,
           fields: [
             {

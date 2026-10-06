@@ -26,6 +26,8 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   --font-body:
     "Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "YuGothic", "Yu Gothic", "Avenir",
     "Helvetica Neue", sans-serif;
+  // Payload はリッチテキストの本文を --font-serif (Georgia) で描くため、日本語が明朝に落ちる。UI と同じ書体に揃える
+  --font-serif: var(--font-body);
   --base-body-size: 15;
   font-size: 15px;
   --base: 1.5rem;
@@ -109,6 +111,124 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   --accessibility-outline: 2px solid #d9dbdb;
 }
 
+// ─── ボタン ───
+
+// Payload のボタンは --bg-color / --color などの変数で配色する。ここでは変数だけを差し替える。
+// 標準の無効な主ボタンはグレー地に濃い文字で、押せるボタンと見分けがつかないため、地も文字も薄くする
+.btn--style-primary.btn--disabled {
+  --bg-color: var(--theme-elevation-100);
+  --color: var(--theme-elevation-400);
+}
+
+.btn--style-primary.btn--disabled button,
+.btn--style-primary.btn--disabled .popup-button {
+  cursor: not-allowed;
+}
+
+// 「既存から選択」などの補助ボタンは塗りのグレーだと無効に見えるため、枠線付きにする
+.btn--style-pill {
+  --bg-color: transparent;
+  --color: var(--theme-text);
+  --hover-bg: var(--theme-elevation-50);
+  --hover-color: var(--theme-text);
+  --btn-border: 1px solid var(--theme-elevation-250);
+  --hover-btn-border: 1px solid var(--theme-elevation-400);
+}
+
+// 一覧見出し横の「新規作成」はその画面の主な操作なので、主ボタンと同じ塗りにする
+.list-create-new-doc__create-new-button.btn--style-pill {
+  --bg-color: var(--theme-elevation-800);
+  --color: var(--theme-elevation-0);
+  --hover-bg: var(--theme-elevation-600);
+  --hover-color: var(--theme-elevation-0);
+  --btn-border: 1px solid transparent;
+  --hover-btn-border: 1px solid transparent;
+}
+
+// 一覧上部の「行の表示」「絞り込み」も補助ボタンとして枠線付きにそろえる
+.list-controls .pill--style-light {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--theme-elevation-250);
+}
+
+// ─── 一覧テーブル ───
+
+// 標準は奇数行に背景を敷く縞模様で、タイトルは常に下線付き。行は罫線で区切り、
+// ホバーした行だけ背景で示す。タイトルの下線はホバー時だけにする
+.collection-list .table {
+  thead th {
+    border-bottom: 1px solid var(--theme-elevation-150);
+  }
+
+  tbody tr:nth-child(odd) {
+    background: transparent;
+  }
+
+  tbody td {
+    border-bottom: 1px solid var(--theme-elevation-100);
+  }
+
+  tbody tr:hover {
+    background: var(--theme-elevation-50);
+  }
+
+  tbody td a {
+    font-weight: 500;
+    text-decoration: none;
+  }
+
+  tbody td a:hover {
+    text-decoration: underline;
+  }
+}
+
+// ─── 検索欄 ───
+
+// 標準の検索欄はグレーの塗りで入力欄に見えにくいため、他の入力欄と同じ地色と枠線にする
+.search-bar {
+  --search-bg: var(--theme-input-bg);
+  border: 1px solid var(--theme-elevation-150);
+  transition: border-color 100ms;
+}
+
+.search-bar:hover {
+  border-color: var(--theme-elevation-250);
+}
+
+.search-bar:focus-within {
+  border-color: var(--theme-elevation-400);
+}
+
+// ─── リッチテキスト (本文) ───
+
+// 標準の本文欄は左端の細い縦線だけで、どこまでが入力欄か分かりにくい。他の入力欄と同じ枠線と地色で囲む。
+// 本文内側の左の余白は「+」(ブロック追加) とドラッグ用の取っ手を出す場所なので、Payload の指定のまま変えない。
+// 取っ手は余白の左端に出て枠線と重なるため、枠の内側に余白を足して取っ手ごと内へ寄せる
+.rich-text-lexical > .rich-text-lexical__wrap > .editor-container {
+  padding-inline: 8px 16px;
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-s);
+  background: var(--theme-input-bg);
+  transition: border-color 100ms;
+}
+
+.rich-text-lexical > .rich-text-lexical__wrap > .editor-container:hover {
+  border-color: var(--theme-elevation-250);
+}
+
+.rich-text-lexical > .rich-text-lexical__wrap > .editor-container:focus-within {
+  border-color: var(--theme-elevation-400);
+}
+
+// 枠で囲むと左端の縦線は二重線に見えるため消す。縦線が担っていた入力エラーの表示は枠の色で示す
+.rich-text-lexical--show-gutter .ContentEditable__root::before {
+  display: none;
+}
+
+.rich-text-lexical.error > .rich-text-lexical__wrap > .editor-container {
+  border-color: var(--theme-error-500);
+}
+
 // ─── ヘッダー ロケールセレクタ ───
 
 // Payload 標準はロケールセレクタを right: 90px の絶対配置にしており、
@@ -166,57 +286,37 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   gap: 3px;
 }
 
-// ナビリンク (カード化 + アイコン)
+// ナビリンク (アイコン + 文字)。項目ごとに枠を付けると箱が積み重なって重く見えるため、
+// 枠は付けず、ホバーと現在地だけ背景で示す。下部の「公開サイト」「ログアウト」は操作なので枠付きのまま
 .nav__link {
   display: flex;
   align-items: center;
-  padding: 10px 14px;
-  border-radius: var(--style-radius-s);
-  background: var(--theme-elevation-0);
-  border: 1px solid var(--theme-elevation-150);
-  color: var(--theme-text);
+  padding: 9px 12px;
+  border-radius: var(--style-radius-m);
+  color: var(--theme-elevation-700);
   text-decoration: none;
   transition:
     background 0.12s ease,
-    border-color 0.12s ease;
+    color 0.12s ease;
 }
 
 .nav__link:hover {
   background: var(--theme-elevation-50);
-  border-color: var(--theme-elevation-200);
+  color: var(--theme-text);
 }
 .nav__link:active {
   background: var(--theme-elevation-100);
 }
-.nav__link--active {
+// 現在地の項目は Payload がリンクではなく div にし、.nav__link-indicator (左端の縦線) を入れる。
+// 縦線はナビの外側に離れて表示されるため隠し、背景で現在地を示す
+.nav__link:has(.nav__link-indicator) {
   background: var(--theme-elevation-100);
-  border-color: var(--theme-elevation-250);
-  font-weight: 500;
+  color: var(--theme-text);
+  font-weight: 600;
 }
 
-[data-theme="dark"] .nav__link {
-  background: var(--theme-elevation-50);
-  border-color: var(--theme-elevation-150);
-}
-[data-theme="dark"] .nav__link:hover {
-  background: var(--theme-elevation-100);
-  border-color: var(--theme-elevation-200);
-}
-[data-theme="dark"] .nav__link--active {
-  background: var(--theme-elevation-100);
-  border-color: var(--theme-elevation-250);
-}
-
-// ─── ナビ順序 ───
-
-.nav-group.コンテンツ {
-  order: -2;
-}
-.nav-group.システム {
-  order: -1;
-}
-#nav-global-home-page {
-  order: -1;
+.nav__link-indicator {
+  display: none;
 }
 
 // ─── 下部ボタン (公開サイト + ログアウト) ───
@@ -319,6 +419,11 @@ $icon-history: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
   -webkit-mask-repeat: no-repeat;
   -webkit-mask-position: center;
   opacity: 0.55;
+}
+
+.nav__link:hover::before,
+.nav__link:has(.nav__link-indicator)::before {
+  opacity: 1;
 }
 
 #nav-users::before {
