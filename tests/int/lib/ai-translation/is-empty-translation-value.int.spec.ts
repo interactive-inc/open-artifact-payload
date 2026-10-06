@@ -22,4 +22,20 @@ describe("isEmptyTranslationValue", () => {
     expect(isEmptyTranslationValue(emptyLexical, "lexical")).toBe(true)
     expect(isEmptyTranslationValue(filledLexical, "lexical")).toBe(false)
   })
+
+  it("lexical: 文字が無くてもブロックや画像があれば入力済み (上書きしない)", () => {
+    const blocksOnly = {
+      root: {
+        children: [
+          { type: "block", fields: { blockType: "linkButton", label: "Contact", href: "/" } },
+        ],
+      },
+    }
+    const imageOnly = {
+      root: { children: [{ type: "paragraph", children: [{ type: "upload", value: 1 }] }] },
+    }
+
+    expect(isEmptyTranslationValue(blocksOnly, "lexical")).toBe(false)
+    expect(isEmptyTranslationValue(imageOnly, "lexical")).toBe(false)
+  })
 })

@@ -226,6 +226,11 @@
     margin-bottom: 1rem;
     text-align: center;
   }
+  /* 包んだ画像は文中の要素に戻し、エディタで指定した配置 (text-align) が効くようにする */
+  .prose :is(.rich-text-image, .rich-text-figure) img {
+    display: inline-block;
+    vertical-align: bottom;
+  }
   .prose .rich-text-figure__caption {
     display: block;
     margin-top: 0.5rem;
