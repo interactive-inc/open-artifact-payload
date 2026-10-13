@@ -22,7 +22,12 @@ export function AnalyticsTrendChart(props: Props) {
   return (
     <div className="ictms-analytics__chart-canvas" aria-hidden="true">
       <ResponsiveContainer width="100%" height={200}>
-        <LineChart data={props.points} margin={{ top: 8, right: 8, bottom: 0, left: -16 }}>
+        {/* 数値は隣の表で読み上げるため、グラフ側のキーボード操作（フォーカス）は持たせない */}
+        <LineChart
+          data={props.points}
+          margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
+          accessibilityLayer={false}
+        >
           <CartesianGrid stroke="var(--theme-elevation-100)" vertical={false} />
           <XAxis dataKey="label" tick={AXIS_TICK} minTickGap={24} tickLine={false} />
           <YAxis allowDecimals={false} tick={AXIS_TICK} tickLine={false} axisLine={false} />
