@@ -19,6 +19,7 @@ import { pages } from "@/core/collections/pages"
 import { aiTranslationLogs } from "@/core/collections/ai-translation-logs"
 import { siteSettings } from "@/core/globals/site-settings"
 import { aiTranslationSettings } from "@/core/globals/ai-translation-settings"
+import { analyticsSettings } from "@/core/globals/analytics-settings"
 import { aiTranslateEndpoint } from "@/core/lib/ai-translation/ai-translate-endpoint"
 import {
   MEDIA_MAX_FILE_SIZE_BYTES,
@@ -194,9 +195,15 @@ export async function buildCoreConfig(props: BuildCoreConfigProps) {
     ? [...baseCollections.map(injectAiTranslateControls), aiTranslationLogs]
     : baseCollections
 
-  const allGlobals = enableAiTranslation
+  const translatableGlobals = enableAiTranslation
     ? [...baseGlobals.map(injectAiTranslateControlsIntoGlobal), aiTranslationSettings]
     : baseGlobals
+
+  // アクセス解析が有効な案件だけ設定 Global を登録する。ダッシュボードは
+  // この Global が登録されているかで解析パネルの有無を決める。
+  const allGlobals = props.features.enableAnalytics
+    ? [...translatableGlobals, analyticsSettings]
+    : translatableGlobals
 
   // フロントにルートが存在するコレクション/グローバルのみ Live Preview 対象にする。
   // 案件でコレクションのフロントページを追加したら、ここにも slug を追加する。

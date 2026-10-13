@@ -106,6 +106,7 @@ export interface Config {
     about: About;
     service: Service;
     'ai-translation-settings': AiTranslationSetting;
+    'analytics-settings': AnalyticsSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
@@ -113,6 +114,7 @@ export interface Config {
     about: AboutSelect<false> | AboutSelect<true>;
     service: ServiceSelect<false> | ServiceSelect<true>;
     'ai-translation-settings': AiTranslationSettingsSelect<false> | AiTranslationSettingsSelect<true>;
+    'analytics-settings': AnalyticsSettingsSelect<false> | AnalyticsSettingsSelect<true>;
   };
   locale: 'ja' | 'en';
   widgets: {
@@ -1116,6 +1118,25 @@ export interface AiTranslationSetting {
   createdAt?: string | null;
 }
 /**
+ * 管理画面のダッシュボードに表示する GA4 のアクセス解析を設定します。
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-settings".
+ */
+export interface AnalyticsSetting {
+  id: number;
+  /**
+   * GA4 の「管理 > プロパティの詳細」にある数字だけの ID です。G- から始まる測定 ID ではありません。変更できるのはサービス管理者だけです。
+   */
+  propertyId?: string | null;
+  /**
+   * サービス管理者は選択に関係なく常に見られます。何も選ばなければサービス管理者だけが見られます。
+   */
+  viewerRoles?: ('admin' | 'editor')[] | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
@@ -1372,6 +1393,17 @@ export interface AiTranslationSettingsSelect<T extends boolean = true> {
         perRunCharacterLimit?: T;
         cooldownSeconds?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "analytics-settings_select".
+ */
+export interface AnalyticsSettingsSelect<T extends boolean = true> {
+  propertyId?: T;
+  viewerRoles?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

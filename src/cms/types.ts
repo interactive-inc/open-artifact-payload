@@ -1,4 +1,5 @@
 export type ProjectFeatures = {
   enableFreePages: boolean
   enableAiTranslation: boolean
+  enableAnalytics: boolean
 }
