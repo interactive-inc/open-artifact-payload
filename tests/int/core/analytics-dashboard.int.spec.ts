@@ -1,8 +1,9 @@
 import { getPayload, type Payload } from "payload"
-import { beforeAll, describe, expect, it } from "vite-plus/test"
+import { afterAll, beforeAll, describe, expect, it } from "vite-plus/test"
 
 import config from "@/payload.config"
 import { loadAnalyticsDashboard } from "@/core/lib/analytics/load-analytics-dashboard"
+import { loadCanViewAnalytics } from "@/core/lib/analytics/load-can-view-analytics"
 import type { User } from "@/payload-types"
 
 let payload: Payload
@@ -41,6 +42,20 @@ describe("loadAnalyticsDashboard", () => {
       slug: "analytics-settings",
       data: { propertyId: "123456789", viewerRoles: ["admin"] },
     })
+  })
+
+  afterAll(async () => {
+    // 他のテストファイルが既定値を前提にできるよう、変えた設定を戻す
+    await payload.updateGlobal({
+      slug: "analytics-settings",
+      data: { propertyId: null, viewerRoles: ["admin"] },
+    })
+  })
+
+  it("描画の前に、パネルを出してよいかを設定のロールで判定する", async () => {
+    expect(await loadCanViewAnalytics({ payload, user: clientAdmin })).toBe(true)
+    expect(await loadCanViewAnalytics({ payload, user: editor })).toBe(false)
+    expect(await loadCanViewAnalytics({ payload, user: null })).toBe(false)
   })
 
   it("見られないロールには何も用意しない", async () => {

@@ -1,11 +1,18 @@
-import { test, expect } from "@playwright/test"
+import { test, expect, type Page } from "@playwright/test"
 
 import { login } from "../helpers/login"
 import { testUser } from "../helpers/seed-user"
 
+// enableAnalytics を false にした案件では設定 Global が無く、REST は 404 を返す
+async function skipWithoutAnalytics(page: Page): Promise<void> {
+  const response = await page.request.get("http://localhost:3000/api/globals/analytics-settings")
+  test.skip(response.status() === 404, "enableAnalytics が無効な案件")
+}
+
 test.describe("ダッシュボードのアクセス解析", () => {
   test("admin は取得済みの数字・人気ページ・流入元を見られる", async ({ page }) => {
     await login({ page, user: testUser })
+    await skipWithoutAnalytics(page)
 
     const panel = page.getByRole("region", { name: "アクセス解析" })
     await expect(panel).toBeVisible({ timeout: 60_000 })
@@ -18,6 +25,7 @@ test.describe("ダッシュボードのアクセス解析", () => {
 
   test("取得済みの結果が無い期間に切り替えると、鍵の確認を促す", async ({ page }) => {
     await login({ page, user: testUser })
+    await skipWithoutAnalytics(page)
 
     const panel = page.getByRole("region", { name: "アクセス解析" })
     await panel.getByRole("link", { name: "7日" }).click()
@@ -29,6 +37,7 @@ test.describe("ダッシュボードのアクセス解析", () => {
 
   test("見られるロールに含まれない editor にはパネルを出さない", async ({ page, browser }) => {
     await login({ page, user: testUser })
+    await skipWithoutAnalytics(page)
     const editor = {
       email: `analytics-editor-${Date.now()}@example.com`,
       password: "test-password-1234",

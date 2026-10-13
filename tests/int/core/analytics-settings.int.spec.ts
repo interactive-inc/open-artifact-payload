@@ -1,7 +1,8 @@
 import { getPayload, type Payload } from "payload"
-import { beforeAll, describe, expect, it } from "vite-plus/test"
+import { afterAll, beforeAll, describe, expect, it } from "vite-plus/test"
 
 import config from "@/payload.config"
+import { analyticsSettings } from "@/core/globals/analytics-settings"
 import type { User } from "@/payload-types"
 
 let payload: Payload
@@ -28,10 +29,22 @@ describe("アクセス解析設定", () => {
     editor = await createUser(["editor"])
   })
 
-  it("見られるロールの既定は管理者だけ", async () => {
-    const settings = await payload.findGlobal({ slug: "analytics-settings" })
+  afterAll(async () => {
+    // 他のテストファイルが既定値を前提にできるよう、変えた設定を戻す
+    await payload.updateGlobal({
+      slug: "analytics-settings",
+      data: { propertyId: null, viewerRoles: ["admin"] },
+    })
+  })
 
-    expect(settings.viewerRoles).toEqual(["admin"])
+  it("見られるロールの既定は管理者だけ", () => {
+    const viewerRoles = analyticsSettings.fields.find(
+      (field) => "name" in field && field.name === "viewerRoles",
+    )
+
+    expect(viewerRoles && "defaultValue" in viewerRoles && viewerRoles.defaultValue).toEqual([
+      "admin",
+    ])
   })
 
   it("editor は設定を読めない", async () => {

@@ -220,6 +220,9 @@ export async function seedE2eFixtures(payload: Payload): Promise<void> {
     },
   })
 
+  // enableAnalytics を false にした案件では設定 Global が無いため、解析の準備だけを飛ばす
+  if (!payload.config.globals.some((global) => global.slug === "analytics-settings")) return
+
   await payload.updateGlobal({
     slug: "analytics-settings",
     data: { propertyId: e2eAnalytics.propertyId, viewerRoles: ["admin"] },
