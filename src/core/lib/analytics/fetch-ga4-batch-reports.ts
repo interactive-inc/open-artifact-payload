@@ -22,8 +22,11 @@ export async function fetchGa4BatchReports(
 ): Promise<Ga4BatchResponse | AnalyticsError> {
   const url = `https://analyticsdata.googleapis.com/v1beta/properties/${props.propertyId}:batchRunReports`
 
+  // Workers の fetch は this 付きで呼ぶと Illegal invocation になるため、取り出してから呼ぶ
+  const fetcher = props.fetcher
+
   try {
-    const response = await props.fetcher(url, {
+    const response = await fetcher(url, {
       method: "POST",
       headers: { authorization: `Bearer ${props.accessToken}`, "content-type": "application/json" },
       body: JSON.stringify(props.body),
@@ -42,7 +45,9 @@ export async function fetchGa4BatchReports(
     if (parsed.success) return parsed.data
 
     return new AnalyticsError({ kind: "invalid-response", detail: "unexpected GA4 response shape" })
-  } catch {
-    return new AnalyticsError({ kind: "unavailable", detail: "GA4 request failed" })
+  } catch (error) {
+    const name = error instanceof Error ? error.name : "unknown"
+
+    return new AnalyticsError({ kind: "unavailable", detail: `GA4 request failed (${name})` })
   }
 }

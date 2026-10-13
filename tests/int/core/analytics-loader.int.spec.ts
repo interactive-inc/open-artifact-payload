@@ -1,5 +1,5 @@
 import { getPayload, type Payload } from "payload"
-import { beforeAll, beforeEach, describe, expect, it } from "vite-plus/test"
+import { beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 
 import config from "@/payload.config"
 import { countDailyInquiries } from "@/core/lib/analytics/count-daily-inquiries"
@@ -120,6 +120,17 @@ describe("loadAnalyticsTraffic", () => {
       lastFailureAt: now.toISOString(),
       lastFailureKind: "unauthorized",
     })
+  })
+
+  it("取得の失敗は、鍵や応答本文を含まない種類と詳細だけをログに残す", async () => {
+    const warn = vi.spyOn(payload.logger, "warn")
+
+    await load(ga4Fetcher(404))
+
+    expect(warn).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "rejected", detail: "GA4 404" }),
+    )
+    warn.mockRestore()
   })
 
   it("保存も無く取得に失敗したら失敗を返す", async () => {

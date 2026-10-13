@@ -24,6 +24,13 @@ export async function refreshAnalyticsTraffic(props: Props): Promise<AnalyticsTr
   const fetched = await fetchAnalyticsTraffic(props)
 
   if (fetched instanceof Error) {
+    // detail は状態コードやエラー名だけで、鍵・トークン・応答本文を含まない
+    props.payload.logger.warn({
+      msg: "GA4 からアクセス解析を取得できませんでした",
+      kind: fetched.kind,
+      detail: fetched.message,
+    })
+
     await recordAnalyticsStatus({
       payload: props.payload,
       at: props.now,

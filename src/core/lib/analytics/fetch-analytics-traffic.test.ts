@@ -67,4 +67,25 @@ describe("fetchAnalyticsTraffic", () => {
     expect(traffic instanceof AnalyticsError && traffic.kind).toBe("invalid-credentials")
     expect(urls).toHaveLength(1)
   })
+
+  it("Workers の fetch と同じく、this を付けて呼ぶと失敗する関数でも動く", async () => {
+    const testAccount = await createTestServiceAccount()
+    function strictFetcher(this: unknown, input: RequestInfo | URL): Promise<Response> {
+      if (this !== undefined) throw new TypeError("Illegal invocation")
+      if (new Request(input).url.startsWith("https://oauth2.googleapis.com/")) {
+        return Promise.resolve(Response.json({ access_token: "ya29.token" }))
+      }
+      return Promise.resolve(Response.json({ reports: [{}, {}, {}, {}] }))
+    }
+
+    const traffic = await fetchAnalyticsTraffic({
+      range: "7d",
+      propertyId: "123456789",
+      serviceAccountJson: testAccount.json,
+      now: new Date("2026-10-14T03:00:00Z"),
+      fetcher: strictFetcher,
+    })
+
+    expect(traffic).not.toBeInstanceOf(Error)
+  })
 })

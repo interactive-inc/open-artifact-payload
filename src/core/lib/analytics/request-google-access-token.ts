@@ -15,8 +15,11 @@ export async function requestGoogleAccessToken(props: Props): Promise<string | A
 
   if (assertion instanceof Error) return assertion
 
+  // Workers の fetch は this 付きで呼ぶと Illegal invocation になるため、取り出してから呼ぶ
+  const fetcher = props.fetcher
+
   try {
-    const response = await props.fetcher("https://oauth2.googleapis.com/token", {
+    const response = await fetcher("https://oauth2.googleapis.com/token", {
       method: "POST",
       body: new URLSearchParams({
         grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
@@ -54,7 +57,9 @@ export async function requestGoogleAccessToken(props: Props): Promise<string | A
       kind: "invalid-response",
       detail: "token exchange without access_token",
     })
-  } catch {
-    return new AnalyticsError({ kind: "unavailable", detail: "token exchange failed" })
+  } catch (error) {
+    const name = error instanceof Error ? error.name : "unknown"
+
+    return new AnalyticsError({ kind: "unavailable", detail: `token exchange failed (${name})` })
   }
 }
