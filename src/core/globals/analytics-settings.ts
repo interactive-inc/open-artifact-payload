@@ -24,6 +24,16 @@ export const analyticsSettings: GlobalConfig = {
   },
   fields: [
     {
+      name: "connectionStatus",
+      label: "接続状態",
+      type: "ui",
+      admin: {
+        components: {
+          Field: "@/core/admin/analytics/analytics-status-field#AnalyticsStatusField",
+        },
+      },
+    },
+    {
       name: "propertyId",
       label: "GA4 プロパティ ID",
       type: "text",

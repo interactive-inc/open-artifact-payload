@@ -14,6 +14,7 @@ type Props = {
   now: Date
   fetcher: Fetcher
   serviceAccountJson: string | undefined
+  propertyId: string | null | undefined
 }
 
 /**
@@ -21,9 +22,7 @@ type Props = {
  * 保存から3時間以内ならそれを使い、古ければ取り直す。
  */
 export async function loadAnalyticsTraffic(props: Props): Promise<AnalyticsTrafficState> {
-  const settings = await props.payload.findGlobal({ slug: "analytics-settings", depth: 0 })
-
-  const propertyId = settings.propertyId?.trim()
+  const propertyId = props.propertyId?.trim()
 
   const serviceAccountJson = props.serviceAccountJson?.trim()
 

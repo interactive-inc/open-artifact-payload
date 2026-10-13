@@ -42,10 +42,22 @@ const cachedTraffic = (fetchedAt: Date) => ({
   channels: [],
 })
 
-const loadWithKey = (fetcher: typeof fetch, json: string | undefined) =>
-  loadAnalyticsTraffic({ payload, range: "7d", now, fetcher, serviceAccountJson: json })
+const loadWith = (props: {
+  fetcher: typeof fetch
+  json: string | undefined
+  propertyId: string | null
+}) =>
+  loadAnalyticsTraffic({
+    payload,
+    range: "7d",
+    now,
+    fetcher: props.fetcher,
+    serviceAccountJson: props.json,
+    propertyId: props.propertyId,
+  })
 
-const load = (fetcher: typeof fetch) => loadWithKey(fetcher, serviceAccountJson)
+const load = (fetcher: typeof fetch) =>
+  loadWith({ fetcher, json: serviceAccountJson, propertyId: "123456789" })
 
 describe("loadAnalyticsTraffic", () => {
   beforeAll(async () => {
@@ -55,19 +67,20 @@ describe("loadAnalyticsTraffic", () => {
   })
 
   beforeEach(async () => {
-    await payload.updateGlobal({ slug: "analytics-settings", data: { propertyId: "123456789" } })
     await payload.kv.delete(trafficKey)
     await payload.kv.delete("analytics:status")
   })
 
   it("プロパティ ID が無ければ GA4 に問い合わせず未接続", async () => {
-    await payload.updateGlobal({ slug: "analytics-settings", data: { propertyId: null } })
-
-    expect(await load(forbiddenFetcher)).toEqual({ status: "not-configured" })
+    expect(
+      await loadWith({ fetcher: forbiddenFetcher, json: serviceAccountJson, propertyId: null }),
+    ).toEqual({ status: "not-configured" })
   })
 
   it("鍵が無ければ GA4 に問い合わせず未接続", async () => {
-    expect(await loadWithKey(forbiddenFetcher, undefined)).toEqual({ status: "not-configured" })
+    expect(
+      await loadWith({ fetcher: forbiddenFetcher, json: undefined, propertyId: "123456789" }),
+    ).toEqual({ status: "not-configured" })
   })
 
   it("3時間以内の保存があれば GA4 に問い合わせずに使う", async () => {

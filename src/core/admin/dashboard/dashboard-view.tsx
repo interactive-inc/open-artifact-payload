@@ -1,8 +1,11 @@
-import { getPayload } from "payload"
-import React from "react"
+import { getPayload, type AdminViewServerProps } from "payload"
+import React, { Suspense } from "react"
 
 import config from "@/payload.config"
 import { dashboardTasks } from "@/cms/admin/dashboard-tasks"
+import { AnalyticsPanel } from "@/core/admin/analytics/analytics-panel"
+import { AnalyticsPanelSkeleton } from "@/core/admin/analytics/analytics-panel-skeleton"
+import { parseAnalyticsRange } from "@/core/lib/analytics/parse-analytics-range"
 import { HelpLink } from "./help-link"
 import { RecentUpdates } from "./recent-updates"
 import { TaskCard } from "./task-card"
@@ -10,7 +13,7 @@ import "./dashboard-view.css"
 
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL ?? "support@yourcompany.jp"
 
-export const DashboardView = async () => {
+export const DashboardView = async (props: AdminViewServerProps) => {
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const recent = await payload.find({
@@ -20,6 +23,8 @@ export const DashboardView = async () => {
   })
   const primary = dashboardTasks.filter((task) => task.priority === "primary")
   const secondary = dashboardTasks.filter((task) => task.priority !== "primary")
+  // enableAnalytics の案件だけ設定 Global が登録される。core から案件のフラグ値は読まない
+  const hasAnalytics = payloadConfig.globals.some((global) => global.slug === "analytics-settings")
 
   return (
     <div className="ictms-dashboard">
@@ -40,6 +45,15 @@ export const DashboardView = async () => {
             <TaskCard key={task.id} task={task} size="small" />
           ))}
         </section>
+      ) : null}
+      {hasAnalytics ? (
+        <Suspense fallback={<AnalyticsPanelSkeleton />}>
+          <AnalyticsPanel
+            payload={payload}
+            user={props.initPageResult.req.user}
+            range={parseAnalyticsRange(props.searchParams?.range)}
+          />
+        </Suspense>
       ) : null}
       <RecentUpdates items={recent.docs} />
       <HelpLink email={SUPPORT_EMAIL} />
