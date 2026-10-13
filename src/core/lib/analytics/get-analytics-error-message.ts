@@ -5,7 +5,7 @@ const MESSAGES: Record<AnalyticsErrorKind, string> = {
   "invalid-credentials":
     "サービスアカウントの鍵を読み取れないか、Google に拒否されました。鍵の設定を確認してください。",
   unauthorized:
-    "GA4 を閲覧する権限がありません。サービスアカウントが GA4 プロパティに閲覧者として追加されているか確認してください。",
+    "GA4 を閲覧する権限がありません。サービスアカウントが GA4 プロパティに閲覧者として追加されているか、Google Cloud で Google Analytics Data API が有効になっているか確認してください。",
   rejected: "GA4 が問い合わせを受け付けませんでした。プロパティ ID が正しいか確認してください。",
   "rate-limited": "GA4 の呼び出し上限に達しました。しばらくしてから開き直してください。",
   unavailable: "GA4 から応答がありません。しばらくしてから開き直してください。",

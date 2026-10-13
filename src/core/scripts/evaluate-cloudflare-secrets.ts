@@ -7,6 +7,7 @@ const OPTIONAL_SECRET_NAMES: ReadonlyArray<string> = [
   "CONTACT_NOTIFICATION_FROM",
   "ANTHROPIC_API_KEY",
   "OPENAI_API_KEY",
+  "GA4_SERVICE_ACCOUNT_JSON",
 ]
 
 type Props = {

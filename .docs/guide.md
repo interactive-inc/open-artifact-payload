@@ -518,6 +518,7 @@ secret は環境ごとに `wrangler secret put <NAME> --env=<environment>` で�
 - `RESEND_API_KEY` / `CONTACT_NOTIFICATION_EMAIL` / `CONTACT_NOTIFICATION_FROM` — 問い合わせ通知メールを使う場合に登録する（API キーと宛先は必須）
 - `ANTHROPIC_API_KEY` と `OPENAI_API_KEY` — AI 翻訳で使うプロバイダーの分だけ登録する
 - `AI_TRANSLATION_MAX_MONTHLY_RUNS` などの `AI_TRANSLATION_` 系 — AI 翻訳の上限の天井を実装側で握る場合に登録する
+- `GA4_SERVICE_ACCOUNT_JSON` — ダッシュボードのアクセス解析を使う場合に、GA4 を読むサービスアカウントの鍵を登録する（手順は [[features/analytics|ダッシュボードのアクセス解析]]）
 
 `NEXT_PUBLIC_SERVER_URL` は secret ではありません。ビルド時に焼き込まれるため `.env` の値が使われます。デプロイ前に本番ドメインへ変更してください。
 
@@ -549,6 +550,7 @@ secret は環境ごとに `wrangler secret put <NAME> --env=<environment>` で�
 - `ANTHROPIC_API_KEY` / `OPENAI_API_KEY` — AI 翻訳で使用するプロバイダーの API キー (任意)
 - `AI_TRANSLATION_MAX_*` — AI 翻訳の月間・実行単位の上限。管理画面と環境変数の小さい方を採用 (任意)
 - `AI_TRANSLATION_ANTHROPIC_API_URL` / `AI_TRANSLATION_OPENAI_API_URL` — AI Gateway などへ接続先を差し替える場合に使用 (任意)
+- `GA4_SERVICE_ACCOUNT_JSON` — ダッシュボードのアクセス解析で GA4 を読むサービスアカウントの鍵 JSON (任意)
 - `PAYLOAD_LOG_LEVEL` — Payload のログレベル。未設定時は `info` (任意)
 - `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID` — デプロイやバックアップ自動化を追加する場合に使用 (任意)
 

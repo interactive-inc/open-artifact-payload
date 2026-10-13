@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2026-10-13: ダッシュボードのアクセス解析
+
+- 管理画面のダッシュボードに、GA4 のユーザー数・表示回数・セッション数と前の期間からの増減、日ごとの推移、人気ページ、流入元、問い合わせ件数を表示できるようにした。期間は 7 日・28 日・90 日。
+- `ProjectFeatures` に `enableAnalytics` を追加した。取り込んだ案件は `src/cms/project-features.ts` に `enableAnalytics: false`（使う場合は `true`）を足す。
+- 設定 Global「アクセス解析設定」のマイグレーションを追加した。取り込んだ案件は `vp run payload migrate`（デプロイ先は `make deploy-db`）で適用する。
+- 任意 secret `GA4_SERVICE_ACCOUNT_JSON` を追加した。導入手順は `.docs/features/analytics.md`。
+
 ## 2026-10-04: 依存パッケージの更新
 
 - メジャー版を変えない範囲で依存を最新へ更新した（Payload 3.90.2、Next.js 16.3.8、React 19.3.0、TypeScript 5.9.3、wrangler 4.147.0 など）。Next.jsのcriticalを含む監査エラーを解消した。
