@@ -3,6 +3,7 @@ import { beforeAll, beforeEach, describe, expect, it, vi } from "vite-plus/test"
 
 import config from "@/payload.config"
 import { countDailyInquiries } from "@/core/lib/analytics/count-daily-inquiries"
+import type { Fetcher } from "@/core/lib/analytics/fetcher"
 import { getAnalyticsPeriod } from "@/core/lib/analytics/get-analytics-period"
 import { loadAnalyticsTraffic } from "@/core/lib/analytics/load-analytics-traffic"
 import { readAnalyticsStatus } from "@/core/lib/analytics/read-analytics-status"
@@ -43,7 +44,7 @@ const cachedTraffic = (fetchedAt: Date) => ({
 })
 
 const loadWith = (props: {
-  fetcher: typeof fetch
+  fetcher: Fetcher
   json: string | undefined
   propertyId: string | null
 }) =>
@@ -56,7 +57,7 @@ const loadWith = (props: {
     propertyId: props.propertyId,
   })
 
-const load = (fetcher: typeof fetch) =>
+const load = (fetcher: Fetcher) =>
   loadWith({ fetcher, json: serviceAccountJson, propertyId: "123456789" })
 
 describe("loadAnalyticsTraffic", () => {

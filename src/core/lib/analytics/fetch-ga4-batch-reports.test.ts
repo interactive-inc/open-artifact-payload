@@ -2,6 +2,7 @@ import { describe, expect, it } from "vite-plus/test"
 
 import { AnalyticsError } from "@/core/lib/analytics/analytics-error"
 import { fetchGa4BatchReports } from "@/core/lib/analytics/fetch-ga4-batch-reports"
+import type { Fetcher } from "@/core/lib/analytics/fetcher"
 
 const body = { requests: [] }
 
@@ -9,7 +10,7 @@ const validResponse = { kind: "analyticsData#batchRunReports", reports: [{}, {},
 
 const respondWith = (status: number, text: string) => async () => new Response(text, { status })
 
-const fetchWith = (fetcher: typeof fetch) =>
+const fetchWith = (fetcher: Fetcher) =>
   fetchGa4BatchReports({ propertyId: "123456789", accessToken: "ya29.token", body, fetcher })
 
 describe("fetchGa4BatchReports", () => {
