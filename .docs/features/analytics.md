@@ -98,4 +98,6 @@ GA4_SERVICE_ACCOUNT_JSON='{"type":"service_account","client_email":"...","privat
 
 ローカルの D1 でもアクセス解析設定にプロパティ ID を入力すると、本物の GA4 の数字を表示できます。
 
+`.env` の値はビルド時に Worker のコードへ含まれます。Cloudflare に登録した secret が優先されるため動作は変わりませんが、`.env` に本物の鍵を入れたまま `make deploy` すると、鍵がデプロイしたコードにも残ります。デプロイする前に `.env` から `GA4_SERVICE_ACCOUNT_JSON` を消してください。`make preview` で確かめるときは、`.env` ではなく `.dev.vars` に書くとビルドに含まれません。
+
 関連: [[security]]、[[guide]]
