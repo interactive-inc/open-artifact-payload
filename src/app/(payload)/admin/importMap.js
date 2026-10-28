@@ -33,6 +33,7 @@ import { ResendNotificationButton as ResendNotificationButton_6d1d301b8ea1da337a
 import { UsageSummaryBeforeList as UsageSummaryBeforeList_8e2df760a6e79eb5d91de36e069c0b50 } from '@/core/admin/ai-translation/usage-summary-before-list'
 import { ArrayRowLabel as ArrayRowLabel_cdd9391e6e747ffc31220d0e2e078bca } from '@/core/admin/row-label/array-row-label'
 import { UsageSummaryField as UsageSummaryField_6d27d244c7dcf25c024a4f2e07241227 } from '@/core/admin/ai-translation/usage-summary-field'
+import { AnalyticsStatusField as AnalyticsStatusField_785b3861f2e308573895bddbc4b013fd } from '@/core/admin/analytics/analytics-status-field'
 import { OpenPublicSite as OpenPublicSite_a32f58d12f662118787c60bde32ef7d1 } from '@/core/admin/nav/open-public-site'
 import { McpConnectionsLink as McpConnectionsLink_b1e36964672c7d09f376dbe3143e6722 } from '@/cms/admin/mcp-connections-link'
 import { AdminThemeProvider as AdminThemeProvider_7a4c7f5d682695795df5b02d5a624dd0 } from '@/core/admin/theme/admin-theme-provider'
@@ -79,6 +80,7 @@ export const importMap = {
   "@/core/admin/ai-translation/usage-summary-before-list#UsageSummaryBeforeList": UsageSummaryBeforeList_8e2df760a6e79eb5d91de36e069c0b50,
   "@/core/admin/row-label/array-row-label#ArrayRowLabel": ArrayRowLabel_cdd9391e6e747ffc31220d0e2e078bca,
   "@/core/admin/ai-translation/usage-summary-field#UsageSummaryField": UsageSummaryField_6d27d244c7dcf25c024a4f2e07241227,
+  "@/core/admin/analytics/analytics-status-field#AnalyticsStatusField": AnalyticsStatusField_785b3861f2e308573895bddbc4b013fd,
   "@/core/admin/nav/open-public-site#OpenPublicSite": OpenPublicSite_a32f58d12f662118787c60bde32ef7d1,
   "@/cms/admin/mcp-connections-link#McpConnectionsLink": McpConnectionsLink_b1e36964672c7d09f376dbe3143e6722,
   "@/core/admin/theme/admin-theme-provider#AdminThemeProvider": AdminThemeProvider_7a4c7f5d682695795df5b02d5a624dd0,

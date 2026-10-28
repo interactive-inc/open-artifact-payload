@@ -108,6 +108,8 @@ wrangler secret put CONTACT_NOTIFICATION_FROM --env=production
 # 任意: AI翻訳を使う場合のみ（選択モデルのプロバイダ分だけ）
 wrangler secret put ANTHROPIC_API_KEY --env=production
 wrangler secret put OPENAI_API_KEY --env=production
+# 任意: ダッシュボードのアクセス解析を使う場合のみ（GA4 を読むサービスアカウントの鍵 JSON）
+wrangler secret put GA4_SERVICE_ACCOUNT_JSON --env=production < key.json
 ```
 
 staging 環境は `--env=staging` に置き換えて各シークレットを登録する。
@@ -145,6 +147,16 @@ staging 環境は `--env=staging` に置き換えて各シークレットを登�
 - サイト運用を他社へ移管するときのチェックリスト: 1. プロバイダのコンソールで該当サイト用の API キーを失効させる（キーはサイトごとに個別発行しておく） 2. 移管先が自前のキーを wrangler secret に登録する 3. AI Gateway 経由の場合はゲートウェイ側の設定・トークンも無効化する。キーは env にしか存在しないため、失効すれば管理画面の状態に関わらず確実に止まる。
 - エンドポイント `POST /api/ai-translate` は対象ドキュメントの参照と翻訳先言語だけを受け付ける。原稿はサーバー側で CMS から取得し、プロンプト・モデル名・フィールド指定などの自由入力は受け付けない（チャット用途への流用防止）。応答は件数・型・長さを検証してから保存し、想定外の出力は保存しない。
 - 既存翻訳は上書きしないのがデフォルト（未入力フィールドのみ翻訳）。上書きは管理画面の「再翻訳（上書き）」から確認ダイアログ付きで実行する。versions.drafts のあるエンティティへの翻訳保存は draft 扱いで、編集者の確認後に公開する。
+
+## アクセス解析
+
+管理画面のダッシュボードに GA4 の集計と問い合わせ件数を表示する。実装は `src/core/lib/analytics/`、画面は `src/core/admin/analytics/`、導入手順は `.docs/features/analytics.md`。
+
+- `src/cms/project-features.ts` の `enableAnalytics` が false なら、設定 Global `analytics-settings` もパネルも登録されない。ダッシュボードは Global の登録有無で判定する
+- GA4 は表示時に Data API の batchRunReports で 4 種類をまとめて取得し、Payload の KV に 3 時間保存する。Payload 3.90 の `kv.set` は D1 で新しいキーを保存しないため、書き込みは `writeAnalyticsKv`（削除してから作成）を使う
+- サービスアカウントはサイトごとに分け、GA4 プロパティに閲覧者で追加する。鍵は `GA4_SERVICE_ACCOUNT_JSON` のみで扱い、DB・画面・ログへ出さない。認証は Web Crypto で RS256 の JWT を署名してトークンを取得する（Google の SDK は入れない）
+- プロパティ ID の更新は serviceAdmin のみ。見られるロールは admin 以上が選ぶ（serviceAdmin は常に閲覧可）
+- 問い合わせ件数は CMS の `contact-submissions` を日本時間の日ごとに数える。GA4 が未接続でも表示する
 
 ## 生成 AI のガードレール
 

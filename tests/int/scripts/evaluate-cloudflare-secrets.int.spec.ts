@@ -10,6 +10,7 @@ const allSecretNames = [
   "CONTACT_NOTIFICATION_FROM",
   "ANTHROPIC_API_KEY",
   "OPENAI_API_KEY",
+  "GA4_SERVICE_ACCOUNT_JSON",
 ]
 
 describe("evaluateCloudflareSecrets", () => {
@@ -31,6 +32,7 @@ describe("evaluateCloudflareSecrets", () => {
       "CONTACT_NOTIFICATION_FROM",
       "ANTHROPIC_API_KEY",
       "OPENAI_API_KEY",
+      "GA4_SERVICE_ACCOUNT_JSON",
     ])
   })
 

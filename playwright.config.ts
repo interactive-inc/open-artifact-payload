@@ -6,7 +6,7 @@ import { defineConfig, devices } from "@playwright/test"
  */
 import "dotenv/config"
 
-import { e2eTurnstileKeys } from "./tests/helpers/e2e-fixtures"
+import { e2eAnalytics, e2eTurnstileKeys } from "./tests/helpers/e2e-fixtures"
 
 /**
  * See https://playwright.dev/docs/test-configuration.
@@ -59,6 +59,8 @@ export default defineConfig({
         process.env.E2E_SERVER === "workers" ? ".wrangler/state-e2e/v3" : ".wrangler/state-e2e",
       // Cloudflare のテスト用シークレット。siteverify は常に success を返す
       TURNSTILE_SECRET_KEY: e2eTurnstileKeys.secretKey,
+      // アクセス解析は KV に入れた取得済みの結果で表示する。鍵は署名できないダミー
+      GA4_SERVICE_ACCOUNT_JSON: e2eAnalytics.serviceAccountJson,
     },
     reuseExistingServer: false,
     // マイグレーションとフィクスチャ投入を含むため dev 起動だけより長く待つ

@@ -1,5 +1,10 @@
 import type { Payload } from "payload"
 
+import { getAnalyticsTrafficKey } from "../../src/core/lib/analytics/analytics-kv-keys.js"
+import { getAnalyticsPeriod } from "../../src/core/lib/analytics/get-analytics-period.js"
+import { writeAnalyticsKv } from "../../src/core/lib/analytics/write-analytics-kv.js"
+import { exampleAnalyticsTraffic } from "../../src/core/test-support/example-analytics-traffic.js"
+
 /**
  * Cloudflare が公開しているテスト用キー。site key は常にウィジェットを解決し、
  * secret は siteverify が常に success を返す。本番と同じ経路のまま E2E を通せる。
@@ -8,6 +13,19 @@ import type { Payload } from "payload"
 export const e2eTurnstileKeys = {
   siteKey: "1x00000000000000000000AA",
   secretKey: "1x0000000000000000000000000000000AA",
+} as const
+
+/**
+ * アクセス解析の E2E 用。鍵は形式だけ正しいダミーで、署名できないため GA4 には届かない。
+ * 28日の結果は取得直後として KV に入れ、GA4 に問い合わせずに表示させる。
+ */
+export const e2eAnalytics = {
+  propertyId: "123456789",
+  serviceAccountJson: JSON.stringify({
+    client_email: "e2e-analytics@example-project.iam.gserviceaccount.com",
+    private_key: "-----BEGIN PRIVATE KEY-----\nAAAA\n-----END PRIVATE KEY-----\n",
+    private_key_id: "e2e-key",
+  }),
 } as const
 
 /** E2E が前提にする固定データ。DB は毎回作り直すため値は変化しない。 */
@@ -201,4 +219,25 @@ export async function seedE2eFixtures(payload: Payload): Promise<void> {
       order: 1,
     },
   })
+
+  // enableAnalytics を false にした案件では設定 Global が無いため、解析の準備だけを飛ばす
+  if (!payload.config.globals.some((global) => global.slug === "analytics-settings")) return
+
+  await payload.updateGlobal({
+    slug: "analytics-settings",
+    data: { propertyId: e2eAnalytics.propertyId, viewerRoles: ["admin"] },
+  })
+
+  const now = new Date()
+
+  const cacheResult = await writeAnalyticsKv({
+    payload,
+    key: getAnalyticsTrafficKey(e2eAnalytics.propertyId, "28d"),
+    value: {
+      ...exampleAnalyticsTraffic,
+      fetchedAt: now.toISOString(),
+      period: getAnalyticsPeriod({ range: "28d", now }),
+    },
+  })
+  if (cacheResult instanceof Error) throw cacheResult
 }
