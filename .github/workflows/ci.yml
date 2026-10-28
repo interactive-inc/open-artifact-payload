@@ -155,12 +155,14 @@ jobs:
       - run: bunx playwright install --with-deps chromium
 
       # Worker runtime の bindings は job の環境変数を継承しないため、CI専用のダミー値を渡す。
+      # GA4_SERVICE_ACCOUNT_JSON は tests/helpers/e2e-fixtures.ts の e2eAnalytics と同じ、署名できないダミー鍵。
       - name: Configure local Worker bindings
         run: |
           cat > .dev.vars <<'EOF'
           PAYLOAD_SECRET=ci-secret-do-not-use-in-production
           NEXT_PUBLIC_SERVER_URL=http://localhost:3000
           TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
+          GA4_SERVICE_ACCOUNT_JSON='{"client_email":"e2e-analytics@example-project.iam.gserviceaccount.com","private_key":"-----BEGIN PRIVATE KEY-----\nAAAA\n-----END PRIVATE KEY-----\n","private_key_id":"e2e-key"}'
           EOF
 
       # Next dev の初回コンパイルとメモリ閾値による再起動をE2Eから除く。
